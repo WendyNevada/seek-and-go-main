@@ -19,3 +19,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 //halo wendy
+
+//test lagi
