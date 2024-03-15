@@ -16,5 +16,8 @@
         "sass": "^1.56.1",
         "typescript": "^5.4.2",
         "vite": "^5.0.0"
+    },
+    "dependencies": {
+        "@types/react-router-dom": "^5.3.3"
     }
 }

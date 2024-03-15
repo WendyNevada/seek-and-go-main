@@ -1,0 +1,9 @@
+.nav-logo-container{
+    max-width: 60px;
+    max-height: 60px;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+  }
