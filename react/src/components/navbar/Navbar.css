@@ -1,3 +1,11 @@
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 90px;
+    border-radius: 16px;
+  }
+
 .nav-logo-container{
     max-width: 60px;
     max-height: 60px;
@@ -6,4 +14,23 @@
 img {
     max-width: 100%;
     height: auto;
-  }
+}
+
+.navbar-menu-container {
+    display: none;
+}
+
+.navbar{
+    background-color: white;
+    box-shadow: 2px;
+}
+
+@media (max-width: 800px){
+    .navbar-menu-container {
+        display: flex;
+    }
+    .navbar-links-container {
+        display: none;
+    }
+}
+

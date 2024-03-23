@@ -7,13 +7,31 @@
 }
 
 .primary-button {
-padding: 0.9rem 1.75rem;
-background-color: white;
-outline: none;
-border: none;
-border-radius: 5rem;
-font-size: 1.1rem;
-cursor: pointer;
-font-weight: 600;
-transition: 0.2s;
+    padding: 0.9rem 1.75rem;
+    background-color: white;
+    outline: none;
+    border: none;
+    border-radius: 5rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.home-banner-container {
+    position: relative;
+    display: flex;
+    padding-top: 3rem;
+  }
+
+.home-bannerImage-container {
+  position: absolute;
+  top: -100px;
+  right: -400px;
+  left: -350px;
+  z-index: -1;
+  max-width: 100vw;
+  max-height: 100vh;
+  background-size: cover;
+  overflow: hidden;
 }
