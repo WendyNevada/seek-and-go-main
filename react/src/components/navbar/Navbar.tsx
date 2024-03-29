@@ -2,44 +2,37 @@ import React, { useState } from 'react'
 import './Navbar.css'
 import { BsCart2 } from 'react-icons/bs'
 import { assetForWeb } from '../../assets/assetStatic'
-import HomeIcon from '@mui/icons-material/Home'
-import InfoIcon from '@mui/icons-material/Info'
-import CommentRoundedIcon from '@mui/icons-material/CommentRounded'
-import PhoneRoundedIcon from '@mui/icons-material/PhoneRounded'
-import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded'
 import { HiOutlineBars3 } from 'react-icons/hi2'
-import { Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
-import Login from '@mui/icons-material/Login';
 
 const Navbar = () => {
     const [openMenu, setOpenMenu] = useState(false)
     const menuOptions = [
         {
             text:"Home",
-            icon:<HomeIcon/>,
+            // icon:<HomeIcon/>,
             link:"/"
         },
         {
             text:"About",
-            icon:<InfoIcon/>,
+            // icon:<InfoIcon/>,
             link:"/About"
         },
         {
             text:"Testimonials",
-            icon:<CommentRoundedIcon/>,
+            // icon:<CommentRoundedIcon/>,
             link:"/Detail"
         },
         {
             text:"Contact",
-            icon:<PhoneRoundedIcon/>
+            // icon:<PhoneRoundedIcon/>
         },
         {
             text:"Cart",
-            icon:<ShoppingCartRoundedIcon/>
+            // icon:<ShoppingCartRoundedIcon/>
         },
         {
             text:"Login",
-            icon: <Login/>
+            // icon: <Login/>
         }
     ]
 
@@ -64,7 +57,7 @@ const Navbar = () => {
             <div className="navbar-menu-container">
                 <HiOutlineBars3 onClick={() => setOpenMenu(true)}></HiOutlineBars3>
             </div>
-            <Drawer open={openMenu} onClose={() => setOpenMenu(false)} anchor='right'>
+            {/* <Drawer open={openMenu} onClose={() => setOpenMenu(false)} anchor='right'>
                 <Box sx={{ width: 220, backgroundColor: 'transparent'}}
                 role='presentation'
                 onClick={() => setOpenMenu(false)}
@@ -78,7 +71,7 @@ const Navbar = () => {
                         ))}
                     </List>
                 </Box>
-            </Drawer>
+            </Drawer> */}
         </nav>
       )
 }

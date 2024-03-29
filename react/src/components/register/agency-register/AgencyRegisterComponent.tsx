@@ -1,3 +1,4 @@
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import React, { useState } from 'react'
 
 interface InputValues {
@@ -43,7 +44,7 @@ const AgencyRegisterComponent = () => {
         if(agencyRegister.password.length < 8){
             validationErrors.password = "Password is too short";
         }
-        setAgencyRegister({ ...agencyRegister, [e.target.name]: e.target.value });
+        // setAgencyRegister({ ...agencyRegister, [e.target.name]: e.target.value });
         setErrors(validationErrors);
     };
 
@@ -55,7 +56,7 @@ const AgencyRegisterComponent = () => {
   return (
     <div>
         <div className="form-container sign-up">
-            <form onSubmit={handleSubmit}>
+            {/* <form onSubmit={handleSubmit}>
                 <h1>As Agency</h1>
                 <input type="text" name="agencyName" placeholder="Agency Name" required/>
                 <input type="email" name="email" placeholder="Email"/>
@@ -65,7 +66,7 @@ const AgencyRegisterComponent = () => {
                 {<span>{errors.password}</span>}
                 <input type="password" name='rePassword' placeholder="Confirm Password" onChange={(e) => setAgencyRegister({...agencyRegister, rePassword: e.target.value})}/>
                 <button type='submit'>Register</button>
-            </form>
+            </form> */}
         </div>
     </div>
   )

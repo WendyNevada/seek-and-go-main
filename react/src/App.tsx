@@ -3,7 +3,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import seekngoLogo from '/favicon.ico'
 import './App.css'
-import HomePage from './components/home-page/HomePage';
+import HomePage from './components/home/HomePage';
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import LoginRegisterPage from './views/Login-register-page/LoginRegisterPage'
 

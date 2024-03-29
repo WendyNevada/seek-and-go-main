@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import './Register.css'
-import { TextField } from '@mui/material';
 import CustomerRegisterComponent from './customer-register/CustomerRegisterComponent';
 import AgencyRegisterComponent from './agency-register/AgencyRegisterComponent';
+import AgencyRegister from './agency-register/AgencyRegister';
 
 const Register = () => {
     const [isLogin, setIsLogin] = useState(true);
@@ -14,8 +14,9 @@ const Register = () => {
     return (
         <div className='body'>
             <div className={`container ${isLogin ? '' : 'active'}`} id="container">
-                <AgencyRegisterComponent></AgencyRegisterComponent>
-                <CustomerRegisterComponent></CustomerRegisterComponent>
+                {/* <AgencyRegisterComponent /> */}
+                <AgencyRegister/>
+                <CustomerRegisterComponent />
                 <div className="toggle-container">
                     <div className="toggle">
                         <div className="toggle-panel toggle-left">
