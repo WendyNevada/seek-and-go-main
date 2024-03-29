@@ -9,6 +9,7 @@ import PhoneRoundedIcon from '@mui/icons-material/PhoneRounded'
 import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded'
 import { HiOutlineBars3 } from 'react-icons/hi2'
 import { Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
+import Login from '@mui/icons-material/Login';
 
 const Navbar = () => {
     const [openMenu, setOpenMenu] = useState(false)
@@ -36,6 +37,10 @@ const Navbar = () => {
             text:"Cart",
             icon:<ShoppingCartRoundedIcon/>
         },
+        {
+            text:"Login",
+            icon: <Login/>
+        }
     ]
 
     return (
@@ -51,6 +56,7 @@ const Navbar = () => {
                     <a href=''>
                         <BsCart2 className='navbar-cart-icon'/>
                     </a>
+                    <a href='\Register'>Login</a>
                     <button className='primary-button'>Bookings Now</button>
                 </div>
 

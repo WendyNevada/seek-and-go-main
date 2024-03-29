@@ -5,18 +5,18 @@ import seekngoLogo from '/favicon.ico'
 import './App.css'
 import HomePage from './components/home-page/HomePage';
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
-import LoginRegister from './components/login-register-page/LoginRegister'
+import LoginRegisterPage from './views/Login-register-page/LoginRegisterPage'
 
 function App() {
   return (
     <Router>
         <Routes>
             <Route path={'/'} element={
-                    <HomePage/>
-                }>
+                <HomePage/>
+            }>
             </Route>
-            <Route path={'/Login'} element={
-                <LoginRegister/>
+            <Route path={'/Register'} element={
+                <LoginRegisterPage/>
             }>
             </Route>
         </Routes>
