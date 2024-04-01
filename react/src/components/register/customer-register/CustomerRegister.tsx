@@ -1,44 +1,70 @@
-import React from "react";
-import { useForm } from "react-hook-form";
-import { agencySchema } from "../utils/schema";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import React from 'react'
+import { customerSchema } from '../utils/schema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { date, z } from 'zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { DatePickerDemo } from '@/components/ui/datepicker';
+import { Button } from '@/components/ui/button';
 
-const AgencyRegister = () => {
-    const form = useForm<z.infer<typeof agencySchema>>({
-        resolver: zodResolver(agencySchema),
+import { format } from "date-fns"
+import { Calendar as CalendarIcon } from "lucide-react"
+
+import { cn } from "@/lib/utils"
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+
+const CustomerRegister = () => {
+    const form = useForm<z.infer<typeof customerSchema>>({
+        resolver: zodResolver(customerSchema),
         defaultValues: {
-            name: "",
-            email: "",
-            npwp: "",
-            location: "",
-            password: "",
-            confirmPassword: "",
+        name: "",
+        email: "",
+        phone: "",
+        dob: undefined,
+        gender: "",
+        password: "",
+        confirmPassword: ""
         },
     });
-    const onSubmit = (values: z.infer<typeof agencySchema>) => {
+
+    const onSubmitConfirm = (values: z.infer<typeof customerSchema>) => {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
+        values.dob = new Date(values.dob);
         console.log(values);
     };
 
+    // const onSubmit = async (values: z.infer<typeof customerSchema>) => {
+    //     //event.preventDefault(); // Prevent default form submission behavior
+    //     try {
+    //         // Submit the form data or perform any other action
+    //         await form.handleSubmit(onSubmitConfirm)();
+    //     } catch (error) {
+    //         console.error('Form submission error:', error);
+    //     }
+    // };
+
+
     return (
         <div>
-            <div className="form-container sign-up my-4">
-                <Form {...form}>
+            <div className="form-container sign-in">
+            <Form {...form}>
                     <form
-                        onSubmit={form.handleSubmit(onSubmit)}
-                        className="space-y-4"
+                        onSubmit={form.handleSubmit(onSubmitConfirm)}
+                        className="space-y-8"
                     >
                         <h1>As Agency</h1>
                         <FormField
                             control={form.control}
                             name="name"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className="custom-field">
                                     <FormLabel>{"Name"}</FormLabel>
                                     <FormControl>
                                         <Input
@@ -55,7 +81,7 @@ const AgencyRegister = () => {
                             control={form.control}
                             name="email"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className="custom-field">
                                     <FormLabel>{"Email"}</FormLabel>
                                     <FormControl>
                                         <Input
@@ -70,10 +96,10 @@ const AgencyRegister = () => {
                         />
                         <FormField
                             control={form.control}
-                            name="npwp"
+                            name="phone"
                             render={({ field }) => (
                                 <FormItem className="custom-field">
-                                    <FormLabel>{"NPWP"}</FormLabel>
+                                    <FormLabel>{"Phone"}</FormLabel>
                                     <FormControl>
                                         <Input
                                             placeholder={field.name}
@@ -85,12 +111,42 @@ const AgencyRegister = () => {
                                 </FormItem>
                             )}
                         />
+                        {/* <input
+                            type="date"
+                            placeholder="Tanggal Lahir"
+                            {...form.register("dob")} // Register the input field
+                            onChange={(e) => form.setValue("dob", new Date(e.target.value))} // Update the form value
+                            value={form.watch("dob")?.toISOString().split("T")[0]} // Watch the form value
+                        /> */}
+                        {/* <DatePickerDemo/> */}
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button
+                                variant={"outline"}
+                                className={cn(
+                                    "w-[280px] justify-start text-left font-normal",
+                                    !date && "text-muted-foreground"
+                                )}
+                                >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {date ? format(dob, "PPP") : <span>Pick a date</span>}
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0">
+                                <Calendar
+                                mode="single"
+                                selected={dob}
+                                onSelect={field}
+                                initialFocus
+                                />
+                            </PopoverContent>
+                        </Popover>
                         <FormField
                             control={form.control}
-                            name="location"
+                            name="gender"
                             render={({ field }) => (
                                 <FormItem className="custom-field">
-                                    <FormLabel>{"Location"}</FormLabel>
+                                    <FormLabel>{"Gender"}</FormLabel>
                                     <FormControl>
                                         <Input
                                             placeholder={field.name}
@@ -141,7 +197,7 @@ const AgencyRegister = () => {
                 </Form>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default AgencyRegister;
+export default CustomerRegister

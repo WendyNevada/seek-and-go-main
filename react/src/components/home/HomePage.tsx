@@ -6,7 +6,7 @@ import AgencyRegister from '../register/agency-register/AgencyRegister'
 
 const HomePage = () => {
   return (
-    <div className="HomePage">
+    <div className="home-page">
         <Navbar/>
         <AgencyRegister/>
         <div className='home-banner-container'>

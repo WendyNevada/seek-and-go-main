@@ -2,6 +2,7 @@ import './App.css'
 import HomePage from './components/home/HomePage';
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import LoginRegisterPage from './views/Login-register-page/LoginRegisterPage'
+import { DatePickerDemo } from './components/ui/datepicker'
 
 function App() {
   return (
@@ -13,6 +14,10 @@ function App() {
             </Route>
             <Route path={'/Register'} element={
                 <LoginRegisterPage/>
+            }>
+            </Route>
+            <Route path={'/Date'} element={
+                <DatePickerDemo/>
             }>
             </Route>
         </Routes>

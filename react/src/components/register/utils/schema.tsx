@@ -1,8 +1,9 @@
 import { z } from "zod"
- 
+
 export const customerSchema= z.object({
     name: z.string(),
     email: z.string(),
+    phone: z.string(),
     dob: z.date({
         required_error: "Please select a date and time",
         invalid_type_error: "That's not a date!",
