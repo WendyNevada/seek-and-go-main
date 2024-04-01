@@ -13,15 +13,15 @@ class AccountSeeder extends Seeder
      */
     public function run(): void
     {
-        Account::factory()
-        ->count(5)
-        ->hasCustomers(1)
-        ->create();
-
         // Account::factory()
         // ->count(5)
-        // ->hasAgencies(1)
+        // ->hasCustomers(1)
         // ->create();
+
+        Account::factory()
+        ->count(5)
+        ->hasAgencies(1)
+        ->create();
 
     }
 }

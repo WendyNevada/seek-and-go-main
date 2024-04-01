@@ -16,7 +16,7 @@ class AccountFactory extends Factory
      */
     public function definition(): array
     {
-        $role = $this->faker->randomElement(['Customer']);
+        $role = $this->faker->randomElement(['Agency']);
 
         return [
             'account_name' => $this->faker->userName(),

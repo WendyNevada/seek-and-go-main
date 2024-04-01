@@ -14,4 +14,23 @@ class Agency extends Model
     //     return $this->belongsTo(Account::class, 'account_id', 'account_id');
     // }
 
+    public function agencyAffiliates()
+    {
+        return $this->hasMany(AgencyAffiliate::class);
+    }
+
+    public function packageHs()
+    {
+        return $this->hasMany(PackageH::class);
+    }
+
+    public function orderHs()
+    {
+        return $this->hasMany(OrderH::class);
+    }
+
+    public function packageHistoryHs()
+    {
+        return $this->hasMany(PackageHistoryH::class);
+    }
 }

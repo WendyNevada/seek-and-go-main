@@ -19,4 +19,19 @@ class Customer extends Model
         return $this->hasMany(PromoHistory::class);
     }
 
+    public function packageHs()
+    {
+        return $this->hasMany(PackageH::class);
+    }
+
+    public function orderHs()
+    {
+        return $this->hasMany(OrderH::class);
+    }
+
+    public function packageHistoryHs()
+    {
+        return $this->hasMany(PackageHistoryH::class);
+    }
+
 }
