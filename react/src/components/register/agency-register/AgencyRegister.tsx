@@ -5,7 +5,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import FormInputItem from "@/components/common/FormInputItem";
 import { Input } from "@/components/ui/input";
 
 const AgencyRegister = () => {
@@ -28,17 +27,17 @@ const AgencyRegister = () => {
 
     return (
         <div>
-            <div className="form-container sign-up">
+            <div className="form-container sign-up my-4">
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}
-                        className="space-y-8"
+                        className="space-y-4"
                     >
                         <FormField
                             control={form.control}
                             name="name"
                             render={({ field }) => (
-                                <FormItem className="">
+                                <FormItem>
                                     <FormLabel>{"Name"}</FormLabel>
                                     <FormControl>
                                         <Input
@@ -55,7 +54,7 @@ const AgencyRegister = () => {
                             control={form.control}
                             name="email"
                             render={({ field }) => (
-                                <FormItem className="">
+                                <FormItem>
                                     <FormLabel>{"Email"}</FormLabel>
                                     <FormControl>
                                         <Input

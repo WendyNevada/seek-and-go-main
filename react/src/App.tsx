@@ -1,7 +1,3 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import seekngoLogo from '/favicon.ico'
 import './App.css'
 import HomePage from './components/home/HomePage';
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';

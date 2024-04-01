@@ -22,7 +22,7 @@ const Register = () => {
                         <div className="toggle-panel toggle-left">
                             <h1>Welcome Back!</h1>
                             <p>Enter your personal details to use all of site features</p>
-                            <button className="hidden" id="login" onClick={toggleForm}>are you a customer?</button>
+                            <button id="login" onClick={toggleForm}>are you a customer?</button>
                             <span></span>
                             <p>
                                 Already have an account?
@@ -34,7 +34,7 @@ const Register = () => {
                         <div className="toggle-panel toggle-right">
                             <h1>Hello, Friend!</h1>
                             <p>Register with your personal details to use all of site features</p>
-                            <button className="hidden" id="register" onClick={toggleForm}>are you an agency?</button>
+                            <button id="register" onClick={toggleForm}>are you an agency?</button>
                             <span></span>
                             <p>
                                 Already have an account?
