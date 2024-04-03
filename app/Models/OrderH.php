@@ -9,6 +9,8 @@ class OrderH extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'order_h_id';
+
     public function orderDs()
     {
         return $this->hasMany(OrderD::class);

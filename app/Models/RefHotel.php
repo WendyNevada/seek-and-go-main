@@ -9,6 +9,8 @@ class RefHotel extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'ref_hotel_id';
+
     public function refZipcodes()
     {
         return $this->belongsTo(RefZipcode::class);

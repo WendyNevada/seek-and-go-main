@@ -9,6 +9,16 @@ class Account extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'account_id';
+
+    protected $fillable = [
+        'account_name',
+        'email',
+        'password',
+        'role',
+        'phone'
+    ];
+
     public function customers()
     {
         return $this->hasOne(Customer::class);

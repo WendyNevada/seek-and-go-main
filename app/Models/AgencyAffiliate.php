@@ -9,6 +9,8 @@ class AgencyAffiliate extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'agency_affiliate_id';
+
     public function agency()
     {
         return $this->belongsTo(Agency::class);

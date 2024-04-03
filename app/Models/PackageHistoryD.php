@@ -9,6 +9,8 @@ class PackageHistoryD extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'package_history_d_id';
+
     public function packageHistoryH()
     {
         return $this->belongsTo(PackageHistoryH::class);

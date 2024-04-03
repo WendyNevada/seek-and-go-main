@@ -9,6 +9,15 @@ class Agency extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'agency_id';
+
+    protected $fillable = [
+        'account_id',
+        'agency_name',
+        'npwp',
+        'location'
+    ];
+
     // public function accounts()
     // {
     //     return $this->belongsTo(Account::class, 'account_id', 'account_id');

@@ -9,6 +9,8 @@ class PackageH extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'package_h_id';
+
     public function packageDs(){
         return $this->hasMany(PackageD::class);
     }

@@ -9,6 +9,8 @@ class Promo extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'promo_id';
+
     public function promoHistories()
     {
         return $this->hasMany(PromoHistory::class);

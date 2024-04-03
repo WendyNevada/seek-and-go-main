@@ -9,6 +9,15 @@ class Customer extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'customer_id';
+
+    protected $fillable = [
+        'account_id',
+        'customer_name',
+        'gender',
+        'birth_date'
+    ];
+
     // public function accounts()
     // {
     //     return $this->belongsTo(Account::class, 'account_id', 'account_id');

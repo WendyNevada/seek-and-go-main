@@ -9,6 +9,8 @@ class PackageD extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'package_d_id';
+
     public function packageHs(){
         return $this->belongsTo(PackageH::class);
     }

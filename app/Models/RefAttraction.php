@@ -9,6 +9,8 @@ class RefAttraction extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'ref_attraction_id';
+
     public function refZipcodes()
     {
         return $this->belongsTo(RefZipcode::class);

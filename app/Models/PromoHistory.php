@@ -9,6 +9,8 @@ class PromoHistory extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'promo_history_id';
+
     public function customers() {
         return $this->belongsTo(Customer::class);
     }
