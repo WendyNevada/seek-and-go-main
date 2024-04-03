@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import './Register.css'
+// import './Register.css'
 import { TextField } from '@mui/material';
 import CustomerRegisterComponent from './customer-register/CustomerRegisterComponent';
 import AgencyRegisterComponent from './agency-register/AgencyRegisterComponent';
@@ -12,11 +12,11 @@ const Register = () => {
     };
 
     return (
-        <div className='body'>
-            <div className={`container ${isLogin ? '' : 'active'}`} id="container">
-                <AgencyRegisterComponent></AgencyRegisterComponent>
+        <div className='none'>
+            <div id="container">
+                {/* <AgencyRegisterComponent></AgencyRegisterComponent> */}
                 <CustomerRegisterComponent></CustomerRegisterComponent>
-                <div className="toggle-container">
+                {/* <div className="toggle-container">
                     <div className="toggle">
                         <div className="toggle-panel toggle-left">
                             <h1>Welcome Back!</h1>
@@ -43,7 +43,7 @@ const Register = () => {
                             </p>
                         </div>
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     )
