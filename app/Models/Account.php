@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Account extends Model
+{
+    use HasFactory;
+
+    protected $primaryKey = 'account_id';
+
+    protected $fillable = [
+        'account_name',
+        'email',
+        'password',
+        'role',
+        'phone'
+    ];
+
+    public function customers()
+    {
+        return $this->hasOne(Customer::class);
+    }
+
+    public function agencies()
+    {
+        return $this->hasOne(Agency::class);
+    }
+}
