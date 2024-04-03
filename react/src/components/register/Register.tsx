@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 // import './Register.css'
 import { TextField } from '@mui/material';
-import CustomerRegisterComponent from './customer-register/CustomerRegisterComponent';
-import AgencyRegisterComponent from './agency-register/AgencyRegisterComponent';
+import CustomerRegisterComponent from './customer-register/CustomerRegister';
+import AgencyRegisterComponent from './agency-register/AgencyRegister';
 
 const Register = () => {
     const [isLogin, setIsLogin] = useState(true);
