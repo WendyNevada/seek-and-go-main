@@ -166,7 +166,8 @@ class AccountController extends Controller
                 return [
                     'status' => "error",
                     'message' => "Email not found",
-                    'account_id' => "-"
+                    'account_id' => "-",
+                    'role' => "-"
                 ];
             }
             else
@@ -176,7 +177,8 @@ class AccountController extends Controller
                     return [
                         'status' => "error",
                         'message' => "Password not match",
-                        'account_id' => "-"
+                        'account_id' => "-",
+                        'role' => "-"
                     ];
                 }
                 else
@@ -184,7 +186,8 @@ class AccountController extends Controller
                     return [
                         'status' => "ok",
                         'message' => "success",
-                        'account_id' => $account->account_id
+                        'account_id' => $account->account_id,
+                        'role' => $account->role
                     ];
                 }
             }
