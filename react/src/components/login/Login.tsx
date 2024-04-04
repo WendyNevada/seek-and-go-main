@@ -1,9 +1,11 @@
 import React from 'react'
-import './Login.css'
+import CustomerLogin from './user-login/UserLogin'
 
 const Login = () => {
   return (
-    <div>Login</div>
+    <div className='mt-20 p-0 sm:p-12'>
+        <CustomerLogin/>
+    </div>
   )
 }
 

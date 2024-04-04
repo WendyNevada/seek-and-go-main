@@ -13,10 +13,14 @@ const Register = () => {
     };
 
     return (
-        <div className='none'>
-            <div id="container">
+        <div className='none mt-20'>
+            <div id="container" className="bg-gray-100 p-0 sm:p-12">
                 {/* <AgencyRegisterComponent></AgencyRegisterComponent> */}
-                <CustomerRegisterComponent/>
+                <div className='justify-center flex'>
+                    {isRegisCustomer ? <Button onClick={toggleForm}>Register as Agency?</Button> : <Button onClick={toggleForm}>Register as Customer?</Button>}
+                </div>
+                {isRegisCustomer ? <CustomerRegisterComponent/> : <AgencyRegisterComponent/>}
+
                 {/* <div className="toggle-container">
                     <div className="toggle">
                         <div className="toggle-panel toggle-left">
