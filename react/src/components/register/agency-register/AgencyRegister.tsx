@@ -1,73 +1,164 @@
 import React, { useState } from 'react'
-
-interface InputValues {
-    agencyName: string;
-    email: string;
-    npwp: string;
-    location: string;
-    password: string;
-    rePassword: string;
-}
+import { agencySchema } from '../utils/schema';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 const AgencyRegisterComponent = () => {
-    const [agencyRegister, setAgencyRegister] = useState({
-        agencyName: '',
-        email: '',
-        npwp: '',
-        location: '',
-        password: '',
-        rePassword: ''
+    const form = useForm<z.infer<typeof agencySchema>>({
+        resolver: zodResolver(agencySchema),
+            defaultValues: {
+            agency_name: "",
+            account_name: "",
+            email: "",
+            password: "",
+            phone: "",
+            npwp:"",
+            location:"",
+            role:"Agency"
+        },
     });
 
-
-    const validateValues = (inputValues: InputValues) => {
-        const errors: { password?: string, rePassword?: string} = {};
-        if (inputValues.password.length < 8) {
-            errors.password = "Password is too short";
-            console.log(errors.password);
-            alert(errors.password);
-        }
-        if (inputValues.rePassword.length < 8) {
-            errors.rePassword = "rePassword is too short";
-            console.log(errors.rePassword);
-        }
-        return errors;
-    };
-
-    const [errors, setErrors] = useState({});
-    const [submitting, setSubmitting] = useState(false);
-
-    const handleSubmit = (e : React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const validationErrors = validateValues(agencyRegister);
-        if(agencyRegister.password.length < 8){
-            validationErrors.password = "Password is too short";
-        }
-        setAgencyRegister({ ...agencyRegister, [e.target.name]: e.target.value });
-        setErrors(validationErrors);
-    };
-
-    const handleForm = (e:any) => {
-        const {name: inputName, value: inputValue} = e.target;
-        setAgencyRegister({...agencyRegister, [inputName]: inputValue})
+    const onSubmit = (values: z.infer<typeof agencySchema>) => {
+        console.log(values);
     }
-
   return (
-    <div>
-        <div className="form-container sign-up">
-            <form onSubmit={handleSubmit}>
-                <h1>As Agency</h1>
-                <input type="text" name="agencyName" placeholder="Agency Name" required/>
-                <input type="email" name="email" placeholder="Email"/>
-                <input type="text" name='npwp' placeholder="NPWP"/>
-                <input type="text" name='location' placeholder="Lokasi"/>
-                <input type="password" name='password' placeholder="Password" onChange={handleForm} value={agencyRegister.password}/>
-                {<span>{errors.password}</span>}
-                <input type="password" name='rePassword' placeholder="Confirm Password" onChange={(e) => setAgencyRegister({...agencyRegister, rePassword: e.target.value})}/>
-                <button type='submit'>Register</button>
-            </form>
+    <div className="min-h-50 w-50 p-0 sm:p-12">
+            <div className="mx-auto max-w-xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)}>
+                        <h1 className="text-2xl font-bold mb-8 text-center">Agency Register</h1>
+                        <FormField
+                            control={form.control}
+                            name="agency_name"
+                            render={({ field }) => (
+                                <FormItem className="custom-field">
+                                    <FormLabel>{"Agency Name"}</FormLabel>
+                                    <FormMessage />
+                                    <FormControl>
+                                        <Input
+                                            placeholder={field.name}
+                                            {...field}
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="account_name"
+                            render={({ field }) => (
+                                <FormItem className="custom-field mt-4">
+                                    <FormLabel>{"Account Name"}</FormLabel>
+                                    <FormMessage />
+                                    <FormControl>
+                                        <Input
+                                            placeholder={field.name}
+                                            {...field}
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem className="custom-field mt-4">
+                                    <FormLabel>{"Email"}</FormLabel>
+                                    <FormMessage />
+                                    <FormControl>
+                                        <Input
+                                            type='email'
+                                            placeholder={field.name}
+                                            {...field}
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                                <FormItem className="custom-field mt-4">
+                                    <FormLabel>{"Password"}</FormLabel>
+                                    <FormMessage />
+                                    <FormControl>
+                                        <Input
+                                            type='password'
+                                            placeholder={field.name}
+                                            {...field}
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="phone"
+                            render={({ field }) => (
+                                <FormItem className="custom-field mt-4">
+                                    <FormLabel>{"Phone"}</FormLabel>
+                                    <FormMessage />
+                                    <FormControl>
+                                        <Input
+                                            placeholder={field.name}
+                                            {...field}
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="npwp"
+                            render={({ field }) => (
+                                <FormItem className="custom-field mt-4">
+                                    <FormLabel>{"NPWP"}</FormLabel>
+                                    <FormMessage />
+                                    <FormControl>
+                                        <Input
+                                            placeholder={field.name}
+                                            {...field}
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="location"
+                            render={({ field }) => (
+                                <FormItem className="custom-field mt-4">
+                                    <FormLabel>{"Location"}</FormLabel>
+                                    <FormMessage />
+                                    <FormControl>
+                                        <Input
+                                            placeholder={field.name}
+                                            {...field}
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        <div className="justify-center flex">
+                            <Button type="submit" className='mt-4'>Register</Button>
+                        </div>
+                    </form>
+                </Form>
+            </div>
         </div>
-    </div>
   )
 }
 

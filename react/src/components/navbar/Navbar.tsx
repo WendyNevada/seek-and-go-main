@@ -44,12 +44,13 @@ const Navbar = () => {
     ]
 
     return (
-        <nav className='flex items-center justify-between flex-wrap bg-teal-500 p-6'>
-            <div className='fill-current h-14 w-14 mr-2" width="70'>
+        <nav className='flex-no-wrap fixed top-0 flex w-full items-center justify-between bg-blue-800 lg:flex-wrap lg:py-4 p-6'>
+
+            <div className='fill-current h-14 w-14 mr-4 width=70 flex flex-row text-teal-200 '>
                 <img src={assetForWeb.logo}/>
             </div>
 
-            <div className="block lg:hidden">
+            <div className="block lg:hidden ml-4">
                 <button className="flex items-center px-3 py-2 border rounded text-teal-200 border-teal-400 hover:text-white hover:border-white" onClick={() => setOpenMenu(true)}>
                 <svg className="fill-current h-3 w-3" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Menu</title><path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"/></svg>
                 </button>
@@ -78,7 +79,8 @@ const Navbar = () => {
                 <a href='' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>
                     <BsCart2 className='navbar-cart-icon'/>
                 </a>
-                <a href='\Register' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Login</a>
+                <a href='\Register' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Register</a>
+                <a href='\Login' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1'>Login</a>
                 <button className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Bookings Now</button>
             </div>
 

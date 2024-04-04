@@ -20,7 +20,7 @@ export interface AgencyRegisterItems {
 }
 
 export interface AgencyRegisterDisplay{
-    agencyRegisterDisplay: AgencyRegisterItems,
+    agencyRegisterDisplay: AgencyRegisterItems[],
 }
 
 

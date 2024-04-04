@@ -8,7 +8,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { customerSchema } from '../utils/schema';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import { DatePickerDemo } from '@/components/ui/datepicker';
 import { format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -28,7 +27,7 @@ const CustomerRegisterComponent = () => {
     const form = useForm<z.infer<typeof customerSchema>>({
         resolver: zodResolver(customerSchema),
         defaultValues: {
-        customer_name: "tes1",
+        customer_name: "",
         account_name: "",
         email: "",
         phone: "",
@@ -45,8 +44,8 @@ const CustomerRegisterComponent = () => {
     }
 
     const onSubmit = (values: z.infer<typeof customerSchema>) => {
-        // Assign the formatted date back to values.birth_date
         values.birth_date = formatDate(values.birth_date);
+        console.log(values.birth_date);
 
         values.customer_name = "tes1";
         values.role="Customer";
@@ -66,17 +65,34 @@ const CustomerRegisterComponent = () => {
     };
 
     return (
-        <div className="min-h-screen w-full bg-gray-100 p-0 sm:p-12">
+        <div className="min-h-50 w-50 p-0 sm:p-12">
             <div className="mx-auto max-w-xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <h1 className="text-2xl font-bold mb-8 text-center">Customer Login</h1>
+                        <h1 className="text-2xl font-bold mb-8 text-center">Customer Register</h1>
+                        <FormField
+                            control={form.control}
+                            name="customer_name"
+                            render={({ field }) => (
+                                <FormItem className="custom-field">
+                                    <FormLabel>{"Customer Name"}</FormLabel>
+                                    <FormMessage />
+                                    <FormControl>
+                                        <Input
+                                            placeholder={field.name}
+                                            {...field}
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
                         <FormField
                             control={form.control}
                             name="account_name"
                             render={({ field }) => (
-                                <FormItem className="custom-field">
-                                    <FormLabel>{"account_name"}</FormLabel>
+                                <FormItem className="custom-field mt-4">
+                                    <FormLabel>{"Account Name"}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
@@ -97,6 +113,7 @@ const CustomerRegisterComponent = () => {
                                     <FormMessage />
                                     <FormControl>
                                         <Input
+                                            type='email'
                                             placeholder={field.name}
                                             {...field}
                                             onChange={field.onChange}
@@ -127,7 +144,7 @@ const CustomerRegisterComponent = () => {
                             name="birth_date"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel className='mr-4'>{"tanggal lahir"}</FormLabel>
+                                    <FormLabel className='mr-4'>{"Tanggal Lahir"}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Popover>
@@ -164,7 +181,7 @@ const CustomerRegisterComponent = () => {
                                     <FormLabel>{"Gender"}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
-                                        <RadioGroup defaultValue="option-one" onChange={newValue => field.onChange(newValue)}>
+                                        <RadioGroup className='flex flex-row' defaultValue="option-one" onChange={newValue => field.onChange(newValue)}>
                                             <div className="flex items-center space-x-2">
                                                 <RadioGroupItem value="M" id="option-one"/>
                                                 <Label htmlFor="option-one">Male</Label>
@@ -196,10 +213,6 @@ const CustomerRegisterComponent = () => {
                                 </FormItem>
                             )}
                         />
-                        {/* <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
-                            <Input id="password" required type="password" />
-                        </div> */}
                         <div className="justify-center flex">
                             <Button type="submit" className='mt-4'>Register</Button>
                         </div>
