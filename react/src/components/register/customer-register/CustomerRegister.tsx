@@ -18,29 +18,51 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { CustomerRegisterItems } from '../api';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import axiosClient from '@/axios.client';
 
 const CustomerRegisterComponent = () => {
+    // const {setUser, setToken} = useStateContext()
+    // const [errors, setErrors] = useState(null)
 
     const form = useForm<z.infer<typeof customerSchema>>({
         resolver: zodResolver(customerSchema),
         defaultValues: {
-        name: "",
+        customer_name: "tes1",
+        account_name: "",
         email: "",
         phone: "",
-        dob: new Date(),
+        birth_date: new Date(),
         gender: "",
         password: "",
-        confirmPassword: ""
+        //confirmPassword: "",
+        role:"Customer"
         },
     });
 
+    function formatDate(date: Date): Date {
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
     const onSubmit = (values: z.infer<typeof customerSchema>) => {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        values.dob = new Date(values.dob);
+        // Assign the formatted date back to values.birth_date
+        values.birth_date = formatDate(values.birth_date);
+
+        values.customer_name = "tes1";
+        values.role="Customer";
         console.log(values);
+
+        axiosClient.post('/v1/CreateAccountCustomer', values)
+    //   .then(({data}) => {
+    //     setUser(data.user)
+    //     setToken(data.token);
+    //   })
+    //   .catch(err => {
+    //     const response = err.response;
+    //     if (response && response.status === 422) {
+    //       setErrors(response.data.errors)
+    //     }
+    //   })
     };
 
     return (
@@ -51,10 +73,10 @@ const CustomerRegisterComponent = () => {
                         <h1 className="text-2xl font-bold mb-8 text-center">Customer Login</h1>
                         <FormField
                             control={form.control}
-                            name="name"
+                            name="account_name"
                             render={({ field }) => (
                                 <FormItem className="custom-field">
-                                    <FormLabel>{"Name"}</FormLabel>
+                                    <FormLabel>{"account_name"}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
@@ -102,7 +124,7 @@ const CustomerRegisterComponent = () => {
                         />
                         <FormField
                             control={form.control}
-                            name="dob"
+                            name="birth_date"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
                                     <FormLabel className='mr-4'>{"tanggal lahir"}</FormLabel>
@@ -144,11 +166,11 @@ const CustomerRegisterComponent = () => {
                                     <FormControl>
                                         <RadioGroup defaultValue="option-one" onChange={newValue => field.onChange(newValue)}>
                                             <div className="flex items-center space-x-2">
-                                                <RadioGroupItem value="male" id="option-one"/>
+                                                <RadioGroupItem value="M" id="option-one"/>
                                                 <Label htmlFor="option-one">Male</Label>
                                             </div>
                                             <div className="flex items-center space-x-2">
-                                                <RadioGroupItem value="female" id="option-two"/>
+                                                <RadioGroupItem value="F" id="option-two"/>
                                                 <Label htmlFor="option-two">Female</Label>
                                             </div>
                                         </RadioGroup>
@@ -178,7 +200,9 @@ const CustomerRegisterComponent = () => {
                             <Label htmlFor="password">Password</Label>
                             <Input id="password" required type="password" />
                         </div> */}
-                        <Button type="submit" className='mt-4'>Register</Button>
+                        <div className="justify-center flex">
+                            <Button type="submit" className='mt-4'>Register</Button>
+                        </div>
                     </form>
                 </Form>
             </div>

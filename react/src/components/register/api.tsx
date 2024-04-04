@@ -1,12 +1,15 @@
 export interface CustomerRegisterItems {
-    name: string;
+    customer_name: string;
+    account_name: string;
     email: string;
     phone: string;
-    dob: Date;
+    birth_date: Date;
     gender: string;
     password: string;
-    confirmPassword: string;
+    //confirmPassword: string;
+    role: string;
 }
+
 export interface AgencyRegisterItems {
     name: string;
     email: string;
@@ -15,7 +18,9 @@ export interface AgencyRegisterItems {
     password: string;
     confirmPassword: string;
 }
+
 export interface AgencyRegisterDisplay{
     agencyRegisterDisplay: AgencyRegisterItems,
 }
+
 
