@@ -11,7 +11,7 @@ class StoreRefHotelRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,15 @@ class StoreRefHotelRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'hotel_code' => ['required'],
+            'ref_zipcode_id' => ['required'],
+            'hotel_name' => ['required'],
+            'description' => ['required'],
+            'address' => ['required'],
+            'rating' => ['nullable'],
+            'is_active' => ['required'],
+            'qty' => ['required'],
+            'promo_code' => ['nullable']
         ];
     }
 }

@@ -13,6 +13,7 @@ use App\Http\Requests\V2\StoreAccountAgencyRequest;
 use App\Http\Resources\V1\CheckEmailResource;
 use App\Models\Agency;
 use App\Models\Customer;
+use Illuminate\Support\Facades\DB;
 
 class AccountController extends Controller
 {
@@ -36,6 +37,8 @@ class AccountController extends Controller
     {
         try
         {
+            DB::beginTransaction();
+
             $account = Account::
                 create(
                     [
@@ -47,7 +50,16 @@ class AccountController extends Controller
                     ]
                 );
             
-            $accountId = $account->id;
+            $accountId = $account->account_id;
+
+            $strBirthDate = $request->birth_date;
+            
+            if(strpos($strBirthDate, "T") == true)
+            {
+                $string = $request->birth_date;
+                $parts = explode("T", $string);
+                $strBirthDate = $parts[0];
+            }
 
             $customer = Customer::
                 create(
@@ -55,9 +67,22 @@ class AccountController extends Controller
                         'account_id' => $accountId,
                         'customer_name' => $request->customer_name,
                         'gender' => $request->gender,
-                        'birth_date' => $request->birth_date
+                        'birth_date' => $strBirthDate
                     ]
                 );
+
+            // $customerChild = new Customer(
+            //     [
+            //         //'account_id' => $accountId,
+            //         'customer_name' => $request->customer_name,
+            //         'gender' => $request->gender,
+            //         'birth_date' => $request->birth_date
+            //     ]
+            // );
+
+            //$account->customers()->save($customerChild);
+
+            DB::commit();
 
             $message = "success";
 
@@ -68,6 +93,8 @@ class AccountController extends Controller
         }
         catch(\Exception $e)
         {
+            DB::rollBack();
+
             $message = $e->getMessage();
 
             return [
@@ -81,6 +108,8 @@ class AccountController extends Controller
     {
         try
         {
+            DB::beginTransaction();
+
             $account = Account::
                 create(
                     [
@@ -92,7 +121,7 @@ class AccountController extends Controller
                     ]
                 );
             
-            $accountId = $account->id;
+            $accountId = $account->account_id;
 
             $agency = Agency::
                 create(
@@ -104,6 +133,8 @@ class AccountController extends Controller
                     ]
                 );
 
+            DB::commit();
+
             $message = "success";
 
             return [
@@ -113,6 +144,8 @@ class AccountController extends Controller
         }
         catch(\Exception $e)
         {
+            DB::rollBack();
+
             $message = $e->getMessage();
 
             return [
@@ -133,7 +166,7 @@ class AccountController extends Controller
                 return [
                     'status' => "error",
                     'message' => "Email not found",
-                    'id' => "-"
+                    'account_id' => "-"
                 ];
             }
             else
@@ -143,7 +176,7 @@ class AccountController extends Controller
                     return [
                         'status' => "error",
                         'message' => "Password not match",
-                        'id' => "-"
+                        'account_id' => "-"
                     ];
                 }
                 else
@@ -151,7 +184,7 @@ class AccountController extends Controller
                     return [
                         'status' => "ok",
                         'message' => "success",
-                        'id' => $account->account_id
+                        'account_id' => $account->account_id
                     ];
                 }
             }
@@ -163,17 +196,21 @@ class AccountController extends Controller
             return [
                 'status' => "error",
                 'message' => $message,
-                'id' => "-"
+                'account_id' => "-"
             ];
         }
     }
 
     public function UpdateCustomerAccount(UpdateCustomerAccountRequest $request)
     {
-        try {
+        try 
+        {
             $account = Account::where('email', $request->email)->first();
     
-            if ($account != null) {
+            if ($account != null) 
+            {
+                DB::beginTransaction();
+
                 $updateData = [];
     
                 if ($request->account_name != null || $request->account_name != '') {
@@ -190,6 +227,8 @@ class AccountController extends Controller
     
                 $account->update($updateData);
     
+                DB::commit();
+
                 return [
                     'status' => "ok",
                     'message' => "success"
@@ -205,6 +244,8 @@ class AccountController extends Controller
         }
         catch(\Exception $e)
         {
+            DB::rollBack();
+
             $message = $e->getMessage();
 
             return [

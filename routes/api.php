@@ -28,6 +28,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::get('articles/{id}', 'AccountController@showId'); //langsung pada url
 
+    #region Account
+    
     Route::post('checkEmail', 'AccountController@checkEmail'); //pake postman
 
     Route::post('CreateAccountCustomer', 'AccountController@CreateAccountCustomer');
@@ -37,4 +39,38 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::post('Login', 'AccountController@Login');
 
     Route::post('UpdateCustomerAccount', 'AccountController@UpdateCustomerAccount');
+
+    #endregion
+
+    #region Attraction
+
+    Route::post('GetAttractionByCode', 'RefAttractionController@GetAttractionByCode');
+
+    Route::post('GetAttractionById', 'RefAttractionController@GetAttractionById');
+
+    Route::post('AddAttraction', 'RefAttractionController@AddAttraction');
+
+    Route::post('EditAttractionById', 'RefAttractionController@EditAttractionById');
+
+    #endregion
+
+    #region Hotel
+
+    Route::post('GetHotelById', 'RefHotelController@GetHotelById');
+
+    Route::post('AddHotel', 'RefHotelController@AddHotel');
+
+    Route::post('EditHotelById', 'RefHotelController@EditHotelById');
+
+    #endregion
+
+    #region Vehicle
+
+    Route::post('AddVehicle', 'RefVehicleController@AddVehicle');
+
+    Route::post('EditVehicleById', 'RefVehicleController@EditVehicleById');
+
+    Route::post('GetVehicleById', 'RefVehicleController@GetVehicleById');
+
+    #endregion
 });

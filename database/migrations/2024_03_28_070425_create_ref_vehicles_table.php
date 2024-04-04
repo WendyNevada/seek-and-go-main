@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('ref_vehicles', function (Blueprint $table) {
             $table->id('ref_vehicle_id');
             $table->string('vehicle_code', length:50);
+            $table->unique('vehicle_code');
             $table->bigInteger('ref_zipcode_id')->unsigned();
             $table->foreign('ref_zipcode_id')->references('ref_zipcode_id')->on('ref_zipcodes')->onDelete('cascade');
             $table->string('vehicle_type', length:100);
@@ -25,7 +26,7 @@ return new class extends Migration
             $table->string('description', length:1000);
             $table->boolean('with_driver');
             $table->string('address', length:100);
-            $table->float('rating', 1, 1);
+            $table->float('rating', 3, 1);
             $table->boolean('is_active');
             $table->integer('qty');
             $table->string('promo_code', length:50)->nullable();

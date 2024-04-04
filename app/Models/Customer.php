@@ -11,6 +11,8 @@ class Customer extends Model
 
     protected $primaryKey = 'customer_id';
 
+    protected $foreignKey = 'account_id';
+
     protected $fillable = [
         'account_id',
         'customer_name',
@@ -20,7 +22,7 @@ class Customer extends Model
 
     // public function accounts()
     // {
-    //     return $this->belongsTo(Account::class, 'account_id', 'account_id');
+    //     return $this->belongsTo(Account::class, $this->foreignKey);
     // }
 
     public function promoHistories()

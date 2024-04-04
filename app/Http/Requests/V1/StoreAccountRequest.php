@@ -29,7 +29,7 @@ class StoreAccountRequest extends FormRequest
             'phone' => ['required', 'string', 'max:15'],
             'customer_name' => ['required', 'string', 'max:255'],
             'gender' => ['required', 'string'],
-            'birth_date' => ['required', 'date']
+            'birth_date' => ['required', 'string']
         ];
     }
 }
