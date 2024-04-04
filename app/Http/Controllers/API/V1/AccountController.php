@@ -288,7 +288,6 @@ class AccountController extends Controller
         {
             return ["tidak ada"];
         }
-        
     }
 
     /**
