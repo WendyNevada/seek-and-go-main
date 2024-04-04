@@ -1,6 +1,6 @@
 import React from 'react'
-import Register from '../../components/login-register-component/register-component/Register'
 import Navbar from '../../components/navbar/Navbar'
+import Register from '@/components/register/Register'
 
 const LoginRegisterPage = () => {
   return (

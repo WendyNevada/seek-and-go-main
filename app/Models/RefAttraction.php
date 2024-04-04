@@ -20,7 +20,6 @@ class RefAttraction extends Model
         'qty',
         'promo_code'
     ];
-
     protected $primaryKey = 'ref_attraction_id';
 
     public function refZipcodes()

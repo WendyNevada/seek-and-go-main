@@ -20,7 +20,7 @@ class RefHotel extends Model
         'qty',
         'promo_code'
     ];
-
+  
     protected $primaryKey = 'ref_hotel_id';
 
     public function refZipcodes()
