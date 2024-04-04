@@ -11,7 +11,7 @@ class UpdateRefHotelRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,14 @@ class UpdateRefHotelRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'ref_hotel_id' => ['required'],
+            'ref_zipcode_id' => ['required'],
+            'hotel_name' => ['required'],
+            'description' => ['required'],
+            'address' => ['required'],
+            'is_active' => ['required'],
+            'qty' => ['required'],
+            'promo_code' => ['nullable']
         ];
     }
 }

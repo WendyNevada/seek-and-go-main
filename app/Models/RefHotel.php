@@ -9,6 +9,18 @@ class RefHotel extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'hotel_code',
+        'ref_zipcode_id',
+        'hotel_name',
+        'description',
+        'address',
+        'rating',
+        'is_active',
+        'qty',
+        'promo_code'
+    ];
+  
     protected $primaryKey = 'ref_hotel_id';
 
     public function refZipcodes()

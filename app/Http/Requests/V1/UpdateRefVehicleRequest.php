@@ -11,7 +11,7 @@ class UpdateRefVehicleRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,20 @@ class UpdateRefVehicleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'ref_vehicle_id' => 'required',
+            'ref_zipcode_id' => 'required',
+            'vehicle_type' => 'required',
+            'vehicle_brand' => 'required',
+            'vehicle_series' => 'required',
+            'vehicle_model' => 'required',
+            'vehicle_year' => 'required',
+            'vehicle_name' => 'required',
+            'description' => 'required',
+            'with_driver' => 'required',
+            'address' => 'required',
+            'is_active' => 'required',
+            'qty' => 'required',
+            'promo_code' => 'nullable'
         ];
     }
 }
