@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import axiosClient from '@/axios.client'
 
 const CustomerLogin = () => {
 
@@ -19,6 +20,12 @@ const CustomerLogin = () => {
 
     const onSubmit = (values: z.infer<typeof customerLoginSchema>) => {
         console.log(values)
+
+        axiosClient.post('/v1/Login', values)
+        .then(response => {
+            console.log(response.data)
+            return response.data
+        })
     };
 
     return (
