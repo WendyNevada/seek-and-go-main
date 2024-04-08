@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreRefVehicleRequest;
 use App\Http\Requests\V1\UpdateRefVehicleRequest;
 use App\Http\Requests\V2\GetRefVehicleByIdRequest;
+use App\Models\AgencyAffiliate;
+use App\Models\Constanta;
 use Illuminate\Support\Facades\DB;
 
 class RefVehicleController extends Controller
@@ -71,48 +73,71 @@ class RefVehicleController extends Controller
     {
         try
         {
-            DB::beginTransaction();
+            $vehicleCheck = RefVehicle::where('vehicle_code', $request->vehicle_code)->first();
 
-            $vehicle = RefVehicle::
-            create(
-                [
-                    'vehicle_code' => $request->vehicle_code,
-                    'ref_zipcode_id' => $request->ref_zipcode_id,
-                    'vehicle_type' => $request->vehicle_type,
-                    'vehicle_brand' => $request->vehicle_brand,
-                    'vehicle_series' => $request->vehicle_series,
-                    'vehicle_model' => $request->vehicle_model,
-                    'vehicle_year' => $request->vehicle_year,
-                    'vehicle_name' => $request->vehicle_name,
-                    'description' => $request->description,
-                    'with_driver' => $request->with_driver,
-                    'address' => $request->address,
-                    'rating' => $request->rating,
-                    'is_active' => $request->is_active,
-                    'qty' => $request->qty,
-                    'promo_code' => $request->promo_code
-                ]
-            );
+            if($vehicleCheck == null)
+            {
+                DB::beginTransaction();
 
-            $refVehicleId = $vehicle->ref_vehicle_id;
+                $vehicle = RefVehicle::
+                create(
+                    [
+                        'vehicle_code' => $request->vehicle_code,
+                        'ref_zipcode_id' => $request->ref_zipcode_id,
+                        'vehicle_type' => $request->vehicle_type,
+                        'vehicle_brand' => $request->vehicle_brand,
+                        'vehicle_series' => $request->vehicle_series,
+                        'vehicle_model' => $request->vehicle_model,
+                        'vehicle_year' => $request->vehicle_year,
+                        'vehicle_name' => $request->vehicle_name,
+                        'description' => $request->description,
+                        'with_driver' => $request->with_driver,
+                        'address' => $request->address,
+                        'rating' => $request->rating,
+                        'is_active' => $request->is_active,
+                        'qty' => $request->qty,
+                        'promo_code' => $request->promo_code
+                    ]
+                );
 
-            DB::commit();
+                $refVehicleId = $vehicle->ref_vehicle_id;
 
-            return [
-                'status' => "ok",
-                'message' => "success",
-                'ref_vehicle_id' => $refVehicleId
-            ];
+                $affiliate = AgencyAffiliate::
+                create(
+                    [
+                        'ref_vehicle_id' => $refVehicleId,
+                        'agency_id' => $request->agency_id,
+                        'base_price' => $request->base_price,
+                        'promo_code' => $request->promo_code_affiliate
+                    ]
+                );
+
+                DB::commit();
+
+                return response()->json([
+                    'status' => "ok",
+                    'message' => "success",
+                    'ref_vehicle_id' => $refVehicleId
+                ], 200);
+            }
+            else
+            {
+                return response()->json([
+                    'status' => "error",
+                    'message' => "data already exist",
+                    'ref_vehicle_id' => "-"
+                ], 400);
+            }
         }
         catch (\Exception $e)
         {
             DB::rollBack();
 
-            return [
+            return response()->json([
                 'status' => "error",
                 'message' => $e->getMessage(),
                 'ref_vehicle_id' => "-"
-            ];
+            ], 500);
         }
     }
 
@@ -147,30 +172,30 @@ class RefVehicleController extends Controller
 
                 DB::commit();
 
-                return [
+                return response()->json([
                     'status' => "ok",
                     'message' => "success",
                     'ref_vehicle_id' => $request->ref_vehicle_id
-                ];
+                ], 200);
             }
             else
             {
-                return [
+                return response()->json([
                     'status' => "error",
                     'message' => "data not found",
                     'ref_vehicle_id' => $request->ref_vehicle_id
-                ];
+                ], 400);
             }
         }
         catch (\Exception $e)
         {
             DB::rollBack();
 
-            return [
+            return response()->json([
                 'status' => "error",
                 'message' => $e->getMessage(),
                 'ref_vehicle_id' => "-"
-            ];
+            ], 500);
         }
     }
 
@@ -179,4 +204,12 @@ class RefVehicleController extends Controller
         $vehicle = RefVehicle::where('ref_vehicle_id', $request->ref_vehicle_id)->first();
 		return response()->json($vehicle);
     }
+
+    public function GetVehicleHomepage()
+    {
+        $vehicle = RefVehicle::orderBy('rating', 'desc')->get()->take(Constanta::$homepageDataCount);
+        return response()->json($vehicle);
+    }
+
+
 }

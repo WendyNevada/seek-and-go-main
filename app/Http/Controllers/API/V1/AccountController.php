@@ -37,59 +37,71 @@ class AccountController extends Controller
     {
         try
         {
-            DB::beginTransaction();
+            $accountCheck = Account::where('email', $request->email)->first();
 
-            $account = Account::
-                create(
-                    [
-                        'account_name' => $request->account_name,
-                        'email' => $request->email,
-                        'password' => $request->password,
-                        'role' => $request->role,
-                        'phone' => $request->phone
-                    ]
-                );
-            
-            $accountId = $account->account_id;
-
-            $strBirthDate = $request->birth_date;
-            
-            if(strpos($strBirthDate, "T") == true)
+            if($accountCheck == null)
             {
-                $string = $request->birth_date;
-                $parts = explode("T", $string);
-                $strBirthDate = $parts[0];
+                DB::beginTransaction();
+
+                $account = Account::
+                    create(
+                        [
+                            'account_name' => $request->account_name,
+                            'email' => $request->email,
+                            'password' => $request->password,
+                            'role' => $request->role,
+                            'phone' => $request->phone
+                        ]
+                    );
+                
+                $accountId = $account->account_id;
+
+                $strBirthDate = $request->birth_date;
+                
+                if(strpos($strBirthDate, "T") == true)
+                {
+                    $string = $request->birth_date;
+                    $parts = explode("T", $string);
+                    $strBirthDate = $parts[0];
+                }
+
+                $customer = Customer::
+                    create(
+                        [
+                            'account_id' => $accountId,
+                            'customer_name' => $request->customer_name,
+                            'gender' => $request->gender,
+                            'birth_date' => $strBirthDate
+                        ]
+                    );
+
+                // $customerChild = new Customer(
+                //     [
+                //         //'account_id' => $accountId,
+                //         'customer_name' => $request->customer_name,
+                //         'gender' => $request->gender,
+                //         'birth_date' => $request->birth_date
+                //     ]
+                // );
+
+                //$account->customers()->save($customerChild);
+
+                DB::commit();
+
+                $message = "success";
+
+                return response()->json([
+                    'status' => 'ok',
+                    'message' => $message
+                ], 200);
             }
-
-            $customer = Customer::
-                create(
-                    [
-                        'account_id' => $accountId,
-                        'customer_name' => $request->customer_name,
-                        'gender' => $request->gender,
-                        'birth_date' => $strBirthDate
-                    ]
-                );
-
-            // $customerChild = new Customer(
-            //     [
-            //         //'account_id' => $accountId,
-            //         'customer_name' => $request->customer_name,
-            //         'gender' => $request->gender,
-            //         'birth_date' => $request->birth_date
-            //     ]
-            // );
-
-            //$account->customers()->save($customerChild);
-
-            DB::commit();
-
-            $message = "success";
-
-            return [
-                'status' => "ok",
-                'message' => $message
-            ];
+            else
+            {
+                return response()->json([
+                    'status' => "error",
+                    'message' => "email already exist"
+                ], 400);
+            }
         }
         catch(\Exception $e)
         {
@@ -97,10 +109,10 @@ class AccountController extends Controller
 
             $message = $e->getMessage();
 
-            return [
+            return response()->json([
                 'status' => "error",
                 'message' => $message
-            ];
+            ], 500);
         }
     }
 
@@ -108,39 +120,51 @@ class AccountController extends Controller
     {
         try
         {
-            DB::beginTransaction();
+            $accountCheck = Account::where('email', $request->email)->first();
 
-            $account = Account::
-                create(
-                    [
-                        'account_name' => $request->account_name,
-                        'email' => $request->email,
-                        'password' => $request->password,
-                        'role' => $request->role,
-                        'phone' => $request->phone
-                    ]
-                );
-            
-            $accountId = $account->account_id;
+            if($accountCheck == null)
+            {
+                DB::beginTransaction();
 
-            $agency = Agency::
-                create(
-                    [
-                        'account_id' => $accountId,
-                        'agency_name' => $request->agency_name,
-                        'npwp' => $request->npwp,
-                        'location' => $request->location
-                    ]
-                );
+                $account = Account::
+                    create(
+                        [
+                            'account_name' => $request->account_name,
+                            'email' => $request->email,
+                            'password' => $request->password,
+                            'role' => $request->role,
+                            'phone' => $request->phone
+                        ]
+                    );
+                
+                $accountId = $account->account_id;
 
-            DB::commit();
+                $agency = Agency::
+                    create(
+                        [
+                            'account_id' => $accountId,
+                            'agency_name' => $request->agency_name,
+                            'npwp' => $request->npwp,
+                            'location' => $request->location
+                        ]
+                    );
 
-            $message = "success";
+                DB::commit();
 
-            return [
-                'status' => "ok",
-                'message' => $message
-            ];
+                $message = "success";
+
+                return response()->json([
+                    'status' => "ok",
+                    'message' => $message
+                ], 200);
+            }
+            else
+            {
+                return response()->json([
+                    'status' => "error",
+                    'message' => "email already exist"
+                ], 400);
+            }
         }
         catch(\Exception $e)
         {
@@ -148,10 +172,10 @@ class AccountController extends Controller
 
             $message = $e->getMessage();
 
-            return [
+            return response()->json([
                 'status' => "error",
                 'message' => $message
-            ];
+            ], 500);
         }
     }
 
@@ -163,32 +187,32 @@ class AccountController extends Controller
 
             if($account == null)
             {
-                return [
+                return response()->json([
                     'status' => "error",
                     'message' => "Email not found",
                     'account_id' => "-",
                     'role' => "-"
-                ];
+                ], 400);
             }
             else
             {
                 if($account->password != $request->password)
                 {
-                    return [
+                    return response()->json([
                         'status' => "error",
                         'message' => "Password not match",
                         'account_id' => "-",
                         'role' => "-"
-                    ];
+                    ], 400);
                 }
                 else
                 {
-                    return [
+                    return response()->json([
                         'status' => "ok",
                         'message' => "success",
                         'account_id' => $account->account_id,
                         'role' => $account->role
-                    ];
+                    ], 200);
                 }
             }
         }
@@ -196,11 +220,11 @@ class AccountController extends Controller
         {
             $message = $e->getMessage();
 
-            return [
+            return response()->json([
                 'status' => "error",
                 'message' => $message,
                 'account_id' => "-"
-            ];
+            ], 500);
         }
     }
 
@@ -232,17 +256,17 @@ class AccountController extends Controller
     
                 DB::commit();
 
-                return [
+                return response()->json([
                     'status' => "ok",
                     'message' => "success"
-                ];
+                ], 200);
             } 
             else 
             {
-                return [
+                return response()->json([
                     'status' => "error",
                     'message' => "Email not found"
-                ];
+                ], 400);
             }
         }
         catch(\Exception $e)
@@ -251,10 +275,10 @@ class AccountController extends Controller
 
             $message = $e->getMessage();
 
-            return [
+            return response()->json([
                 'status' => "error",
                 'message' => $message
-            ];
+            ], 500);
         }
     }
 

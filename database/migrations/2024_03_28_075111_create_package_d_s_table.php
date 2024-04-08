@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('package_ds', function (Blueprint $table) {
+        Schema::create('package_d_s', function (Blueprint $table) {
             $table->id('package_d_id');
             $table->bigInteger('package_h_id')->unsigned();
-            $table->foreign('package_h_id')->references('package_h_id')->on('package_hs')->onDelete('cascade');
+            $table->foreign('package_h_id')->references('package_h_id')->on('package_h_s')->onDelete('cascade');
             $table->bigInteger('ref_hotel_id')->unsigned()->nullable();
             $table->foreign('ref_hotel_id')->references('ref_hotel_id')->on('ref_hotels')->onDelete('cascade');
             $table->bigInteger('ref_attraction_id')->unsigned()->nullable();

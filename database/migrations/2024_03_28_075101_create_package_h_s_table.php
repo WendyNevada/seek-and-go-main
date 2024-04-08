@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('package_hs', function (Blueprint $table) {
+        Schema::create('package_h_s', function (Blueprint $table) {
             $table->id('package_h_id');
             $table->string('package_code', length:50);
+            $table->unique('package_code');
             $table->bigInteger('agency_id')->unsigned();
             $table->foreign('agency_id')->references('agency_id')->on('agencies')->onDelete('cascade');
-            $table->bigInteger('customer_id')->unsigned();
+            $table->bigInteger('customer_id')->unsigned()->nullable();
             $table->foreign('customer_id')->references('customer_id')->on('customers')->onDelete('cascade');
             $table->string('package_name', length:100);
             $table->string('description', length:1000);

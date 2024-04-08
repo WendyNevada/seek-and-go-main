@@ -9,6 +9,15 @@ class AgencyAffiliate extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'ref_hotel_id',
+        'ref_attraction_id',
+        'ref_vehicle_id',
+        'agency_id',
+        'base_price',
+        'promo_code'
+    ];
+
     protected $primaryKey = 'agency_affiliate_id';
 
     public function agency()

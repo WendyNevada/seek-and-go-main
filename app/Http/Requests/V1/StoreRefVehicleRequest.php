@@ -22,6 +22,7 @@ class StoreRefVehicleRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'agency_id' => ['required'],
             'vehicle_code' => 'required',
             'ref_zipcode_id' => 'required',
             'vehicle_type' => 'required',
@@ -36,7 +37,9 @@ class StoreRefVehicleRequest extends FormRequest
             'rating' => 'nullable',
             'is_active' => 'required',
             'qty' => 'required',
-            'promo_code' => 'nullable'
+            'promo_code' => 'nullable',
+            'base_price' => ['required'],
+            'promo_code_affiliate' => ['nullable']
         ];
     }
 }

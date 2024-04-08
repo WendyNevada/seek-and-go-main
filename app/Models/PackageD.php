@@ -9,6 +9,15 @@ class PackageD extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'package_h_id',
+        'ref_hotel_id',
+        'ref_attraction_id',
+        'ref_vehicle_id',
+        'start_dt',
+        'end_dt'
+    ];
+
     protected $primaryKey = 'package_d_id';
 
     public function packageHs(){

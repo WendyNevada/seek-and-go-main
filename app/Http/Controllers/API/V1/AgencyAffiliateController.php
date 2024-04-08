@@ -4,8 +4,8 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Models\AgencyAffiliate;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreAgencyAffiliateRequest;
-use App\Http\Requests\UpdateAgencyAffiliateRequest;
+use App\Http\Requests\V1\StoreAgencyAffiliateRequest;
+use App\Http\Requests\V1\UpdateAgencyAffiliateRequest;
 
 class AgencyAffiliateController extends Controller
 {
@@ -63,5 +63,10 @@ class AgencyAffiliateController extends Controller
     public function destroy(AgencyAffiliate $agencyAffiliate)
     {
         //
+    }
+
+    public function CreateAgencyAffiliateForProduct()
+    {
+        
     }
 }

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('trx_id');
             $table->string('trx_no', length:20);
             $table->bigInteger('order_h_id')->unsigned();
-            $table->foreign('order_h_id')->references('order_h_id')->on('order_hs')->onDelete('cascade');
+            $table->foreign('order_h_id')->references('order_h_id')->on('order_h_s')->onDelete('cascade');
             $table->boolean('payment_status');
             $table->timestamps();
         });

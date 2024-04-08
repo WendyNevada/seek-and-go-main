@@ -52,6 +52,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('EditAttractionById', 'RefAttractionController@EditAttractionById');
 
+    Route::post('GetAttractionHomepage', 'RefAttractionController@GetAttractionHomepage');
+
     #endregion
 
     #region Hotel
@@ -62,6 +64,9 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('EditHotelById', 'RefHotelController@EditHotelById');
 
+    Route::post('GetHotelHomepage', 'RefHotelController@GetHotelHomepage');
+
+
     #endregion
 
     #region Vehicle
@@ -71,6 +76,29 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::post('EditVehicleById', 'RefVehicleController@EditVehicleById');
 
     Route::post('GetVehicleById', 'RefVehicleController@GetVehicleById');
+
+    Route::post('GetVehicleHomepage', 'RefVehicleController@GetVehicleHomepage');
+
+
+    #endregion
+
+    #region Package
+
+    Route::post('CreatePackageAgency', 'PackageHController@CreatePackageAgency');
+
+    #endregion
+
+    #region Zipcode
+
+    Route::post('GetAllArea1', 'RefZipcodeController@GetAllArea1');
+
+    Route::post('GetArea2ByArea1', 'RefZipcodeController@GetArea2ByArea1');
+    
+    Route::post('GetArea3ByArea2', 'RefZipcodeController@GetArea3ByArea2');
+
+    Route::post('GetArea4ByArea3', 'RefZipcodeController@GetArea4ByArea3');
+
+    Route::post('GetRefZipcodeIdByArea4AndArea3', 'RefZipcodeController@GetRefZipcodeIdByArea4AndArea3');
 
     #endregion
 });
