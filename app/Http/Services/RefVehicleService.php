@@ -9,7 +9,9 @@ use App\Http\Requests\V1\UpdateRefVehicleRequest;
 use App\Http\Requests\V2\GetRefVehicleByIdRequest;
 use App\Models\AgencyAffiliate;
 use App\Models\Constanta;
+use App\Models\RefPicture;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class RefVehicleService implements RefVehicleInterface
 {
@@ -45,6 +47,19 @@ class RefVehicleService implements RefVehicleInterface
                 );
 
                 $refVehicleId = $vehicle->ref_vehicle_id;
+
+                if($request->hasFile('picture'))
+                {
+                    $image = $request->file('picture');
+                    $imageName =  $request->vehicle_code . '_' . time() . '.' . $image->getClientOriginalName();
+                    $path = $image->storeAs(Constanta::$refVehiclePictureDirectory, $imageName, Constanta::$refPictureDisk);
+                    $url = Storage::url($path);
+
+                    $refPicture = new RefPicture();
+                    $refPicture->ref_vehicle_id = $refVehicleId;
+                    $refPicture->image_url = $url;
+                    $refPicture->save();
+                }
 
                 $affiliate = AgencyAffiliate::
                 create(
@@ -114,6 +129,28 @@ class RefVehicleService implements RefVehicleInterface
                     ]
                 );
 
+                if($request->hasFile('picture'))
+                {
+                    $image = $request->file('picture');
+                    $imageName =  $vehicle->vehicle_code . '_' . time() . '.' . $image->getClientOriginalName();
+                    $path = $image->storeAs(Constanta::$refVehiclePictureDirectory, $imageName, Constanta::$refPictureDisk);
+                    $url = Storage::url($path);
+
+                    $refPicture = RefPicture::where('ref_vehicle_id', $vehicle->ref_vehicle_id)->first();
+                    if($refPicture != null)
+                    {
+                        $refPicture->image_url = $url;
+                        $refPicture->save();
+                    }
+                    else
+                    {
+                        $refPicture = new RefPicture();
+                        $refPicture->ref_vehicle_id = $vehicle->ref_vehicle_id;
+                        $refPicture->image_url = $url;
+                        $refPicture->save();
+                    }
+                }
+
                 DB::commit();
 
                 return response()->json([
@@ -146,12 +183,61 @@ class RefVehicleService implements RefVehicleInterface
     public function GetVehicleById(GetRefVehicleByIdRequest $request)
     {
         $vehicle = RefVehicle::where('ref_vehicle_id', $request->ref_vehicle_id)->first();
-		return response()->json($vehicle);
+
+        $vehiclePicture = RefPicture::where('ref_vehicle_id', $request->ref_vehicle_id)->first();
+
+        if($vehicle != null)
+        {
+            if($vehiclePicture != null)
+            {
+                return response()->json([
+                    'status' => "ok",
+                    'message' => "success",
+                    'vehicle' => $vehicle,
+                    'picture_url' => $vehiclePicture->image_url
+                ], 200);
+            }
+            else
+            {
+                return response()->json([
+                    'status' => "ok",
+                    'message' => "success",
+                    'vehicle' => $vehicle,
+                    'picture_url' => "-"
+                ], 200);
+            }
+        }
+        else
+        {
+            return response()->json([
+                'status' => "error",
+                'message' => "Data not found",
+                'vehicle' => "-",
+                'picture_url' => "-"
+            ], 400);
+        }
     }
 
     public function GetVehicleHomepage()
     {
-        $vehicle = RefVehicle::orderBy('rating', 'desc')->get()->take(Constanta::$homepageDataCount);
+        $vehicle = RefVehicle::orderBy('rating', 'desc')->limit(Constanta::$homepageDataCount)->get();
+
+        foreach ($vehicle as $key => $value)
+        {
+            $picture = RefPicture::where('ref_vehicle_id', $value->ref_vehicle_id)->first();
+
+            if($picture != null)
+            {
+                $image_url = $picture->image_url;
+            }
+            else
+            {
+                $image_url = "-";
+            }
+
+            $value->image_url = $image_url;
+        }
+
         return response()->json($vehicle);
     }
 

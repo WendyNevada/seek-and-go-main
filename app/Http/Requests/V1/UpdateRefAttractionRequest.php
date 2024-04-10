@@ -30,6 +30,7 @@ class UpdateRefAttractionRequest extends FormRequest
             'is_active' => ['required'],
             'qty' => ['required'],
             'promo_code' => ['nullable'],
+            'picture' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif', 'max:2048']
         ];
     }
 }

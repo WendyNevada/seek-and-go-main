@@ -10,7 +10,9 @@ use App\Http\Requests\V2\GetRefAttractionByCodeRequest;
 use App\Http\Requests\V2\GetRefAttractionByIdRequest;
 use App\Models\AgencyAffiliate;
 use App\Models\Constanta;
+use App\Models\RefPicture;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class RefAttractionService implements RefAttractionInterface
 {
@@ -23,7 +25,39 @@ class RefAttractionService implements RefAttractionInterface
     public function GetAttractionById(GetRefAttractionByIdRequest $request)
     {
         $attraction = RefAttraction::where('ref_attraction_id', $request->ref_attraction_id)->first();
-        return response()->json($attraction);
+
+        $attractionPicture = RefPicture::where('ref_attraction_id', $request->ref_attraction_id)->first();
+
+        if($attraction != null)
+        {
+            if($attractionPicture != null)
+            {
+                return response()->json([
+                    'status' => "ok",
+                    'message' => "success",
+                    'attraction' => $attraction,
+                    'picture_url' => $attractionPicture->image_url
+                ], 200);
+            }
+            else
+            {
+                return response()->json([
+                    'status' => "ok",
+                    'message' => "success",
+                    'attraction' => $attraction,
+                    'picture_url' => "-"
+                ], 200);
+            }
+        }
+        else
+        {
+            return response()->json([
+                'status' => "error",
+                'message' => "Data not found",
+                'attraction' => "-",
+                'picture_url' => "-"
+            ], 400);
+        }
     }
 
     public function AddAttraction(StoreRefAttractionRequest $request)
@@ -52,6 +86,20 @@ class RefAttractionService implements RefAttractionInterface
                 );
 
                 $refAttractionId = $attraction->ref_attraction_id;
+
+                if($request->hasFile('picture'))
+                {
+                    $image = $request->file('picture');
+                    $imageName =  $request->attraction_code . '_' . time() . '.' . $image->getClientOriginalName();
+                    $path = $image->storeAs(Constanta::$refAttractionPictureDirectory, $imageName, Constanta::$refPictureDisk);
+                    $url = Storage::url($path);
+
+                    $refPicture = new RefPicture();
+
+                    $refPicture->ref_attraction_id = $refAttractionId;
+                    $refPicture->image_url = $url;
+                    $refPicture->save();
+                }
 
                 $affiliate = AgencyAffiliate::
                 create(
@@ -115,6 +163,28 @@ class RefAttractionService implements RefAttractionInterface
                     ]
                 );
 
+                if($request->hasFile('picture'))
+                {
+                    $image = $request->file('picture');
+                    $imageName =  $attraction->attraction_code . '_' . time() . '.' . $image->getClientOriginalName();
+                    $path = $image->storeAs(Constanta::$refAttractionPictureDirectory, $imageName, Constanta::$refPictureDisk);
+                    $url = Storage::url($path);
+
+                    $refPicture = RefPicture::where('ref_attraction_id', $attraction->ref_attraction_id)->first();
+                    if($refPicture != null)
+                    {
+                        $refPicture->image_url = $url;
+                        $refPicture->save();
+                    }
+                    else
+                    {
+                        $refPicture = new RefPicture();
+                        $refPicture->ref_attraction_id = $attraction->ref_attraction_id;
+                        $refPicture->image_url = $url;
+                        $refPicture->save();
+                    }
+                }
+
                 DB::commit();
 
                 return response()->json([
@@ -146,7 +216,24 @@ class RefAttractionService implements RefAttractionInterface
 
     public function GetAttractionHomepage()
     {
-        $attraction = RefAttraction::orderBy('rating', 'desc')->get()->take(Constanta::$homepageDataCount);
+        $attraction = RefAttraction::orderBy('rating', 'desc')->limit(Constanta::$homepageDataCount)->get();
+
+        foreach ($attraction as $key => $value)
+        {
+            $picture = RefPicture::where('ref_attraction_id', $value->ref_attraction_id)->first();
+
+            if($picture != null)
+            {
+                $image_url = $picture->image_url;
+            }
+            else
+            {
+                $image_url = "-";
+            }
+
+            $value->image_url = $image_url;
+        }
+
         return response()->json($attraction);
     }
 

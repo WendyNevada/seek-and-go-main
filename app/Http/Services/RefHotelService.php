@@ -9,14 +9,48 @@ use App\Http\Requests\V1\UpdateRefHotelRequest;
 use App\Http\Requests\V2\GetRefHotelByIdRequest;
 use App\Models\AgencyAffiliate;
 use App\Models\Constanta;
+use App\Models\RefPicture;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class RefHotelService implements RefHotelInterface
 {
     public function GetHotelById(GetRefHotelByIdRequest $request)
     {
         $hotel = RefHotel::where('ref_hotel_id', $request->ref_hotel_id)->first();
-		return response()->json($hotel);
+
+        $hotelPicture = RefPicture::where('ref_hotel_id', $request->ref_hotel_id)->first();
+
+        if($hotel != null)
+        {
+            if($hotelPicture != null)
+            {
+                return response()->json([
+                    'status' => "ok",
+                    'message' => "success",
+                    'hotel' => $hotel,
+                    'picture_url' => $hotelPicture->image_url
+                ], 200);
+            }
+            else
+            {
+                return response()->json([
+                    'status' => "ok",
+                    'message' => "success",
+                    'hotel' => $hotel,
+                    'picture_url' => "-"
+                ], 200);
+            }
+        }
+        else
+        {
+            return response()->json([
+                'status' => "error",
+                'message' => "Data not found",
+                'hotel' => "-",
+                'picture_url' => "-"
+            ], 400);
+        }
     }
 
     public function AddHotel(StoreRefHotelRequest $request)
@@ -45,6 +79,19 @@ class RefHotelService implements RefHotelInterface
                 );
 
                 $refHotelId = $hotel->ref_hotel_id;
+
+                if($request->hasFile('picture'))
+                {
+                    $image = $request->file('picture');
+                    $imageName =  $request->hotel_code . '_' . time() . '.' . $image->getClientOriginalName();
+                    $path = $image->storeAs(Constanta::$refHotelPictureDirectory, $imageName, Constanta::$refPictureDisk);
+                    $url = Storage::url($path);
+
+                    $refPicture = new RefPicture();
+                    $refPicture->ref_hotel_id = $refHotelId;
+                    $refPicture->image_url = $url;
+                    $refPicture->save();
+                }
 
                 $affiliate = AgencyAffiliate::
                 create(
@@ -105,6 +152,28 @@ class RefHotelService implements RefHotelInterface
                     'promo_code' => $request->promo_code
                 ]);
 
+                if($request->hasFile('picture'))
+                {
+                    $image = $request->file('picture');
+                    $imageName =  $hotel->hotel_code . '_' . time() . '.' . $image->getClientOriginalName();
+                    $path = $image->storeAs(Constanta::$refHotelPictureDirectory, $imageName, Constanta::$refPictureDisk);
+                    $url = Storage::url($path);
+
+                    $refPicture = RefPicture::where('ref_hotel_id', $hotel->ref_hotel_id)->first();
+                    if($refPicture != null)
+                    {
+                        $refPicture->image_url = $url;
+                        $refPicture->save();
+                    }
+                    else
+                    {
+                        $refPicture = new RefPicture();
+                        $refPicture->ref_hotel_id = $hotel->ref_hotel_id;
+                        $refPicture->image_url = $url;
+                        $refPicture->save();
+                    }
+                }
+
                 DB::commit();
 
                 return response()->json([
@@ -136,7 +205,24 @@ class RefHotelService implements RefHotelInterface
 
     public function GetHotelHomepage()
     {
-        $hotel = RefHotel::orderBy('rating', 'desc')->get()->take(Constanta::$homepageDataCount);
+        $hotel = RefHotel::orderBy('rating', 'desc')->limit(Constanta::$homepageDataCount)->get();
+
+        foreach ($hotel as $key => $value)
+        {
+            $picture = RefPicture::where('ref_hotel_id', $value->ref_hotel_id)->first();
+
+            if($picture != null)
+            {
+                $image_url = $picture->image_url;
+            }
+            else
+            {
+                $image_url = "-";
+            }
+
+            $value->image_url = $image_url;
+        }
+
         return response()->json($hotel);
     }
 
