@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('agency_affiliates', function (Blueprint $table) {
             $table->id('agency_affiliate_id');
-            $table->bigInteger('ref_hotel_id')->unsigned();
+            $table->bigInteger('ref_hotel_id')->unsigned()->nullable();
             $table->foreign('ref_hotel_id')->references('ref_hotel_id')->on('ref_hotels')->onDelete('cascade');
-            $table->bigInteger('ref_attraction_id')->unsigned();
+            $table->bigInteger('ref_attraction_id')->unsigned()->nullable();
             $table->foreign('ref_attraction_id')->references('ref_attraction_id')->on('ref_attractions')->onDelete('cascade');
-            $table->bigInteger('ref_vehicle_id')->unsigned();
+            $table->bigInteger('ref_vehicle_id')->unsigned()->nullable();
             $table->foreign('ref_vehicle_id')->references('ref_vehicle_id')->on('ref_vehicles')->onDelete('cascade');
             $table->bigInteger('agency_id')->unsigned();
             $table->foreign('agency_id')->references('agency_id')->on('agencies')->onDelete('cascade');

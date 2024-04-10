@@ -9,6 +9,16 @@ class PackageHistoryH extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'package_code',
+        'agency_id',
+        'customer_id',
+        'package_name',
+        'is_custom',
+        'promo_code',
+        'package_price'
+    ];
+
     protected $primaryKey = 'package_history_h_id';
 
     public function packageHistoryDs()

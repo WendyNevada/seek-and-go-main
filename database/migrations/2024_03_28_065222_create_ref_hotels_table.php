@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('hotel_name', length:100);
             $table->string('description', length:1000);
             $table->string('address', length:100);
-            $table->float('rating', 3, 1);
+            $table->float('rating', 3, 1)->nullable();
             $table->boolean('is_active');
             $table->integer('qty');
             $table->string('promo_code', length:50)->nullable();

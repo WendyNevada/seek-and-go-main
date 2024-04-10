@@ -4,8 +4,8 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Models\OrderD;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreOrderDRequest;
-use App\Http\Requests\UpdateOrderDRequest;
+use App\Http\Requests\V1\StoreOrderDRequest;
+use App\Http\Requests\V1\UpdateOrderDRequest;
 
 class OrderDController extends Controller
 {

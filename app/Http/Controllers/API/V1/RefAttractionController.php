@@ -4,11 +4,11 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Models\RefAttraction;
 use App\Http\Controllers\Controller;
+use App\Http\Interfaces\RefAttractionInterface;
 use App\Http\Requests\V1\StoreRefAttractionRequest;
 use App\Http\Requests\V1\UpdateRefAttractionRequest;
 use App\Http\Requests\V2\GetRefAttractionByCodeRequest;
 use App\Http\Requests\V2\GetRefAttractionByIdRequest;
-use Illuminate\Support\Facades\DB;
 
 class RefAttractionController extends Controller
 {
@@ -68,110 +68,33 @@ class RefAttractionController extends Controller
         //
     }
 
-    public function GetAttractionByCode(GetRefAttractionByCodeRequest $request)
+    public function GetAttractionByCode(RefAttractionInterface $refAttractionInterface, GetRefAttractionByCodeRequest $request)
     {
-        $attraction = RefAttraction::where('attraction_code', $request->attraction_code)->first();
-        return response()->json($attraction);
+        $response = $refAttractionInterface->GetAttractionByCode($request);
+        return $response;
     }
 
-    public function GetAttractionById(GetRefAttractionByIdRequest $request)
+    public function GetAttractionById(RefAttractionInterface $refAttractionInterface, GetRefAttractionByIdRequest $request)
     {
-        $attraction = RefAttraction::where('ref_attraction_id', $request->ref_attraction_id)->first();
-        return response()->json($attraction);
+        $response = $refAttractionInterface->GetAttractionById($request);
+        return $response;
     }
 
-    public function AddAttraction(StoreRefAttractionRequest $request)
+    public function AddAttraction(RefAttractionInterface $refAttractionInterface, StoreRefAttractionRequest $request)
     {
-        try
-        {
-            DB::beginTransaction();
-
-            $attraction = RefAttraction::
-            create(
-                [
-                    'attraction_code' => $request->attraction_code,
-                    'ref_zipcode_id' => $request->ref_zipcode_id,
-                    'attraction_name' => $request->attraction_name,
-                    'description' => $request->description,
-                    'address' => $request->address,
-                    'rating' => $request->rating,
-                    'is_active' => $request->is_active,
-                    'qty' => $request->qty,
-                    'promo_code' => $request->promo_code
-                ]
-            );
-
-            $refAttractionId = $attraction->ref_attraction_id;
-
-            DB::commit();
-
-            return [
-                'status' => "ok",
-                'message' => "success",
-                'ref_attraction_id' => $refAttractionId
-            ];
-        }
-        catch (\Exception $e)
-        {
-            DB::rollBack();
-
-            return [
-                'status' => "error",
-                'message' => $e->getMessage(),
-                'ref_attraction_id' => "-"
-            ];
-        }
+        $response = $refAttractionInterface->AddAttraction($request);
+        return $response;
     }
 
-    public function EditAttractionById(UpdateRefAttractionRequest $request)
+    public function EditAttractionById(RefAttractionInterface $refAttractionInterface, UpdateRefAttractionRequest $request)
     {
-        try
-        {
-            $attraction = RefAttraction::where('ref_attraction_id', $request->ref_attraction_id)->first();
+        $response = $refAttractionInterface->EditAttractionById($request);
+        return $response;
+    }
 
-            if($attraction != null)
-            {
-                DB::beginTransaction();
-
-                $attraction = $attraction
-                ->update(
-                    [
-                        'ref_zipcode_id' => $request->ref_zipcode_id,
-                        'attraction_name' => $request->attraction_name,
-                        'description' => $request->description,
-                        'address' => $request->address,
-                        'is_active' => $request->is_active,
-                        'qty' => $request->qty,
-                        'promo_code' => $request->promo_code
-                    ]
-                );
-
-                DB::commit();
-
-                return [
-                    'status' => "ok",
-                    'message' => "success",
-                    'ref_attraction_id' => $request->ref_attraction_id
-                ];
-            }
-            else
-            {
-                return [
-                    'status' => "error",
-                    'message' => "Data is not found",
-                    'ref_attraction_id' => "-"
-                ];
-            }
-        }
-        catch (\Exception $e)
-        {
-            DB::rollBack();
-
-            return [
-                'status' => "error",
-                'message' => $e->getMessage(),
-                'ref_attraction_id' => "-"
-            ];
-        }
+    public function GetAttractionHomepage(RefAttractionInterface $refAttractionInterface)
+    {
+        $response = $refAttractionInterface->GetAttractionHomepage();
+        return $response;
     }
 }

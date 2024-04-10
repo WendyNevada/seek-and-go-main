@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\V1;
+namespace App\Http\Requests\V2;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRefAttractionRequest extends FormRequest
+class CreatePackageAgencyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,18 +22,20 @@ class StoreRefAttractionRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'package_code' => ['required'],
             'agency_id' => ['required'],
-            'attraction_code' => ['required'],
-            'ref_zipcode_id' => ['required'],
-            'attraction_name' => ['required'],
+            'package_name' => ['required'],
             'description' => ['required'],
-            'address' => ['required'],
-            'rating' => ['nullable'],
+            'promo_code' => ['nullable'],
+            'package_price' => ['required'],
             'is_active' => ['required'],
             'qty' => ['required'],
-            'promo_code' => ['nullable'],
-            'base_price' => ['required'],
-            'promo_code_affiliate' => ['nullable']
+            'details' => ['required', 'array'],
+            'details.*.ref_hotel_id' => ['nullable'],
+            'details.*.ref_attraction_id' => ['nullable'],
+            'details.*.ref_vehicle_id' => ['nullable'],
+            'details.*.start_dt' => ['required','string'],
+            'details.*.end_dt' => ['required', 'string']
         ];
     }
 }

@@ -15,15 +15,15 @@ return new class extends Migration
             $table->id('package_history_d_id');
             $table->bigInteger('package_history_h_id')->unsigned();
             $table->foreign('package_history_h_id')->references('package_history_h_id')->on('package_history_h_s')->onDelete('cascade');
-            $table->string('hotel_name', length:100);
-            $table->dateTime('hotel_start_dt');
-            $table->dateTime('hotel_end_dt');
-            $table->string('attraction_name', length:100);
-            $table->dateTime('attraction_start_dt');
-            $table->dateTime('attraction_end_dt');
-            $table->string('vehicle_name', length:100);
-            $table->dateTime('vehicle_start_dt');
-            $table->dateTime('vehicle_end_dt');
+            $table->string('hotel_name', length:100)->nullable();
+            $table->dateTime('hotel_start_dt')->nullable();
+            $table->dateTime('hotel_end_dt')->nullable();
+            $table->string('attraction_name', length:100)->nullable();
+            $table->dateTime('attraction_start_dt')->nullable();
+            $table->dateTime('attraction_end_dt')->nullable();
+            $table->string('vehicle_name', length:100)->nullable();
+            $table->dateTime('vehicle_start_dt')->nullable();
+            $table->dateTime('vehicle_end_dt')->nullable();
             $table->timestamps();
         });
     }

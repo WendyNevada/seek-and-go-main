@@ -4,8 +4,12 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Models\PackageH;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StorePackageHRequest;
-use App\Http\Requests\UpdatePackageHRequest;
+use App\Http\Interfaces\PackageHInterface;
+use App\Http\Requests\V1\StorePackageHRequest;
+use App\Http\Requests\V1\UpdatePackageHRequest;
+use App\Http\Requests\V2\CreatePackageAgencyRequest;
+use Illuminate\Support\Facades\DB;
+use App\Models\PackageD;
 
 class PackageHController extends Controller
 {
@@ -63,5 +67,11 @@ class PackageHController extends Controller
     public function destroy(PackageH $packageH)
     {
         //
+    }
+
+    public function CreatePackageAgency(PackageHInterface $packageHInterface, CreatePackageAgencyRequest $request)
+    {
+        $response = $packageHInterface->CreatePackageAgency($request);
+        return $response;
     }
 }

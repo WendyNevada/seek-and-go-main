@@ -22,6 +22,7 @@ class StoreRefHotelRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'agency_id' => ['required'],
             'hotel_code' => ['required'],
             'ref_zipcode_id' => ['required'],
             'hotel_name' => ['required'],
@@ -30,7 +31,9 @@ class StoreRefHotelRequest extends FormRequest
             'rating' => ['nullable'],
             'is_active' => ['required'],
             'qty' => ['required'],
-            'promo_code' => ['nullable']
+            'promo_code' => ['nullable'],
+            'base_price' => ['required'],
+            'promo_code_affiliate' => ['nullable']
         ];
     }
 }

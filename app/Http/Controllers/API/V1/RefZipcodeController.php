@@ -4,8 +4,11 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Models\RefZipcode;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreRefZipcodeRequest;
-use App\Http\Requests\UpdateRefZipcodeRequest;
+use App\Http\Interfaces\RefZipcodeInterface;
+use App\Http\Requests\V1\StoreRefZipcodeRequest;
+use App\Http\Requests\V1\UpdateRefZipcodeRequest;
+use App\Http\Requests\V2\GetRefZipcodeByAreaRequest;
+use App\Http\Requests\V2\GetRefZipcodeIdByArea3AndArea4;
 
 class RefZipcodeController extends Controller
 {
@@ -64,4 +67,35 @@ class RefZipcodeController extends Controller
     {
         //
     }
+
+    public function GetAllArea1(RefZipcodeInterface $refZipcodeInterface)
+    {
+        $response = $refZipcodeInterface->GetAllArea1();
+        return $response;
+    }
+
+    public function GetArea2ByArea1(RefZipcodeInterface $refZipcodeInterface, GetRefZipcodeByAreaRequest $request)
+    {
+        $response = $refZipcodeInterface->GetArea2ByArea1($request);
+        return $response;
+    }
+
+    public function GetArea3ByArea2(RefZipcodeInterface $refZipcodeInterface, GetRefZipcodeByAreaRequest $request)
+    {
+        $response = $refZipcodeInterface->GetArea3ByArea2($request);
+        return $response;
+    }
+
+    public function GetArea4ByArea3(RefZipcodeInterface $refZipcodeInterface, GetRefZipcodeByAreaRequest $request)
+    {
+        $response = $refZipcodeInterface->GetArea4ByArea3($request);
+        return $response;
+    }
+
+    public function GetRefZipcodeIdByArea4AndArea3(RefZipcodeInterface $refZipcodeInterface, GetRefZipcodeIdByArea3AndArea4 $request)
+    {
+        $response = $refZipcodeInterface->GetRefZipcodeIdByArea4AndArea3($request);
+        return $response;
+    }
+    
 }

@@ -4,9 +4,12 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Models\RefHotel;
 use App\Http\Controllers\Controller;
+use App\Http\Interfaces\RefHotelInterface;
 use App\Http\Requests\V1\StoreRefHotelRequest;
 use App\Http\Requests\V1\UpdateRefHotelRequest;
 use App\Http\Requests\V2\GetRefHotelByIdRequest;
+use App\Models\AgencyAffiliate;
+use App\Models\Constanta;
 use Illuminate\Support\Facades\DB;
 
 class RefHotelController extends Controller
@@ -67,105 +70,27 @@ class RefHotelController extends Controller
         //
     }
 
-    public function GetHotelById(GetRefHotelByIdRequest $request)
+    public function GetHotelById(RefHotelInterface $refHotelInterface, GetRefHotelByIdRequest $request)
     {
-        $hotel = RefHotel::where('ref_hotel_id', $request->ref_hotel_id)->first();
-		return response()->json($hotel);
+        $response = $refHotelInterface->GetHotelById($request);
+        return $response;
     }
 
-    public function AddHotel(StoreRefHotelRequest $request)
+    public function AddHotel(RefHotelInterface $refHotelInterface, StoreRefHotelRequest $request)
     {
-        try
-        {
-            DB::beginTransaction();
-
-            $hotel = RefHotel::
-            create(
-                [
-                    'hotel_code' => $request->hotel_code,
-                    'ref_zipcode_id' => $request->ref_zipcode_id,
-                    'hotel_name' => $request->hotel_name,
-                    'description' => $request->description,
-                    'address' => $request->address,
-                    'rating' => $request->rating,
-                    'is_active' => $request->is_active,
-                    'qty' => $request->qty,
-                    'promo_code' => $request->promo_code
-                ]
-            );
-
-            $refHotelId = $hotel->ref_hotel_id;
-
-            DB::commit();
-
-            return [
-                'status' => "ok",
-                'message' => "success",
-                'ref_hotel_id' => $refHotelId
-            ];
-        }
-        catch (\Exception $e)
-        {
-            DB::rollBack();
-
-            // return response()->json([
-            //     'message' => $e->getMessage()
-            // ], 500);
-
-            return [
-                'status' => "error",
-                'message' => $e->getMessage(),
-                'ref_hotel_id' => "-"
-            ];
-        }
+        $response = $refHotelInterface->AddHotel($request);
+        return $response;
     }
 
-    public function EditHotelById(UpdateRefHotelRequest $request)
+    public function EditHotelById(RefHotelInterface $refHotelInterface, UpdateRefHotelRequest $request)
     {
-        try
-        {
-            $hotel = RefHotel::where('ref_hotel_id', $request->ref_hotel_id)->first();
+        $response = $refHotelInterface->EditHotelById($request);
+        return $response;
+    }
 
-            if($hotel != null)
-            {
-                DB::beginTransaction();
-
-                $hotel = $hotel->update([
-                    'ref_zipcode_id' => $request->ref_zipcode_id,
-                    'hotel_name' => $request->hotel_name,
-                    'description' => $request->description,
-                    'address' => $request->address,
-                    'is_active' => $request->is_active,
-                    'qty' => $request->qty,
-                    'promo_code' => $request->promo_code
-                ]);
-
-                DB::commit();
-
-                return [
-                    'status' => "ok",
-                    'message' => "success",
-                    'ref_hotel_id' => $request->ref_hotel_id
-                ];
-            }
-            else
-            {
-                return [
-                    'status' => "error",
-                    'message' => "data not found",
-                    'ref_hotel_id' => "-"
-                ];
-            }
-        }
-        catch (\Exception $e)
-        {
-            DB::rollBack();
-
-            return [
-                'status' => "error",
-                'message' => $e->getMessage(),
-                'ref_hotel_id' => "-"
-            ];
-        }
+    public function GetHotelHomepage(RefHotelInterface $refHotelInterface)
+    {
+        $response = $refHotelInterface->GetHotelHomepage();
+        return $response;
     }
 }
