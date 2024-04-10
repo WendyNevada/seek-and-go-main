@@ -40,6 +40,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('UpdateCustomerAccount', 'AccountController@UpdateCustomerAccount');
 
+    Route::post('UpdateAgencyAccount', 'AccountController@UpdateAgencyAccount');
+
     #endregion
 
     #region Attraction
@@ -99,6 +101,12 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::post('GetArea4ByArea3', 'RefZipcodeController@GetArea4ByArea3');
 
     Route::post('GetRefZipcodeIdByArea4AndArea3', 'RefZipcodeController@GetRefZipcodeIdByArea4AndArea3');
+
+    #endregion
+
+    #region Order
+
+    Route::post('CreateOrder', 'OrderHController@CreateOrder');
 
     #endregion
 });

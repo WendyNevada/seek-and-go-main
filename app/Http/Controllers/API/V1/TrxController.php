@@ -4,8 +4,8 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Models\Trx;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreTrxRequest;
-use App\Http\Requests\UpdateTrxRequest;
+use App\Http\Requests\V1\StoreTrxRequest;
+use App\Http\Requests\V1\UpdateTrxRequest;
 
 class TrxController extends Controller
 {

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('package_code', length:50);
             $table->bigInteger('agency_id')->unsigned();
             $table->foreign('agency_id')->references('agency_id')->on('agencies')->onDelete('cascade');
-            $table->bigInteger('customer_id')->unsigned();
+            $table->bigInteger('customer_id')->unsigned()->nullable();
             $table->foreign('customer_id')->references('customer_id')->on('customers')->onDelete('cascade');
             $table->string('package_name', length:100);
             $table->boolean('is_custom');

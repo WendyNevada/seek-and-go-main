@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id('order_d_id');
             $table->bigInteger('order_h_id')->unsigned();
             $table->foreign('order_h_id')->references('order_h_id')->on('order_h_s')->onDelete('cascade');
-            $table->bigInteger('package_h_id')->unsigned();
+            $table->bigInteger('package_h_id')->unsigned()->nullable();
             $table->foreign('package_h_id')->references('package_h_id')->on('package_h_s')->onDelete('cascade');
-            $table->bigInteger('package_history_id')->unsigned();
+            $table->bigInteger('package_history_id')->unsigned()->nullable();
             $table->bigInteger('ref_hotel_id')->unsigned()->nullable();
             $table->foreign('ref_hotel_id')->references('ref_hotel_id')->on('ref_hotels')->onDelete('cascade');
             $table->bigInteger('ref_attraction_id')->unsigned()->nullable();

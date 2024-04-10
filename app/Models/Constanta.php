@@ -10,4 +10,6 @@ class Constanta extends Model
     use HasFactory;
 
     public static $homepageDataCount = 5;
+
+    public static $orderStatusNew = "NEW";
 }
