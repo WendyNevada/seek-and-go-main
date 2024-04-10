@@ -42,4 +42,9 @@ class RefHotel extends Model
     {
         return $this->hasMany(OrderD::class);
     }
+
+    public function refPictures()
+    {
+        return $this->hasMany(RefPicture::class);
+    }
 }

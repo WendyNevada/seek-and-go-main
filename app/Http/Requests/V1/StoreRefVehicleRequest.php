@@ -39,7 +39,8 @@ class StoreRefVehicleRequest extends FormRequest
             'qty' => 'required',
             'promo_code' => 'nullable',
             'base_price' => ['required'],
-            'promo_code_affiliate' => ['nullable']
+            'promo_code_affiliate' => ['nullable'],
+            'picture' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif', 'max:2048']
         ];
     }
 }
