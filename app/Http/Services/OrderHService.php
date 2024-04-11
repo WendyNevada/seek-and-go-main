@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\Http\Interfaces\OrderHInterface;
 use App\Http\Requests\V2\CreateOrderRequest;
+use App\Http\Requests\V2\GetOrderDashboardRequest;
 use App\Models\Constanta;
 use App\Models\OrderD;
 use App\Models\OrderH;
@@ -13,6 +14,18 @@ use Illuminate\Support\Facades\DB;
 
 class OrderHService implements OrderHInterface
 {
+
+    public function GetOrderDashboard(GetOrderDashboardRequest $request)
+    {
+        $order = OrderH::where([
+            ['agency_id', $request->agency_id],
+            ['order_status', Constanta::$orderStatusNew]
+        ])->with('orderDs')->orderBy('order_dt', 'asc')->limit(Constanta::$orderDashboardDataCount)->get();
+        
+
+        return response()->json($order);
+    }
+
     public function CreateOrder(CreateOrderRequest $request)
     {
 
