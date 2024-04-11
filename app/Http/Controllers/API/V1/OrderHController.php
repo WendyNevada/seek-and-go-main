@@ -4,10 +4,11 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Models\OrderH;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V1\StoreOrderHRequest;
-use App\Http\Requests\V1\UpdateOrderHRequest;
-use App\Http\Requests\V2\CreateOrderRequest;
 use App\Http\Interfaces\OrderHInterface;
+use App\Http\Requests\V1\StoreOrderHRequest;
+use App\Http\Requests\V2\CreateOrderRequest;
+use App\Http\Requests\V1\UpdateOrderHRequest;
+use App\Http\Requests\V2\GetOrderDashboardRequest;
 
 class OrderHController extends Controller
 {
@@ -70,6 +71,12 @@ class OrderHController extends Controller
     public function CreateOrder(OrderHInterface $orderHInterface, CreateOrderRequest $request)
     {
         $response = $orderHInterface->CreateOrder($request);
+        return $response;
+    }
+
+    public function GetOrderDashboard(OrderHInterface $orderHInterface, GetOrderDashboardRequest $request)
+    {
+        $response = $orderHInterface->GetOrderDashboard($request);
         return $response;
     }
 

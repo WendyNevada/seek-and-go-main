@@ -17,6 +17,10 @@ class Constanta extends Model
     public static $orderStatusNew = "NEW";
     #endregion
 
+    #region order dashboard
+    public static $orderDashboardDataCount = 5;
+    #endregion
+
     #region ref picture
     public static $refPictureDisk = "public";
     public static $refAttractionPictureDirectory = "ref_attraction_pictures";

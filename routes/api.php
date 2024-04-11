@@ -87,6 +87,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     #region Package
 
     Route::post('CreatePackageAgency', 'PackageHController@CreatePackageAgency');
+    
+    Route::post('CreateCustomPackageCustomer', 'PackageHController@CreateCustomPackageCustomer');
 
     #endregion
 
@@ -107,6 +109,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     #region Order
 
     Route::post('CreateOrder', 'OrderHController@CreateOrder');
+
+    Route::post('GetOrderDashboard', 'OrderHController@GetOrderDashboard');
 
     #endregion
 });

@@ -13,7 +13,7 @@ class OrderH extends Model
 
     public function orderDs()
     {
-        return $this->hasMany(OrderD::class);
+        return $this->hasMany(OrderD::class, 'order_h_id');
     }
 
     public function customer()

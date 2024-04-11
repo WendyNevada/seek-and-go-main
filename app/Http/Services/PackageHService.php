@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Http\Interfaces\PackageHInterface;
+use App\Http\Requests\V2\CreateCustomPackageCustomerRequest;
 use App\Models\PackageH;
 use App\Http\Requests\V2\CreatePackageAgencyRequest;
 use Illuminate\Support\Facades\DB;
@@ -91,8 +92,6 @@ class PackageHService implements PackageHInterface
                     ]);
                 }
 
-
-
                 DB::commit();
 
                 return response()->json([
@@ -123,8 +122,74 @@ class PackageHService implements PackageHInterface
         }
     }
 
-    public function CreatePackageCustomer() 
+    public function CreateCustomPackageCustomer(CreateCustomPackageCustomerRequest $request) 
     {
-        
+        try
+        {
+            DB::beginTransaction();
+
+            $customCode = "CUST" . date("YmdHis") . rand(0, 9);
+
+            $packageHCustom = new PackageH();
+            $packageHCustom->package_code = $customCode;
+            $packageHCustom->agency_id = $request->agency_id;
+            $packageHCustom->customer_id = $request->customer_id;
+            $packageHCustom->package_name = $request->package_name;
+            $packageHCustom->description = $request->description;
+            $packageHCustom->is_custom = true;
+            $packageHCustom->promo_code = null;
+            $packageHCustom->package_price = null;
+            $packageHCustom->is_active = true;
+            $packageHCustom->qty = 1;
+            $packageHCustom->save();
+
+            foreach($request->details as $detail)
+            {
+                $strStartDate = $detail['start_dt'];
+                $strEndDate = $detail['end_dt'];
+            
+                if(strpos($strStartDate, "T") == true)
+                {
+                    $string = $detail->start_dt;
+                    $parts = explode("T", $string);
+                    $strStartDate = $parts[0];
+                }
+
+                if(strpos($strEndDate, "T") == true)
+                {
+                    $string = $detail->end_dt;
+                    $parts = explode("T", $string);
+                    $strEndDate = $parts[0];
+                }
+
+                $packageD = PackageD::create([
+                    'package_h_id' => $packageHCustom->package_h_id,
+                    'ref_hotel_id' => $detail['ref_hotel_id'],
+                    'ref_attraction_id' => $detail['ref_attraction_id'],
+                    'ref_vehicle_id' => $detail['ref_vehicle_id'],
+                    'start_dt' => $strStartDate,
+                    'end_dt' => $strEndDate
+                ]);
+
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'success',
+                'package_h_id' => $packageHCustom->package_h_id
+            ], 200);
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'package_h_id' => '-'
+            ], 500);
+        }
     }
 }
