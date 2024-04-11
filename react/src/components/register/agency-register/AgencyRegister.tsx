@@ -25,7 +25,7 @@ const AgencyRegisterComponent = () => {
     const onSubmit = (values: z.infer<typeof agencySchema>) => {
         console.log(values);
     }
-    
+
   return (
     <div className="min-h-50 w-50 p-0 sm:p-12">
             <div className="mx-auto max-w-xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
