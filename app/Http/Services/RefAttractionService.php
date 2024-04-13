@@ -6,6 +6,7 @@ use App\Http\Interfaces\RefAttractionInterface;
 use App\Models\RefAttraction;
 use App\Http\Requests\V1\StoreRefAttractionRequest;
 use App\Http\Requests\V1\UpdateRefAttractionRequest;
+use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Requests\V2\GetRefAttractionByCodeRequest;
 use App\Http\Requests\V2\GetRefAttractionByIdRequest;
 use App\Models\AgencyAffiliate;
@@ -149,7 +150,7 @@ class RefAttractionService implements RefAttractionInterface
                 'status' => "error",
                 'message' => $e->getMessage(),
                 'ref_attraction_id' => "-"
-            ]. 500);
+            ], 500);
         }
     }
 
@@ -236,7 +237,7 @@ class RefAttractionService implements RefAttractionInterface
 
     public function GetAttractionHomepage()
     {
-        $attraction = RefAttraction::orderBy('rating', 'desc')->limit(Constanta::$homepageDataCount)->get();
+        $attraction = RefAttraction::where('is_active', '1')->orderBy('rating', 'desc')->limit(Constanta::$homepageDataCount)->get();
 
         foreach ($attraction as $key => $value)
         {
@@ -256,6 +257,19 @@ class RefAttractionService implements RefAttractionInterface
             $value->image_url = $image_url;
             $value->base_price = $base_price;
         }
+
+        return response()->json($attraction);
+    }
+
+    public function GetActiveAttractionByAgencyId(AgencyIdRequest $request)
+    {
+        $attraction = RefAttraction::
+        join('agency_affiliates', 'ref_attractions.ref_attraction_id', '=', 'agency_affiliates.ref_attraction_id')->
+        select('ref_attractions.*', 'agency_affiliates.base_price')->
+        where('ref_attractions.is_active', true)->
+        where('agency_affiliates.agency_id', $request->agency_id)->
+        limit(Constanta::$homepageDataCount)->
+        get();
 
         return response()->json($attraction);
     }

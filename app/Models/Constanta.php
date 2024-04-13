@@ -13,8 +13,25 @@ class Constanta extends Model
     public static $homepageDataCount = 5;
     #endregion
 
-    #region order status
+    #region package
+    public static $customPackageStatNew = "NEW";
+    public static $customPackageStatApv = "APV";
+    #endregion
+
+    #region trx
+    public static $trxConst = "TRX";
+    public static $trxStatusNew = "NEW";
+    #endregion
+
+    #region order
+    public static $orderConst = "ORD";
     public static $orderStatusNew = "NEW";
+    public static $orderStatusApproved = "APV";
+    public static $orderStatusRejected = "RJT";
+    public static $orderStatusCanceled = "CAN";
+    public static $orderStatusPaid = "PAY";
+    public static $orderStatusCustPaid = "CPY";
+    public static $orderStatusRetryPay = "RTP";
     #endregion
 
     #region order dashboard
@@ -26,5 +43,6 @@ class Constanta extends Model
     public static $refAttractionPictureDirectory = "ref_attraction_pictures";
     public static $refHotelPictureDirectory = "ref_hotel_pictures";
     public static $refVehiclePictureDirectory = "ref_vehicle_pictures";
+    public static $orderHPictureDirectory = "order_h_pictures";
     #endregion
 }

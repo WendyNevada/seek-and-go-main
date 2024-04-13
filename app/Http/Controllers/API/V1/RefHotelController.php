@@ -3,14 +3,15 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Models\RefHotel;
+use App\Models\Constanta;
+use App\Models\AgencyAffiliate;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Interfaces\RefHotelInterface;
 use App\Http\Requests\V1\StoreRefHotelRequest;
 use App\Http\Requests\V1\UpdateRefHotelRequest;
 use App\Http\Requests\V2\GetRefHotelByIdRequest;
-use App\Models\AgencyAffiliate;
-use App\Models\Constanta;
-use Illuminate\Support\Facades\DB;
 
 class RefHotelController extends Controller
 {
@@ -91,6 +92,12 @@ class RefHotelController extends Controller
     public function GetHotelHomepage(RefHotelInterface $refHotelInterface)
     {
         $response = $refHotelInterface->GetHotelHomepage();
+        return $response;
+    }
+
+    public function GetActiveHotelByAgencyId(RefHotelInterface $refHotelInterface, AgencyIdRequest $request)
+    {
+        $response = $refHotelInterface->GetActiveHotelByAgencyId($request);
         return $response;
     }
 }

@@ -2,21 +2,23 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use App\Http\Interfaces\AccountInterface;
-use App\Http\Interfaces\OrderHInterface;
-use App\Http\Interfaces\RefAttractionInterface;
-use App\Http\Interfaces\RefHotelInterface;
-use App\Http\Interfaces\RefVehicleInterface;
-use App\Http\Interfaces\PackageHInterface;
-use App\Http\Interfaces\RefZipcodeInterface;
-use App\Http\Services\AccountService;
+use App\Http\Services\TrxService;
 use App\Http\Services\OrderHService;
-use App\Http\Services\RefAttractionService;
-use App\Http\Services\RefHotelService;
-use App\Http\Services\RefVehicleService;
+use App\Http\Interfaces\TrxInterface;
+use App\Http\Services\AccountService;
 use App\Http\Services\PackageHService;
+use App\Http\Services\RefHotelService;
+use Illuminate\Support\ServiceProvider;
+use App\Http\Interfaces\OrderHInterface;
+use App\Http\Services\RefVehicleService;
 use App\Http\Services\RefZipcodeService;
+use App\Http\Interfaces\AccountInterface;
+use App\Http\Interfaces\PackageHInterface;
+use App\Http\Interfaces\RefHotelInterface;
+use App\Http\Services\RefAttractionService;
+use App\Http\Interfaces\RefVehicleInterface;
+use App\Http\Interfaces\RefZipcodeInterface;
+use App\Http\Interfaces\RefAttractionInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PackageHInterface::class, PackageHService::class);
         $this->app->bind(RefZipcodeInterface::class, RefZipcodeService::class);
         $this->app->bind(OrderHInterface::class, OrderHService::class);
+        $this->app->bind(TrxInterface::class, TrxService::class);
     }
 
     /**

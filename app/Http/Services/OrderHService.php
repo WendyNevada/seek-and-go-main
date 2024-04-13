@@ -2,15 +2,19 @@
 
 namespace App\Http\Services;
 
-use App\Http\Interfaces\OrderHInterface;
-use App\Http\Requests\V2\CreateOrderRequest;
-use App\Http\Requests\V2\GetOrderDashboardRequest;
-use App\Models\Constanta;
+use App\Models\Trx;
 use App\Models\OrderD;
 use App\Models\OrderH;
 use App\Models\PackageH;
+use App\Models\Constanta;
 use App\Models\PackageHistoryH;
 use Illuminate\Support\Facades\DB;
+use App\Http\Interfaces\OrderHInterface;
+use App\Http\Requests\V2\OrderHIdRequest;
+use App\Http\Requests\V2\CreateOrderRequest;
+use App\Http\Requests\V2\CustIdRequest;
+use App\Http\Requests\V2\GetOrderByIdRequest;
+use App\Http\Requests\V2\GetOrderDashboardRequest;
 
 class OrderHService implements OrderHInterface
 {
@@ -26,6 +30,43 @@ class OrderHService implements OrderHInterface
         return response()->json($order);
     }
 
+    public function GetNewOrderForCustomer(CustIdRequest $request)
+    {
+        $order = OrderH::where([
+            ['customer_id', $request->customer_id],
+            ['order_status', Constanta::$orderStatusNew]
+        ])->with('orderDs')->orderBy('order_dt', 'asc')->get();
+        
+        return response()->json($order);
+    }
+
+    public function GetApvOrderForCustomer(CustIdRequest $request)
+    {
+        $order = OrderH::where([
+            ['customer_id', $request->customer_id],
+            ['order_status', Constanta::$orderStatusApproved]
+        ])->with('orderDs')->orderBy('order_dt', 'asc')->get();
+        
+        return response()->json($order);
+    }
+
+    public function GetRetryPayOrderForCustomer(CustIdRequest $request)
+    {
+        $order = OrderH::where([
+            ['customer_id', $request->customer_id],
+            ['order_status', Constanta::$orderStatusRetryPay]
+        ])->with('orderDs')->orderBy('order_dt', 'asc')->limit(Constanta::$orderDashboardDataCount)->get();
+        
+        return response()->json($order);
+    }
+
+    public function GetOrderById(GetOrderByIdRequest $request)
+    {
+        $order = OrderH::where('order_h_id', $request->order_h_id)->with('orderDs')->get();
+        
+        return response()->json($order);
+    }
+
     public function CreateOrder(CreateOrderRequest $request)
     {
 
@@ -33,12 +74,12 @@ class OrderHService implements OrderHInterface
         {
             DB::beginTransaction();
 
-            $orderNo = "ORD".date("YmdHis").rand(100, 999);
+            $orderNo = Constanta::$orderConst . date("YmdHis") . rand(100, 999);
 
             $orderH = new OrderH();
             $orderH->agency_id = $request->agency_id;
             $orderH->customer_id = $request->customer_id;
-            $orderH->order_dt = $request->order_dt;
+            $orderH->order_dt = now();
             $orderH->total_price = $request->total_price;
             $orderH->order_no = $orderNo;
             $orderH->order_status = Constanta::$orderStatusNew;
@@ -102,4 +143,179 @@ class OrderHService implements OrderHInterface
             ], 500);
         }
     }
+
+    public function ApproveOrder(OrderHIdRequest $request)
+    {
+        try
+        {
+            DB::beginTransaction();
+
+            $orderH = OrderH::where('order_h_id', $request->order_h_id)->first();
+            $orderH->order_status = Constanta::$orderStatusApproved;
+            $orderH->update();
+
+            $trxNo = Constanta::$orderConst . date("YmdHis") . rand(100, 999);
+
+            $trx = new Trx();
+            $trx->trx_no = $trxNo;
+            $trx->order_h_id = $request->order_h_id;
+            $trx->payment_status = false;
+            $trx->save();
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Order approved successfully',
+                'trx_no' => $trxNo
+            ], 200);
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function RejectOrder(OrderHIdRequest $request)
+    {
+        try
+        {
+            DB::beginTransaction();
+
+            $orderH = OrderH::where('order_h_id', $request->order_h_id)->first();
+            $orderH->order_status = Constanta::$orderStatusRejected;
+            $orderH->update();
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Order rejected',
+                'order_no' => $orderH->order_no
+            ], 200);
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'order_no' => $orderH->order_no
+            ], 500);
+        }
+    }
+
+    public function CancelOrder(OrderHIdRequest $request)
+    {
+        try
+        {
+            DB::beginTransaction();
+
+            $orderH = OrderH::where('order_h_id', $request->order_h_id)->first();
+            $orderH->order_status = Constanta::$orderStatusCanceled;
+            $orderH->update();
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Order canceled',
+                'order_no' => $orderH->order_no
+            ], 200);
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'order_no' => $orderH->order_no
+            ], 500);
+        }
+    }
+
+    public function PaidOrder(OrderHIdRequest $request)
+    {
+        try
+        {
+            DB::beginTransaction();
+
+            $orderH = OrderH::where('order_h_id', $request->order_h_id)->first();
+            $orderH->order_status = Constanta::$orderStatusPaid;
+            $orderH->update();
+
+            $trx = Trx::where('order_h_id', $request->order_h_id)->first();
+            $trx->payment_status = true;
+            $trx->update();
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Order payment accepted',
+                'order_no' => $orderH->order_no
+            ], 200);
+
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'order_no' => $orderH->order_no
+            ], 500);
+
+        }
+    }
+
+    public function RetryPaymentOrder(OrderHIdRequest $request)
+    {
+        try
+        {
+            DB::beginTransaction();
+
+            $orderH = OrderH::where('order_h_id', $request->order_h_id)->first();
+            $orderH->order_status = Constanta::$orderStatusRetryPay;
+            $orderH->update();
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Order set to retry payment',
+                'order_no' => $orderH->order_no
+            ], 200);
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'order_no' => $orderH->order_no
+            ], 500);
+        }
+    }
+
+    public function GetCustPaidOrder(GetOrderDashboardRequest $request)
+    {
+        $order = OrderH::where([
+            ['agency_id', $request->agency_id],
+            ['order_status', Constanta::$orderStatusCustPaid]
+        ])->with('orderDs')->orderBy('order_dt', 'asc')->limit(Constanta::$orderDashboardDataCount)->get();
+        
+        return response()->json($order);
+    }
+
+    
 }
