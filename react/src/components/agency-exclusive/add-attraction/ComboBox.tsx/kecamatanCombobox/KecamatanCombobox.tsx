@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+import React, {useState} from "react"
 import { Check, ChevronsUpDown } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -18,33 +18,22 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { useKecamatanQuery } from "./KecamatanCombobox-hook"
 
-const frameworks = [
-  {
-    value: "kecamatan_1",
-    label: "kecamatan 1",
-  },
-  {
-    value: "kecamatan_2",
-    label: "kecamatan 2",
-  },
-  {
-    value: "kecamatan_3",
-    label: "kecamatan 3",
-  },
-  {
-    value: "kecamatan_4",
-    label: "kecamatan 4",
-  },
-  {
-    value: "kecamatan_5",
-    label: "kecamatan 5",
-  },
-]
+interface KecamatanComboboxProps {
+    onSelectKecamatan: (kecamatan: string) => void;
+    selectedCity: string;
+}
 
-export function KecamatanCombobox() {
-  const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState("")
+interface Kecamatan {
+    value: string;
+    label: string;
+}
+
+export function KecamatanCombobox({onSelectKecamatan, selectedCity} : KecamatanComboboxProps) {
+  const [open, setOpen] = useState(false)
+  const [value, setValue] = useState("")
+  const { kecamatan, loading } = useKecamatanQuery({selectedCity});
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -56,7 +45,7 @@ export function KecamatanCombobox() {
           className="w-[200px] justify-between"
         >
           {value
-            ? frameworks.find((framework) => framework.value === value)?.label
+            ? kecamatan.find((kecamatan:Kecamatan) => kecamatan.value === value)?.label
             : "Select Kecamatan..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -64,25 +53,27 @@ export function KecamatanCombobox() {
       <PopoverContent className="w-[200px] p-0">
         <Command>
           <CommandInput placeholder="Search Kecamatan..." />
-          <CommandEmpty>No framework found.</CommandEmpty>
+          {!loading && kecamatan.length === 0 && <CommandEmpty>No district found.</CommandEmpty>}
+          {/* <CommandEmpty>No framework found.</CommandEmpty> */}
           <CommandGroup>
-            {frameworks.map((framework) => (
+            {kecamatan.map((kecamatan:Kecamatan) => (
                 <CommandList>
                     <CommandItem
-                        key={framework.value}
-                        value={framework.value}
+                        key={kecamatan.value}
+                        value={kecamatan.value}
                         onSelect={(currentValue) => {
-                        setValue(currentValue === value ? "" : currentValue)
-                        setOpen(false)
+                            setValue(currentValue === value ? "" : currentValue)
+                            setOpen(false)
+                            onSelectKecamatan(currentValue)
                         }}
                     >
                         <Check
                         className={cn(
                             "mr-2 h-4 w-4",
-                            value === framework.value ? "opacity-100" : "opacity-0"
+                            value === kecamatan.value ? "opacity-100" : "opacity-0"
                         )}
                         />
-                        {framework.label}
+                        {kecamatan.label}
                     </CommandItem>
                 </CommandList>
 

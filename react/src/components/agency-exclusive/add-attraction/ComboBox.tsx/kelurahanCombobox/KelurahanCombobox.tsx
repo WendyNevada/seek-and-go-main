@@ -18,37 +18,22 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { useKelurahanQuery } from "./KelurahanCombobox-hook"
 
-const provinces = [
-  {
-    value: "province_1",
-    label: "province 1",
-  },
-  {
-    value: "province_2",
-    label: "province 2",
-  },
-  {
-    value: "province_3",
-    label: "province 3",
-  },
-  {
-    value: "province_4",
-    label: "province 4",
-  },
-  {
-    value: "province_5",
-    label: "province 5",
-  },
-]
+interface KelurahanComboboxProps {
+    onSelectKelurahan: (kelurahan: string) => void;
+    selectedKecamatan: string;
+}
 
-interface ProvinceComboboxProps {
-    onSelectProvince: (province: string) => void;
-  }
+interface Kelurahan {
+    value: string;
+    label: string;
+}
 
-export function ProvinceCombobox({onSelectProvince}: ProvinceComboboxProps) {
+export function KelurahanCombobox({onSelectKelurahan, selectedKecamatan} : KelurahanComboboxProps) {
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState("")
+  const {kelurahan,  loading} = useKelurahanQuery({selectedKecamatan});
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -60,34 +45,35 @@ export function ProvinceCombobox({onSelectProvince}: ProvinceComboboxProps) {
           className="w-[200px] justify-between"
         >
           {value
-            ? provinces.find((provinces) => provinces.value === value)?.label
-            : "Select Province..."}
+            ? kelurahan.find((kelurahan:Kelurahan) => kelurahan.value === value)?.label
+            : "Select kelurahan..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search Province..." />
-          <CommandEmpty>No framework found.</CommandEmpty>
+          <CommandInput placeholder="Search kelurahan..." />
+          {!loading && kelurahan.length === 0 && <CommandEmpty>No sub district found.</CommandEmpty>}
+          {/* <CommandEmpty>No framework found.</CommandEmpty> */}
           <CommandGroup>
-            {provinces.map((provinces) => (
+            {kelurahan.map((kelurahan:Kelurahan) => (
                 <CommandList>
                     <CommandItem
-                        key={provinces.value}
-                        value={provinces.value}
+                        key={kelurahan.value}
+                        value={kelurahan.value}
                         onSelect={(currentValue) => {
                             setValue(currentValue === value ? "" : currentValue)
                             setOpen(false)
-                            onSelectProvince(currentValue);
+                            onSelectKelurahan(currentValue)
                         }}
                     >
                         <Check
-                            className={cn(
-                                "mr-2 h-4 w-4",
-                                value === provinces.value ? "opacity-100" : "opacity-0"
+                        className={cn(
+                            "mr-2 h-4 w-4",
+                            value === kelurahan.value ? "opacity-100" : "opacity-0"
                         )}
                         />
-                        {provinces.label}
+                        {kelurahan.label}
                     </CommandItem>
                 </CommandList>
 

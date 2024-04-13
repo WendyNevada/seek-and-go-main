@@ -1,4 +1,4 @@
-import AddProduct from '@/components/agency-exclusive/add-product/AddProduct'
+import AddProduct from '@/components/agency-exclusive/add-attraction/AddProduct'
 import AgencyNavbar from '@/components/navbar/AgencyNavbar'
 import React from 'react'
 

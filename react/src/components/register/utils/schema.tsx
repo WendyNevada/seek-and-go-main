@@ -14,7 +14,7 @@ export const customerSchema= z.object({
         invalid_type_error: "That's not a date!",
       }),
     gender: z.string(),
-    password: z.string(),
+    password: z.string().min(8, {message: "Password must be at least 8 characters"}),
     //confirmPassword: z.string(),
     role: z.string()
 }).required()
@@ -23,8 +23,8 @@ export const agencySchema= z.object({
     agency_name: z.string().min(1,  {message: "Agency Name is required" }),
     account_name: z.string().min(1,  {message: "First Name is required" }),
     email: z.string(),
-    password: z.string(),
-    confirmPassword: z.string(),
+    password: z.string().min(8, {message: "Password must be at least 8 characters"}),
+    //confirmPassword: z.string(),
     role: z.string(),
     phone: z.string(),
     npwp: z.string(),
