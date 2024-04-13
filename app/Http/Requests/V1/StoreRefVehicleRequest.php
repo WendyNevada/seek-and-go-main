@@ -24,7 +24,10 @@ class StoreRefVehicleRequest extends FormRequest
         return [
             'agency_id' => ['required'],
             'vehicle_code' => 'required',
-            'ref_zipcode_id' => 'required',
+            'area_1' => ['required'],
+            'area_2' => ['required'],
+            'area_3' => ['required'],
+            'area_4' => ['required'],
             'vehicle_type' => 'required',
             'vehicle_brand' => 'required',
             'vehicle_series' => 'required',

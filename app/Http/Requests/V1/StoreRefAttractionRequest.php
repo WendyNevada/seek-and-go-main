@@ -24,7 +24,10 @@ class StoreRefAttractionRequest extends FormRequest
         return [
             'agency_id' => ['required'],
             'attraction_code' => ['required'],
-            'ref_zipcode_id' => ['required'],
+            'area_1' => ['required'],
+            'area_2' => ['required'],
+            'area_3' => ['required'],
+            'area_4' => ['required'],
             'attraction_name' => ['required'],
             'description' => ['required'],
             'address' => ['required'],
