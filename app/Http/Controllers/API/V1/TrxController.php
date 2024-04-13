@@ -4,8 +4,11 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Models\Trx;
 use App\Http\Controllers\Controller;
+use App\Http\Interfaces\TrxInterface;
 use App\Http\Requests\V1\StoreTrxRequest;
+use App\Http\Requests\V2\OrderHIdRequest;
 use App\Http\Requests\V1\UpdateTrxRequest;
+use App\Http\Requests\V2\CustPaymentRequest;
 
 class TrxController extends Controller
 {
@@ -64,5 +67,17 @@ class TrxController extends Controller
     public function destroy(Trx $trx)
     {
         //
+    }
+
+    public function CustPayment(TrxInterface $trxInterface, CustPaymentRequest $request)
+    {
+        $response = $trxInterface->CustPayment($request);
+        return $response;
+    }
+
+    public function CancelCustPayment(TrxInterface $trxInterface, OrderHIdRequest $request)
+    {
+        $response = $trxInterface->CancelCustPayment($request);
+        return $response;
     }
 }

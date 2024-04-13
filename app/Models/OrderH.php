@@ -9,6 +9,15 @@ class OrderH extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'agency_id',
+        'customer_id',
+        'order_no',
+        'order_dt',
+        'total_price',
+        'order_status'
+    ];
+
     protected $primaryKey = 'order_h_id';
 
     public function orderDs()

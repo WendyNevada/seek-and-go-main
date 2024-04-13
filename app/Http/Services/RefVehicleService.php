@@ -9,6 +9,7 @@ use App\Models\RefZipcode;
 use App\Models\AgencyAffiliate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Interfaces\RefVehicleInterface;
 use App\Http\Requests\V1\StoreRefVehicleRequest;
 use App\Http\Requests\V1\UpdateRefVehicleRequest;
@@ -240,7 +241,7 @@ class RefVehicleService implements RefVehicleInterface
 
     public function GetVehicleHomepage()
     {
-        $vehicle = RefVehicle::orderBy('rating', 'desc')->limit(Constanta::$homepageDataCount)->get();
+        $vehicle = RefVehicle::where('is_active', '1')->orderBy('rating', 'desc')->limit(Constanta::$homepageDataCount)->get();
 
         foreach ($vehicle as $key => $value)
         {
@@ -260,6 +261,19 @@ class RefVehicleService implements RefVehicleInterface
             $value->image_url = $image_url;
             $value->base_price = $base_price;
         }
+
+        return response()->json($vehicle);
+    }
+
+    public function GetActiveVehicleByAgencyId(AgencyIdRequest $request)
+    {
+        $vehicle = RefVehicle::
+        join('agency_affiliates', 'ref_vehicles.ref_vehicle_id', '=', 'agency_affiliates.ref_vehicle_id')->
+        select('ref_vehicles.*', 'agency_affiliates.base_price')->
+        where('ref_vehicles.is_active', true)->
+        where('agency_affiliates.agency_id', $request->agency_id)->
+        limit(Constanta::$homepageDataCount)->
+        get();
 
         return response()->json($vehicle);
     }

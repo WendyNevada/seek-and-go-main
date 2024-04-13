@@ -6,10 +6,12 @@ use App\Models\PackageD;
 use App\Models\PackageH;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Interfaces\PackageHInterface;
 use App\Http\Requests\V1\StorePackageHRequest;
 use App\Http\Requests\V1\UpdatePackageHRequest;
 use App\Http\Requests\V2\CreatePackageAgencyRequest;
+use App\Http\Requests\V2\ApproveCustomPackageRequest;
 use App\Http\Requests\V2\CreateCustomPackageCustomerRequest;
 
 class PackageHController extends Controller
@@ -79,6 +81,30 @@ class PackageHController extends Controller
     public function CreateCustomPackageCustomer(PackageHInterface $packageHInterface, CreateCustomPackageCustomerRequest $request)
     {
         $response = $packageHInterface->CreateCustomPackageCustomer($request);
+        return $response;
+    }
+
+    public function GetNewCustomPackageByAgencyId(PackageHInterface $packageHInterface, AgencyIdRequest $request)
+    {
+        $response = $packageHInterface->GetNewCustomPackageByAgencyId($request);
+        return $response;
+    }
+
+    public function GetApvCustomPackageByAgencyId(PackageHInterface $packageHInterface, AgencyIdRequest $request)
+    {
+        $response = $packageHInterface->GetApvCustomPackageByAgencyId($request);
+        return $response;
+    }
+
+    public function ApproveCustomPackage(PackageHInterface $packageHInterface, ApproveCustomPackageRequest $request)
+    {
+        $response = $packageHInterface->ApproveCustomPackage($request);
+        return $response;
+    }
+
+    public function GetActivePackageHByAgencyId(PackageHInterface $packageHInterface, AgencyIdRequest $request)
+    {
+        $response = $packageHInterface->GetActivePackageHByAgencyId($request);
         return $response;
     }
 }
