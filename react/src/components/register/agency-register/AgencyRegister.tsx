@@ -6,8 +6,12 @@ import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import axiosClient from '@/axios.client';
+import { useNavigate } from 'react-router-dom';
 
 const AgencyRegisterComponent = () => {
+    const navigate = useNavigate();
+
     const form = useForm<z.infer<typeof agencySchema>>({
         resolver: zodResolver(agencySchema),
             defaultValues: {
@@ -22,8 +26,12 @@ const AgencyRegisterComponent = () => {
         },
     });
 
+    //CreateAccountAgency
+
     const onSubmit = (values: z.infer<typeof agencySchema>) => {
         console.log(values);
+        axiosClient.post('/v1/CreateAccountAgency', values)
+        navigate('/Agency/DashBoard');
     }
 
   return (
