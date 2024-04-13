@@ -11,6 +11,7 @@ use App\Http\Requests\V2\GetRefAttractionByIdRequest;
 use App\Models\AgencyAffiliate;
 use App\Models\Constanta;
 use App\Models\RefPicture;
+use App\Models\RefZipcode;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -28,6 +29,8 @@ class RefAttractionService implements RefAttractionInterface
 
         $attractionPicture = RefPicture::where('ref_attraction_id', $request->ref_attraction_id)->first();
 
+        $agencyAffiliate = AgencyAffiliate::where('ref_attraction_id', $request->ref_attraction_id)->first();
+
         if($attraction != null)
         {
             if($attractionPicture != null)
@@ -36,7 +39,8 @@ class RefAttractionService implements RefAttractionInterface
                     'status' => "ok",
                     'message' => "success",
                     'attraction' => $attraction,
-                    'picture_url' => $attractionPicture->image_url
+                    'picture_url' => $attractionPicture->image_url,
+                    'base_price' => $agencyAffiliate->base_price
                 ], 200);
             }
             else
@@ -45,7 +49,8 @@ class RefAttractionService implements RefAttractionInterface
                     'status' => "ok",
                     'message' => "success",
                     'attraction' => $attraction,
-                    'picture_url' => "-"
+                    'picture_url' => "-",
+                    'base_price' => $agencyAffiliate->base_price
                 ], 200);
             }
         }
@@ -55,7 +60,8 @@ class RefAttractionService implements RefAttractionInterface
                 'status' => "error",
                 'message' => "Data not found",
                 'attraction' => "-",
-                'picture_url' => "-"
+                'picture_url' => "-",
+                'base_price' => "-"
             ], 400);
         }
     }
@@ -70,11 +76,18 @@ class RefAttractionService implements RefAttractionInterface
             {
                 DB::beginTransaction();
 
+                $refZipcodeId = RefZipcode::
+                    where('area_1', $request->area_1)->
+                    where('area_2', $request->area_2)->
+                    where('area_3', $request->area_3)->
+                    where('area_4', $request->area_4)->
+                    first()->ref_zipcode_id;
+
                 $attraction = RefAttraction::
                 create(
                     [
                         'attraction_code' => $request->attraction_code,
-                        'ref_zipcode_id' => $request->ref_zipcode_id,
+                        'ref_zipcode_id' => $refZipcodeId,
                         'attraction_name' => $request->attraction_name,
                         'description' => $request->description,
                         'address' => $request->address,
@@ -150,10 +163,17 @@ class RefAttractionService implements RefAttractionInterface
             {
                 DB::beginTransaction();
 
+                $refZipcodeId = RefZipcode::
+                    where('area_1', $request->area_1)->
+                    where('area_2', $request->area_2)->
+                    where('area_3', $request->area_3)->
+                    where('area_4', $request->area_4)->
+                    first()->ref_zipcode_id;
+
                 $attraction = $attraction
                 ->update(
                     [
-                        'ref_zipcode_id' => $request->ref_zipcode_id,
+                        'ref_zipcode_id' => $refZipcodeId,
                         'attraction_name' => $request->attraction_name,
                         'description' => $request->description,
                         'address' => $request->address,
@@ -222,6 +242,8 @@ class RefAttractionService implements RefAttractionInterface
         {
             $picture = RefPicture::where('ref_attraction_id', $value->ref_attraction_id)->first();
 
+            $base_price = AgencyAffiliate::where('ref_attraction_id', $value->ref_attraction_id)->first()->base_price;
+
             if($picture != null)
             {
                 $image_url = $picture->image_url;
@@ -232,6 +254,7 @@ class RefAttractionService implements RefAttractionInterface
             }
 
             $value->image_url = $image_url;
+            $value->base_price = $base_price;
         }
 
         return response()->json($attraction);

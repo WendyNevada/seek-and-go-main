@@ -23,7 +23,10 @@ class UpdateRefHotelRequest extends FormRequest
     {
         return [
             'ref_hotel_id' => ['required'],
-            'ref_zipcode_id' => ['required'],
+            'area_1' => ['required'],
+            'area_2' => ['required'],
+            'area_3' => ['required'],
+            'area_4' => ['required'],
             'hotel_name' => ['required'],
             'description' => ['required'],
             'address' => ['required'],

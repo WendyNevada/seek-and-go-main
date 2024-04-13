@@ -2,16 +2,17 @@
 
 namespace App\Http\Services;
 
-use App\Http\Interfaces\RefVehicleInterface;
+use App\Models\Constanta;
+use App\Models\RefPicture;
 use App\Models\RefVehicle;
+use App\Models\RefZipcode;
+use App\Models\AgencyAffiliate;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Interfaces\RefVehicleInterface;
 use App\Http\Requests\V1\StoreRefVehicleRequest;
 use App\Http\Requests\V1\UpdateRefVehicleRequest;
 use App\Http\Requests\V2\GetRefVehicleByIdRequest;
-use App\Models\AgencyAffiliate;
-use App\Models\Constanta;
-use App\Models\RefPicture;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class RefVehicleService implements RefVehicleInterface
 {
@@ -25,11 +26,18 @@ class RefVehicleService implements RefVehicleInterface
             {
                 DB::beginTransaction();
 
+                $refZipcodeId = RefZipcode::
+                    where('area_1', $request->area_1)->
+                    where('area_2', $request->area_2)->
+                    where('area_3', $request->area_3)->
+                    where('area_4', $request->area_4)->
+                    first()->ref_zipcode_id;
+
                 $vehicle = RefVehicle::
                 create(
                     [
                         'vehicle_code' => $request->vehicle_code,
-                        'ref_zipcode_id' => $request->ref_zipcode_id,
+                        'ref_zipcode_id' => $refZipcodeId,
                         'vehicle_type' => $request->vehicle_type,
                         'vehicle_brand' => $request->vehicle_brand,
                         'vehicle_series' => $request->vehicle_series,
@@ -110,10 +118,17 @@ class RefVehicleService implements RefVehicleInterface
             {
                 DB::beginTransaction();
 
+                $refZipcodeId = RefZipcode::
+                    where('area_1', $request->area_1)->
+                    where('area_2', $request->area_2)->
+                    where('area_3', $request->area_3)->
+                    where('area_4', $request->area_4)->
+                    first()->ref_zipcode_id;
+
                 $vehicle = $vehicle
                 ->update(
                     [
-                        'ref_zipcode_id' => $request->ref_zipcode_id,
+                        'ref_zipcode_id' => $refZipcodeId,
                         'vehicle_type' => $request->vehicle_type,
                         'vehicle_brand' => $request->vehicle_brand,
                         'vehicle_series' => $request->vehicle_series,
@@ -186,6 +201,8 @@ class RefVehicleService implements RefVehicleInterface
 
         $vehiclePicture = RefPicture::where('ref_vehicle_id', $request->ref_vehicle_id)->first();
 
+        $agencyAffiliate = AgencyAffiliate::where('ref_vehicle_id', $request->ref_vehicle_id)->first();
+
         if($vehicle != null)
         {
             if($vehiclePicture != null)
@@ -194,7 +211,8 @@ class RefVehicleService implements RefVehicleInterface
                     'status' => "ok",
                     'message' => "success",
                     'vehicle' => $vehicle,
-                    'picture_url' => $vehiclePicture->image_url
+                    'picture_url' => $vehiclePicture->image_url,
+                    'base_price' => $agencyAffiliate->base_price
                 ], 200);
             }
             else
@@ -203,7 +221,8 @@ class RefVehicleService implements RefVehicleInterface
                     'status' => "ok",
                     'message' => "success",
                     'vehicle' => $vehicle,
-                    'picture_url' => "-"
+                    'picture_url' => "-",
+                    'base_price' => $agencyAffiliate->base_price
                 ], 200);
             }
         }
@@ -213,7 +232,8 @@ class RefVehicleService implements RefVehicleInterface
                 'status' => "error",
                 'message' => "Data not found",
                 'vehicle' => "-",
-                'picture_url' => "-"
+                'picture_url' => "-",
+                'base_price' => "-"
             ], 400);
         }
     }
@@ -226,6 +246,8 @@ class RefVehicleService implements RefVehicleInterface
         {
             $picture = RefPicture::where('ref_vehicle_id', $value->ref_vehicle_id)->first();
 
+            $base_price = AgencyAffiliate::where('ref_vehicle_id', $value->ref_vehicle_id)->first()->base_price;
+
             if($picture != null)
             {
                 $image_url = $picture->image_url;
@@ -236,6 +258,7 @@ class RefVehicleService implements RefVehicleInterface
             }
 
             $value->image_url = $image_url;
+            $value->base_price = $base_price;
         }
 
         return response()->json($vehicle);
