@@ -9,6 +9,11 @@ class Constanta extends Model
 {
     use HasFactory;
 
+    #region role
+    public static $roleCustomer = "Customer";
+    public static $roleAgency = "Agency";
+    #endregion
+
     #region homepage
     public static $homepageDataCount = 5;
     #endregion
