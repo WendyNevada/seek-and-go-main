@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import axiosClient from '@/axios.client';
 import { useNavigate } from 'react-router-dom';
+import { toast } from '@/components/ui/use-toast';
+import axios, { AxiosError } from 'axios';
 
 const AgencyRegisterComponent = () => {
     const navigate = useNavigate();
@@ -30,8 +32,22 @@ const AgencyRegisterComponent = () => {
 
     const onSubmit = (values: z.infer<typeof agencySchema>) => {
         console.log(values);
-        axiosClient.post('/v1/CreateAccountAgency', values)
-        navigate('/Agency/DashBoard');
+        try{
+            axiosClient.post('/v1/CreateAccountAgency', values);
+            toast({
+                variant: "success",
+                description: "Register Success."
+            });
+            navigate('/Login');
+        }catch (response) {
+            const axiosError = response as AxiosError; // Cast the error to AxiosError
+            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
+                toast({
+                    variant: "destructive",
+                    description: (axiosError.response?.data as { message: string })?.message,
+                });
+            }
+        }
     }
 
   return (

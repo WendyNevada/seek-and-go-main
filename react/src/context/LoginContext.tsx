@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 // Define the shape of user data
 interface User {
   account_id: number;
+  customer_id: number;
+  agency_id:number;
   role: string;
 }
 
@@ -50,8 +52,11 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
       const userData: User = {
         account_id: response.data.account_id,
-        role: response.data.role
+        customer_id: response.data.customer_id,
+        agency_id: response.data.agency_id,
+        role: response.data.role,
       };
+      console.log('ini data user',userData);
       setUser(userData);
       setError(null);
       handleNavigation(userData);

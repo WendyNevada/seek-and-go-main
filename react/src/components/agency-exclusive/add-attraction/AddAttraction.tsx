@@ -79,7 +79,7 @@ const AddAttraction = () => {
     const onSubmit = async (values: z.infer<typeof addAttractionSchema>) => {
 
         const formData = new FormData();
-        formData.append('agency_id', String(user?.account_id)); // Assuming agency_id is a string
+        formData.append('agency_id', String(user?.agency_id)); // Assuming agency_id is a string
         formData.append('attraction_code', values.attraction_code);
         formData.append('area_1', values.area_1);
         formData.append('area_2', values.area_2);

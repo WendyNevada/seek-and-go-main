@@ -51,7 +51,7 @@ const UserLogin = () => {
                             name="email"
                             render={({ field }) => (
                                 <FormItem className="custom-field">
-                                    <FormLabel>{"Customer Name"}</FormLabel>
+                                    <FormLabel>{"Email"}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
