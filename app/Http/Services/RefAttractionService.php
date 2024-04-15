@@ -265,7 +265,8 @@ class RefAttractionService implements RefAttractionInterface
     {
         $attraction = RefAttraction::
         join('agency_affiliates', 'ref_attractions.ref_attraction_id', '=', 'agency_affiliates.ref_attraction_id')->
-        select('ref_attractions.*', 'agency_affiliates.base_price')->
+        leftjoin('ref_pictures', 'ref_attractions.ref_attraction_id', '=', 'ref_pictures.ref_attraction_id')->
+        select('ref_attractions.*', 'agency_affiliates.base_price', 'ref_pictures.image_url')->
         where('ref_attractions.is_active', true)->
         where('agency_affiliates.agency_id', $request->agency_id)->
         limit(Constanta::$homepageDataCount)->
