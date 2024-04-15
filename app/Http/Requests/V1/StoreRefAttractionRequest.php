@@ -32,7 +32,6 @@ class StoreRefAttractionRequest extends FormRequest
             'description' => ['required'],
             'address' => ['required'],
             'rating' => ['nullable'],
-            'is_active' => ['required'],
             'qty' => ['required'],
             'promo_code' => ['nullable'],
             'base_price' => ['required'],

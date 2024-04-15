@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Interfaces\RefHotelInterface;
+use App\Http\Requests\V2\RefHotelIdRequest;
 use App\Http\Requests\V1\StoreRefHotelRequest;
 use App\Http\Requests\V1\UpdateRefHotelRequest;
 use App\Http\Requests\V2\GetRefHotelByIdRequest;
@@ -86,6 +87,12 @@ class RefHotelController extends Controller
     public function EditHotelById(RefHotelInterface $refHotelInterface, UpdateRefHotelRequest $request)
     {
         $response = $refHotelInterface->EditHotelById($request);
+        return $response;
+    }
+
+    public function DeactivateHotelById(RefHotelInterface $refHotelInterface, RefHotelIdRequest $request)
+    {
+        $response = $refHotelInterface->DeactivateHotelById($request);
         return $response;
     }
 

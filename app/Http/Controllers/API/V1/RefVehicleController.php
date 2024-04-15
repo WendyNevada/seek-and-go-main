@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Interfaces\RefVehicleInterface;
+use App\Http\Requests\V2\RefVehicleIdRequest;
 use App\Http\Requests\V1\StoreRefVehicleRequest;
 use App\Http\Requests\V1\UpdateRefVehicleRequest;
 use App\Http\Requests\V2\GetRefVehicleByIdRequest;
@@ -80,6 +81,12 @@ class RefVehicleController extends Controller
     public function EditVehicleById(RefVehicleInterface $refVehicleInterface, UpdateRefVehicleRequest $request)
     {
         $response = $refVehicleInterface->EditVehicleById($request);
+        return $response;
+    }
+
+    public function DeactivateVehicleById(RefVehicleInterface $refVehicleInterface, RefVehicleIdRequest $request)
+    {
+        $response = $refVehicleInterface->DeactivateVehicleById($request);
         return $response;
     }
 
