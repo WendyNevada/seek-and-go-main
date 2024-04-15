@@ -1,10 +1,11 @@
+
+import axiosClient from '@/axios.client';
 import React, { createContext, useState, useContext, ReactNode } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 // Define the shape of user data
 interface User {
-  id: number;
-  email: string;
+  account_id: number;
   role: string;
 }
 
@@ -27,32 +28,45 @@ const LoginContext = createContext<LoginContextType | undefined>(undefined);
 
 // Custom hook to use the context
 export const useLogin = () => {
-  const context = useContext(LoginContext);
-  if (!context) {
-    throw new Error('useLogin must be used within a LoginProvider');
-  }
-  return context;
+    const context = useContext(LoginContext);
+
+    if (!context) {
+        throw new Error('useLogin must be used within a LoginProvider');
+    }
+    return context;
 };
 
 // Provider component
 export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   // Function to handle user login
   const login = async (credentials: LoginCredentials) => {
     try {
       // Simulate login request using axios
-      const response = await axios.post('/login', credentials);
+      const response = await axiosClient.post('/v1/Login', credentials);
 
-      // Assuming response.data contains user information
-      setUser(response.data.user);
-
-
+      const userData: User = {
+        account_id: response.data.account_id,
+        role: response.data.role
+      };
+      setUser(userData);
       setError(null);
+      handleNavigation(userData);
     } catch (error) {
       // Handle errors
       setError('Login failed. Please check your credentials.');
+    }
+  };
+
+  const handleNavigation = (userData: User) => {
+
+    if (userData.role === "Agency") {
+      navigate('/Agency/DashBoard');
+    } else {
+      navigate('/');
     }
   };
 

@@ -7,10 +7,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useLogin } from '@/context/LoginContext'
+import { useNavigate } from 'react-router-dom'
 
 const UserLogin = () => {
     //const userLogin:UserLogin = new UserLogin();
     const { login } = useLogin();
+    // const navigate = useNavigate();
 
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
@@ -26,21 +28,17 @@ const UserLogin = () => {
         } catch (error) {
             console.log(error);
         }
-    };
-    // const onSubmit = (values: z.infer<typeof loginSchema>) => {
-    //     console.log(values)
 
-    //     axiosClient.post('/v1/Login', values)
-    //     .then(response => {
-    //         console.log(response.data)
-    //         userLogin.account_id = response.data.account_id,
-    //         userLogin.role = response.data.role,
-    //         console.log(userLogin)
-    //         localStorage.setItem('token', response.data.token);
-    //     }).catch(error => {
-    //         console.log(error);
-    //     });
-    // };
+        // console.log('role : ', user?.role);
+        // console.log('account id : ', user?.account_id);
+
+        // if(user  && user?.role === "Agency") {
+        //     navigate('/Agency/DashBoard');
+        // }
+        // else {
+        //     navigate('/');
+        // }
+    };
 
     return (
         <div className="min-h-50 w-50 p-0 sm:p-12">

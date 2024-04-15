@@ -1,6 +1,4 @@
 import { Button } from '@/components/ui/button'
-import React from 'react'
-import { Route } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
 
 const ProductList = () => {
@@ -15,7 +13,7 @@ const ProductList = () => {
             <div className='flex justify-end'>
                 <Button onClick={onRoute} className='mt-4 rounded-full'>Add Product</Button>
             </div>
-
+            
             {/* ProductList */}
         </div>
     )

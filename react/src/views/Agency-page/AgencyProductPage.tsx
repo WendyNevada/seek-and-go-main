@@ -1,5 +1,5 @@
 
-import ProductList from '@/components/agency-exclusive/product/ProductList'
+import ProductList from '@/components/agency-exclusive/product-dashboard/ProductList'
 import AgencyNavbar from '@/components/navbar/AgencyNavbar'
 import React from 'react'
 

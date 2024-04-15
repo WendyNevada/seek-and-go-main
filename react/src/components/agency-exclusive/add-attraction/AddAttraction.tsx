@@ -13,11 +13,16 @@ import { KelurahanCombobox } from './ComboBox.tsx/kelurahanCombobox/KelurahanCom
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import axiosClient from '@/axios.client'
-import AttractionObj from './utils/model'
+import { toast } from '@/components/ui/use-toast'
+import axios, { AxiosError } from 'axios'
+import { useNavigate } from 'react-router-dom'
+import { useLogin } from '@/context/LoginContext'
 
-const AddProduct = () => {
-    const attractionObj:AttractionObj = new AttractionObj();
+const AddAttraction = () => {
+    //const attractionObj:AttractionObj = new AttractionObj();
     const [imageUrl, setImageUrl] = useState('');
+    const navigate = useNavigate();
+    const { user } = useLogin();
 
     const form = useForm<z.infer<typeof addAttractionSchema>>({
         resolver: zodResolver(addAttractionSchema),
@@ -73,34 +78,45 @@ const AddProduct = () => {
 
     const onSubmit = async (values: z.infer<typeof addAttractionSchema>) => {
 
-        // const response = await axiosClient.post('/v1/GetRefZipcodeIdByArea4AndArea3', {area_3: values.area_3, area_4: values.area_4})
-        // console.log("hasil generate api ", response.data.ref_zipcode_id);
+        const formData = new FormData();
+        formData.append('agency_id', String(user?.account_id)); // Assuming agency_id is a string
+        formData.append('attraction_code', values.attraction_code);
+        formData.append('area_1', values.area_1);
+        formData.append('area_2', values.area_2);
+        formData.append('area_3', values.area_3);
+        formData.append('area_4', values.area_4);
+        formData.append('attraction_name', values.attraction_name);
+        formData.append('description', values.description);
+        formData.append('address', values.address);
+        formData.append('rating', '0'); // Assuming rating is a string or number
+        formData.append('is_active', values.is_active ? '1' : '0'); // Convert boolean to string
+        formData.append('qty', values.qty.toString()); // Convert number to string
+        formData.append('promo_code', values.promo_code);
+        formData.append('base_price', values.base_price.toString()); // Convert number to string
+        formData.append('promo_code_affiliate', values.promo_code_affiliate);
 
-        attractionObj.agency_id = 1;//nanti diganti dan diganti ambil dari context
-        attractionObj.attraction_code = values.attraction_code;
-        attractionObj.area_1 = values.area_1;
-        attractionObj.area_2 = values.area_2;
-        attractionObj.area_3 = values.area_3;
-        attractionObj.area_4 = values.area_4;
-        attractionObj.attraction_name = values.attraction_name;
-        attractionObj.description = values.description;
-        attractionObj.address = values.address;
-        attractionObj.rating = 0;
-        attractionObj.is_active = values.is_active;
-        attractionObj.qty = values.qty;
-        attractionObj.promo_code = values.promo_code;
-        attractionObj.base_price = values.base_price;
-        attractionObj.promo_code_affiliate = values.promo_code_affiliate;
-        attractionObj.picture = values.picture[0];
-
-        console.log("object to backend",attractionObj);
-
-        axiosClient.post('/v1/AddAttraction', {attractionObj})
+        // Append the picture file
+        formData.append('picture', values.picture[0]); // Assuming values.picture is a FileList
 
         try{
-            console.log(values);
-        }catch(error){
-            console.log(error);
+            await axiosClient.post('/v1/AddAttraction', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data' // Set the content type to multipart/form-data
+                }
+            });
+            toast({
+                variant: "success",
+                description: "Item added."
+            });
+            navigate('/Agency/DashBoard');
+        }catch (response) {
+            const axiosError = response as AxiosError; // Cast the error to AxiosError
+            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
+                toast({
+                    variant: "destructive",
+                    description: (axiosError.response?.data as { message: string })?.message,
+                });
+            }
         }
     }
 
@@ -142,9 +158,6 @@ const AddProduct = () => {
                                                 accept='.jpg, .jpeg, .png'
                                                 {...fileRef}
                                                 onChange={handleImageUpload}
-                                                // onChange = { (event) =>
-                                                //     field.onChange(event.target?.files?.[0] ?? undefined)
-                                                // }
                                             />
                                         </FormControl>
                                         {imageUrl && (
@@ -334,7 +347,8 @@ const AddProduct = () => {
                             />
 
                             <div className="justify-center flex">
-                                <Button type="submit" className='mt-4'>Add Attraction Product</Button>
+                                <Button type="submit" className='mt-4'>Add Attraction Product
+                                </Button>
                             </div>
                         </form>
                     </Form>
@@ -343,4 +357,4 @@ const AddProduct = () => {
     )
 }
 
-export default AddProduct
+export default AddAttraction
