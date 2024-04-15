@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreign('ref_attraction_id')->references('ref_attraction_id')->on('ref_attractions')->onDelete('cascade');
             $table->bigInteger('ref_vehicle_id')->unsigned()->nullable();
             $table->foreign('ref_vehicle_id')->references('ref_vehicle_id')->on('ref_vehicles')->onDelete('cascade');
+            $table->bigInteger('order_h_id')->unsigned()->nullable();
             $table->string('image_url', length:2000);
             $table->timestamps();
         });

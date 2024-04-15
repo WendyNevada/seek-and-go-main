@@ -21,11 +21,11 @@ class Account extends Model
 
     public function customers()
     {
-        return $this->hasOne(Customer::class);
+        return $this->hasOne(Customer::class, 'account_id');
     }
 
     public function agencies()
     {
-        return $this->hasOne(Agency::class);
+        return $this->hasOne(Agency::class, 'account_id');
     }
 }

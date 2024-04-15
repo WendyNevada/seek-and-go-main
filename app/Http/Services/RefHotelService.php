@@ -9,6 +9,7 @@ use App\Models\RefZipcode;
 use App\Models\AgencyAffiliate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Interfaces\RefHotelInterface;
 use App\Http\Requests\V1\StoreRefHotelRequest;
 use App\Http\Requests\V1\UpdateRefHotelRequest;
@@ -225,7 +226,7 @@ class RefHotelService implements RefHotelInterface
 
     public function GetHotelHomepage()
     {
-        $hotel = RefHotel::orderBy('rating', 'desc')->limit(Constanta::$homepageDataCount)->get();
+        $hotel = RefHotel::where('is_active', '1')->orderBy('rating', 'desc')->limit(Constanta::$homepageDataCount)->get();
 
         foreach ($hotel as $key => $value)
         {
@@ -249,5 +250,17 @@ class RefHotelService implements RefHotelInterface
         return response()->json($hotel);
     }
 
+    public function GetActiveHotelByAgencyId(AgencyIdRequest $request)
+    {
+        $hotel = RefHotel::
+        join('agency_affiliates', 'ref_hotels.ref_hotel_id', '=', 'agency_affiliates.ref_hotel_id')->
+        select('ref_hotels.*', 'agency_affiliates.base_price')->
+        where('ref_hotels.is_active', true)->
+        where('agency_affiliates.agency_id', $request->agency_id)->
+        limit(Constanta::$homepageDataCount)->
+        get();
+
+        return response()->json($hotel);
+    }
     
 }

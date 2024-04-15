@@ -26,7 +26,7 @@ return new class extends Migration
             $table->foreign('ref_vehicle_id')->references('ref_vehicle_id')->on('ref_vehicles')->onDelete('cascade');
             $table->dateTime('start_dt');
             $table->dateTime('end_dt');
-            $table->double('price', 17, 2);
+            $table->double('price', 17, 2)->nullable();
             $table->timestamps();
         });
     }

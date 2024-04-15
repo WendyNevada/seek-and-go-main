@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Models\Constanta;
 use App\Models\RefVehicle;
+use App\Models\AgencyAffiliate;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Interfaces\RefVehicleInterface;
 use App\Http\Requests\V1\StoreRefVehicleRequest;
 use App\Http\Requests\V1\UpdateRefVehicleRequest;
 use App\Http\Requests\V2\GetRefVehicleByIdRequest;
-use App\Models\AgencyAffiliate;
-use App\Models\Constanta;
-use Illuminate\Support\Facades\DB;
 
 class RefVehicleController extends Controller
 {
@@ -94,5 +95,10 @@ class RefVehicleController extends Controller
         return $response;
     }
 
+    public function GetActiveVehicleByAgencyId(RefVehicleInterface $refVehicleInterface, AgencyIdRequest $request)
+    {
+        $response = $refVehicleInterface->GetActiveVehicleByAgencyId($request);
+        return $response;
+    }
 
 }

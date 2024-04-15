@@ -9,6 +9,19 @@ class OrderD extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'order_d_id',
+        'order_h_id',
+        'package_h_id',
+        'package_history_id',
+        'ref_hotel_id',
+        'ref_attraction_id',
+        'ref_vehicle_id',
+        'start_dt',
+        'end_dt',
+        'price'
+    ];
+
     protected $primaryKey = 'order_d_id';
 
     public function orderH()

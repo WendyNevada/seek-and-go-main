@@ -56,6 +56,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('GetAttractionHomepage', 'RefAttractionController@GetAttractionHomepage');
 
+    Route::post('GetActiveAttractionByAgencyId', 'RefAttractionController@GetActiveAttractionByAgencyId');
+
     #endregion
 
     #region Hotel
@@ -68,6 +70,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('GetHotelHomepage', 'RefHotelController@GetHotelHomepage');
 
+    Route::post('GetActiveHotelByAgencyId', 'RefHotelController@GetActiveHotelByAgencyId');
 
     #endregion
 
@@ -81,6 +84,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('GetVehicleHomepage', 'RefVehicleController@GetVehicleHomepage');
 
+    Route::post('GetActiveVehicleByAgencyId', 'RefVehicleController@GetActiveVehicleByAgencyId');
 
     #endregion
 
@@ -89,6 +93,14 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::post('CreatePackageAgency', 'PackageHController@CreatePackageAgency');
     
     Route::post('CreateCustomPackageCustomer', 'PackageHController@CreateCustomPackageCustomer');
+
+    Route::post('GetNewCustomPackageByAgencyId', 'PackageHController@GetNewCustomPackageByAgencyId');
+
+    Route::post('GetApvCustomPackageByAgencyId', 'PackageHController@GetApvCustomPackageByAgencyId');
+
+    Route::post('ApproveCustomPackage', 'PackageHController@ApproveCustomPackage');
+
+    Route::post('GetActivePackageHByAgencyId', 'PackageHController@GetActivePackageHByAgencyId');
 
     #endregion
 
@@ -111,6 +123,32 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::post('CreateOrder', 'OrderHController@CreateOrder');
 
     Route::post('GetOrderDashboard', 'OrderHController@GetOrderDashboard');
+
+    Route::post('GetNewOrderForCustomer', 'OrderHController@GetNewOrderForCustomer');
+
+    Route::post('GetApvOrderForCustomer', 'OrderHController@GetApvOrderForCustomer');
+
+    Route::post('GetOrderById', 'OrderHController@GetOrderById');
+
+    Route::post('ApproveOrder', 'OrderHController@ApproveOrder');
+
+    Route::post('RejectOrder', 'OrderHController@RejectOrder');
+
+    Route::post('CancelOrder', 'OrderHController@CancelOrder');
+
+    Route::post('PaidOrder', 'OrderHController@PaidOrder');
+
+    Route::post('RetryPaymentOrder', 'OrderHController@RetryPaymentOrder');
+
+    Route::post('GetCustPaidOrder', 'OrderHController@GetCustPaidOrder');
+
+    #endregion
+
+    #region Trx
+
+    Route::post('CustPayment', 'TrxController@CustPayment');
+
+    Route::post('CancelCustPayment', 'TrxController@CancelCustPayment');
 
     #endregion
 });
