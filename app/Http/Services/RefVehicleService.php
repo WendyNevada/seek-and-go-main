@@ -14,6 +14,7 @@ use App\Http\Interfaces\RefVehicleInterface;
 use App\Http\Requests\V1\StoreRefVehicleRequest;
 use App\Http\Requests\V1\UpdateRefVehicleRequest;
 use App\Http\Requests\V2\GetRefVehicleByIdRequest;
+use App\Http\Requests\V2\RefVehicleIdRequest;
 
 class RefVehicleService implements RefVehicleInterface
 {
@@ -49,7 +50,7 @@ class RefVehicleService implements RefVehicleInterface
                         'with_driver' => $request->with_driver,
                         'address' => $request->address,
                         'rating' => $request->rating,
-                        'is_active' => $request->is_active,
+                        'is_active' => true,
                         'qty' => $request->qty,
                         'promo_code' => $request->promo_code
                     ]
@@ -84,7 +85,7 @@ class RefVehicleService implements RefVehicleInterface
 
                 return response()->json([
                     'status' => "ok",
-                    'message' => "success",
+                    'message' => "Vehicle added successfully",
                     'ref_vehicle_id' => $refVehicleId
                 ], 200);
             }
@@ -92,7 +93,7 @@ class RefVehicleService implements RefVehicleInterface
             {
                 return response()->json([
                     'status' => "error",
-                    'message' => "data already exist",
+                    'message' => "Vehicle code already exists",
                     'ref_vehicle_id' => "-"
                 ], 400);
             }
@@ -113,7 +114,7 @@ class RefVehicleService implements RefVehicleInterface
     {
         try
         {
-            $vehicle = RefVehicle::where('ref_vehicle_id', $request->ref_vehicle_id);
+            $vehicle = RefVehicle::where('ref_vehicle_id', $request->ref_vehicle_id)->first();
             
             if($vehicle != null)
             {
@@ -125,6 +126,15 @@ class RefVehicleService implements RefVehicleInterface
                     where('area_3', $request->area_3)->
                     where('area_4', $request->area_4)->
                     first()->ref_zipcode_id;
+
+                $agencyAffiliate = AgencyAffiliate::where('ref_vehicle_id', $vehicle->ref_vehicle_id)->first();
+
+                $agencyAffiliate
+                ->update(
+                    [
+                        'base_price' => $request->base_price
+                    ]
+                );
 
                 $vehicle = $vehicle
                 ->update(
@@ -139,7 +149,6 @@ class RefVehicleService implements RefVehicleInterface
                         'description' => $request->description,
                         'with_driver' => $request->with_driver,
                         'address' => $request->address,
-                        'is_active' => $request->is_active,
                         'qty' => $request->qty,
                         'promo_code' => $request->promo_code
                     ]
@@ -171,7 +180,7 @@ class RefVehicleService implements RefVehicleInterface
 
                 return response()->json([
                     'status' => "ok",
-                    'message' => "success",
+                    'message' => "Vehicle edited successfully",
                     'ref_vehicle_id' => $request->ref_vehicle_id
                 ], 200);
             }
@@ -179,7 +188,7 @@ class RefVehicleService implements RefVehicleInterface
             {
                 return response()->json([
                     'status' => "error",
-                    'message' => "data not found",
+                    'message' => "Data not found",
                     'ref_vehicle_id' => $request->ref_vehicle_id
                 ], 400);
             }
@@ -192,6 +201,45 @@ class RefVehicleService implements RefVehicleInterface
                 'status' => "error",
                 'message' => $e->getMessage(),
                 'ref_vehicle_id' => "-"
+            ], 500);
+        }
+    }
+
+    public function DeactivateVehicleById(RefVehicleIdRequest $request) 
+    {
+        try
+        {
+            $vehicle = RefVehicle::where('ref_vehicle_id', $request->ref_vehicle_id)->first();
+
+            if($vehicle != null)
+            {
+                $vehicle->update(
+                    [
+                        'is_active' => '0'
+                    ]
+                );
+
+                return response()->json([
+                    'status' => "ok",
+                    'message' => "Deactivate success",
+                    'ref_vehicle_id' => $request->ref_vehicle_id
+                ], 200);
+            }
+            else
+            {
+                return response()->json([
+                    'status' => "error",
+                    'message' => "Data not found",
+                    'ref_vehicle_id' => $request->ref_vehicle_id
+                ], 400);
+            }    
+        }
+        catch (\Exception $e)
+        {
+            return response()->json([
+                'status' => "error",
+                'message' => $e->getMessage(),
+                'ref_vehicle_id' => $request->ref_vehicle_id
             ], 500);
         }
     }
@@ -210,7 +258,7 @@ class RefVehicleService implements RefVehicleInterface
             {
                 return response()->json([
                     'status' => "ok",
-                    'message' => "success",
+                    'message' => "Success",
                     'vehicle' => $vehicle,
                     'picture_url' => $vehiclePicture->image_url,
                     'base_price' => $agencyAffiliate->base_price
@@ -220,7 +268,7 @@ class RefVehicleService implements RefVehicleInterface
             {
                 return response()->json([
                     'status' => "ok",
-                    'message' => "success",
+                    'message' => "Success",
                     'vehicle' => $vehicle,
                     'picture_url' => "-",
                     'base_price' => $agencyAffiliate->base_price

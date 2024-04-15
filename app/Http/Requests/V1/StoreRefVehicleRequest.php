@@ -38,7 +38,6 @@ class StoreRefVehicleRequest extends FormRequest
             'with_driver' => 'required',
             'address' => 'required',
             'rating' => 'nullable',
-            'is_active' => 'required',
             'qty' => 'required',
             'promo_code' => 'nullable',
             'base_price' => ['required'],

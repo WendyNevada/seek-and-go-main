@@ -9,6 +9,7 @@ use App\Http\Requests\V1\UpdateRefAttractionRequest;
 use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Requests\V2\GetRefAttractionByCodeRequest;
 use App\Http\Requests\V2\GetRefAttractionByIdRequest;
+use App\Http\Requests\V2\RefAttractionIdRequest;
 use App\Models\AgencyAffiliate;
 use App\Models\Constanta;
 use App\Models\RefPicture;
@@ -93,7 +94,7 @@ class RefAttractionService implements RefAttractionInterface
                         'description' => $request->description,
                         'address' => $request->address,
                         'rating' => $request->rating,
-                        'is_active' => $request->is_active,
+                        'is_active' => true,
                         'qty' => $request->qty,
                         'promo_code' => $request->promo_code
                     ]
@@ -129,7 +130,7 @@ class RefAttractionService implements RefAttractionInterface
 
                 return response()->json([
                     'status' => "ok",
-                    'message' => "success",
+                    'message' => "Attraction added successfully",
                     'ref_attraction_id' => $refAttractionId
                 ], 200);
             }
@@ -137,7 +138,7 @@ class RefAttractionService implements RefAttractionInterface
             {
                 return response()->json([
                     'status' => "error",
-                    'message' => "attraction code already exist",
+                    'message' => "Attraction code already exists",
                     'ref_attraction_id' => "-"
                 ], 400);
             }
@@ -171,6 +172,14 @@ class RefAttractionService implements RefAttractionInterface
                     where('area_4', $request->area_4)->
                     first()->ref_zipcode_id;
 
+                $agencyAffiliate = AgencyAffiliate::where('ref_attraction_id', $attraction->ref_attraction_id)->first();
+
+                $agencyAffiliate->update(
+                    [
+                        'base_price' => $request->base_price
+                    ]
+                );
+
                 $attraction = $attraction
                 ->update(
                     [
@@ -178,7 +187,6 @@ class RefAttractionService implements RefAttractionInterface
                         'attraction_name' => $request->attraction_name,
                         'description' => $request->description,
                         'address' => $request->address,
-                        'is_active' => $request->is_active,
                         'qty' => $request->qty,
                         'promo_code' => $request->promo_code
                     ]
@@ -210,7 +218,7 @@ class RefAttractionService implements RefAttractionInterface
 
                 return response()->json([
                     'status' => "ok",
-                    'message' => "success",
+                    'message' => "Attraction edited successfully",
                     'ref_attraction_id' => $request->ref_attraction_id
                 ], 200);
             }
@@ -227,6 +235,45 @@ class RefAttractionService implements RefAttractionInterface
         {
             DB::rollBack();
 
+            return response()->json([
+                'status' => "error",
+                'message' => $e->getMessage(),
+                'ref_attraction_id' => "-"
+            ], 500);
+        }
+    }
+
+    public function DeactivateAttractionById(RefAttractionIdRequest $request)
+    {
+        try
+        {
+            $attraction = RefAttraction::where('ref_attraction_id', $request->ref_attraction_id)->first();
+
+            if($attraction != null)
+            {
+                $attraction->update(
+                    [
+                        'is_active' => '0'
+                    ]
+                );
+
+                return response()->json([
+                    'status' => "ok",
+                    'message' => "Deactivate success",
+                    'ref_attraction_id' => $request->ref_attraction_id
+                ], 200);
+            }
+            else
+            {
+                return response()->json([
+                    'status' => "error",
+                    'message' => "Data not found",
+                    'ref_attraction_id' => $request->ref_attraction_id
+                ], 400);
+            }
+        }
+        catch (\Exception $e)
+        {
             return response()->json([
                 'status' => "error",
                 'message' => $e->getMessage(),
