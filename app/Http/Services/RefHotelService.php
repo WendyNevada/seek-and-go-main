@@ -254,7 +254,8 @@ class RefHotelService implements RefHotelInterface
     {
         $hotel = RefHotel::
         join('agency_affiliates', 'ref_hotels.ref_hotel_id', '=', 'agency_affiliates.ref_hotel_id')->
-        select('ref_hotels.*', 'agency_affiliates.base_price')->
+        leftjoin('ref_pictures', 'ref_hotels.ref_hotel_id', '=', 'ref_pictures.ref_hotel_id')->
+        select('ref_hotels.*', 'agency_affiliates.base_price', 'ref_pictures.image_url')->
         where('ref_hotels.is_active', true)->
         where('agency_affiliates.agency_id', $request->agency_id)->
         limit(Constanta::$homepageDataCount)->

@@ -269,7 +269,8 @@ class RefVehicleService implements RefVehicleInterface
     {
         $vehicle = RefVehicle::
         join('agency_affiliates', 'ref_vehicles.ref_vehicle_id', '=', 'agency_affiliates.ref_vehicle_id')->
-        select('ref_vehicles.*', 'agency_affiliates.base_price')->
+        leftjoin('ref_pictures', 'ref_vehicles.ref_vehicle_id', '=', 'ref_pictures.ref_vehicle_id')->
+        select('ref_vehicles.*', 'agency_affiliates.base_price', 'ref_pictures.image_url')->
         where('ref_vehicles.is_active', true)->
         where('agency_affiliates.agency_id', $request->agency_id)->
         limit(Constanta::$homepageDataCount)->
