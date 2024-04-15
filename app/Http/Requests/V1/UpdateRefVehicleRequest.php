@@ -36,9 +36,9 @@ class UpdateRefVehicleRequest extends FormRequest
             'description' => 'required',
             'with_driver' => 'required',
             'address' => 'required',
-            'is_active' => 'required',
             'qty' => 'required',
             'promo_code' => 'nullable',
+            'base_price' => ['required'],
             'picture' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif', 'max:2048']
         ];
     }

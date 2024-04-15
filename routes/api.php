@@ -54,6 +54,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('EditAttractionById', 'RefAttractionController@EditAttractionById');
 
+    Route::post('DeactivateAttractionById', 'RefAttractionController@DeactivateAttractionById');
+
     Route::post('GetAttractionHomepage', 'RefAttractionController@GetAttractionHomepage');
 
     Route::post('GetActiveAttractionByAgencyId', 'RefAttractionController@GetActiveAttractionByAgencyId');
@@ -68,6 +70,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('EditHotelById', 'RefHotelController@EditHotelById');
 
+    Route::post('DeactivateHotelById', 'RefHotelController@DeactivateHotelById');
+
     Route::post('GetHotelHomepage', 'RefHotelController@GetHotelHomepage');
 
     Route::post('GetActiveHotelByAgencyId', 'RefHotelController@GetActiveHotelByAgencyId');
@@ -79,6 +83,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::post('AddVehicle', 'RefVehicleController@AddVehicle');
 
     Route::post('EditVehicleById', 'RefVehicleController@EditVehicleById');
+
+    Route::post('DeactivateVehicleById', 'RefVehicleController@DeactivateVehicleById');
 
     Route::post('GetVehicleById', 'RefVehicleController@GetVehicleById');
 

@@ -3,6 +3,7 @@
 namespace App\Http\Interfaces;
 
 use App\Http\Requests\V2\AgencyIdRequest;
+use App\Http\Requests\V2\RefAttractionIdRequest;
 use App\Http\Requests\V1\StoreRefAttractionRequest;
 use App\Http\Requests\V1\UpdateRefAttractionRequest;
 use App\Http\Requests\V2\GetRefAttractionByIdRequest;
@@ -17,6 +18,8 @@ interface RefAttractionInterface
     public function AddAttraction(StoreRefAttractionRequest $request);
 
     public function EditAttractionById(UpdateRefAttractionRequest $request);
+
+    public function DeactivateAttractionById(RefAttractionIdRequest $request);
 
     public function GetAttractionHomepage();
 
