@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useLogin } from '@/context/LoginContext'
-import { useNavigate } from 'react-router-dom'
 
 const UserLogin = () => {
     //const userLogin:UserLogin = new UserLogin();
@@ -28,16 +27,6 @@ const UserLogin = () => {
         } catch (error) {
             console.log(error);
         }
-
-        // console.log('role : ', user?.role);
-        // console.log('account id : ', user?.account_id);
-
-        // if(user  && user?.role === "Agency") {
-        //     navigate('/Agency/DashBoard');
-        // }
-        // else {
-        //     navigate('/');
-        // }
     };
 
     return (

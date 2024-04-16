@@ -11,7 +11,6 @@ import { CityCombobox } from './ComboBox.tsx/cityComboBox/CityCombobox'
 import { KecamatanCombobox } from './ComboBox.tsx/kecamatanCombobox/KecamatanCombobox'
 import { KelurahanCombobox } from './ComboBox.tsx/kelurahanCombobox/KelurahanCombobox'
 import { Textarea } from '@/components/ui/textarea'
-import { Switch } from '@/components/ui/switch'
 import axiosClient from '@/axios.client'
 import { toast } from '@/components/ui/use-toast'
 import axios, { AxiosError } from 'axios'
@@ -89,7 +88,7 @@ const AddAttraction = () => {
         formData.append('description', values.description);
         formData.append('address', values.address);
         formData.append('rating', '0'); // Assuming rating is a string or number
-        formData.append('is_active', values.is_active ? '1' : '0'); // Convert boolean to string
+        formData.append('is_active', '1'); // Convert boolean to string
         formData.append('qty', values.qty.toString()); // Convert number to string
         formData.append('promo_code', values.promo_code);
         formData.append('base_price', values.base_price.toString()); // Convert number to string
@@ -277,7 +276,7 @@ const AddAttraction = () => {
                                     </FormItem>
                                 )}
                             />
-                            <FormField
+                            {/* <FormField
                                 control={form.control}
                                 name="is_active"
                                 render={({ field }) => (
@@ -293,7 +292,7 @@ const AddAttraction = () => {
                                         </FormControl>
                                     </FormItem>
                                 )}
-                            />
+                            /> */}
                             <FormField
                                 control={form.control}
                                 name="qty"
