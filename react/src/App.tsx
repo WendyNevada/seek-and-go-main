@@ -38,9 +38,10 @@ function AgencyRoutes() {
 
   return (
     <Routes>
-      <Route path="DashBoard" element={<AgencyHomePage />} />
-      <Route path="Product" element={<AgencyProductPage />} />
-      <Route path="AddProduct" element={<AgencyAddProductPage />} />
+        <Route path="/DashBoard" element={<AgencyHomePage />} />
+      {/* <Route path="DashBoard" element={<AgencyHomePage />} /> */}
+        <Route path="Product" element={<AgencyProductPage />} />
+        <Route path="AddProduct" element={<AgencyAddProductPage />} />
     </Routes>
   );
 }

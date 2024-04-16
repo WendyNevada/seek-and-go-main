@@ -11,6 +11,8 @@ import { GetAttractionModel } from '../utils/AttractionModel';
 import { useLogin } from '@/context/LoginContext';
 import axiosClient from '@/axios.client';
 import { Button } from '@/components/ui/button';
+import { AlertDialogProduct } from '../ProductComponent/DeleteProductAlert';
+import EditIcon from '@mui/icons-material/Edit';
 
 const AttractionList = () => {
     const [attractions, setAttractions] = useState<GetAttractionModel[]>([]);
@@ -53,8 +55,9 @@ const AttractionList = () => {
                         </CardContent>
                         {/* Add more card components based on other properties */}
                         <CardFooter>
-                            <Button>Edit</Button>
-                            <Button className='ml-2' variant="destructive">Delete</Button>
+                            <Button variant='primary'>{<EditIcon/>}</Button>
+                            <AlertDialogProduct attractionId={attraction.ref_attraction_id}/>
+                            {/* <Button className='ml-2' variant="destructive">Delete</Button> */}
                         </CardFooter>
                     </Card>
                 );

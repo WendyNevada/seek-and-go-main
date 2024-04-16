@@ -1,13 +1,13 @@
-
 import axiosClient from '@/axios.client';
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import Cookies from 'js-cookie';
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Define the shape of user data
 interface User {
   account_id: number;
   customer_id: number;
-  agency_id:number;
+  agency_id: number;
   role: string;
 }
 
@@ -23,6 +23,7 @@ interface LoginContextType {
   login: (credentials: LoginCredentials) => Promise<void>;
   logout: () => void;
   error: string | null;
+  navigateTo: (path: string) => void;
 }
 
 // Create the context
@@ -44,6 +45,13 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
   // Function to handle user login
   const login = async (credentials: LoginCredentials) => {
     try {
@@ -56,7 +64,10 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         agency_id: response.data.agency_id,
         role: response.data.role,
       };
-      console.log('ini data user',userData);
+
+      // Store user data in localStorage
+      localStorage.setItem('user', JSON.stringify(userData));
+
       setUser(userData);
       setError(null);
       handleNavigation(userData);
@@ -67,7 +78,6 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   };
 
   const handleNavigation = (userData: User) => {
-
     if (userData.role === "Agency") {
       navigate('/Agency/DashBoard');
     } else {
@@ -76,6 +86,8 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   };
 
   const logout = () => {
+    // Clear the user data from localStorage
+    localStorage.removeItem('user');
     // Clear the user data
     setUser(null);
   };
@@ -85,7 +97,8 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     user,
     login,
     logout,
-    error
+    error,
+    navigateTo: navigate,
   };
 
   // Provide the context value to its children
