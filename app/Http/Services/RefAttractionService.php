@@ -12,6 +12,9 @@ use App\Http\Requests\V2\GetRefAttractionByIdRequest;
 use App\Http\Requests\V2\RefAttractionIdRequest;
 use App\Models\AgencyAffiliate;
 use App\Models\Constanta;
+use App\Models\OrderD;
+use App\Models\OrderH;
+use App\Models\PackageH;
 use App\Models\RefPicture;
 use App\Models\RefZipcode;
 use Illuminate\Support\Facades\DB;
@@ -251,11 +254,59 @@ class RefAttractionService implements RefAttractionInterface
 
             if($attraction != null)
             {
+                $orderHs = OrderH::with('orderDs')
+                ->whereHas('orderDs', function ($query) use ($request) {
+                    $query->where('ref_attraction_id', $request->ref_attraction_id);
+                })
+                ->whereIn('order_status', [
+                    Constanta::$orderStatusNew,
+                    Constanta::$orderStatusApproved,
+                    Constanta::$orderStatusPaid,
+                    Constanta::$orderStatusCustPaid,
+                    Constanta::$orderStatusRetryPay
+                ])
+                ->get();
+
+                if(count($orderHs) > 0)
+                {
+                    return response()->json(
+                        [
+                            'status' => "error",
+                            'message' => "Attraction is in active order",
+                            'ref_attraction_id' => $request->ref_attraction_id
+                        ],
+                        400
+                    );
+                }
+
+                $packageHs = PackageH::with('packageDs')
+                ->whereHas('packageDs', function ($query) use ($request) {
+                    $query->where('ref_attraction_id', $request->ref_attraction_id);
+                })
+                ->where('is_active', true)
+                ->get();
+
+                if(count($packageHs) > 0)
+                {
+                    return response()->json(
+                        [
+                            'status' => "error",
+                            'message' => "Attraction is in active package",
+                            'ref_attraction_id' => $request->ref_attraction_id
+                        ],
+                        400
+                    );
+                }
+
+                DB::beginTransaction();
+
                 $attraction->update(
                     [
                         'is_active' => '0'
                     ]
                 );
+
+                DB::commit();
 
                 return response()->json([
                     'status' => "ok",
@@ -274,6 +325,8 @@ class RefAttractionService implements RefAttractionInterface
         }
         catch (\Exception $e)
         {
+            DB::rollBack();
+
             return response()->json([
                 'status' => "error",
                 'message' => $e->getMessage(),
