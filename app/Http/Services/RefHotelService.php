@@ -2,6 +2,8 @@
 
 namespace App\Http\Services;
 
+use App\Models\OrderH;
+use App\Models\PackageH;
 use App\Models\RefHotel;
 use App\Models\Constanta;
 use App\Models\RefPicture;
@@ -11,10 +13,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Interfaces\RefHotelInterface;
+use App\Http\Requests\V2\RefHotelIdRequest;
 use App\Http\Requests\V1\StoreRefHotelRequest;
 use App\Http\Requests\V1\UpdateRefHotelRequest;
 use App\Http\Requests\V2\GetRefHotelByIdRequest;
-use App\Http\Requests\V2\RefHotelIdRequest;
 
 class RefHotelService implements RefHotelInterface
 {
@@ -240,11 +242,59 @@ class RefHotelService implements RefHotelInterface
 
             if($hotel != null)
             {
+                $orderHs = OrderH::with('orderDs')
+                ->whereHas('orderDs', function ($query) use ($request) {
+                    $query->where('ref_hotel_id', $request->ref_hotel_id);
+                })
+                ->whereIn('order_status', [
+                    Constanta::$orderStatusNew,
+                    Constanta::$orderStatusApproved,
+                    Constanta::$orderStatusPaid,
+                    Constanta::$orderStatusCustPaid,
+                    Constanta::$orderStatusRetryPay
+                ])
+                ->get();
+
+                if(count($orderHs) > 0)
+                {
+                    return response()->json(
+                        [
+                            'status' => "error",
+                            'message' => "Hotel is in active order",
+                            'ref_hotel_id' => $request->ref_hotel_id
+                        ],
+                        400
+                    );
+                }
+
+                $packageHs = PackageH::with('packageDs')
+                ->whereHas('packageDs', function ($query) use ($request) {
+                    $query->where('ref_hotel_id', $request->ref_hotel_id);
+                })
+                ->where('is_active', true)
+                ->get();
+
+                if(count($packageHs) > 0)
+                {
+                    return response()->json(
+                        [
+                            'status' => "error",
+                            'message' => "Hotel is in active package",
+                            'ref_hotel_id' => $request->ref_hotel_id
+                        ],
+                        400
+                    );
+                }
+
+                DB::beginTransaction();
+
                 $hotel->update(
                     [
                         'is_active' => '0'
                     ]
                 );
+
+                DB::commit();
 
                 return response()->json([
                     'status' => "ok",
@@ -263,6 +313,8 @@ class RefHotelService implements RefHotelInterface
         }
         catch (\Exception $e)
         {
+            DB::rollBack();
+
             return response()->json([
                 'status' => "error",
                 'message' => $e->getMessage(),
