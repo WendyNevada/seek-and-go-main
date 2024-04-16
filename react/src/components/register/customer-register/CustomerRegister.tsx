@@ -34,7 +34,7 @@ const CustomerRegisterComponent = () => {
         birth_date: new Date(),
         gender: "",
         password: "",
-        //confirmPassword: "",
+        confirmPassword: "",
         role:"Customer"
         },
     });
@@ -46,12 +46,22 @@ const CustomerRegisterComponent = () => {
     const onSubmit = (values: z.infer<typeof customerSchema>) => {
         values.birth_date = formatDate(values.birth_date);
         console.log(values.birth_date);
-
-        values.customer_name = "tes1";
-        values.role="Customer";
         console.log(values);
 
         axiosClient.post('/v1/CreateAccountCustomer', values)
+
+        form.reset({
+            customer_name: "",
+            account_name: "",
+            email: "",
+            phone: "",
+            birth_date: new Date(),
+            gender: "",
+            password: "",
+            confirmPassword: "",
+            role: "Customer"
+        });
+
     //   .then(({data}) => {
     //     setUser(data.user)
     //     setToken(data.token);
@@ -141,34 +151,36 @@ const CustomerRegisterComponent = () => {
                         />
                         <FormField
                             control={form.control}
-                            name="birth_date"
+                            name="password"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel className='mr-4'>{"Tanggal Lahir"}</FormLabel>
+                                    <FormLabel>{"Password"}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
-                                        <Popover>
-                                            <PopoverTrigger asChild>
-                                                <Button
-                                                variant={"outline"}
-                                                className={cn(
-                                                    "w-[300px] justify-start text-left font-normal",
-                                                    !field.value && "text-muted-foreground"
-                                                )}
-                                                >
-                                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                                {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                                                </Button>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-0">
-                                                <Calendar
-                                                mode="single"
-                                                selected={field.value}
-                                                onSelect={field.onChange}
-                                                initialFocus
-                                                />
-                                            </PopoverContent>
-                                        </Popover>
+                                        <Input
+                                            type="password"
+                                            placeholder={field.name}
+                                            {...field}
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="confirmPassword"
+                            render={({ field }) => (
+                                <FormItem className="custom-field mt-4">
+                                    <FormLabel>{"Confirm Password"}</FormLabel>
+                                    <FormMessage />
+                                    <FormControl>
+                                        <Input
+                                            type="password"
+                                            placeholder={field.name}
+                                            {...field}
+                                            onChange={field.onChange}
+                                        />
                                     </FormControl>
                                 </FormItem>
                             )}
@@ -197,19 +209,43 @@ const CustomerRegisterComponent = () => {
                         />
                         <FormField
                             control={form.control}
-                            name="password"
+                            name="birth_date"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Password"}</FormLabel>
+                                    <FormLabel>{"Birth Date"}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
-                                            type="password"
-                                            placeholder={field.name}
-                                            {...field}
-                                            onChange={field.onChange}
+                                            type="date"
                                         />
                                     </FormControl>
+
+                                    {/* <FormLabel className='mr-4'>{"Tanggal Lahir"}</FormLabel>
+                                    <FormMessage />
+                                    <FormControl>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <Button
+                                                variant={"outline"}
+                                                className={cn(
+                                                    "w-[300px] justify-start text-left font-normal",
+                                                    !field.value && "text-muted-foreground"
+                                                )}
+                                                >
+                                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                                {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0">
+                                                <Calendar
+                                                mode="single"
+                                                selected={field.value}
+                                                onSelect={field.onChange}
+                                                initialFocus
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                    </FormControl> */}
                                 </FormItem>
                             )}
                         />

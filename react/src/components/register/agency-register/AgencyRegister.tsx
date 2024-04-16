@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, ChangeEvent } from 'react'
 import { agencySchema } from '../utils/schema';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import axiosClient from '@/axios.client';
 
 const AgencyRegisterComponent = () => {
     const form = useForm<z.infer<typeof agencySchema>>({
@@ -18,12 +19,29 @@ const AgencyRegisterComponent = () => {
             phone: "",
             npwp:"",
             location:"",
+            confirmPassword:"",
             role:"Agency"
         },
     });
 
+
     const onSubmit = (values: z.infer<typeof agencySchema>) => {
         console.log(values);
+
+        axiosClient.post('/v1/CreateAccountAgency', values);
+
+        form.reset({
+            agency_name: "",
+            account_name: "",
+            email: "",
+            password: "",
+            phone: "",
+            npwp:"",
+            location:"",
+            confirmPassword:"",
+            role:"Agency"
+        });
+
     }
 
   return (
@@ -90,6 +108,24 @@ const AgencyRegisterComponent = () => {
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
                                     <FormLabel>{"Password"}</FormLabel>
+                                    <FormMessage />
+                                    <FormControl>
+                                        <Input
+                                            type='password'
+                                            placeholder={field.name}
+                                            {...field}
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="confirmPassword"
+                            render={({ field }) => (
+                                <FormItem className="custom-field mt-4">
+                                    <FormLabel>{"Confirm Password"}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
