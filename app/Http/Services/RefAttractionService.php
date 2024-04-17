@@ -181,16 +181,13 @@ class RefAttractionService implements RefAttractionInterface
                     ]
                 );
 
-                $attraction = $attraction
-                ->update(
-                    [
-                        'attraction_name' => $request->attraction_name,
-                        'description' => $request->description,
-                        'address' => $request->address,
-                        'qty' => $request->qty,
-                        'promo_code' => $request->promo_code
-                    ]
-                );
+                $attraction->update([
+                    'attraction_name' => $request->attraction_name,
+                    'description' => $request->description,
+                    'address' => $request->address,
+                    'qty' => $request->qty,
+                    'promo_code' => $request->promo_code
+                ]);
 
                 if($request->hasFile('picture'))
                 {

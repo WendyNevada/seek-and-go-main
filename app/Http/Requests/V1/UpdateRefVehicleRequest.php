@@ -35,7 +35,7 @@ class UpdateRefVehicleRequest extends FormRequest
             'qty' => 'required',
             'promo_code' => 'nullable',
             'base_price' => ['required'],
-            'picture' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif', 'max:2048']
+            'picture' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif', 'max:10000']
         ];
     }
 }

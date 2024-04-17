@@ -21,6 +21,12 @@ class OrderHService implements OrderHInterface
 
     #region Private Function
 
+    private function getOrderHById($id): OrderH
+    {
+        $orderH = OrderH::where('order_h_id', $id)->first();
+        return $orderH;
+    }
+
     private function getOrderByAgencyAndStatusAndLimit($agency_id, $order_status, $limit)
     {
         $order = OrderH::where([
@@ -56,6 +62,88 @@ class OrderHService implements OrderHInterface
         $order = OrderH::where('order_h_id', $order_h_id)->with('orderDs')->get();
 
         return $order;
+    }
+
+    private function generateOrderNo(): string
+    {
+        $orderNo = Constanta::$orderConst . date("YmdHis") . rand(100, 999);
+
+        return $orderNo;
+    }
+
+    private function createOrderH($order_no, $customer_id, $agency_id, $order_dt, $order_status, $total_price): OrderH
+    {
+        $orderH = new OrderH();
+        $orderH->agency_id = $agency_id;
+        $orderH->customer_id = $customer_id;
+        $orderH->order_dt = now();
+        $orderH->total_price = $total_price;
+        $orderH->order_no = $order_no;
+        $orderH->order_status = Constanta::$orderStatusNew;
+        $orderH->save();
+
+        return $orderH;
+    }
+
+    private function reformatDate($date): string
+    {
+        $strDate = $date->birth_date;
+                
+        if(strpos($strDate, "T") == true)
+        {
+            $string = $date->birth_date;
+            $parts = explode("T", $string);
+            $strDate = $parts[0];
+        }
+
+        return $strDate;
+    }
+
+    private function createOrderD($order_h_id, $package_h_id, $ref_hotel_id, $ref_attraction_id, $ref_vehicle_id, $strStartDate, $strEndDate, $price): OrderD
+    {
+        $orderD = new OrderD();
+        $orderD->order_h_id = $order_h_id;
+        $orderD->package_h_id = $package_h_id;
+
+        $orderD->package_history_id = $orderD->package_h_id == null ? null : 
+            PackageHistoryH::where('package_code', 
+                (PackageH::where('package_h_id', $orderD->package_h_id)->first()->package_code)
+            )->first()->package_history_h_id;
+        
+        $orderD->ref_hotel_id = $ref_hotel_id == "" ? null : $ref_hotel_id;
+        $orderD->ref_attraction_id = $ref_attraction_id == "" ? null : $ref_attraction_id;
+        $orderD->ref_vehicle_id = $ref_vehicle_id == "" ? null : $ref_vehicle_id;
+        $orderD->start_dt = $strStartDate;
+        $orderD->end_dt = $strEndDate;
+        $orderD->price = $price;
+        $orderD->save();
+
+        return $orderD;
+    }
+
+    private function updateOrderStatus($order_h_id, $order_status): void
+    {
+        $orderH = OrderH::where('order_h_id', $order_h_id)->first();
+        $orderH->order_status = $order_status;
+        $orderH->update();
+    }
+
+    private function generateTrxNo(): string
+    {
+        $trxNo = Constanta::$orderConst . date("YmdHis") . rand(100, 999);
+
+        return $trxNo;
+    }
+
+    private function createTrx($trxNo, $order_h_id): Trx
+    {
+        $trx = new Trx();
+        $trx->trx_no = $trxNo;
+        $trx->order_h_id = $order_h_id;
+        $trx->payment_status = false;
+        $trx->save();
+
+        return $trx;
     }
 
     #endregion
@@ -108,57 +196,30 @@ class OrderHService implements OrderHInterface
 
     public function CreateOrder(CreateOrderRequest $request)
     {
-        
+        $orderHService = new OrderHService;
         try
         {
             DB::beginTransaction();
 
-            $orderNo = Constanta::$orderConst . date("YmdHis") . rand(100, 999);
+            $orderNo = $orderHService->generateOrderNo();
 
-            $orderH = new OrderH();
-            $orderH->agency_id = $request->agency_id;
-            $orderH->customer_id = $request->customer_id;
-            $orderH->order_dt = now();
-            $orderH->total_price = $request->total_price;
-            $orderH->order_no = $orderNo;
-            $orderH->order_status = Constanta::$orderStatusNew;
-            $orderH->save();
+            $orderH = $orderHService->createOrderH($orderNo, $request->customer_id, $request->agency_id, $request->order_dt, $request->order_status, $request->total_price);
 
             foreach($request->details as $detail)
             {
-                $strStartDate = $detail['start_dt'];
-                $strEndDate = $detail['end_dt'];
-            
-                if(strpos($strStartDate, "T") == true)
-                {
-                    $string = $detail->start_dt;
-                    $parts = explode("T", $string);
-                    $strStartDate = $parts[0];
-                }
+                $strStartDate = $orderHService->reformatDate($detail['start_dt']);
+                $strEndDate = $orderHService->reformatDate($detail['end_dt']);
 
-                if(strpos($strEndDate, "T") == true)
-                {
-                    $string = $detail->end_dt;
-                    $parts = explode("T", $string);
-                    $strEndDate = $parts[0];
-                }
-
-                $orderD = new OrderD();
-                $orderD->order_h_id = $orderH->order_h_id;
-                $orderD->package_h_id = $detail['package_h_id'];
-
-                $orderD->package_history_id = $orderD->package_h_id == null ? null : 
-                    PackageHistoryH::where('package_code', 
-                        (PackageH::where('package_h_id', $orderD->package_h_id)->first()->package_code)
-                    )->first()->package_history_h_id;
-                
-                $orderD->ref_hotel_id = $detail['ref_hotel_id'] == "" ? null : $detail['ref_hotel_id'];
-                $orderD->ref_attraction_id = $detail['ref_attraction_id'] == "" ? null : $detail['ref_attraction_id'];
-                $orderD->ref_vehicle_id = $detail['ref_vehicle_id'] == "" ? null : $detail['ref_vehicle_id'];
-                $orderD->start_dt = $strStartDate;
-                $orderD->end_dt = $strEndDate;
-                $orderD->price = $detail['price'];
-                $orderD->save();
+                $orderD = $orderHService->createOrderD(
+                    $orderH->order_h_id,
+                    $detail['package_h_id'],
+                    $detail['ref_hotel_id'],
+                    $detail['ref_attraction_id'],
+                    $detail['ref_vehicle_id'],
+                    $strStartDate,
+                    $strEndDate,
+                    $detail['price']
+                );
             }
 
             DB::commit();
@@ -185,21 +246,16 @@ class OrderHService implements OrderHInterface
 
     public function ApproveOrder(OrderHIdRequest $request)
     {
+        $orderHService = new OrderHService;
         try
         {
             DB::beginTransaction();
 
-            $orderH = OrderH::where('order_h_id', $request->order_h_id)->first();
-            $orderH->order_status = Constanta::$orderStatusApproved;
-            $orderH->update();
+            $orderHService->updateOrderStatus($request->order_h_id, Constanta::$orderStatusApproved);
 
-            $trxNo = Constanta::$orderConst . date("YmdHis") . rand(100, 999);
+            $trxNo = $orderHService->generateTrxNo();
 
-            $trx = new Trx();
-            $trx->trx_no = $trxNo;
-            $trx->order_h_id = $request->order_h_id;
-            $trx->payment_status = false;
-            $trx->save();
+            $trx = $orderHService->createTrx($trxNo, $request->order_h_id);
 
             DB::commit();
 

@@ -172,7 +172,7 @@ class RefHotelService implements RefHotelInterface
                     ]
                 );
 
-                $hotel = $hotel->update([
+                $hotel->update([
                     'hotel_name' => $request->hotel_name,
                     'description' => $request->description,
                     'address' => $request->address,
