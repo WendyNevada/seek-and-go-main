@@ -147,25 +147,28 @@ class RefVehicleService implements RefVehicleInterface
                     ]
                 );
 
-                if($request->hasFile('picture'))
+                if($request->picture_url)
                 {
-                    $image = $request->file('picture');
-                    $imageName =  $vehicle->vehicle_code . '_' . time() . '.' . $image->getClientOriginalName();
-                    $path = $image->storeAs(Constanta::$refVehiclePictureDirectory, $imageName, Constanta::$refPictureDisk);
-                    $url = Storage::url($path);
+                    if($request->hasFile('picture'))
+                    {
+                        $image = $request->file('picture');
+                        $imageName =  $vehicle->vehicle_code . '_' . time() . '.' . $image->getClientOriginalName();
+                        $path = $image->storeAs(Constanta::$refVehiclePictureDirectory, $imageName, Constanta::$refPictureDisk);
+                        $url = Storage::url($path);
 
-                    $refPicture = RefPicture::where('ref_vehicle_id', $vehicle->ref_vehicle_id)->first();
-                    if($refPicture != null)
-                    {
-                        $refPicture->image_url = $url;
-                        $refPicture->save();
-                    }
-                    else
-                    {
-                        $refPicture = new RefPicture();
-                        $refPicture->ref_vehicle_id = $vehicle->ref_vehicle_id;
-                        $refPicture->image_url = $url;
-                        $refPicture->save();
+                        $refPicture = RefPicture::where('ref_vehicle_id', $vehicle->ref_vehicle_id)->first();
+                        if($refPicture != null)
+                        {
+                            $refPicture->image_url = $url;
+                            $refPicture->save();
+                        }
+                        else
+                        {
+                            $refPicture = new RefPicture();
+                            $refPicture->ref_vehicle_id = $vehicle->ref_vehicle_id;
+                            $refPicture->image_url = $url;
+                            $refPicture->save();
+                        }
                     }
                 }
 

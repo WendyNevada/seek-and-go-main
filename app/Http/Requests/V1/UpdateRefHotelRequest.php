@@ -29,7 +29,8 @@ class UpdateRefHotelRequest extends FormRequest
             'qty' => ['required'],
             'promo_code' => ['nullable'],
             'base_price' => ['required'],
-            'picture' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif', 'max:10000']
+            'picture' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif', 'max:10000'],
+            'picture_url' => ['nullable', 'string']
         ];
     }
 }

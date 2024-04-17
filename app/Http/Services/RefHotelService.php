@@ -180,25 +180,28 @@ class RefHotelService implements RefHotelInterface
                     'promo_code' => $request->promo_code
                 ]);
 
-                if($request->hasFile('picture'))
+                if($request->picture_url == null)
                 {
-                    $image = $request->file('picture');
-                    $imageName =  $hotel->hotel_code . '_' . time() . '.' . $image->getClientOriginalName();
-                    $path = $image->storeAs(Constanta::$refHotelPictureDirectory, $imageName, Constanta::$refPictureDisk);
-                    $url = Storage::url($path);
+                    if($request->hasFile('picture'))
+                    {
+                        $image = $request->file('picture');
+                        $imageName =  $hotel->hotel_code . '_' . time() . '.' . $image->getClientOriginalName();
+                        $path = $image->storeAs(Constanta::$refHotelPictureDirectory, $imageName, Constanta::$refPictureDisk);
+                        $url = Storage::url($path);
 
-                    $refPicture = RefPicture::where('ref_hotel_id', $hotel->ref_hotel_id)->first();
-                    if($refPicture != null)
-                    {
-                        $refPicture->image_url = $url;
-                        $refPicture->save();
-                    }
-                    else
-                    {
-                        $refPicture = new RefPicture();
-                        $refPicture->ref_hotel_id = $hotel->ref_hotel_id;
-                        $refPicture->image_url = $url;
-                        $refPicture->save();
+                        $refPicture = RefPicture::where('ref_hotel_id', $hotel->ref_hotel_id)->first();
+                        if($refPicture != null)
+                        {
+                            $refPicture->image_url = $url;
+                            $refPicture->save();
+                        }
+                        else
+                        {
+                            $refPicture = new RefPicture();
+                            $refPicture->ref_hotel_id = $hotel->ref_hotel_id;
+                            $refPicture->image_url = $url;
+                            $refPicture->save();
+                        }
                     }
                 }
 
