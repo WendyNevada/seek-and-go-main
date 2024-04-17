@@ -4,9 +4,10 @@ import LoginPage from './views/Login-register-page/LoginPage';
 import { LoginProvider } from '@/context/LoginContext';
 import AgencyHomePage from './views/Agency-page/AgencyHomePage';
 import AgencyProductPage from './views/Agency-page/AgencyProductPage';
-import AgencyAddProductPage from './views/Agency-page/AgencyAddAttractionPage';
+import AgencyAddAttractionPage from './views/Agency-page/AgencyAddAttractionPage';
 import HomePage from './views/Home-Page/HomePage';
 import { useUserRole } from './context/CustomHook';
+import AgencyEditAttractionPage from './views/Agency-page/AgencyEditAttractionPage';
 
 function App() {
   return (
@@ -38,10 +39,11 @@ function AgencyRoutes() {
 
   return (
     <Routes>
-        <Route path="/DashBoard" element={<AgencyHomePage />} />
-      {/* <Route path="DashBoard" element={<AgencyHomePage />} /> */}
+        <Route path="/" element={<AgencyHomePage />} />
+        {/* <Route path="DashBoard" element={<AgencyHomePage />} /> */}
         <Route path="Product" element={<AgencyProductPage />} />
-        <Route path="AddProduct" element={<AgencyAddProductPage />} />
+        <Route path="AddAttraction" element={<AgencyAddAttractionPage />} />
+        <Route path="EditAttraction/:ref_attraction_id" element={<AgencyEditAttractionPage />} />
     </Routes>
   );
 }

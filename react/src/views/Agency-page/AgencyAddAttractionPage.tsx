@@ -2,7 +2,7 @@ import AddAttraction from '@/components/agency-exclusive/add-attraction/AddAttra
 import AgencyNavbar from '@/components/navbar/AgencyNavbar'
 import React from 'react'
 
-const AgencyAddProductPage = () => {
+const AgencyAddAttractionPage = () => {
   return (
     <div>
         <AgencyNavbar/>
@@ -14,4 +14,4 @@ const AgencyAddProductPage = () => {
   )
 }
 
-export default AgencyAddProductPage
+export default AgencyAddAttractionPage

@@ -18,7 +18,7 @@ const Navbar = () => {
         {
             text:"Product",
             icon:<HomeIcon/>,
-            link:"/Agency/DashBoard"
+            link:"/Agency"
         },
         {
             text:"About",

@@ -6,7 +6,7 @@ const ProductList = () => {
     const navigate = useNavigate();
 
     const onRoute = () => {
-        navigate('/Agency/AddProduct');
+        navigate('/Agency/AddAttraction');
     };
 
     return (

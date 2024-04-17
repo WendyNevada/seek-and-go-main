@@ -13,9 +13,12 @@ import axiosClient from '@/axios.client';
 import { Button } from '@/components/ui/button';
 import { AlertDialogProduct } from '../ProductComponent/DeleteProductAlert';
 import EditIcon from '@mui/icons-material/Edit';
+import { useNavigate } from 'react-router-dom';
 
 const AttractionList = () => {
     const [attractions, setAttractions] = useState<GetAttractionModel[]>([]);
+    const navigate = useNavigate();
+    //const [selectedAttraction, setSelectedAttraction] = useState<GetAttractionModel | null>(null);
     const { user } = useLogin();
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -32,9 +35,13 @@ const AttractionList = () => {
                 console.error('Error fetching attractions:', error);
             }
         };
-
         fetchAttractions();
     }, []);
+
+    const onEditAttraction = (refAttractionId: number) => {
+        //ref_attraction_id
+        navigate(`/Agency/EditAttraction/${refAttractionId}`)
+    }
 
     //api untuk get
     //GetActiveAttractionByAgencyId
@@ -55,7 +62,7 @@ const AttractionList = () => {
                         </CardContent>
                         {/* Add more card components based on other properties */}
                         <CardFooter>
-                            <Button variant='primary'>{<EditIcon/>}</Button>
+                            <Button variant='primary' onClick={ () => onEditAttraction(attraction.ref_attraction_id)}>{<EditIcon/>}</Button>
                             <AlertDialogProduct attractionId={attraction.ref_attraction_id}/>
                             {/* <Button className='ml-2' variant="destructive">Delete</Button> */}
                         </CardFooter>

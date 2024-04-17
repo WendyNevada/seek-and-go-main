@@ -1,5 +1,4 @@
 import axiosClient from '@/axios.client';
-import Cookies from 'js-cookie';
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -49,6 +48,7 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
+      handleNavigation(JSON.parse(storedUser));
     }
   }, []);
 
@@ -79,7 +79,7 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   const handleNavigation = (userData: User) => {
     if (userData.role === "Agency") {
-      navigate('/Agency/DashBoard');
+      navigate('/Agency');
     } else {
       navigate('/');
     }
@@ -90,6 +90,7 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     localStorage.removeItem('user');
     // Clear the user data
     setUser(null);
+    navigate('/Login');
   };
 
   // Value to be provided by the context
