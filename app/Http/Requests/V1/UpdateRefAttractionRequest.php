@@ -23,10 +23,6 @@ class UpdateRefAttractionRequest extends FormRequest
     {
         return [
             'ref_attraction_id' => ['required'],
-            'area_1' => ['required'],
-            'area_2' => ['required'],
-            'area_3' => ['required'],
-            'area_4' => ['required'],
             'attraction_name' => ['required'],
             'description' => ['required'],
             'address' => ['required'],

@@ -164,13 +164,6 @@ class RefHotelService implements RefHotelInterface
             {
                 DB::beginTransaction();
 
-                $refZipcodeId = RefZipcode::
-                    where('area_1', $request->area_1)->
-                    where('area_2', $request->area_2)->
-                    where('area_3', $request->area_3)->
-                    where('area_4', $request->area_4)->
-                    first()->ref_zipcode_id;
-
                 $agencyAffiliate = AgencyAffiliate::where('ref_hotel_id', $hotel->ref_hotel_id)->first();
 
                 $agencyAffiliate->update(
@@ -180,7 +173,6 @@ class RefHotelService implements RefHotelInterface
                 );
 
                 $hotel = $hotel->update([
-                    'ref_zipcode_id' => $refZipcodeId,
                     'hotel_name' => $request->hotel_name,
                     'description' => $request->description,
                     'address' => $request->address,

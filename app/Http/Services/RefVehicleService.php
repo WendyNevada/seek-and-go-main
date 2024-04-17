@@ -122,13 +122,6 @@ class RefVehicleService implements RefVehicleInterface
             {
                 DB::beginTransaction();
 
-                $refZipcodeId = RefZipcode::
-                    where('area_1', $request->area_1)->
-                    where('area_2', $request->area_2)->
-                    where('area_3', $request->area_3)->
-                    where('area_4', $request->area_4)->
-                    first()->ref_zipcode_id;
-
                 $agencyAffiliate = AgencyAffiliate::where('ref_vehicle_id', $vehicle->ref_vehicle_id)->first();
 
                 $agencyAffiliate
@@ -141,7 +134,6 @@ class RefVehicleService implements RefVehicleInterface
                 $vehicle = $vehicle
                 ->update(
                     [
-                        'ref_zipcode_id' => $refZipcodeId,
                         'vehicle_type' => $request->vehicle_type,
                         'vehicle_brand' => $request->vehicle_brand,
                         'vehicle_series' => $request->vehicle_series,

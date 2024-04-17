@@ -128,7 +128,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('CreateOrder', 'OrderHController@CreateOrder');
 
-    Route::post('GetOrderDashboard', 'OrderHController@GetOrderDashboard');
+    Route::post('GetNewOrderDashboard', 'OrderHController@GetNewOrderDashboard');
 
     Route::post('GetNewOrderForCustomer', 'OrderHController@GetNewOrderForCustomer');
 

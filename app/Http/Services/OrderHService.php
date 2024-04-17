@@ -19,57 +19,96 @@ use App\Http\Requests\V2\GetOrderDashboardRequest;
 class OrderHService implements OrderHInterface
 {
 
-    public function GetOrderDashboard(GetOrderDashboardRequest $request)
+    #region Private Function
+
+    private function getOrderByAgencyAndStatusAndLimit($agency_id, $order_status, $limit)
     {
         $order = OrderH::where([
-            ['agency_id', $request->agency_id],
-            ['order_status', Constanta::$orderStatusNew]
-        ])->with('orderDs')->orderBy('order_dt', 'asc')->limit(Constanta::$orderDashboardDataCount)->get();
+            ['agency_id', $agency_id],
+            ['order_status', $order_status]
+        ])->with('orderDs')->orderBy('order_dt', 'asc')->limit($limit)->get();
         
+        return $order;
+    }
 
+    private function getOrderByCustomerAndStatusWithLimit($customer_id, $order_status, $limit = null)
+    {
+        if($limit != null)
+        {
+            $order = OrderH::where([
+                ['customer_id', $customer_id],
+                ['order_status', $order_status]
+            ])->with('orderDs')->orderBy('order_dt', 'asc')->limit($limit)->get();
+        }
+        else
+        {
+            $order = OrderH::where([
+                ['customer_id', $customer_id],
+                ['order_status', $order_status]
+            ])->with('orderDs')->orderBy('order_dt', 'asc')->get();
+        }
+
+        return $order;
+    }
+
+    private function getOrderHByIdWithOrderD($order_h_id)
+    {
+        $order = OrderH::where('order_h_id', $order_h_id)->with('orderDs')->get();
+
+        return $order;
+    }
+
+    #endregion
+
+    #region Public Function
+    public function GetNewOrderDashboard(GetOrderDashboardRequest $request)
+    {
+        $orderHService = new OrderHService;
+
+        $order = $orderHService->getOrderByAgencyAndStatusAndLimit($request->agency_id, Constanta::$orderStatusNew, Constanta::$orderDashboardDataCount);
+        
         return response()->json($order);
     }
 
     public function GetNewOrderForCustomer(CustIdRequest $request)
     {
-        $order = OrderH::where([
-            ['customer_id', $request->customer_id],
-            ['order_status', Constanta::$orderStatusNew]
-        ])->with('orderDs')->orderBy('order_dt', 'asc')->get();
+        $orderHService = new OrderHService;
+
+        $order = $orderHService->getOrderByCustomerAndStatusWithLimit($request->customer_id, Constanta::$orderStatusNew);
         
         return response()->json($order);
     }
 
     public function GetApvOrderForCustomer(CustIdRequest $request)
     {
-        $order = OrderH::where([
-            ['customer_id', $request->customer_id],
-            ['order_status', Constanta::$orderStatusApproved]
-        ])->with('orderDs')->orderBy('order_dt', 'asc')->get();
+        $orderHService = new OrderHService;
+
+        $order = $orderHService->getOrderByCustomerAndStatusWithLimit($request->customer_id, Constanta::$orderStatusApproved);
         
         return response()->json($order);
     }
 
     public function GetRetryPayOrderForCustomer(CustIdRequest $request)
     {
-        $order = OrderH::where([
-            ['customer_id', $request->customer_id],
-            ['order_status', Constanta::$orderStatusRetryPay]
-        ])->with('orderDs')->orderBy('order_dt', 'asc')->limit(Constanta::$orderDashboardDataCount)->get();
+        $orderHService = new OrderHService;
+
+        $order = $orderHService->getOrderByCustomerAndStatusWithLimit($request->customer_id, Constanta::$orderStatusRetryPay, Constanta::$orderDashboardDataCount);
         
         return response()->json($order);
     }
 
     public function GetOrderById(GetOrderByIdRequest $request)
     {
-        $order = OrderH::where('order_h_id', $request->order_h_id)->with('orderDs')->get();
+        $orderHService = new OrderHService;
+
+        $order = $orderHService->getOrderHByIdWithOrderD($request->order_h_id);
         
         return response()->json($order);
     }
 
     public function CreateOrder(CreateOrderRequest $request)
     {
-
+        
         try
         {
             DB::beginTransaction();
@@ -316,6 +355,8 @@ class OrderHService implements OrderHInterface
         
         return response()->json($order);
     }
+
+    #endregion
 
     
 }
