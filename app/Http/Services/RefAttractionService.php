@@ -173,13 +173,6 @@ class RefAttractionService implements RefAttractionInterface
             {
                 DB::beginTransaction();
 
-                $refZipcodeId = RefZipcode::
-                    where('area_1', $request->area_1)->
-                    where('area_2', $request->area_2)->
-                    where('area_3', $request->area_3)->
-                    where('area_4', $request->area_4)->
-                    first()->ref_zipcode_id;
-
                 $agencyAffiliate = AgencyAffiliate::where('ref_attraction_id', $attraction->ref_attraction_id)->first();
 
                 $agencyAffiliate->update(
@@ -191,7 +184,6 @@ class RefAttractionService implements RefAttractionInterface
                 $attraction = $attraction
                 ->update(
                     [
-                        'ref_zipcode_id' => $refZipcodeId,
                         'attraction_name' => $request->attraction_name,
                         'description' => $request->description,
                         'address' => $request->address,

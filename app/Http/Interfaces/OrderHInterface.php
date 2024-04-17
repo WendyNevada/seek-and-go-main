@@ -12,7 +12,7 @@ interface OrderHInterface
 {
     public function CreateOrder(CreateOrderRequest $request);
 
-    public function GetOrderDashboard(GetOrderDashboardRequest $request);
+    public function GetNewOrderDashboard(GetOrderDashboardRequest $request);
 
     public function GetNewOrderForCustomer(CustIdRequest $request);
 
