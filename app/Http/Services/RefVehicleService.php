@@ -304,6 +304,8 @@ class RefVehicleService implements RefVehicleInterface
 
         $agencyAffiliate = AgencyAffiliate::where('ref_vehicle_id', $request->ref_vehicle_id)->first();
 
+        $address = RefZipcode::where('ref_zipcode_id', $vehicle->ref_zipcode_id)->first();
+
         if($vehicle != null)
         {
             if($vehiclePicture != null)
@@ -313,7 +315,8 @@ class RefVehicleService implements RefVehicleInterface
                     'message' => "Success",
                     'vehicle' => $vehicle,
                     'picture_url' => $vehiclePicture->image_url,
-                    'base_price' => $agencyAffiliate->base_price
+                    'base_price' => $agencyAffiliate->base_price,
+                    'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
                 ], 200);
             }
             else
@@ -323,7 +326,8 @@ class RefVehicleService implements RefVehicleInterface
                     'message' => "Success",
                     'vehicle' => $vehicle,
                     'picture_url' => "-",
-                    'base_price' => $agencyAffiliate->base_price
+                    'base_price' => $agencyAffiliate->base_price,
+                    'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
                 ], 200);
             }
         }
@@ -334,7 +338,8 @@ class RefVehicleService implements RefVehicleInterface
                 'message' => "Data not found",
                 'vehicle' => "-",
                 'picture_url' => "-",
-                'base_price' => "-"
+                'base_price' => "-",
+                'address' => "-"
             ], 400);
         }
     }
