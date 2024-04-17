@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react'
+import React, { useState } from 'react'
 import { agencySchema } from '../utils/schema';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -6,9 +6,10 @@ import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import axiosClient from '@/axios.client';
 
 const AgencyRegisterComponent = () => {
+    const navigate = useNavigate();
+
     const form = useForm<z.infer<typeof agencySchema>>({
         resolver: zodResolver(agencySchema),
             defaultValues: {
@@ -24,24 +25,24 @@ const AgencyRegisterComponent = () => {
         },
     });
 
-
     const onSubmit = (values: z.infer<typeof agencySchema>) => {
         console.log(values);
-
-        axiosClient.post('/v1/CreateAccountAgency', values);
-
-        form.reset({
-            agency_name: "",
-            account_name: "",
-            email: "",
-            password: "",
-            phone: "",
-            npwp:"",
-            location:"",
-            confirmPassword:"",
-            role:"Agency"
-        });
-
+        try{
+            axiosClient.post('/v1/CreateAccountAgency', values);
+            toast({
+                variant: "success",
+                description: "Register Success."
+            });
+            navigate('/Login');
+        }catch (response) {
+            const axiosError = response as AxiosError; // Cast the error to AxiosError
+            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
+                toast({
+                    variant: "destructive",
+                    description: (axiosError.response?.data as { message: string })?.message,
+                });
+            }
+        }
     }
 
   return (

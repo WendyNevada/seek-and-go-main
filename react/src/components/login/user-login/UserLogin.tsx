@@ -11,6 +11,7 @@ import { useLogin } from '@/context/LoginContext'
 const UserLogin = () => {
     //const userLogin:UserLogin = new UserLogin();
     const { login } = useLogin();
+    // const navigate = useNavigate();
 
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
@@ -27,20 +28,6 @@ const UserLogin = () => {
             console.log(error);
         }
     };
-    // const onSubmit = (values: z.infer<typeof loginSchema>) => {
-    //     console.log(values)
-
-    //     axiosClient.post('/v1/Login', values)
-    //     .then(response => {
-    //         console.log(response.data)
-    //         userLogin.account_id = response.data.account_id,
-    //         userLogin.role = response.data.role,
-    //         console.log(userLogin)
-    //         localStorage.setItem('token', response.data.token);
-    //     }).catch(error => {
-    //         console.log(error);
-    //     });
-    // };
 
     return (
         <div className="min-h-50 w-50 p-0 sm:p-12">
@@ -53,7 +40,7 @@ const UserLogin = () => {
                             name="email"
                             render={({ field }) => (
                                 <FormItem className="custom-field">
-                                    <FormLabel>{"Customer Name"}</FormLabel>
+                                    <FormLabel>{"Email"}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input

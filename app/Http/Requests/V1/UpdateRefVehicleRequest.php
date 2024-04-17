@@ -23,7 +23,10 @@ class UpdateRefVehicleRequest extends FormRequest
     {
         return [
             'ref_vehicle_id' => 'required',
-            'ref_zipcode_id' => 'required',
+            'area_1' => ['required'],
+            'area_2' => ['required'],
+            'area_3' => ['required'],
+            'area_4' => ['required'],
             'vehicle_type' => 'required',
             'vehicle_brand' => 'required',
             'vehicle_series' => 'required',
@@ -33,9 +36,9 @@ class UpdateRefVehicleRequest extends FormRequest
             'description' => 'required',
             'with_driver' => 'required',
             'address' => 'required',
-            'is_active' => 'required',
             'qty' => 'required',
             'promo_code' => 'nullable',
+            'base_price' => ['required'],
             'picture' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif', 'max:2048']
         ];
     }

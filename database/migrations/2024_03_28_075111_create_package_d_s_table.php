@@ -21,8 +21,8 @@ return new class extends Migration
             $table->foreign('ref_attraction_id')->references('ref_attraction_id')->on('ref_attractions')->onDelete('cascade');
             $table->bigInteger('ref_vehicle_id')->unsigned()->nullable();
             $table->foreign('ref_vehicle_id')->references('ref_vehicle_id')->on('ref_vehicles')->onDelete('cascade');
-            $table->dateTime('start_dt');
-            $table->dateTime('end_dt');
+            $table->dateTime('start_dt')->nullable();
+            $table->dateTime('end_dt')->nullable();
             $table->timestamps();
         });
     }

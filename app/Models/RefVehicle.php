@@ -10,6 +10,7 @@ class RefVehicle extends Model
     use HasFactory;
 
     protected $fillable = [
+        'ref_vehicle_id',
         'vehicle_code',
         'ref_zipcode_id',
         'vehicle_type',

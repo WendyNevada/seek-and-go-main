@@ -1,5 +1,4 @@
 "use client"
-import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -19,8 +18,12 @@ import {
 } from "@/components/ui/popover"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import axiosClient from '@/axios.client';
+import { useNavigate } from 'react-router-dom';
+import { toast } from '@/components/ui/use-toast';
+import axios, { AxiosError } from 'axios';
 
 const CustomerRegisterComponent = () => {
+    const navigate = useNavigate();
     // const {setUser, setToken} = useStateContext()
     // const [errors, setErrors] = useState(null)
 
@@ -48,20 +51,22 @@ const CustomerRegisterComponent = () => {
         console.log(values.birth_date);
         console.log(values);
 
-        axiosClient.post('/v1/CreateAccountCustomer', values)
-
-        form.reset({
-            customer_name: "",
-            account_name: "",
-            email: "",
-            phone: "",
-            birth_date: new Date(),
-            gender: "",
-            password: "",
-            confirmPassword: "",
-            role: "Customer"
-        });
-
+        try{
+            axiosClient.post('/v1/CreateAccountCustomer', values);
+            toast({
+                variant: "success",
+                description: "Register Success."
+            });
+            navigate('/Login');
+        }catch (response) {
+            const axiosError = response as AxiosError; // Cast the error to AxiosError
+            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
+                toast({
+                    variant: "destructive",
+                    description: (axiosError.response?.data as { message: string })?.message,
+                });
+            }
+        }
     //   .then(({data}) => {
     //     setUser(data.user)
     //     setToken(data.token);

@@ -16,6 +16,7 @@ class PackageH extends Model
         'package_name',
         'description',
         'is_custom',
+        'custom_status',
         'promo_code',
         'package_price',
         'is_active',
@@ -25,7 +26,7 @@ class PackageH extends Model
     protected $primaryKey = 'package_h_id';
 
     public function packageDs(){
-        return $this->hasMany(PackageD::class);
+        return $this->hasMany(PackageD::class, 'package_h_id');
     }
 
     public function customer(){

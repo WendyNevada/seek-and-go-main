@@ -1,28 +1,37 @@
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import React, { useState } from 'react'
+import React, { useState, ChangeEvent } from 'react'
 import { z } from 'zod'
 import { addAttractionSchema } from './utils/schema'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/ui/input'
 import { ProvinceCombobox } from './ComboBox.tsx/ProvinceComboBox'
-import { CityCombobox } from './ComboBox.tsx/CityCombobox'
-import { KecamatanCombobox } from './ComboBox.tsx/KecamatanCombobox'
-import { KelurahanCombobox } from './ComboBox.tsx/KelurahanCombobox'
+import { CityCombobox } from './ComboBox.tsx/cityComboBox/CityCombobox'
+import { KecamatanCombobox } from './ComboBox.tsx/kecamatanCombobox/KecamatanCombobox'
+import { KelurahanCombobox } from './ComboBox.tsx/kelurahanCombobox/KelurahanCombobox'
 import { Textarea } from '@/components/ui/textarea'
-import { Switch } from '@/components/ui/switch'
+import axiosClient from '@/axios.client'
+import { toast } from '@/components/ui/use-toast'
+import axios, { AxiosError } from 'axios'
+import { useNavigate } from 'react-router-dom'
+import { useLogin } from '@/context/LoginContext'
 
-const AddProduct = () => {
+const AddAttraction = () => {
+    //const attractionObj:AttractionObj = new AttractionObj();
+    const [imageUrl, setImageUrl] = useState('');
+    const navigate = useNavigate();
+    const { user } = useLogin();
+
     const form = useForm<z.infer<typeof addAttractionSchema>>({
         resolver: zodResolver(addAttractionSchema),
         defaultValues: {
             attraction_code: "",
             picture: undefined,
             area_1: "",
-            // area_2: "",
-            // area_3: "",
-            // area_4: "",
+            area_2: "",
+            area_3: "",
+            area_4: "",
             attraction_name: "",
             description: "",
             address: "",
@@ -38,16 +47,75 @@ const AddProduct = () => {
 
     const handleProvinceSelect = (province:string) => {
         form.setValue("area_1",province);
-        console.log("ini provinsi" + province);
     };
 
-    const onSubmit = (values: z.infer<typeof addAttractionSchema>) => {
-        console.log(values.area_1)
-        console.log(values);
+    const handleCitySelect = (city:string) => {
+        form.setValue("area_2",city);
+    }
+
+    const handleKecamatanSelect = (kecamatan:string) => {
+        form.setValue("area_3",kecamatan);
+    }
+
+    const handleKelurahanSelect = (kelurahan:string) => {
+        form.setValue("area_4",kelurahan);
+    }
+
+    const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files && event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            const result = reader.result as string
+            setImageUrl(result);
+        };
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const onSubmit = async (values: z.infer<typeof addAttractionSchema>) => {
+
+        const formData = new FormData();
+        formData.append('agency_id', String(user?.agency_id)); // Assuming agency_id is a string
+        formData.append('attraction_code', values.attraction_code);
+        formData.append('area_1', values.area_1);
+        formData.append('area_2', values.area_2);
+        formData.append('area_3', values.area_3);
+        formData.append('area_4', values.area_4);
+        formData.append('attraction_name', values.attraction_name);
+        formData.append('description', values.description);
+        formData.append('address', values.address);
+        formData.append('rating', '0'); // Assuming rating is a string or number
+        formData.append('is_active', '1'); // Convert boolean to string
+        formData.append('qty', values.qty.toString()); // Convert number to string
+        formData.append('promo_code', values.promo_code);
+        formData.append('base_price', values.base_price.toString()); // Convert number to string
+        formData.append('promo_code_affiliate', values.promo_code_affiliate);
+
+        // Append the picture file
+        formData.append('picture', values.picture[0]); // Assuming values.picture is a FileList
+
         try{
-            console.log(values);
-        }catch(error){
-            console.log(error);
+            await axiosClient.post('/v1/AddAttraction', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data' // Set the content type to multipart/form-data
+                }
+            });
+            toast({
+                variant: "success",
+                description: "Item added."
+            });
+            navigate('/Agency/DashBoard');
+        }catch (response) {
+            const axiosError = response as AxiosError; // Cast the error to AxiosError
+            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
+                toast({
+                    variant: "destructive",
+                    description: (axiosError.response?.data as { message: string })?.message,
+                });
+            }
         }
     }
 
@@ -78,7 +146,7 @@ const AddProduct = () => {
                             <FormField
                                 control={form.control}
                                 name="picture"
-                                render={({ field }) => (
+                                render={() => (
                                     <FormItem className="custom-field">
                                         <FormLabel>{"Picture"}</FormLabel>
                                         <FormMessage />
@@ -88,11 +156,14 @@ const AddProduct = () => {
                                                 type="file"
                                                 accept='.jpg, .jpeg, .png'
                                                 {...fileRef}
-                                                // onChange = { (event) =>
-                                                //     field.onChange(event.target?.files?.[0] ?? undefined)
-                                                // }
+                                                onChange={handleImageUpload}
                                             />
                                         </FormControl>
+                                        {imageUrl && (
+                                            <div>
+                                                <img src={imageUrl} alt="Uploaded" style={{ maxWidth: '100%', marginTop: '10px' }} />
+                                            </div>
+                                        )}
                                     </FormItem>
                                 )}
                             />
@@ -110,31 +181,31 @@ const AddProduct = () => {
                                         </FormItem>
                                     )}
                                 />
-                                {/* <FormField
+                                <FormField
                                     control={form.control}
                                     name="area_2"
-                                    render={({ field }) => (
+                                    render={() => (
                                         <FormItem className="custom-field mt-4 flex flex-col">
                                             <FormLabel>{"City"}</FormLabel>
                                             <FormMessage />
                                             <FormControl>
-                                                <CityCombobox/>
+                                                <CityCombobox onSelectCity={handleCitySelect} selectedProvince={form.watch("area_1")}/>
                                             </FormControl>
                                         </FormItem>
                                     )}
-                                /> */}
+                                />
                             </div>
 
-                            {/* <div className="flex flex-row">
+                            <div className="flex flex-row">
                                 <FormField
                                     control={form.control}
                                     name="area_3"
-                                    render={({ field }) => (
+                                    render={() => (
                                         <FormItem className="custom-field mt-4 mr-8 flex flex-col">
                                             <FormLabel>{"District"}</FormLabel>
                                             <FormMessage />
                                             <FormControl>
-                                                <KecamatanCombobox/>
+                                                <KecamatanCombobox onSelectKecamatan={handleKecamatanSelect} selectedCity={form.watch("area_2")}/>
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -142,17 +213,17 @@ const AddProduct = () => {
                                 <FormField
                                     control={form.control}
                                     name="area_4"
-                                    render={({ field }) => (
+                                    render={() => (
                                         <FormItem className="custom-field mt-4 flex flex-col">
                                             <FormLabel>{"Subdistrict"}</FormLabel>
                                             <FormMessage />
                                             <FormControl>
-                                                <KelurahanCombobox/>
+                                                <KelurahanCombobox onSelectKelurahan={handleKelurahanSelect} selectedKecamatan={form.watch("area_3")}/>
                                             </FormControl>
                                         </FormItem>
                                     )}
                                 />
-                            </div> */}
+                            </div>
 
                             <FormField
                                 control={form.control}
@@ -205,7 +276,7 @@ const AddProduct = () => {
                                     </FormItem>
                                 )}
                             />
-                            <FormField
+                            {/* <FormField
                                 control={form.control}
                                 name="is_active"
                                 render={({ field }) => (
@@ -221,7 +292,7 @@ const AddProduct = () => {
                                         </FormControl>
                                     </FormItem>
                                 )}
-                            />
+                            /> */}
                             <FormField
                                 control={form.control}
                                 name="qty"
@@ -275,7 +346,8 @@ const AddProduct = () => {
                             />
 
                             <div className="justify-center flex">
-                                <Button type="submit" className='mt-4'>Add Attraction Product</Button>
+                                <Button type="submit" className='mt-4'>Add Attraction Product
+                                </Button>
                             </div>
                         </form>
                     </Form>
@@ -284,4 +356,4 @@ const AddProduct = () => {
     )
 }
 
-export default AddProduct
+export default AddAttraction

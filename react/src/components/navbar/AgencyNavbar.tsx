@@ -10,6 +10,7 @@ import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded'
 import { HiOutlineBars3 } from 'react-icons/hi2'
 import { Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 import Login from '@mui/icons-material/Login';
+import { Link } from 'react-router-dom'
 
 const Navbar = () => {
     const [openMenu, setOpenMenu] = useState(false)
@@ -72,8 +73,8 @@ const Navbar = () => {
             </div>
 
             <div className='w-full hidden flex lg:flex lg:items-center lg:w-auto'>
-                <a href='/Agency/DashBoard' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Dashboard</a>
-                <a href="/Agency/Product" className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Product</a>
+                <Link to='/Agency/DashBoard' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Dashboard</Link>
+                <Link to="/Agency/Product" className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Product</Link>
                 {/* <a href='\About' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>About</a>
                 <a href='\Detail' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Details</a>
                 <a href='' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Contact</a>

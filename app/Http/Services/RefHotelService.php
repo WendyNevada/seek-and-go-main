@@ -2,16 +2,19 @@
 
 namespace App\Http\Services;
 
-use App\Http\Interfaces\RefHotelInterface;
 use App\Models\RefHotel;
+use App\Models\Constanta;
+use App\Models\RefPicture;
+use App\Models\RefZipcode;
+use App\Models\AgencyAffiliate;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\V2\AgencyIdRequest;
+use App\Http\Interfaces\RefHotelInterface;
 use App\Http\Requests\V1\StoreRefHotelRequest;
 use App\Http\Requests\V1\UpdateRefHotelRequest;
 use App\Http\Requests\V2\GetRefHotelByIdRequest;
-use App\Models\AgencyAffiliate;
-use App\Models\Constanta;
-use App\Models\RefPicture;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\V2\RefHotelIdRequest;
 
 class RefHotelService implements RefHotelInterface
 {
@@ -21,24 +24,28 @@ class RefHotelService implements RefHotelInterface
 
         $hotelPicture = RefPicture::where('ref_hotel_id', $request->ref_hotel_id)->first();
 
+        $agencyAffiliate = AgencyAffiliate::where('ref_hotel_id', $request->ref_hotel_id)->first();
+
         if($hotel != null)
         {
             if($hotelPicture != null)
             {
                 return response()->json([
                     'status' => "ok",
-                    'message' => "success",
+                    'message' => "Success",
                     'hotel' => $hotel,
-                    'picture_url' => $hotelPicture->image_url
+                    'picture_url' => $hotelPicture->image_url,
+                    'base_price' => $agencyAffiliate->base_price
                 ], 200);
             }
             else
             {
                 return response()->json([
                     'status' => "ok",
-                    'message' => "success",
+                    'message' => "Success",
                     'hotel' => $hotel,
-                    'picture_url' => "-"
+                    'picture_url' => "-",
+                    'base_price' => $agencyAffiliate->base_price
                 ], 200);
             }
         }
@@ -48,7 +55,8 @@ class RefHotelService implements RefHotelInterface
                 'status' => "error",
                 'message' => "Data not found",
                 'hotel' => "-",
-                'picture_url' => "-"
+                'picture_url' => "-",
+                'base_price' => "-"
             ], 400);
         }
     }
@@ -63,16 +71,23 @@ class RefHotelService implements RefHotelInterface
             {
                 DB::beginTransaction();
 
+                $refZipcodeId = RefZipcode::
+                    where('area_1', $request->area_1)->
+                    where('area_2', $request->area_2)->
+                    where('area_3', $request->area_3)->
+                    where('area_4', $request->area_4)->
+                    first()->ref_zipcode_id;
+
                 $hotel = RefHotel::
                 create(
                     [
                         'hotel_code' => $request->hotel_code,
-                        'ref_zipcode_id' => $request->ref_zipcode_id,
+                        'ref_zipcode_id' => $refZipcodeId,
                         'hotel_name' => $request->hotel_name,
                         'description' => $request->description,
                         'address' => $request->address,
                         'rating' => $request->rating,
-                        'is_active' => $request->is_active,
+                        'is_active' => true,
                         'qty' => $request->qty,
                         'promo_code' => $request->promo_code
                     ]
@@ -107,7 +122,7 @@ class RefHotelService implements RefHotelInterface
 
                 return response()->json([
                     'status' => "ok",
-                    'message' => "success",
+                    'message' => "Hotel added successfully",
                     'ref_hotel_id' => $refHotelId
                 ], 200);
             }
@@ -115,7 +130,7 @@ class RefHotelService implements RefHotelInterface
             {
                 return response()->json([
                     'status' => "error",
-                    'message' => "data already exist",
+                    'message' => "Hotel code already exists",
                     'ref_hotel_id' => "-"
                 ], 400);
             }
@@ -142,12 +157,26 @@ class RefHotelService implements RefHotelInterface
             {
                 DB::beginTransaction();
 
+                $refZipcodeId = RefZipcode::
+                    where('area_1', $request->area_1)->
+                    where('area_2', $request->area_2)->
+                    where('area_3', $request->area_3)->
+                    where('area_4', $request->area_4)->
+                    first()->ref_zipcode_id;
+
+                $agencyAffiliate = AgencyAffiliate::where('ref_hotel_id', $hotel->ref_hotel_id)->first();
+
+                $agencyAffiliate->update(
+                    [
+                        'base_price' => $request->base_price
+                    ]
+                );
+
                 $hotel = $hotel->update([
-                    'ref_zipcode_id' => $request->ref_zipcode_id,
+                    'ref_zipcode_id' => $refZipcodeId,
                     'hotel_name' => $request->hotel_name,
                     'description' => $request->description,
                     'address' => $request->address,
-                    'is_active' => $request->is_active,
                     'qty' => $request->qty,
                     'promo_code' => $request->promo_code
                 ]);
@@ -178,7 +207,7 @@ class RefHotelService implements RefHotelInterface
 
                 return response()->json([
                     'status' => "ok",
-                    'message' => "success",
+                    'message' => "Hotel edited successfully",
                     'ref_hotel_id' => $request->ref_hotel_id
                 ], 200);
             }
@@ -186,7 +215,7 @@ class RefHotelService implements RefHotelInterface
             {
                 return response()->json([
                     'status' => "error",
-                    'message' => "data not found",
+                    'message' => "Data not found",
                     'ref_hotel_id' => "-"
                 ], 400);
             }
@@ -203,13 +232,54 @@ class RefHotelService implements RefHotelInterface
         }
     }
 
+    public function DeactivateHotelById(RefHotelIdRequest $request)
+    {
+        try
+        {
+            $hotel = RefHotel::where('ref_hotel_id', $request->ref_hotel_id)->first();
+
+            if($hotel != null)
+            {
+                $hotel->update(
+                    [
+                        'is_active' => '0'
+                    ]
+                );
+
+                return response()->json([
+                    'status' => "ok",
+                    'message' => "Deactivate success",
+                    'ref_hotel_id' => $request->ref_hotel_id
+                ], 200);
+            }
+            else
+            {
+                return response()->json([
+                    'status' => "error",
+                    'message' => "Data not found",
+                    'ref_hotel_id' => $request->ref_hotel_id
+                ], 400);
+            }
+        }
+        catch (\Exception $e)
+        {
+            return response()->json([
+                'status' => "error",
+                'message' => $e->getMessage(),
+                'ref_hotel_id' => "-"
+            ], 500);
+        }
+    }
+
     public function GetHotelHomepage()
     {
-        $hotel = RefHotel::orderBy('rating', 'desc')->limit(Constanta::$homepageDataCount)->get();
+        $hotel = RefHotel::where('is_active', '1')->orderBy('rating', 'desc')->limit(Constanta::$homepageDataCount)->get();
 
         foreach ($hotel as $key => $value)
         {
             $picture = RefPicture::where('ref_hotel_id', $value->ref_hotel_id)->first();
+
+            $base_price = AgencyAffiliate::where('ref_hotel_id', $value->ref_hotel_id)->first()->base_price;
 
             if($picture != null)
             {
@@ -221,10 +291,24 @@ class RefHotelService implements RefHotelInterface
             }
 
             $value->image_url = $image_url;
+            $value->base_price = $base_price;
         }
 
         return response()->json($hotel);
     }
 
+    public function GetActiveHotelByAgencyId(AgencyIdRequest $request)
+    {
+        $hotel = RefHotel::
+        join('agency_affiliates', 'ref_hotels.ref_hotel_id', '=', 'agency_affiliates.ref_hotel_id')->
+        leftjoin('ref_pictures', 'ref_hotels.ref_hotel_id', '=', 'ref_pictures.ref_hotel_id')->
+        select('ref_hotels.*', 'agency_affiliates.base_price', 'ref_pictures.image_url')->
+        where('ref_hotels.is_active', true)->
+        where('agency_affiliates.agency_id', $request->agency_id)->
+        limit(Constanta::$homepageDataCount)->
+        get();
+
+        return response()->json($hotel);
+    }
     
 }

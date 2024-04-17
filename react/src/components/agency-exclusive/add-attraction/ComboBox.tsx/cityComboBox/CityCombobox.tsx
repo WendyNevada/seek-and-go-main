@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+import React, {useState} from "react"
 import { Check, ChevronsUpDown } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -18,33 +18,20 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { useCityQuery } from "./CityCombobox-hook"
 
-const frameworks = [
-  {
-    value: "city_1",
-    label: "city 1",
-  },
-  {
-    value: "city_2",
-    label: "city 2",
-  },
-  {
-    value: "city_3",
-    label: "city 3",
-  },
-  {
-    value: "city_4",
-    label: "city 4",
-  },
-  {
-    value: "city_5",
-    label: "city 5",
-  },
-]
-
-export function CityCombobox() {
-  const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState("")
+    interface CityComboboxProps {
+        onSelectCity: (city: string) => void;
+        selectedProvince: string;
+    }
+    interface City {
+        value: string;
+        label: string;
+    }
+export function CityCombobox({onSelectCity, selectedProvince} : CityComboboxProps) {
+  const [open, setOpen] = useState(false)
+  const [value, setValue] = useState("")
+  const {cities, loading}= useCityQuery({ selectedProvince });
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -56,7 +43,7 @@ export function CityCombobox() {
           className="w-[200px] justify-between"
         >
           {value
-            ? frameworks.find((framework) => framework.value === value)?.label
+            ? cities.find((cities:City) => cities.value === value)?.label
             : "Select City..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -64,30 +51,36 @@ export function CityCombobox() {
       <PopoverContent className="w-[200px] p-0">
         <Command>
           <CommandInput placeholder="Search City..." />
-          <CommandEmpty>No framework found.</CommandEmpty>
-          <CommandGroup>
-            {frameworks.map((framework) => (
+          {/* {loading ? <CommandEmpty>Loading...</CommandEmpty> : null} */}
+          {!loading && cities.length === 0 && <CommandEmpty>No city found.</CommandEmpty>}
+          {/* <CommandEmpty>No City found.</CommandEmpty> */}
+          {!loading && cities.length > 0 && (
+            <CommandGroup>
+            {cities.map((cities:City) => (
                 <CommandList>
                     <CommandItem
-                        key={framework.value}
-                        value={framework.value}
+                        key={cities.value}
+                        value={cities.value}
                         onSelect={(currentValue) => {
-                        setValue(currentValue === value ? "" : currentValue)
-                        setOpen(false)
+                            setValue(currentValue === value ? "" : currentValue)
+                            setOpen(false)
+                            onSelectCity(currentValue)
                         }}
                     >
                         <Check
                         className={cn(
                             "mr-2 h-4 w-4",
-                            value === framework.value ? "opacity-100" : "opacity-0"
+                            value === cities.value ? "opacity-100" : "opacity-0"
                         )}
                         />
-                        {framework.label}
+                        {cities.label}
                     </CommandItem>
                 </CommandList>
 
             ))}
           </CommandGroup>
+          )
+        }
         </Command>
       </PopoverContent>
     </Popover>

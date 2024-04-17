@@ -23,13 +23,16 @@ class UpdateRefAttractionRequest extends FormRequest
     {
         return [
             'ref_attraction_id' => ['required'],
-            'ref_zipcode_id' => ['required'],
+            'area_1' => ['required'],
+            'area_2' => ['required'],
+            'area_3' => ['required'],
+            'area_4' => ['required'],
             'attraction_name' => ['required'],
             'description' => ['required'],
             'address' => ['required'],
-            'is_active' => ['required'],
             'qty' => ['required'],
             'promo_code' => ['nullable'],
+            'base_price' => ['required'],
             'picture' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif', 'max:2048']
         ];
     }

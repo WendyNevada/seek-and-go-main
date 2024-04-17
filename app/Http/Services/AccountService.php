@@ -2,16 +2,17 @@
 
 namespace App\Http\Services;
 
+use App\Models\Agency;
 use App\Models\Account;
+use App\Models\Customer;
+use App\Models\Constanta;
+use Illuminate\Support\Facades\DB;
+use App\Http\Requests\V2\LoginRequest;
 use App\Http\Interfaces\AccountInterface;
 use App\Http\Requests\V1\StoreAccountRequest;
-use App\Http\Requests\V2\UpdateCustomerAccountRequest;
-use App\Http\Requests\V2\LoginRequest;
 use App\Http\Requests\V2\StoreAccountAgencyRequest;
 use App\Http\Requests\V2\UpdateAgencyAccountRequest;
-use App\Models\Agency;
-use App\Models\Customer;
-use Illuminate\Support\Facades\DB;
+use App\Http\Requests\V2\UpdateCustomerAccountRequest;
 
 
 class AccountService implements AccountInterface
@@ -29,7 +30,9 @@ class AccountService implements AccountInterface
                     'status' => "error",
                     'message' => "Email not found",
                     'account_id' => "-",
-                    'role' => "-"
+                    'role' => "-",
+                    'customer_id' => "-",
+                    'agency_id' => "-"
                 ], 400);
             }
             else
@@ -40,17 +43,35 @@ class AccountService implements AccountInterface
                         'status' => "error",
                         'message' => "Password not match",
                         'account_id' => "-",
-                        'role' => "-"
+                        'role' => "-",
+                        'customer_id' => "-",
+                        'agency_id' => "-"
                     ], 400);
                 }
                 else
                 {
-                    return response()->json([
-                        'status' => "ok",
-                        'message' => "success",
-                        'account_id' => $account->account_id,
-                        'role' => $account->role
-                    ], 200);
+                    if($account->role == Constanta::$roleCustomer)
+                    {
+                        return response()->json([
+                            'status' => "ok",
+                            'message' => "success",
+                            'account_id' => $account->account_id,
+                            'role' => $account->role,
+                            'customer_id' => $account->customers->customer_id,
+                            'agency_id' => "-"
+                        ], 200);
+                    }
+                    else
+                    {
+                        return response()->json([
+                            'status' => "ok",
+                            'message' => "success",
+                            'account_id' => $account->account_id,
+                            'role' => $account->role,
+                            'customer_id' => "-",
+                            'agency_id' => $account->agencies->agency_id
+                        ], 200);
+                    }
                 }
             }
         }
@@ -61,7 +82,9 @@ class AccountService implements AccountInterface
             return response()->json([
                 'status' => "error",
                 'message' => $message,
-                'account_id' => "-"
+                'account_id' => "-",
+                'customer_id' => "-",
+                'agency_id' => "-"
             ], 500);
         }
     }

@@ -4,11 +4,13 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Models\RefAttraction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Interfaces\RefAttractionInterface;
+use App\Http\Requests\V2\RefAttractionIdRequest;
 use App\Http\Requests\V1\StoreRefAttractionRequest;
 use App\Http\Requests\V1\UpdateRefAttractionRequest;
-use App\Http\Requests\V2\GetRefAttractionByCodeRequest;
 use App\Http\Requests\V2\GetRefAttractionByIdRequest;
+use App\Http\Requests\V2\GetRefAttractionByCodeRequest;
 
 class RefAttractionController extends Controller
 {
@@ -92,9 +94,21 @@ class RefAttractionController extends Controller
         return $response;
     }
 
+    public function DeactivateAttractionById(RefAttractionInterface $refAttractionInterface, RefAttractionIdRequest $request)
+    {
+        $response = $refAttractionInterface->DeactivateAttractionById($request);
+        return $response;
+    }
+
     public function GetAttractionHomepage(RefAttractionInterface $refAttractionInterface)
     {
         $response = $refAttractionInterface->GetAttractionHomepage();
+        return $response;
+    }
+
+    public function GetActiveAttractionByAgencyId(RefAttractionInterface $refAttractionInterface, AgencyIdRequest $request)
+    {
+        $response = $refAttractionInterface->GetActiveAttractionByAgencyId($request);
         return $response;
     }
 }
