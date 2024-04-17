@@ -28,6 +28,8 @@ class RefHotelService implements RefHotelInterface
 
         $agencyAffiliate = AgencyAffiliate::where('ref_hotel_id', $request->ref_hotel_id)->first();
 
+        $address = RefZipcode::where('ref_zipcode_id', $hotel->ref_zipcode_id)->first();
+
         if($hotel != null)
         {
             if($hotelPicture != null)
@@ -37,7 +39,8 @@ class RefHotelService implements RefHotelInterface
                     'message' => "Success",
                     'hotel' => $hotel,
                     'picture_url' => $hotelPicture->image_url,
-                    'base_price' => $agencyAffiliate->base_price
+                    'base_price' => $agencyAffiliate->base_price,
+                    'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
                 ], 200);
             }
             else
@@ -47,7 +50,8 @@ class RefHotelService implements RefHotelInterface
                     'message' => "Success",
                     'hotel' => $hotel,
                     'picture_url' => "-",
-                    'base_price' => $agencyAffiliate->base_price
+                    'base_price' => $agencyAffiliate->base_price,
+                    'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
                 ], 200);
             }
         }
@@ -58,7 +62,8 @@ class RefHotelService implements RefHotelInterface
                 'message' => "Data not found",
                 'hotel' => "-",
                 'picture_url' => "-",
-                'base_price' => "-"
+                'base_price' => "-",
+                'address' => "-"
             ], 400);
         }
     }

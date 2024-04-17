@@ -36,6 +36,8 @@ class RefAttractionService implements RefAttractionInterface
 
         $agencyAffiliate = AgencyAffiliate::where('ref_attraction_id', $request->ref_attraction_id)->first();
 
+        $address = RefZipcode::where('ref_zipcode_id', $attraction->ref_zipcode_id)->first();
+
         if($attraction != null)
         {
             if($attractionPicture != null)
@@ -45,7 +47,8 @@ class RefAttractionService implements RefAttractionInterface
                     'message' => "success",
                     'attraction' => $attraction,
                     'picture_url' => $attractionPicture->image_url,
-                    'base_price' => $agencyAffiliate->base_price
+                    'base_price' => $agencyAffiliate->base_price,
+                    'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
                 ], 200);
             }
             else
@@ -55,7 +58,8 @@ class RefAttractionService implements RefAttractionInterface
                     'message' => "success",
                     'attraction' => $attraction,
                     'picture_url' => "-",
-                    'base_price' => $agencyAffiliate->base_price
+                    'base_price' => $agencyAffiliate->base_price,
+                    'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
                 ], 200);
             }
         }
@@ -66,7 +70,8 @@ class RefAttractionService implements RefAttractionInterface
                 'message' => "Data not found",
                 'attraction' => "-",
                 'picture_url' => "-",
-                'base_price' => "-"
+                'base_price' => "-",
+                'address' => "-"
             ], 400);
         }
     }
