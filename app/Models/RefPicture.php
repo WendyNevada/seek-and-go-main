@@ -9,6 +9,8 @@ class RefPicture extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'ref_picture_id';
+
     public function refAttractions()
     {
         return $this->belongsTo(RefAttraction::class);

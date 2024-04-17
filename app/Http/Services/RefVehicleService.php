@@ -131,8 +131,7 @@ class RefVehicleService implements RefVehicleInterface
                     ]
                 );
 
-                $vehicle = $vehicle
-                ->update(
+                $vehicle->update(
                     [
                         'vehicle_type' => $request->vehicle_type,
                         'vehicle_brand' => $request->vehicle_brand,
