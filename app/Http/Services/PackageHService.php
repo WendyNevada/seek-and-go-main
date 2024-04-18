@@ -21,36 +21,160 @@ use App\Http\Requests\V2\CreateCustomPackageCustomerRequest;
 
 class PackageHService implements PackageHInterface
 {
+    #region Private Function
+
+    private function getPackageByPackageCode($package_code): PackageH
+    {
+        $packageH = PackageH::where('package_code', $package_code)->first();
+        return $packageH;
+    }
+
+    private function createPackageHAgency($package_code, $agency_id, $package_name, $description, $promo_code, $package_price, $is_active, $qty): PackageH
+    {
+        $packageH = PackageH::create([
+            'package_code' => $package_code,
+            'agency_id' => $agency_id,
+            'package_name' => $package_name,
+            'description' => $description,
+            'is_custom' => false,
+            'promo_code' => $promo_code,
+            'package_price' => $package_price,
+            'is_active' => $is_active,
+            'qty' => $qty
+        ]);
+
+        return $packageH;
+    }
+
+    private function createPackageHistoryHAgency($package_code, $agency_id, $package_name, $is_custom, $promo_code, $package_price): PackageHistoryH
+    {
+        $packageHistoryH = PackageHistoryH::create([
+            'package_code' => $package_code,
+            'agency_id' => $agency_id,
+            'package_name' => $package_name,
+            'is_custom' => false,
+            'promo_code' => $promo_code,
+            'package_price' => $package_price,
+        ]);
+
+        return $packageHistoryH;
+    }
+
+    private function reformatDate($date): string
+    {
+        $strDate = $date->birth_date;
+                
+        if(strpos($strDate, "T") == true)
+        {
+            $string = $date->birth_date;
+            $parts = explode("T", $string);
+            $strDate = $parts[0];
+        }
+
+        return $strDate;
+    }
+
+    private function createPackageD($package_h_id, $ref_hotel_id, $ref_attraction_id, $ref_vehicle_id, $strStartDate, $strEndDate): PackageD
+    {
+        $packageD = PackageD::create([
+            'package_h_id' => $package_h_id,
+            'ref_hotel_id' => $ref_hotel_id,
+            'ref_attraction_id' => $ref_attraction_id,
+            'ref_vehicle_id' => $ref_vehicle_id,
+            'start_dt' => $strStartDate,
+            'end_dt' => $strEndDate
+        ]);
+
+        return $packageD;
+    }
+
+    private function createPackageHistoryD($package_history_h_id, $packageD): PackageHistoryD
+    {
+        $packageHistoryD = PackageHistoryD::create([
+            'package_history_h_id' => $package_history_h_id,
+
+            'hotel_name' => $packageD->ref_hotel_id == null ? null : RefHotel::where('ref_hotel_id', $packageD->ref_hotel_id)->first()->hotel_name,
+            'hotel_start_dt' => $packageD->ref_hotel_id == null ? null : $packageD->start_dt,
+            'hotel_end_dt' => $packageD->ref_hotel_id == null ? null : $packageD->end_dt,
+
+            'attraction_name' => $packageD->ref_attraction_id == null ? null : RefAttraction::where('ref_attraction_id', $packageD->ref_attraction_id)->first()->attraction_name,
+            'attraction_start_dt' => $packageD->ref_attraction_id == null ? null : $packageD->start_dt,
+            'attraction_end_dt' => $packageD->ref_attraction_id == null ? null : $packageD->end_dt,
+
+            'vehicle_name' => $packageD->ref_vehicle_id == null ? null : RefVehicle::where('ref_vehicle_id', $packageD->ref_vehicle_id)->first()->vehicle_name,
+            'vehicle_start_dt' => $packageD->ref_vehicle_id == null ? null : $packageD->start_dt,
+            'vehicle_end_dt' => $packageD->ref_vehicle_id == null ? null : $packageD->end_dt
+        ]);
+
+        return $packageHistoryD;
+    }
+
+    private function generateCustomCode(): string
+    {
+        $customCode = "CUST" . date("YmdHis") . rand(0, 9);
+
+        return $customCode;
+    }
+
+    private function createPackageHCustomer($customCode, $agency_id, $customer_id, $package_name, $description): PackageH
+    {
+        $packageHCustom = new PackageH();
+        $packageHCustom->package_code = $customCode;
+        $packageHCustom->agency_id = $agency_id;
+        $packageHCustom->customer_id = $customer_id;
+        $packageHCustom->package_name = $package_name;
+        $packageHCustom->description = $description;
+        $packageHCustom->is_custom = true;
+        $packageHCustom->custom_status = Constanta::$customPackageStatNew;
+        $packageHCustom->promo_code = null;
+        $packageHCustom->package_price = null;
+        $packageHCustom->is_active = true;
+        $packageHCustom->qty = 1;
+        $packageHCustom->save();
+
+        return $packageHCustom;
+    }
+
+    private function getCustomPackageByAgencyIdAndStatus($agency_id, $is_custom = false, $custom_status)
+    {
+        $packageH = PackageH::
+            where('agency_id', $agency_id)->
+            where('is_custom', $custom_status)->
+            where('custom_status', $custom_status)->
+            with('packageDs')->
+            get();
+        
+
+        return $packageH;
+    }
+
+    private function getPackageByAgencyId($agency_id, $is_custom = false, $limit)
+    {
+        $packageH = PackageH::where('agency_id', $agency_id)
+            ->where('is_custom', $is_custom)
+            ->limit($limit)
+            ->get();
+
+        return $packageH;
+    }
+
+    #endregion
+
+    #region Public Function
     public function CreatePackageAgency(CreatePackageAgencyRequest $request)
     {
+        $packageHService = new PackageHService();
         try
         {
-            $packageHCheck = PackageH::where('package_code', $request->package_code)->first();
+            $packageHCheck = $packageHService->getPackageByPackageCode($request->package_code);
 
             if($packageHCheck == null)
             {
                 DB::beginTransaction();
 
-                $packageH = PackageH::create([
-                    'package_code' => $request->package_code,
-                    'agency_id' => $request->agency_id,
-                    'package_name' => $request->package_name,
-                    'description' => $request->description,
-                    'is_custom' => false,
-                    'promo_code' => $request->promo_code,
-                    'package_price' => $request->package_price,
-                    'is_active' => $request->is_active,
-                    'qty' => $request->qty
-                ]);
+                $packageH = $packageHService->createPackageHAgency($request->package_code, $request->agency_id, $request->package_name, $request->description, $request->promo_code, $request->package_price, $request->is_active, $request->qty);
 
-                $packageHistoryH = PackageHistoryH::create([
-                    'package_code' => $packageH->package_code,
-                    'agency_id' => $packageH->agency_id,
-                    'package_name' => $packageH->package_name,
-                    'is_custom' => false,
-                    'promo_code' => $packageH->promo_code,
-                    'package_price' => $packageH->package_price,
-                ]);
+                $packageHistoryH = $packageHService->createPackageHistoryHAgency($request->package_code, $request->agency_id, $request->package_name, $request->is_custom, $request->promo_code, $request->package_price);
 
                 foreach($request->details as $detail)
                 {
@@ -59,48 +183,13 @@ class PackageHService implements PackageHInterface
 
                     if($detail['start_dt'] != null && $detail['end_dt'] != null || $detail['start_dt'] != "" && $detail['end_dt'] != "")
                     {
-                        $strStartDate = $detail['start_dt'];
-                        $strEndDate = $detail['end_dt'];
-                    
-                        if(strpos($strStartDate, "T") == true)
-                        {
-                            $string = $detail->start_dt;
-                            $parts = explode("T", $string);
-                            $strStartDate = $parts[0];
-                        }
-
-                        if(strpos($strEndDate, "T") == true)
-                        {
-                            $string = $detail->end_dt;
-                            $parts = explode("T", $string);
-                            $strEndDate = $parts[0];
-                        }
+                        $strStartDate = $packageHService->reformatDate($detail['start_dt']);
+                        $strEndDate = $packageHService->reformatDate($detail['end_dt']);
                     }
 
-                    $packageD = PackageD::create([
-                        'package_h_id' => $packageH->package_h_id,
-                        'ref_hotel_id' => $detail['ref_hotel_id'],
-                        'ref_attraction_id' => $detail['ref_attraction_id'],
-                        'ref_vehicle_id' => $detail['ref_vehicle_id'],
-                        'start_dt' => $strStartDate,
-                        'end_dt' => $strEndDate
-                    ]);
+                    $packageD = $packageHService->createPackageD($packageH->package_h_id, $detail['ref_hotel_id'], $detail['ref_attraction_id'], $detail['ref_vehicle_id'], $strStartDate, $strEndDate);
 
-                    $packageHistoryD = PackageHistoryD::create([
-                        'package_history_h_id' => $packageHistoryH->package_history_h_id,
-
-                        'hotel_name' => $packageD->ref_hotel_id == null ? null : RefHotel::where('ref_hotel_id', $packageD->ref_hotel_id)->first()->hotel_name,
-                        'hotel_start_dt' => $packageD->ref_hotel_id == null ? null : $packageD->start_dt,
-                        'hotel_end_dt' => $packageD->ref_hotel_id == null ? null : $packageD->end_dt,
-
-                        'attraction_name' => $packageD->ref_attraction_id == null ? null : RefAttraction::where('ref_attraction_id', $packageD->ref_attraction_id)->first()->attraction_name,
-                        'attraction_start_dt' => $packageD->ref_attraction_id == null ? null : $packageD->start_dt,
-                        'attraction_end_dt' => $packageD->ref_attraction_id == null ? null : $packageD->end_dt,
-
-                        'vehicle_name' => $packageD->ref_vehicle_id == null ? null : RefVehicle::where('ref_vehicle_id', $packageD->ref_vehicle_id)->first()->vehicle_name,
-                        'vehicle_start_dt' => $packageD->ref_vehicle_id == null ? null : $packageD->start_dt,
-                        'vehicle_end_dt' => $packageD->ref_vehicle_id == null ? null : $packageD->end_dt
-                    ]);
+                    $packageHistoryD = $packageHService->createPackageHistoryD($packageHistoryH->package_history_h_id, $packageD);
                 }
 
                 DB::commit();
@@ -135,25 +224,14 @@ class PackageHService implements PackageHInterface
 
     public function CreateCustomPackageCustomer(CreateCustomPackageCustomerRequest $request) 
     {
+        $packageHService = new PackageHService();
         try
         {
             DB::beginTransaction();
 
-            $customCode = "CUST" . date("YmdHis") . rand(0, 9);
+            $customCode = $packageHService->generateCustomCode();
 
-            $packageHCustom = new PackageH();
-            $packageHCustom->package_code = $customCode;
-            $packageHCustom->agency_id = $request->agency_id;
-            $packageHCustom->customer_id = $request->customer_id;
-            $packageHCustom->package_name = $request->package_name;
-            $packageHCustom->description = $request->description;
-            $packageHCustom->is_custom = true;
-            $packageHCustom->custom_status = Constanta::$customPackageStatNew;
-            $packageHCustom->promo_code = null;
-            $packageHCustom->package_price = null;
-            $packageHCustom->is_active = true;
-            $packageHCustom->qty = 1;
-            $packageHCustom->save();
+            $packageHCustom = $packageHService->createPackageHCustomer($customCode, $request->agency_id, $request->customer_id, $request->package_name, $request->description);
 
             foreach($request->details as $detail)
             {
@@ -162,32 +240,11 @@ class PackageHService implements PackageHInterface
 
                 if($detail['start_dt'] != null && $detail['end_dt'] != null || $detail['start_dt'] != "" && $detail['end_dt'] != "")
                 {
-                    $strStartDate = $detail['start_dt'];
-                    $strEndDate = $detail['end_dt'];
-                
-                    if(strpos($strStartDate, "T") == true)
-                    {
-                        $string = $detail->start_dt;
-                        $parts = explode("T", $string);
-                        $strStartDate = $parts[0];
-                    }
-
-                    if(strpos($strEndDate, "T") == true)
-                    {
-                        $string = $detail->end_dt;
-                        $parts = explode("T", $string);
-                        $strEndDate = $parts[0];
-                    }
+                    $strStartDate = $packageHService->reformatDate($detail['start_dt']);
+                    $strEndDate = $packageHService->reformatDate($detail['end_dt']);
                 }
 
-                $packageD = PackageD::create([
-                    'package_h_id' => $packageHCustom->package_h_id,
-                    'ref_hotel_id' => $detail['ref_hotel_id'],
-                    'ref_attraction_id' => $detail['ref_attraction_id'],
-                    'ref_vehicle_id' => $detail['ref_vehicle_id'],
-                    'start_dt' => $strStartDate,
-                    'end_dt' => $strEndDate
-                ]);
+                $packageD = $packageHService->createPackageD($packageHCustom->package_h_id, $detail['ref_hotel_id'], $detail['ref_attraction_id'], $detail['ref_vehicle_id'], $strStartDate, $strEndDate);
 
             }
 
@@ -213,24 +270,18 @@ class PackageHService implements PackageHInterface
 
     public function GetNewCustomPackageByAgencyId(AgencyIdRequest $request)
     {
-        $packageH = PackageH::
-            where('agency_id', $request->agency_id)->
-            where('is_custom', true)->
-            where('custom_status', Constanta::$customPackageStatNew)->
-            with('packageDs')->
-            get();
+        $packageHService = new PackageHService();
+
+        $packageH = $packageHService->getCustomPackageByAgencyIdAndStatus($request->agency_id, true, Constanta::$customPackageStatNew);
 
         return response()->json($packageH);
     }
 
     public function GetApvCustomPackageByAgencyId(AgencyIdRequest $request)
     {
-        $packageH = PackageH::
-            where('agency_id', $request->agency_id)->
-            where('is_custom', true)->
-            where('custom_status', Constanta::$customPackageStatApv)->
-            with('packageDs')->
-            get();
+        $packageHService = new PackageHService();
+
+        $packageH = $packageHService->getCustomPackageByAgencyIdAndStatus($request->agency_id, true, Constanta::$customPackageStatApv);
 
         return response()->json($packageH);
     }
@@ -330,11 +381,11 @@ class PackageHService implements PackageHInterface
 
     public function GetActivePackageHByAgencyId(AgencyIdRequest $request)
     {
-        $packageH = PackageH::where('agency_id', $request->agency_id)
-            ->where('is_custom', false)
-            ->limit(Constanta::$homepageDataCount)
-            ->get();
+        $packageHService = new PackageHService;
+
+        $packageH = $packageHService->getPackageByAgencyId($request->agency_id, false, Constanta::$homepageDataCount);
 
         return response()->json($packageH);
     }
+    #endregion
 }

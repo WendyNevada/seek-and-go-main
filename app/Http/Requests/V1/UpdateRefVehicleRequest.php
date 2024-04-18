@@ -27,6 +27,7 @@ class UpdateRefVehicleRequest extends FormRequest
             'vehicle_brand' => 'required',
             'vehicle_series' => 'required',
             'vehicle_model' => 'required',
+            'vehicle_seat' => 'required',
             'vehicle_year' => 'required',
             'vehicle_name' => 'required',
             'description' => 'required',

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('vehicle_brand', length:100);
             $table->string('vehicle_series', length:100);
             $table->string('vehicle_model', length:100);
+            $table->string('vehicle_seat', length:100);
             $table->string('vehicle_year', length:5);
             $table->string('vehicle_name', length:100);
             $table->string('description', length:1000);
