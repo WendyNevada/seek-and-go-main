@@ -15,7 +15,7 @@ export const customerSchema= z.object({
       }),
     gender: z.string(),
     password: z.string(),
-    //confirmPassword: z.string(),
+    confirmPassword: z.string(),
     role: z.string()
 }).required()
 .refine((data)=> data.password === data.confirmPassword,{
