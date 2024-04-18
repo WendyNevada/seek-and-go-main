@@ -162,66 +162,55 @@ class OrderHService implements OrderHInterface
     #region Public Function
     public function GetNewOrderDashboard(GetOrderDashboardRequest $request)
     {
-        $orderHService = new OrderHService;
-
-        $order = $orderHService->getOrderByAgencyAndStatusAndLimit($request->agency_id, Constanta::$orderStatusNew, Constanta::$orderDashboardDataCount);
+        $order = $this->getOrderByAgencyAndStatusAndLimit($request->agency_id, Constanta::$orderStatusNew, Constanta::$orderDashboardDataCount);
         
         return response()->json($order);
     }
 
     public function GetNewOrderForCustomer(CustIdRequest $request)
     {
-        $orderHService = new OrderHService;
-
-        $order = $orderHService->getOrderByCustomerAndStatusWithLimit($request->customer_id, Constanta::$orderStatusNew);
+        $order = $this->getOrderByCustomerAndStatusWithLimit($request->customer_id, Constanta::$orderStatusNew);
         
         return response()->json($order);
     }
 
     public function GetApvOrderForCustomer(CustIdRequest $request)
     {
-        $orderHService = new OrderHService;
-
-        $order = $orderHService->getOrderByCustomerAndStatusWithLimit($request->customer_id, Constanta::$orderStatusApproved);
+        $order = $this->getOrderByCustomerAndStatusWithLimit($request->customer_id, Constanta::$orderStatusApproved);
         
         return response()->json($order);
     }
 
     public function GetRetryPayOrderForCustomer(CustIdRequest $request)
     {
-        $orderHService = new OrderHService;
-
-        $order = $orderHService->getOrderByCustomerAndStatusWithLimit($request->customer_id, Constanta::$orderStatusRetryPay, Constanta::$orderDashboardDataCount);
+        $order = $this->getOrderByCustomerAndStatusWithLimit($request->customer_id, Constanta::$orderStatusRetryPay, Constanta::$orderDashboardDataCount);
         
         return response()->json($order);
     }
 
     public function GetOrderById(GetOrderByIdRequest $request)
     {
-        $orderHService = new OrderHService;
-
-        $order = $orderHService->getOrderHByIdWithOrderD($request->order_h_id);
+        $order = $this->getOrderHByIdWithOrderD($request->order_h_id);
         
         return response()->json($order);
     }
 
     public function CreateOrder(CreateOrderRequest $request)
     {
-        $orderHService = new OrderHService;
         try
         {
             DB::beginTransaction();
 
-            $orderNo = $orderHService->generateOrderNo();
+            $orderNo = $this->generateOrderNo();
 
-            $orderH = $orderHService->createOrderH($orderNo, $request->customer_id, $request->agency_id, $request->order_dt, $request->order_status, $request->total_price);
+            $orderH = $this->createOrderH($orderNo, $request->customer_id, $request->agency_id, $request->order_dt, $request->order_status, $request->total_price);
 
             foreach($request->details as $detail)
             {
-                $strStartDate = $orderHService->reformatDate($detail['start_dt']);
-                $strEndDate = $orderHService->reformatDate($detail['end_dt']);
+                $strStartDate = $this->reformatDate($detail['start_dt']);
+                $strEndDate = $this->reformatDate($detail['end_dt']);
 
-                $orderD = $orderHService->createOrderD(
+                $orderD = $this->createOrderD(
                     $orderH->order_h_id,
                     $detail['package_h_id'],
                     $detail['ref_hotel_id'],
@@ -257,16 +246,15 @@ class OrderHService implements OrderHInterface
 
     public function ApproveOrder(OrderHIdRequest $request)
     {
-        $orderHService = new OrderHService;
         try
         {
             DB::beginTransaction();
 
-            $orderH = $orderHService->updateOrderStatus($request->order_h_id, Constanta::$orderStatusApproved);
+            $orderH = $this->updateOrderStatus($request->order_h_id, Constanta::$orderStatusApproved);
 
-            $trxNo = $orderHService->generateTrxNo();
+            $trxNo = $this->generateTrxNo();
 
-            $trx = $orderHService->createTrx($trxNo, $request->order_h_id);
+            $trx = $this->createTrx($trxNo, $request->order_h_id);
 
             DB::commit();
 
@@ -289,12 +277,11 @@ class OrderHService implements OrderHInterface
 
     public function RejectOrder(OrderHIdRequest $request)
     {
-        $orderHService = new OrderHService;
         try
         {
             DB::beginTransaction();
             
-            $orderH = $orderHService->updateOrderStatus($request->order_h_id, Constanta::$orderStatusRejected);
+            $orderH = $this->updateOrderStatus($request->order_h_id, Constanta::$orderStatusRejected);
 
             DB::commit();
 
@@ -318,12 +305,11 @@ class OrderHService implements OrderHInterface
 
     public function CancelOrder(OrderHIdRequest $request)
     {
-        $orderHService = new OrderHService;
         try
         {
             DB::beginTransaction();
 
-            $orderH = $orderHService->updateOrderStatus($request->order_h_id, Constanta::$orderStatusCanceled);
+            $orderH = $this->updateOrderStatus($request->order_h_id, Constanta::$orderStatusCanceled);
 
             DB::commit();
 
@@ -347,14 +333,13 @@ class OrderHService implements OrderHInterface
 
     public function PaidOrder(OrderHIdRequest $request)
     {
-        $orderHService = new OrderHService;
         try
         {
             DB::beginTransaction();
 
-            $orderH = $orderHService->updateOrderStatus($request->order_h_id, Constanta::$orderStatusPaid);
+            $orderH = $this->updateOrderStatus($request->order_h_id, Constanta::$orderStatusPaid);
 
-            $trx = $orderHService->updatePaymentStatusTrx($request->order_h_id, true);
+            $trx = $this->updatePaymentStatusTrx($request->order_h_id, true);
 
             DB::commit();
 
@@ -380,12 +365,11 @@ class OrderHService implements OrderHInterface
 
     public function RetryPaymentOrder(OrderHIdRequest $request)
     {
-        $orderHService = new OrderHService;
         try
         {
             DB::beginTransaction();
 
-            $orderH = $orderHService->updateOrderStatus($request->order_h_id, Constanta::$orderStatusRetryPay);
+            $orderH = $this->updateOrderStatus($request->order_h_id, Constanta::$orderStatusRetryPay);
 
             DB::commit();
 
@@ -409,9 +393,7 @@ class OrderHService implements OrderHInterface
 
     public function GetCustPaidOrder(GetOrderDashboardRequest $request)
     {
-        $orderHService = new OrderHService;
-
-        $order = $orderHService->getOrderByAgencyAndStatusAndLimit($request->agency_id, Constanta::$orderStatusCustPaid, Constanta::$orderDashboardDataCount);
+        $order = $this->getOrderByAgencyAndStatusAndLimit($request->agency_id, Constanta::$orderStatusCustPaid, Constanta::$orderDashboardDataCount);
         
         return response()->json($order);
     }

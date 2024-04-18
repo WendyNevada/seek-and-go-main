@@ -17,6 +17,7 @@ use App\Models\OrderH;
 use App\Models\PackageH;
 use App\Models\RefPicture;
 use App\Models\RefZipcode;
+use Brick\Math\BigInteger;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -58,7 +59,7 @@ class RefAttractionService implements RefAttractionInterface
         return $refZipcode;
     }
 
-    private function getRefZipcodeIdByAllArea($area_1, $area_2, $area_3, $area_4): RefZipcode
+    private function getRefZipcodeIdByAllArea($area_1, $area_2, $area_3, $area_4)
     {
         $refZipcodeId = RefZipcode::
                     where('area_1', $area_1)->
@@ -253,31 +254,27 @@ class RefAttractionService implements RefAttractionInterface
         limit($limit)->
         get();
 
-        return response()->json($attraction);
+        return $attraction;
     }
     #endregion
 
     #region Public Function
     public function GetAttractionByCode(GetRefAttractionByCodeRequest $request)
     {
-        $attractionService = new RefAttractionService();
-
-        $attraction = $attractionService->getRefAttractionByCode($request->attraction_code);
+        $attraction = $this->getRefAttractionByCode($request->attraction_code);
 
         return response()->json($attraction);
     }
 
     public function GetAttractionById(GetRefAttractionByIdRequest $request)
     {
-        $attractionService = new RefAttractionService();
+        $attraction = $this->getRefAttractionById($request->ref_attraction_id);
 
-        $attraction = $attractionService->getRefAttractionById($request->ref_attraction_id);
+        $attractionPicture = $this->getRefPictureByAttractionId($request->ref_attraction_id);
 
-        $attractionPicture = $attractionService->getRefPictureByAttractionId($request->ref_attraction_id);
+        $agencyAffiliate = $this->getAgencyAffiliateByAttractionId($request->ref_attraction_id);
 
-        $agencyAffiliate = $attractionService->getAgencyAffiliateByAttractionId($request->ref_attraction_id);
-
-        $address = $attractionService->getRefZipcodeById($attraction->ref_zipcode_id);
+        $address = $this->getRefZipcodeById($attraction->ref_zipcode_id);
 
         if($attraction != null)
         {
@@ -319,18 +316,17 @@ class RefAttractionService implements RefAttractionInterface
 
     public function AddAttraction(StoreRefAttractionRequest $request)
     {
-        $attractionService = new RefAttractionService();
         try
         {
-            $attractionCheck = $attractionService->getRefAttractionByCode($request->attraction_code);
+            $attractionCheck = $this->getRefAttractionByCode($request->attraction_code);
 
             if($attractionCheck == null)
             {
                 DB::beginTransaction();
 
-                $refZipcodeId = $attractionService->getRefZipcodeIdByAllArea($request->area_1, $request->area_2, $request->area_3, $request->area_4);
+                $refZipcodeId = $this->getRefZipcodeIdByAllArea($request->area_1, $request->area_2, $request->area_3, $request->area_4);
 
-                $attraction = $attractionService->createRefAttraction(
+                $attraction = $this->createRefAttraction(
                     $request->attraction_code,
                     $refZipcodeId,
                     $request->attraction_name,
@@ -345,10 +341,10 @@ class RefAttractionService implements RefAttractionInterface
 
                 if($request->hasFile('picture'))
                 {
-                    $attractionService->insertRefPictureAttraction($request->file('picture'), $request->attraction_code, $refAttractionId);
+                    $this->insertRefPictureAttraction($request->file('picture'), $request->attraction_code, $refAttractionId);
                 }
 
-                $attractionService->insertAgencyAffiliateAttraction($refAttractionId, $request->agency_id, $request->base_price, $request->promo_code_affiliate);
+                $this->insertAgencyAffiliateAttraction($refAttractionId, $request->agency_id, $request->base_price, $request->promo_code_affiliate);
 
                 DB::commit();
 
@@ -381,24 +377,23 @@ class RefAttractionService implements RefAttractionInterface
 
     public function EditAttractionById(UpdateRefAttractionRequest $request)
     {
-        $attractionService = new RefAttractionService();
         try
         {
-            $attraction = $attractionService->getRefAttractionById($request->ref_attraction_id);
+            $attraction = $this->getRefAttractionById($request->ref_attraction_id);
 
             if($attraction != null)
             {
                 DB::beginTransaction();
 
-                $attractionService->updatePriceAgencyAffiliateAttraction($request->ref_attraction_id, $request->base_price);
+                $this->updatePriceAgencyAffiliateAttraction($request->ref_attraction_id, $request->base_price);
 
-                $attractionService->updateRefAttraction($request->ref_attraction_id, $request->attraction_name, $request->description, $request->address, $request->qty, $request->promo_code);
+                $this->updateRefAttraction($request->ref_attraction_id, $request->attraction_name, $request->description, $request->address, $request->qty, $request->promo_code);
 
                 if($request->picture_url == null)
                 {
                     if($request->hasFile('picture'))
                     {
-                        $attractionService->updateRefPictureAttraction($request->file('picture'), $request->attraction_code, $request->ref_attraction_id);
+                        $this->updateRefPictureAttraction($request->file('picture'), $request->attraction_code, $request->ref_attraction_id);
                     }
                 }
 
@@ -433,14 +428,13 @@ class RefAttractionService implements RefAttractionInterface
 
     public function DeactivateAttractionById(RefAttractionIdRequest $request)
     {
-        $attractionService = new RefAttractionService();
         try
         {
-            $attraction = $attractionService->getRefAttractionById($request->ref_attraction_id);
+            $attraction = $this->getRefAttractionById($request->ref_attraction_id);
 
             if($attraction != null)
             {
-                $checkOrders = $attractionService->checkOrderForAttraction($request->ref_attraction_id);
+                $checkOrders = $this->checkOrderForAttraction($request->ref_attraction_id);
 
                 if($checkOrders == true)
                 {
@@ -454,7 +448,7 @@ class RefAttractionService implements RefAttractionInterface
                     );
                 }
 
-                $checkPackages = $attractionService->checkPackageForAttraction($request->ref_attraction_id);
+                $checkPackages = $this->checkPackageForAttraction($request->ref_attraction_id);
 
                 if($checkPackages == true)
                 {
@@ -470,7 +464,7 @@ class RefAttractionService implements RefAttractionInterface
 
                 DB::beginTransaction();
 
-                $attractionService->updateIsActiveAttraction($request->ref_attraction_id, false);
+                $this->updateIsActiveAttraction($request->ref_attraction_id, false);
 
                 DB::commit();
 
@@ -503,18 +497,14 @@ class RefAttractionService implements RefAttractionInterface
 
     public function GetAttractionHomepage()
     {
-        $attractionService = new RefAttractionService();
-
-        $attraction = $attractionService->getActiveAttractionDataSortedWithLimit(Constanta::$homepageDataCount);
+        $attraction = $this->getActiveAttractionDataSortedWithLimit(Constanta::$homepageDataCount);
 
         return response()->json($attraction);
     }
 
     public function GetActiveAttractionByAgencyId(AgencyIdRequest $request)
     {
-        $attractionService = new RefAttractionService();
-
-        $attraction = $attractionService->getAttractionsByAgencyId($request->agency_id, Constanta::$homepageDataCount);
+        $attraction = $this->getAttractionsByAgencyId($request->agency_id, Constanta::$homepageDataCount);
 
         return response()->json($attraction);
     }
