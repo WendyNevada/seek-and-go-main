@@ -134,11 +134,9 @@ class AccountService implements AccountInterface
 
     public function Login(LoginRequest $request)
     {
-        $accountService = new AccountService();
-
         try
         {
-            $account = $accountService->getAccountByEmail($request->email);
+            $account = $this->getAccountByEmail($request->email);
 
             if($account == null)
             {
@@ -153,7 +151,7 @@ class AccountService implements AccountInterface
             }
             else
             {
-                if(!$accountService->checkPassword($account->password, $request->password))
+                if(!$this->checkPassword($account->password, $request->password))
                 {
                     return response()->json([
                         'status' => "error",
@@ -166,7 +164,7 @@ class AccountService implements AccountInterface
                 }
                 else
                 {
-                    if($accountService->checkRole($account->role, Constanta::$roleCustomer))
+                    if($this->checkRole($account->role, Constanta::$roleCustomer))
                     {
                         return response()->json([
                             'status' => "ok",
@@ -207,22 +205,21 @@ class AccountService implements AccountInterface
 
     public function CreateAccountCustomer(StoreAccountRequest $request)
     {
-        $accountService = new AccountService();
         try
         {
-            $accountCheck = $accountService->getAccountByEmail($request->email);
+            $accountCheck = $this->getAccountByEmail($request->email);
 
             if($accountCheck == null)
             {
                 DB::beginTransaction();
 
-                $account = $accountService->createAccount($request->account_name, $request->email, $request->password, $request->role, $request->phone);
+                $account = $this->createAccount($request->account_name, $request->email, $request->password, $request->role, $request->phone);
                 
                 $accountId = $account->account_id;
 
-                $strBirthDate = $accountService->reformatDate($request->birth_date);
+                $strBirthDate = $this->reformatDate($request->birth_date);
 
-                $customer = $accountService->createCustomer($accountId, $request->customer_name, $request->gender, $strBirthDate);
+                $customer = $this->createCustomer($accountId, $request->customer_name, $request->gender, $strBirthDate);
 
                 DB::commit();
 
@@ -259,20 +256,19 @@ class AccountService implements AccountInterface
 
     public function CreateAccountAgency(StoreAccountAgencyRequest $request)
     {
-        $accountService = new AccountService();
         try
         {
-            $accountCheck = $accountService->getAccountByEmail($request->email);
+            $accountCheck = $this->getAccountByEmail($request->email);
 
             if($accountCheck == null)
             {
                 DB::beginTransaction();
 
-                $account = $accountService->createAccount($request->account_name, $request->email, $request->password, $request->role, $request->phone);
+                $account = $this->createAccount($request->account_name, $request->email, $request->password, $request->role, $request->phone);
                 
                 $accountId = $account->account_id;
 
-                $agency = $accountService->createAgency($accountId, $request->agency_name, $request->npwp, $request->location);
+                $agency = $this->createAgency($accountId, $request->agency_name, $request->npwp, $request->location);
 
                 DB::commit();
 
@@ -309,16 +305,15 @@ class AccountService implements AccountInterface
 
     public function UpdateCustomerAccount(UpdateCustomerAccountRequest $request)
     {
-        $accountService = new AccountService();
         try 
         {
-            $account = $accountService->getAccountByEmail($request->email);
+            $account = $this->getAccountByEmail($request->email);
     
             if ($account != null) 
             {
                 DB::beginTransaction();
                 
-                $accountService->updateAccount($account->account_id, $request->account_name, $request->email, $request->password, $request->role, $request->phone);
+                $this->updateAccount($account->account_id, $request->account_name, $request->email, $request->password, $request->role, $request->phone);
     
                 DB::commit();
 
@@ -353,18 +348,17 @@ class AccountService implements AccountInterface
 
     public function UpdateAgencyAccount(UpdateAgencyAccountRequest $request)
     {
-        $accountService = new AccountService();
         try 
         {
-            $account = $accountService->getAccountByEmail($request->email);
+            $account = $this->getAccountByEmail($request->email);
     
             if ($account != null) 
             {
                 DB::beginTransaction();
 
-                $account = $accountService->updateAccount($account->account_id, $request->account_name, $request->email, $request->password, $request->role, $request->phone);
+                $account = $this->updateAccount($account->account_id, $request->account_name, $request->email, $request->password, $request->role, $request->phone);
 
-                $agency = $accountService->updateAgency($account->account_id, $request->agency_name, $request->npwp, $request->location);
+                $agency = $this->updateAgency($account->account_id, $request->agency_name, $request->npwp, $request->location);
     
                 DB::commit();
 
