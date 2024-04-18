@@ -34,3 +34,26 @@ export const addAttractionSchema = z.object({
     base_price: z.coerce.number(),
     promo_code_affiliate: z.string(),
 })
+
+export const editAttractionSchema = z.object({
+    attraction_code: z.string(),
+    picture: z
+        .any()
+        .optional()
+        .refine((file) => {
+            if (!file || !file[0]) return true;
+            return file[0]?.size <= MAX_FILE_SIZE && ACCEPTED_IMAGE_TYPES.includes(file[0]?.type);
+        }, {
+            message: "Invalid image format or size.",
+        }),
+    //ref_zipcode_id: z.string().min(1,  {message: "Product Description is required" }),,
+    attraction_name: z.string().min(1,  {message: "Product Price is required" }),
+    description: z.string().min(1,  {message: "Product Description is required" }),
+    address: z.string().min(1,  {message: "Product Address is required" }),
+    address2 : z.string(),
+    is_active: z.boolean(),
+    qty: z.coerce.number(),
+    promo_code: z.string(),
+    base_price: z.coerce.number(),
+    promo_code_affiliate: z.string(),
+})
