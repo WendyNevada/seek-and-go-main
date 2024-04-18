@@ -20,69 +20,126 @@ use App\Http\Requests\V2\GetRefVehicleByIdRequest;
 
 class RefVehicleService implements RefVehicleInterface
 {
+    #region Private Function
+    private function getRefVehicleByCode($vehicle_code): RefVehicle
+    {
+        $vehicle = RefVehicle::where('vehicle_code', $vehicle_code)->first();
+
+        return $vehicle;
+    }
+
+    private function getRefVehicleById($ref_vehicle_id): RefVehicle
+    {
+        $vehicle = RefVehicle::where('ref_vehicle_id', $ref_vehicle_id)->first();
+
+        return $vehicle;
+    }
+
+    private function getRefZipcodeIdByAllArea($area_1, $area_2, $area_3, $area_4)
+    {
+        $refZipcodeId = RefZipcode::
+                    where('area_1', $area_1)->
+                    where('area_2', $area_2)->
+                    where('area_3', $area_3)->
+                    where('area_4', $area_4)->
+                    first()->ref_zipcode_id;
+
+        return $refZipcodeId;
+    }
+
+    private function createVehicle($vehicle_code, $refZipcodeId, $vehicle_type, $vehicle_brand, $vehicle_series, $vehicle_model, $vehicle_seat, $vehicle_year, $vehicle_name, $description, $with_driver, $address, $rating, $qty, $promo_code): RefVehicle
+    {
+        $vehicle = RefVehicle::
+                create(
+                    [
+                        'vehicle_code' => $vehicle_code,
+                        'ref_zipcode_id' => $refZipcodeId,
+                        'vehicle_type' => $vehicle_type,
+                        'vehicle_brand' => $vehicle_brand,
+                        'vehicle_series' => $vehicle_series,
+                        'vehicle_model' => $vehicle_model,
+                        'vehicle_seat' => $vehicle_seat,
+                        'vehicle_year' => $vehicle_year,
+                        'vehicle_name' => $vehicle_name,
+                        'description' => $description,
+                        'with_driver' => $with_driver,
+                        'address' => $address,
+                        'rating' => $rating,
+                        'is_active' => true,
+                        'qty' => $qty,
+                        'promo_code' => $promo_code
+                    ]
+                );
+
+        return $vehicle;
+    }
+
+    private function insertRefPictureVehicle($picture, $vehicle_code, $ref_vehicle_id): void
+    {
+        $image = $picture;
+        $imageName =  $vehicle_code . '_' . time() . '.' . $image->getClientOriginalName();
+        $path = $image->storeAs(Constanta::$refVehiclePictureDirectory, $imageName, Constanta::$refPictureDisk);
+        $url = Storage::url($path);
+
+        $refPicture = new RefPicture();
+        $refPicture->ref_vehicle_id = $ref_vehicle_id;
+        $refPicture->image_url = $url;
+        $refPicture->save();
+    }
+
+    private function insertAgencyAffiliateVehicle($ref_vehicle_id, $agency_id, $base_price, $promo_code_affiliate): void
+    {
+        $affiliate = AgencyAffiliate::
+                create(
+                    [
+                        'ref_vehicle_id' => $ref_vehicle_id,
+                        'agency_id' => $agency_id,
+                        'base_price' => $base_price,
+                        'promo_code' => $promo_code_affiliate
+                    ]
+                );
+    }
+    #endregion
+
+    #region Public Function
     public function AddVehicle(StoreRefVehicleRequest $request)
     {
         try
         {
-            $vehicleCheck = RefVehicle::where('vehicle_code', $request->vehicle_code)->first();
+            $vehicleCheck = $this->getRefVehicleByCode($request->vehicle_code);
 
             if($vehicleCheck == null)
             {
                 DB::beginTransaction();
 
-                $refZipcodeId = RefZipcode::
-                    where('area_1', $request->area_1)->
-                    where('area_2', $request->area_2)->
-                    where('area_3', $request->area_3)->
-                    where('area_4', $request->area_4)->
-                    first()->ref_zipcode_id;
+                $refZipcodeId = $this->getRefZipcodeIdByAllArea($request->area_1, $request->area_2, $request->area_3, $request->area_4);
 
-                $vehicle = RefVehicle::
-                create(
-                    [
-                        'vehicle_code' => $request->vehicle_code,
-                        'ref_zipcode_id' => $refZipcodeId,
-                        'vehicle_type' => $request->vehicle_type,
-                        'vehicle_brand' => $request->vehicle_brand,
-                        'vehicle_series' => $request->vehicle_series,
-                        'vehicle_model' => $request->vehicle_model,
-                        'vehicle_seat' => $request->vehicle_seat,
-                        'vehicle_year' => $request->vehicle_year,
-                        'vehicle_name' => $request->vehicle_name,
-                        'description' => $request->description,
-                        'with_driver' => $request->with_driver,
-                        'address' => $request->address,
-                        'rating' => $request->rating,
-                        'is_active' => true,
-                        'qty' => $request->qty,
-                        'promo_code' => $request->promo_code
-                    ]
-                );
+                $vehicle = $this->createVehicle(
+                        $request->vehicle_code, 
+                        $refZipcodeId, 
+                        $request->vehicle_type,
+                        $request->vehicle_brand,
+                        $request->vehicle_series,
+                        $request->vehicle_model,
+                        $request->vehicle_seat,
+                        $request->vehicle_year,
+                        $request->vehicle_name,
+                        $request->description,
+                        $request->with_driver,
+                        $request->address,
+                        $request->rating,
+                        $request->qty,
+                        $request->promo_code
+                    );
 
                 $refVehicleId = $vehicle->ref_vehicle_id;
 
                 if($request->hasFile('picture'))
                 {
-                    $image = $request->file('picture');
-                    $imageName =  $request->vehicle_code . '_' . time() . '.' . $image->getClientOriginalName();
-                    $path = $image->storeAs(Constanta::$refVehiclePictureDirectory, $imageName, Constanta::$refPictureDisk);
-                    $url = Storage::url($path);
-
-                    $refPicture = new RefPicture();
-                    $refPicture->ref_vehicle_id = $refVehicleId;
-                    $refPicture->image_url = $url;
-                    $refPicture->save();
+                    $this->insertRefPictureVehicle($request->file('picture'), $request->vehicle_code, $refVehicleId);
                 }
 
-                $affiliate = AgencyAffiliate::
-                create(
-                    [
-                        'ref_vehicle_id' => $refVehicleId,
-                        'agency_id' => $request->agency_id,
-                        'base_price' => $request->base_price,
-                        'promo_code' => $request->promo_code_affiliate
-                    ]
-                );
+                $this->insertAgencyAffiliateVehicle($refVehicleId, $request->agency_id, $request->base_price, $request->promo_code_affiliate);
 
                 DB::commit();
 
@@ -117,7 +174,7 @@ class RefVehicleService implements RefVehicleInterface
     {
         try
         {
-            $vehicle = RefVehicle::where('ref_vehicle_id', $request->ref_vehicle_id)->first();
+            $vehicle = $this->getRefVehicleById($request->ref_vehicle_id);
             
             if($vehicle != null)
             {
@@ -379,5 +436,6 @@ class RefVehicleService implements RefVehicleInterface
 
         return response()->json($vehicle);
     }
+    #endregion
     
 }
