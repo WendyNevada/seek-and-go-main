@@ -13,16 +13,132 @@ use App\Http\Requests\V1\StoreAccountRequest;
 use App\Http\Requests\V2\StoreAccountAgencyRequest;
 use App\Http\Requests\V2\UpdateAgencyAccountRequest;
 use App\Http\Requests\V2\UpdateCustomerAccountRequest;
-
+use App\Models\RefAttraction;
 
 class AccountService implements AccountInterface
 {
 
+    #region Private Method
+    private function getAccountByEmail($email): Account
+    {
+        $account = Account::where('email', $email)->first();
+        return $account;
+    }
+
+    private function checkPassword($accPass, $reqPass): bool
+    {
+        if($accPass == $reqPass)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private function checkRole($accRole, $reqRole): bool
+    {
+        if($accRole == $reqRole)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private function createAccount($account_name, $email, $password, $role, $phone): Account
+    {
+        $createAccount = Account::
+                    create(
+                        [
+                            'account_name' => $account_name,
+                            'email' => $email,
+                            'password' => $password,
+                            'role' => $role,
+                            'phone' => $phone
+                        ]
+                    );
+
+        return $createAccount;
+    }
+
+    private function reformatDate($date): string
+    {
+        $strDate = $date->birth_date;
+                
+        if(strpos($strDate, "T") == true)
+        {
+            $string = $date->birth_date;
+            $parts = explode("T", $string);
+            $strDate = $parts[0];
+        }
+
+        return $strDate;
+    }
+
+    private function createCustomer($accountId, $customer_name, $gender, $birthDate): Customer
+    {
+        $customer = Customer::
+                    create(
+                        [
+                            'account_id' => $accountId,
+                            'customer_name' => $customer_name,
+                            'gender' => $gender,
+                            'birth_date' => $birthDate
+                        ]
+                    );
+        
+        return $customer;
+    }
+
+    private function createAgency($accountId, $agency_name, $npwp, $location): Agency
+    {
+        $agency = Agency::
+                    create(
+                        [
+                            'account_id' => $accountId,
+                            'agency_name' => $agency_name,
+                            'npwp' => $npwp,
+                            'location' => $location
+                        ]
+                    );
+        
+        return $agency;
+    }
+
+    private function updateAccount($account_id, $account_name, $password, $phone): Account
+    {
+        $account = Account::find($account_id);
+        $account->account_name = $account_name;
+        $account->password = $password;
+        $account->phone = $phone;
+        $account->save();
+        return $account;
+    }
+
+    private function updateAgency($account_id, $agency_name, $npwp, $location): Agency
+    {
+        $agency = Agency::find($account_id);
+        $agency->agency_name = $agency_name;
+        $agency->npwp = $npwp;
+        $agency->location = $location;
+        $agency->save();
+        return $agency;
+    }
+    #endregion
+
+    #region Public Method
+
     public function Login(LoginRequest $request)
     {
+        $accountService = new AccountService();
+
         try
         {
-            $account = Account::where('email', $request->email)->first();
+            $account = $accountService->getAccountByEmail($request->email);
 
             if($account == null)
             {
@@ -37,11 +153,11 @@ class AccountService implements AccountInterface
             }
             else
             {
-                if($account->password != $request->password)
+                if(!$accountService->checkPassword($account->password, $request->password))
                 {
                     return response()->json([
                         'status' => "error",
-                        'message' => "Password not match",
+                        'message' => "Password does not match",
                         'account_id' => "-",
                         'role' => "-",
                         'customer_id' => "-",
@@ -50,7 +166,7 @@ class AccountService implements AccountInterface
                 }
                 else
                 {
-                    if($account->role == Constanta::$roleCustomer)
+                    if($accountService->checkRole($account->role, Constanta::$roleCustomer))
                     {
                         return response()->json([
                             'status' => "ok",
@@ -91,45 +207,22 @@ class AccountService implements AccountInterface
 
     public function CreateAccountCustomer(StoreAccountRequest $request)
     {
+        $accountService = new AccountService();
         try
         {
-            $accountCheck = Account::where('email', $request->email)->first();
+            $accountCheck = $accountService->getAccountByEmail($request->email);
 
             if($accountCheck == null)
             {
                 DB::beginTransaction();
 
-                $account = Account::
-                    create(
-                        [
-                            'account_name' => $request->account_name,
-                            'email' => $request->email,
-                            'password' => $request->password,
-                            'role' => $request->role,
-                            'phone' => $request->phone
-                        ]
-                    );
+                $account = $accountService->createAccount($request->account_name, $request->email, $request->password, $request->role, $request->phone);
                 
                 $accountId = $account->account_id;
 
-                $strBirthDate = $request->birth_date;
-                
-                if(strpos($strBirthDate, "T") == true)
-                {
-                    $string = $request->birth_date;
-                    $parts = explode("T", $string);
-                    $strBirthDate = $parts[0];
-                }
+                $strBirthDate = $accountService->reformatDate($request->birth_date);
 
-                $customer = Customer::
-                    create(
-                        [
-                            'account_id' => $accountId,
-                            'customer_name' => $request->customer_name,
-                            'gender' => $request->gender,
-                            'birth_date' => $strBirthDate
-                        ]
-                    );
+                $customer = $accountService->createCustomer($accountId, $request->customer_name, $request->gender, $strBirthDate);
 
                 DB::commit();
 
@@ -137,14 +230,16 @@ class AccountService implements AccountInterface
 
                 return response()->json([
                     'status' => 'ok',
-                    'message' => $message
+                    'message' => $message,
+                    'account_id' => $accountId
                 ], 200);
             }
             else
             {
                 return response()->json([
                     'status' => "error",
-                    'message' => "email already exist"
+                    'message' => "email already exist",
+                    'account_id' => "-",
                 ], 400);
             }
         }
@@ -156,43 +251,28 @@ class AccountService implements AccountInterface
 
             return response()->json([
                 'status' => "error",
-                'message' => $message
+                'message' => $message,
+                'account_id' => "-",
             ], 500);
         }
     }
 
     public function CreateAccountAgency(StoreAccountAgencyRequest $request)
     {
+        $accountService = new AccountService();
         try
         {
-            $accountCheck = Account::where('email', $request->email)->first();
+            $accountCheck = $accountService->getAccountByEmail($request->email);
 
             if($accountCheck == null)
             {
                 DB::beginTransaction();
 
-                $account = Account::
-                    create(
-                        [
-                            'account_name' => $request->account_name,
-                            'email' => $request->email,
-                            'password' => $request->password,
-                            'role' => $request->role,
-                            'phone' => $request->phone
-                        ]
-                    );
+                $account = $accountService->createAccount($request->account_name, $request->email, $request->password, $request->role, $request->phone);
                 
                 $accountId = $account->account_id;
 
-                $agency = Agency::
-                    create(
-                        [
-                            'account_id' => $accountId,
-                            'agency_name' => $request->agency_name,
-                            'npwp' => $request->npwp,
-                            'location' => $request->location
-                        ]
-                    );
+                $agency = $accountService->createAgency($accountId, $request->agency_name, $request->npwp, $request->location);
 
                 DB::commit();
 
@@ -200,14 +280,16 @@ class AccountService implements AccountInterface
 
                 return response()->json([
                     'status' => "ok",
-                    'message' => $message
+                    'message' => $message,
+                    'account_id' => $account->account_id
                 ], 200);
             }
             else
             {
                 return response()->json([
                     'status' => "error",
-                    'message' => "email already exist"
+                    'message' => "email already exist",
+                    'account_id' => "-",
                 ], 400);
             }
         }
@@ -219,49 +301,39 @@ class AccountService implements AccountInterface
 
             return response()->json([
                 'status' => "error",
-                'message' => $message
+                'message' => $message,
+                'account_id' => "-",
             ], 500);
         }
     }
 
     public function UpdateCustomerAccount(UpdateCustomerAccountRequest $request)
     {
+        $accountService = new AccountService();
         try 
         {
-            $account = Account::where('email', $request->email)->first();
+            $account = $accountService->getAccountByEmail($request->email);
     
             if ($account != null) 
             {
                 DB::beginTransaction();
-
-                $updateData = [];
-    
-                if ($request->account_name != null || $request->account_name != '') {
-                    $updateData['account_name'] = $request->account_name;
-                }
-    
-                if ($request->password != null || $request->password != '') {
-                    $updateData['password'] = $request->password;
-                }
-    
-                if ($request->phone != null || $request->phone != '') {
-                    $updateData['phone'] = $request->phone;
-                }
-    
-                $account->update($updateData);
+                
+                $accountService->updateAccount($account->account_id, $request->account_name, $request->email, $request->password, $request->role, $request->phone);
     
                 DB::commit();
 
                 return response()->json([
                     'status' => "ok",
-                    'message' => "success"
+                    'message' => "success",
+                    'account_id' => $account->account_id
                 ], 200);
             } 
             else 
             {
                 return response()->json([
                     'status' => "error",
-                    'message' => "Email not found"
+                    'message' => "Email not found",
+                    'account_id' => "-"
                 ], 400);
             }
         }
@@ -273,57 +345,41 @@ class AccountService implements AccountInterface
 
             return response()->json([
                 'status' => "error",
-                'message' => $message
+                'message' => $message,
+                'account_id' => "-"
             ], 500);
         }
     }
 
     public function UpdateAgencyAccount(UpdateAgencyAccountRequest $request)
     {
+        $accountService = new AccountService();
         try 
         {
-            $account = Account::where('email', $request->email)->first();
+            $account = $accountService->getAccountByEmail($request->email);
     
             if ($account != null) 
             {
                 DB::beginTransaction();
 
-                $updateData = [];
-    
-                if ($request->account_name != null || $request->account_name != '') {
-                    $updateData['account_name'] = $request->account_name;
-                }
-    
-                if ($request->password != null || $request->password != '') {
-                    $updateData['password'] = $request->password;
-                }
-    
-                if ($request->phone != null || $request->phone != '') {
-                    $updateData['phone'] = $request->phone;
-                }
-    
-                $account->update($updateData);
+                $account = $accountService->updateAccount($account->account_id, $request->account_name, $request->email, $request->password, $request->role, $request->phone);
 
-                $agency = Agency::where('account_id', $account->account_id)->first();
-
-                $agency = $agency->update([
-                    'agency_name' => $request->agency_name,
-                    'npwp' => $request->npwp,
-                    'location' => $request->location
-                ]);
+                $agency = $accountService->updateAgency($account->account_id, $request->agency_name, $request->npwp, $request->location);
     
                 DB::commit();
 
                 return response()->json([
                     'status' => "ok",
-                    'message' => "success"
+                    'message' => "success",
+                    'account_id' => $account->account_id
                 ], 200);
             } 
             else 
             {
                 return response()->json([
                     'status' => "error",
-                    'message' => "Email not found"
+                    'message' => "Email not found",
+                    'account_id' => "-"
                 ], 400);
             }
         }
@@ -335,9 +391,12 @@ class AccountService implements AccountInterface
 
             return response()->json([
                 'status' => "error",
-                'message' => $message
+                'message' => $message,
+                'account_id' => "-"
             ], 500);
         }
     }
+
+    #endregion
 
 }

@@ -21,9 +21,9 @@ class OrderHController extends Controller
         return $response;
     }
 
-    public function GetOrderDashboard(OrderHInterface $orderHInterface, GetOrderDashboardRequest $request)
+    public function GetNewOrderDashboard(OrderHInterface $orderHInterface, GetOrderDashboardRequest $request)
     {
-        $response = $orderHInterface->GetOrderDashboard($request);
+        $response = $orderHInterface->GetNewOrderDashboard($request);
         return $response;
     }
 

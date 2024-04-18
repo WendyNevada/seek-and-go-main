@@ -2,6 +2,8 @@
 
 namespace App\Http\Services;
 
+use App\Models\OrderH;
+use App\Models\PackageH;
 use App\Models\RefHotel;
 use App\Models\Constanta;
 use App\Models\RefPicture;
@@ -11,10 +13,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Interfaces\RefHotelInterface;
+use App\Http\Requests\V2\RefHotelIdRequest;
 use App\Http\Requests\V1\StoreRefHotelRequest;
 use App\Http\Requests\V1\UpdateRefHotelRequest;
 use App\Http\Requests\V2\GetRefHotelByIdRequest;
-use App\Http\Requests\V2\RefHotelIdRequest;
 
 class RefHotelService implements RefHotelInterface
 {
@@ -26,6 +28,8 @@ class RefHotelService implements RefHotelInterface
 
         $agencyAffiliate = AgencyAffiliate::where('ref_hotel_id', $request->ref_hotel_id)->first();
 
+        $address = RefZipcode::where('ref_zipcode_id', $hotel->ref_zipcode_id)->first();
+
         if($hotel != null)
         {
             if($hotelPicture != null)
@@ -35,7 +39,8 @@ class RefHotelService implements RefHotelInterface
                     'message' => "Success",
                     'hotel' => $hotel,
                     'picture_url' => $hotelPicture->image_url,
-                    'base_price' => $agencyAffiliate->base_price
+                    'base_price' => $agencyAffiliate->base_price,
+                    'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
                 ], 200);
             }
             else
@@ -45,7 +50,8 @@ class RefHotelService implements RefHotelInterface
                     'message' => "Success",
                     'hotel' => $hotel,
                     'picture_url' => "-",
-                    'base_price' => $agencyAffiliate->base_price
+                    'base_price' => $agencyAffiliate->base_price,
+                    'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
                 ], 200);
             }
         }
@@ -56,7 +62,8 @@ class RefHotelService implements RefHotelInterface
                 'message' => "Data not found",
                 'hotel' => "-",
                 'picture_url' => "-",
-                'base_price' => "-"
+                'base_price' => "-",
+                'address' => "-"
             ], 400);
         }
     }
@@ -157,13 +164,6 @@ class RefHotelService implements RefHotelInterface
             {
                 DB::beginTransaction();
 
-                $refZipcodeId = RefZipcode::
-                    where('area_1', $request->area_1)->
-                    where('area_2', $request->area_2)->
-                    where('area_3', $request->area_3)->
-                    where('area_4', $request->area_4)->
-                    first()->ref_zipcode_id;
-
                 $agencyAffiliate = AgencyAffiliate::where('ref_hotel_id', $hotel->ref_hotel_id)->first();
 
                 $agencyAffiliate->update(
@@ -172,8 +172,7 @@ class RefHotelService implements RefHotelInterface
                     ]
                 );
 
-                $hotel = $hotel->update([
-                    'ref_zipcode_id' => $refZipcodeId,
+                $hotel->update([
                     'hotel_name' => $request->hotel_name,
                     'description' => $request->description,
                     'address' => $request->address,
@@ -181,25 +180,28 @@ class RefHotelService implements RefHotelInterface
                     'promo_code' => $request->promo_code
                 ]);
 
-                if($request->hasFile('picture'))
+                if($request->picture_url == null)
                 {
-                    $image = $request->file('picture');
-                    $imageName =  $hotel->hotel_code . '_' . time() . '.' . $image->getClientOriginalName();
-                    $path = $image->storeAs(Constanta::$refHotelPictureDirectory, $imageName, Constanta::$refPictureDisk);
-                    $url = Storage::url($path);
+                    if($request->hasFile('picture'))
+                    {
+                        $image = $request->file('picture');
+                        $imageName =  $hotel->hotel_code . '_' . time() . '.' . $image->getClientOriginalName();
+                        $path = $image->storeAs(Constanta::$refHotelPictureDirectory, $imageName, Constanta::$refPictureDisk);
+                        $url = Storage::url($path);
 
-                    $refPicture = RefPicture::where('ref_hotel_id', $hotel->ref_hotel_id)->first();
-                    if($refPicture != null)
-                    {
-                        $refPicture->image_url = $url;
-                        $refPicture->save();
-                    }
-                    else
-                    {
-                        $refPicture = new RefPicture();
-                        $refPicture->ref_hotel_id = $hotel->ref_hotel_id;
-                        $refPicture->image_url = $url;
-                        $refPicture->save();
+                        $refPicture = RefPicture::where('ref_hotel_id', $hotel->ref_hotel_id)->first();
+                        if($refPicture != null)
+                        {
+                            $refPicture->image_url = $url;
+                            $refPicture->save();
+                        }
+                        else
+                        {
+                            $refPicture = new RefPicture();
+                            $refPicture->ref_hotel_id = $hotel->ref_hotel_id;
+                            $refPicture->image_url = $url;
+                            $refPicture->save();
+                        }
                     }
                 }
 
@@ -240,11 +242,59 @@ class RefHotelService implements RefHotelInterface
 
             if($hotel != null)
             {
+                $orderHs = OrderH::with('orderDs')
+                ->whereHas('orderDs', function ($query) use ($request) {
+                    $query->where('ref_hotel_id', $request->ref_hotel_id);
+                })
+                ->whereIn('order_status', [
+                    Constanta::$orderStatusNew,
+                    Constanta::$orderStatusApproved,
+                    Constanta::$orderStatusPaid,
+                    Constanta::$orderStatusCustPaid,
+                    Constanta::$orderStatusRetryPay
+                ])
+                ->get();
+
+                if(count($orderHs) > 0)
+                {
+                    return response()->json(
+                        [
+                            'status' => "error",
+                            'message' => "Hotel is in active order",
+                            'ref_hotel_id' => $request->ref_hotel_id
+                        ],
+                        400
+                    );
+                }
+
+                $packageHs = PackageH::with('packageDs')
+                ->whereHas('packageDs', function ($query) use ($request) {
+                    $query->where('ref_hotel_id', $request->ref_hotel_id);
+                })
+                ->where('is_active', true)
+                ->get();
+
+                if(count($packageHs) > 0)
+                {
+                    return response()->json(
+                        [
+                            'status' => "error",
+                            'message' => "Hotel is in active package",
+                            'ref_hotel_id' => $request->ref_hotel_id
+                        ],
+                        400
+                    );
+                }
+
+                DB::beginTransaction();
+
                 $hotel->update(
                     [
                         'is_active' => '0'
                     ]
                 );
+
+                DB::commit();
 
                 return response()->json([
                     'status' => "ok",
@@ -263,6 +313,8 @@ class RefHotelService implements RefHotelInterface
         }
         catch (\Exception $e)
         {
+            DB::rollBack();
+
             return response()->json([
                 'status' => "error",
                 'message' => $e->getMessage(),

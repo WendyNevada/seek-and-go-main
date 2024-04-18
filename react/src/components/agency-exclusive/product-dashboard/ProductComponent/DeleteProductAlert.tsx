@@ -17,6 +17,9 @@ export function AlertDialogProduct({attractionId} : {attractionId: number}) {
     //DeactivateAttractionById
     const handleDelete = () => {
         axiosClient.post('/v1/DeactivateAttractionById', {ref_attraction_id: attractionId})
+        .then(() => {
+            window.location.reload();
+        });
     }
 
     return (

@@ -2,6 +2,8 @@
 
 namespace App\Http\Services;
 
+use App\Models\OrderH;
+use App\Models\PackageH;
 use App\Models\Constanta;
 use App\Models\RefPicture;
 use App\Models\RefVehicle;
@@ -11,10 +13,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Interfaces\RefVehicleInterface;
+use App\Http\Requests\V2\RefVehicleIdRequest;
 use App\Http\Requests\V1\StoreRefVehicleRequest;
 use App\Http\Requests\V1\UpdateRefVehicleRequest;
 use App\Http\Requests\V2\GetRefVehicleByIdRequest;
-use App\Http\Requests\V2\RefVehicleIdRequest;
 
 class RefVehicleService implements RefVehicleInterface
 {
@@ -120,13 +122,6 @@ class RefVehicleService implements RefVehicleInterface
             {
                 DB::beginTransaction();
 
-                $refZipcodeId = RefZipcode::
-                    where('area_1', $request->area_1)->
-                    where('area_2', $request->area_2)->
-                    where('area_3', $request->area_3)->
-                    where('area_4', $request->area_4)->
-                    first()->ref_zipcode_id;
-
                 $agencyAffiliate = AgencyAffiliate::where('ref_vehicle_id', $vehicle->ref_vehicle_id)->first();
 
                 $agencyAffiliate
@@ -136,10 +131,8 @@ class RefVehicleService implements RefVehicleInterface
                     ]
                 );
 
-                $vehicle = $vehicle
-                ->update(
+                $vehicle->update(
                     [
-                        'ref_zipcode_id' => $refZipcodeId,
                         'vehicle_type' => $request->vehicle_type,
                         'vehicle_brand' => $request->vehicle_brand,
                         'vehicle_series' => $request->vehicle_series,
@@ -154,25 +147,28 @@ class RefVehicleService implements RefVehicleInterface
                     ]
                 );
 
-                if($request->hasFile('picture'))
+                if($request->picture_url)
                 {
-                    $image = $request->file('picture');
-                    $imageName =  $vehicle->vehicle_code . '_' . time() . '.' . $image->getClientOriginalName();
-                    $path = $image->storeAs(Constanta::$refVehiclePictureDirectory, $imageName, Constanta::$refPictureDisk);
-                    $url = Storage::url($path);
+                    if($request->hasFile('picture'))
+                    {
+                        $image = $request->file('picture');
+                        $imageName =  $vehicle->vehicle_code . '_' . time() . '.' . $image->getClientOriginalName();
+                        $path = $image->storeAs(Constanta::$refVehiclePictureDirectory, $imageName, Constanta::$refPictureDisk);
+                        $url = Storage::url($path);
 
-                    $refPicture = RefPicture::where('ref_vehicle_id', $vehicle->ref_vehicle_id)->first();
-                    if($refPicture != null)
-                    {
-                        $refPicture->image_url = $url;
-                        $refPicture->save();
-                    }
-                    else
-                    {
-                        $refPicture = new RefPicture();
-                        $refPicture->ref_vehicle_id = $vehicle->ref_vehicle_id;
-                        $refPicture->image_url = $url;
-                        $refPicture->save();
+                        $refPicture = RefPicture::where('ref_vehicle_id', $vehicle->ref_vehicle_id)->first();
+                        if($refPicture != null)
+                        {
+                            $refPicture->image_url = $url;
+                            $refPicture->save();
+                        }
+                        else
+                        {
+                            $refPicture = new RefPicture();
+                            $refPicture->ref_vehicle_id = $vehicle->ref_vehicle_id;
+                            $refPicture->image_url = $url;
+                            $refPicture->save();
+                        }
                     }
                 }
 
@@ -213,11 +209,59 @@ class RefVehicleService implements RefVehicleInterface
 
             if($vehicle != null)
             {
+                $orderHs = OrderH::with('orderDs')
+                ->whereHas('orderDs', function ($query) use ($request) {
+                    $query->where('ref_vehicle_id', $request->ref_vehicle_id);
+                })
+                ->whereIn('order_status', [
+                    Constanta::$orderStatusNew,
+                    Constanta::$orderStatusApproved,
+                    Constanta::$orderStatusPaid,
+                    Constanta::$orderStatusCustPaid,
+                    Constanta::$orderStatusRetryPay
+                ])
+                ->get();
+
+                if(count($orderHs) > 0)
+                {
+                    return response()->json(
+                        [
+                            'status' => "error",
+                            'message' => "Vehicle is in active order",
+                            'ref_vehicle_id' => $request->ref_vehicle_id
+                        ],
+                        400
+                    );
+                }
+
+                $packageHs = PackageH::with('packageDs')
+                ->whereHas('packageDs', function ($query) use ($request) {
+                    $query->where('ref_vehicle_id', $request->ref_vehicle_id);
+                })
+                ->where('is_active', true)
+                ->get();
+
+                if(count($packageHs) > 0)
+                {
+                    return response()->json(
+                        [
+                            'status' => "error",
+                            'message' => "Hotel is in active package",
+                            'ref_vehicle_id' => $request->ref_vehicle_id
+                        ],
+                        400
+                    );
+                }
+
+                DB::beginTransaction();
+
                 $vehicle->update(
                     [
                         'is_active' => '0'
                     ]
                 );
+
+                DB::commit();
 
                 return response()->json([
                     'status' => "ok",
@@ -236,6 +280,8 @@ class RefVehicleService implements RefVehicleInterface
         }
         catch (\Exception $e)
         {
+            DB::rollBack();
+
             return response()->json([
                 'status' => "error",
                 'message' => $e->getMessage(),
@@ -252,6 +298,8 @@ class RefVehicleService implements RefVehicleInterface
 
         $agencyAffiliate = AgencyAffiliate::where('ref_vehicle_id', $request->ref_vehicle_id)->first();
 
+        $address = RefZipcode::where('ref_zipcode_id', $vehicle->ref_zipcode_id)->first();
+
         if($vehicle != null)
         {
             if($vehiclePicture != null)
@@ -261,7 +309,8 @@ class RefVehicleService implements RefVehicleInterface
                     'message' => "Success",
                     'vehicle' => $vehicle,
                     'picture_url' => $vehiclePicture->image_url,
-                    'base_price' => $agencyAffiliate->base_price
+                    'base_price' => $agencyAffiliate->base_price,
+                    'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
                 ], 200);
             }
             else
@@ -271,7 +320,8 @@ class RefVehicleService implements RefVehicleInterface
                     'message' => "Success",
                     'vehicle' => $vehicle,
                     'picture_url' => "-",
-                    'base_price' => $agencyAffiliate->base_price
+                    'base_price' => $agencyAffiliate->base_price,
+                    'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
                 ], 200);
             }
         }
@@ -282,7 +332,8 @@ class RefVehicleService implements RefVehicleInterface
                 'message' => "Data not found",
                 'vehicle' => "-",
                 'picture_url' => "-",
-                'base_price' => "-"
+                'base_price' => "-",
+                'address' => "-"
             ], 400);
         }
     }
@@ -326,5 +377,5 @@ class RefVehicleService implements RefVehicleInterface
 
         return response()->json($vehicle);
     }
-
+    
 }

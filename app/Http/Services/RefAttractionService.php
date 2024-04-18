@@ -12,6 +12,9 @@ use App\Http\Requests\V2\GetRefAttractionByIdRequest;
 use App\Http\Requests\V2\RefAttractionIdRequest;
 use App\Models\AgencyAffiliate;
 use App\Models\Constanta;
+use App\Models\OrderD;
+use App\Models\OrderH;
+use App\Models\PackageH;
 use App\Models\RefPicture;
 use App\Models\RefZipcode;
 use Illuminate\Support\Facades\DB;
@@ -33,6 +36,8 @@ class RefAttractionService implements RefAttractionInterface
 
         $agencyAffiliate = AgencyAffiliate::where('ref_attraction_id', $request->ref_attraction_id)->first();
 
+        $address = RefZipcode::where('ref_zipcode_id', $attraction->ref_zipcode_id)->first();
+
         if($attraction != null)
         {
             if($attractionPicture != null)
@@ -42,7 +47,8 @@ class RefAttractionService implements RefAttractionInterface
                     'message' => "success",
                     'attraction' => $attraction,
                     'picture_url' => $attractionPicture->image_url,
-                    'base_price' => $agencyAffiliate->base_price
+                    'base_price' => $agencyAffiliate->base_price,
+                    'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
                 ], 200);
             }
             else
@@ -52,7 +58,8 @@ class RefAttractionService implements RefAttractionInterface
                     'message' => "success",
                     'attraction' => $attraction,
                     'picture_url' => "-",
-                    'base_price' => $agencyAffiliate->base_price
+                    'base_price' => $agencyAffiliate->base_price,
+                    'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
                 ], 200);
             }
         }
@@ -63,7 +70,8 @@ class RefAttractionService implements RefAttractionInterface
                 'message' => "Data not found",
                 'attraction' => "-",
                 'picture_url' => "-",
-                'base_price' => "-"
+                'base_price' => "-",
+                'address' => "-"
             ], 400);
         }
     }
@@ -165,13 +173,6 @@ class RefAttractionService implements RefAttractionInterface
             {
                 DB::beginTransaction();
 
-                $refZipcodeId = RefZipcode::
-                    where('area_1', $request->area_1)->
-                    where('area_2', $request->area_2)->
-                    where('area_3', $request->area_3)->
-                    where('area_4', $request->area_4)->
-                    first()->ref_zipcode_id;
-
                 $agencyAffiliate = AgencyAffiliate::where('ref_attraction_id', $attraction->ref_attraction_id)->first();
 
                 $agencyAffiliate->update(
@@ -180,37 +181,36 @@ class RefAttractionService implements RefAttractionInterface
                     ]
                 );
 
-                $attraction = $attraction
-                ->update(
-                    [
-                        'ref_zipcode_id' => $refZipcodeId,
-                        'attraction_name' => $request->attraction_name,
-                        'description' => $request->description,
-                        'address' => $request->address,
-                        'qty' => $request->qty,
-                        'promo_code' => $request->promo_code
-                    ]
-                );
+                $attraction->update([
+                    'attraction_name' => $request->attraction_name,
+                    'description' => $request->description,
+                    'address' => $request->address,
+                    'qty' => $request->qty,
+                    'promo_code' => $request->promo_code
+                ]);
 
-                if($request->hasFile('picture'))
+                if($request->picture_url == null)
                 {
-                    $image = $request->file('picture');
-                    $imageName =  $attraction->attraction_code . '_' . time() . '.' . $image->getClientOriginalName();
-                    $path = $image->storeAs(Constanta::$refAttractionPictureDirectory, $imageName, Constanta::$refPictureDisk);
-                    $url = Storage::url($path);
+                    if($request->hasFile('picture'))
+                    {
+                        $image = $request->file('picture');
+                        $imageName =  $attraction->attraction_code . '_' . time() . '.' . $image->getClientOriginalName();
+                        $path = $image->storeAs(Constanta::$refAttractionPictureDirectory, $imageName, Constanta::$refPictureDisk);
+                        $url = Storage::url($path);
 
-                    $refPicture = RefPicture::where('ref_attraction_id', $attraction->ref_attraction_id)->first();
-                    if($refPicture != null)
-                    {
-                        $refPicture->image_url = $url;
-                        $refPicture->save();
-                    }
-                    else
-                    {
-                        $refPicture = new RefPicture();
-                        $refPicture->ref_attraction_id = $attraction->ref_attraction_id;
-                        $refPicture->image_url = $url;
-                        $refPicture->save();
+                        $refPicture = RefPicture::where('ref_attraction_id', $attraction->ref_attraction_id)->first();
+                        if($refPicture != null)
+                        {
+                            $refPicture->image_url = $url;
+                            $refPicture->save();
+                        }
+                        else
+                        {
+                            $refPicture = new RefPicture();
+                            $refPicture->ref_attraction_id = $attraction->ref_attraction_id;
+                            $refPicture->image_url = $url;
+                            $refPicture->save();
+                        }
                     }
                 }
 
@@ -251,11 +251,59 @@ class RefAttractionService implements RefAttractionInterface
 
             if($attraction != null)
             {
+                $orderHs = OrderH::with('orderDs')
+                ->whereHas('orderDs', function ($query) use ($request) {
+                    $query->where('ref_attraction_id', $request->ref_attraction_id);
+                })
+                ->whereIn('order_status', [
+                    Constanta::$orderStatusNew,
+                    Constanta::$orderStatusApproved,
+                    Constanta::$orderStatusPaid,
+                    Constanta::$orderStatusCustPaid,
+                    Constanta::$orderStatusRetryPay
+                ])
+                ->get();
+
+                if(count($orderHs) > 0)
+                {
+                    return response()->json(
+                        [
+                            'status' => "error",
+                            'message' => "Attraction is in active order",
+                            'ref_attraction_id' => $request->ref_attraction_id
+                        ],
+                        400
+                    );
+                }
+
+                $packageHs = PackageH::with('packageDs')
+                ->whereHas('packageDs', function ($query) use ($request) {
+                    $query->where('ref_attraction_id', $request->ref_attraction_id);
+                })
+                ->where('is_active', true)
+                ->get();
+
+                if(count($packageHs) > 0)
+                {
+                    return response()->json(
+                        [
+                            'status' => "error",
+                            'message' => "Attraction is in active package",
+                            'ref_attraction_id' => $request->ref_attraction_id
+                        ],
+                        400
+                    );
+                }
+
+                DB::beginTransaction();
+
                 $attraction->update(
                     [
                         'is_active' => '0'
                     ]
                 );
+
+                DB::commit();
 
                 return response()->json([
                     'status' => "ok",
@@ -274,6 +322,8 @@ class RefAttractionService implements RefAttractionInterface
         }
         catch (\Exception $e)
         {
+            DB::rollBack();
+
             return response()->json([
                 'status' => "error",
                 'message' => $e->getMessage(),

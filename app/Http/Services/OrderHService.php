@@ -19,107 +19,218 @@ use App\Http\Requests\V2\GetOrderDashboardRequest;
 class OrderHService implements OrderHInterface
 {
 
-    public function GetOrderDashboard(GetOrderDashboardRequest $request)
+    #region Private Function
+
+    private function getOrderHById($id): OrderH
+    {
+        $orderH = OrderH::where('order_h_id', $id)->first();
+        return $orderH;
+    }
+
+    private function getOrderByAgencyAndStatusAndLimit($agency_id, $order_status, $limit)
     {
         $order = OrderH::where([
-            ['agency_id', $request->agency_id],
-            ['order_status', Constanta::$orderStatusNew]
-        ])->with('orderDs')->orderBy('order_dt', 'asc')->limit(Constanta::$orderDashboardDataCount)->get();
+            ['agency_id', $agency_id],
+            ['order_status', $order_status]
+        ])->with('orderDs')->orderBy('order_dt', 'asc')->limit($limit)->get();
         
+        return $order;
+    }
 
+    private function getOrderByCustomerAndStatusWithLimit($customer_id, $order_status, $limit = null)
+    {
+        if($limit != null)
+        {
+            $order = OrderH::where([
+                ['customer_id', $customer_id],
+                ['order_status', $order_status]
+            ])->with('orderDs')->orderBy('order_dt', 'asc')->limit($limit)->get();
+        }
+        else
+        {
+            $order = OrderH::where([
+                ['customer_id', $customer_id],
+                ['order_status', $order_status]
+            ])->with('orderDs')->orderBy('order_dt', 'asc')->get();
+        }
+
+        return $order;
+    }
+
+    private function getOrderHByIdWithOrderD($order_h_id)
+    {
+        $order = OrderH::where('order_h_id', $order_h_id)->with('orderDs')->get();
+
+        return $order;
+    }
+
+    private function generateOrderNo(): string
+    {
+        $orderNo = Constanta::$orderConst . date("YmdHis") . rand(100, 999);
+
+        return $orderNo;
+    }
+
+    private function createOrderH($order_no, $customer_id, $agency_id, $order_dt, $order_status, $total_price): OrderH
+    {
+        $orderH = new OrderH();
+        $orderH->agency_id = $agency_id;
+        $orderH->customer_id = $customer_id;
+        $orderH->order_dt = now();
+        $orderH->total_price = $total_price;
+        $orderH->order_no = $order_no;
+        $orderH->order_status = Constanta::$orderStatusNew;
+        $orderH->save();
+
+        return $orderH;
+    }
+
+    private function reformatDate($date): string
+    {
+        $strDate = $date->birth_date;
+                
+        if(strpos($strDate, "T") == true)
+        {
+            $string = $date->birth_date;
+            $parts = explode("T", $string);
+            $strDate = $parts[0];
+        }
+
+        return $strDate;
+    }
+
+    private function createOrderD($order_h_id, $package_h_id, $ref_hotel_id, $ref_attraction_id, $ref_vehicle_id, $strStartDate, $strEndDate, $price): OrderD
+    {
+        $orderD = new OrderD();
+        $orderD->order_h_id = $order_h_id;
+        $orderD->package_h_id = $package_h_id;
+
+        $orderD->package_history_id = $orderD->package_h_id == null ? null : 
+            PackageHistoryH::where('package_code', 
+                (PackageH::where('package_h_id', $orderD->package_h_id)->first()->package_code)
+            )->first()->package_history_h_id;
+        
+        $orderD->ref_hotel_id = $ref_hotel_id == "" ? null : $ref_hotel_id;
+        $orderD->ref_attraction_id = $ref_attraction_id == "" ? null : $ref_attraction_id;
+        $orderD->ref_vehicle_id = $ref_vehicle_id == "" ? null : $ref_vehicle_id;
+        $orderD->start_dt = $strStartDate;
+        $orderD->end_dt = $strEndDate;
+        $orderD->price = $price;
+        $orderD->save();
+
+        return $orderD;
+    }
+
+    private function updateOrderStatus($order_h_id, $order_status): OrderH
+    {
+        $orderH = OrderH::where('order_h_id', $order_h_id)->first();
+        $orderH->order_status = $order_status;
+        $orderH->update();
+
+        return $orderH;
+    }
+
+    private function generateTrxNo(): string
+    {
+        $trxNo = Constanta::$orderConst . date("YmdHis") . rand(100, 999);
+
+        return $trxNo;
+    }
+
+    private function createTrx($trxNo, $order_h_id): Trx
+    {
+        $trx = new Trx();
+        $trx->trx_no = $trxNo;
+        $trx->order_h_id = $order_h_id;
+        $trx->payment_status = false;
+        $trx->save();
+
+        return $trx;
+    }
+
+    private function updatePaymentStatusTrx($order_h_id, $payment_status): Trx
+    {
+        $trx = Trx::where('order_h_id', $order_h_id)->first();
+        $trx->payment_status = $payment_status;
+        $trx->update();
+
+        return $trx;
+    }
+
+    #endregion
+
+    #region Public Function
+    public function GetNewOrderDashboard(GetOrderDashboardRequest $request)
+    {
+        $orderHService = new OrderHService;
+
+        $order = $orderHService->getOrderByAgencyAndStatusAndLimit($request->agency_id, Constanta::$orderStatusNew, Constanta::$orderDashboardDataCount);
+        
         return response()->json($order);
     }
 
     public function GetNewOrderForCustomer(CustIdRequest $request)
     {
-        $order = OrderH::where([
-            ['customer_id', $request->customer_id],
-            ['order_status', Constanta::$orderStatusNew]
-        ])->with('orderDs')->orderBy('order_dt', 'asc')->get();
+        $orderHService = new OrderHService;
+
+        $order = $orderHService->getOrderByCustomerAndStatusWithLimit($request->customer_id, Constanta::$orderStatusNew);
         
         return response()->json($order);
     }
 
     public function GetApvOrderForCustomer(CustIdRequest $request)
     {
-        $order = OrderH::where([
-            ['customer_id', $request->customer_id],
-            ['order_status', Constanta::$orderStatusApproved]
-        ])->with('orderDs')->orderBy('order_dt', 'asc')->get();
+        $orderHService = new OrderHService;
+
+        $order = $orderHService->getOrderByCustomerAndStatusWithLimit($request->customer_id, Constanta::$orderStatusApproved);
         
         return response()->json($order);
     }
 
     public function GetRetryPayOrderForCustomer(CustIdRequest $request)
     {
-        $order = OrderH::where([
-            ['customer_id', $request->customer_id],
-            ['order_status', Constanta::$orderStatusRetryPay]
-        ])->with('orderDs')->orderBy('order_dt', 'asc')->limit(Constanta::$orderDashboardDataCount)->get();
+        $orderHService = new OrderHService;
+
+        $order = $orderHService->getOrderByCustomerAndStatusWithLimit($request->customer_id, Constanta::$orderStatusRetryPay, Constanta::$orderDashboardDataCount);
         
         return response()->json($order);
     }
 
     public function GetOrderById(GetOrderByIdRequest $request)
     {
-        $order = OrderH::where('order_h_id', $request->order_h_id)->with('orderDs')->get();
+        $orderHService = new OrderHService;
+
+        $order = $orderHService->getOrderHByIdWithOrderD($request->order_h_id);
         
         return response()->json($order);
     }
 
     public function CreateOrder(CreateOrderRequest $request)
     {
-
+        $orderHService = new OrderHService;
         try
         {
             DB::beginTransaction();
 
-            $orderNo = Constanta::$orderConst . date("YmdHis") . rand(100, 999);
+            $orderNo = $orderHService->generateOrderNo();
 
-            $orderH = new OrderH();
-            $orderH->agency_id = $request->agency_id;
-            $orderH->customer_id = $request->customer_id;
-            $orderH->order_dt = now();
-            $orderH->total_price = $request->total_price;
-            $orderH->order_no = $orderNo;
-            $orderH->order_status = Constanta::$orderStatusNew;
-            $orderH->save();
+            $orderH = $orderHService->createOrderH($orderNo, $request->customer_id, $request->agency_id, $request->order_dt, $request->order_status, $request->total_price);
 
             foreach($request->details as $detail)
             {
-                $strStartDate = $detail['start_dt'];
-                $strEndDate = $detail['end_dt'];
-            
-                if(strpos($strStartDate, "T") == true)
-                {
-                    $string = $detail->start_dt;
-                    $parts = explode("T", $string);
-                    $strStartDate = $parts[0];
-                }
+                $strStartDate = $orderHService->reformatDate($detail['start_dt']);
+                $strEndDate = $orderHService->reformatDate($detail['end_dt']);
 
-                if(strpos($strEndDate, "T") == true)
-                {
-                    $string = $detail->end_dt;
-                    $parts = explode("T", $string);
-                    $strEndDate = $parts[0];
-                }
-
-                $orderD = new OrderD();
-                $orderD->order_h_id = $orderH->order_h_id;
-                $orderD->package_h_id = $detail['package_h_id'];
-
-                $orderD->package_history_id = $orderD->package_h_id == null ? null : 
-                    PackageHistoryH::where('package_code', 
-                        (PackageH::where('package_h_id', $orderD->package_h_id)->first()->package_code)
-                    )->first()->package_history_h_id;
-                
-                $orderD->ref_hotel_id = $detail['ref_hotel_id'] == "" ? null : $detail['ref_hotel_id'];
-                $orderD->ref_attraction_id = $detail['ref_attraction_id'] == "" ? null : $detail['ref_attraction_id'];
-                $orderD->ref_vehicle_id = $detail['ref_vehicle_id'] == "" ? null : $detail['ref_vehicle_id'];
-                $orderD->start_dt = $strStartDate;
-                $orderD->end_dt = $strEndDate;
-                $orderD->price = $detail['price'];
-                $orderD->save();
+                $orderD = $orderHService->createOrderD(
+                    $orderH->order_h_id,
+                    $detail['package_h_id'],
+                    $detail['ref_hotel_id'],
+                    $detail['ref_attraction_id'],
+                    $detail['ref_vehicle_id'],
+                    $strStartDate,
+                    $strEndDate,
+                    $detail['price']
+                );
             }
 
             DB::commit();
@@ -146,21 +257,16 @@ class OrderHService implements OrderHInterface
 
     public function ApproveOrder(OrderHIdRequest $request)
     {
+        $orderHService = new OrderHService;
         try
         {
             DB::beginTransaction();
 
-            $orderH = OrderH::where('order_h_id', $request->order_h_id)->first();
-            $orderH->order_status = Constanta::$orderStatusApproved;
-            $orderH->update();
+            $orderH = $orderHService->updateOrderStatus($request->order_h_id, Constanta::$orderStatusApproved);
 
-            $trxNo = Constanta::$orderConst . date("YmdHis") . rand(100, 999);
+            $trxNo = $orderHService->generateTrxNo();
 
-            $trx = new Trx();
-            $trx->trx_no = $trxNo;
-            $trx->order_h_id = $request->order_h_id;
-            $trx->payment_status = false;
-            $trx->save();
+            $trx = $orderHService->createTrx($trxNo, $request->order_h_id);
 
             DB::commit();
 
@@ -183,13 +289,12 @@ class OrderHService implements OrderHInterface
 
     public function RejectOrder(OrderHIdRequest $request)
     {
+        $orderHService = new OrderHService;
         try
         {
             DB::beginTransaction();
-
-            $orderH = OrderH::where('order_h_id', $request->order_h_id)->first();
-            $orderH->order_status = Constanta::$orderStatusRejected;
-            $orderH->update();
+            
+            $orderH = $orderHService->updateOrderStatus($request->order_h_id, Constanta::$orderStatusRejected);
 
             DB::commit();
 
@@ -213,13 +318,12 @@ class OrderHService implements OrderHInterface
 
     public function CancelOrder(OrderHIdRequest $request)
     {
+        $orderHService = new OrderHService;
         try
         {
             DB::beginTransaction();
 
-            $orderH = OrderH::where('order_h_id', $request->order_h_id)->first();
-            $orderH->order_status = Constanta::$orderStatusCanceled;
-            $orderH->update();
+            $orderH = $orderHService->updateOrderStatus($request->order_h_id, Constanta::$orderStatusCanceled);
 
             DB::commit();
 
@@ -243,17 +347,14 @@ class OrderHService implements OrderHInterface
 
     public function PaidOrder(OrderHIdRequest $request)
     {
+        $orderHService = new OrderHService;
         try
         {
             DB::beginTransaction();
 
-            $orderH = OrderH::where('order_h_id', $request->order_h_id)->first();
-            $orderH->order_status = Constanta::$orderStatusPaid;
-            $orderH->update();
+            $orderH = $orderHService->updateOrderStatus($request->order_h_id, Constanta::$orderStatusPaid);
 
-            $trx = Trx::where('order_h_id', $request->order_h_id)->first();
-            $trx->payment_status = true;
-            $trx->update();
+            $trx = $orderHService->updatePaymentStatusTrx($request->order_h_id, true);
 
             DB::commit();
 
@@ -279,13 +380,12 @@ class OrderHService implements OrderHInterface
 
     public function RetryPaymentOrder(OrderHIdRequest $request)
     {
+        $orderHService = new OrderHService;
         try
         {
             DB::beginTransaction();
 
-            $orderH = OrderH::where('order_h_id', $request->order_h_id)->first();
-            $orderH->order_status = Constanta::$orderStatusRetryPay;
-            $orderH->update();
+            $orderH = $orderHService->updateOrderStatus($request->order_h_id, Constanta::$orderStatusRetryPay);
 
             DB::commit();
 
@@ -309,13 +409,14 @@ class OrderHService implements OrderHInterface
 
     public function GetCustPaidOrder(GetOrderDashboardRequest $request)
     {
-        $order = OrderH::where([
-            ['agency_id', $request->agency_id],
-            ['order_status', Constanta::$orderStatusCustPaid]
-        ])->with('orderDs')->orderBy('order_dt', 'asc')->limit(Constanta::$orderDashboardDataCount)->get();
+        $orderHService = new OrderHService;
+
+        $order = $orderHService->getOrderByAgencyAndStatusAndLimit($request->agency_id, Constanta::$orderStatusCustPaid, Constanta::$orderDashboardDataCount);
         
         return response()->json($order);
     }
+
+    #endregion
 
     
 }
