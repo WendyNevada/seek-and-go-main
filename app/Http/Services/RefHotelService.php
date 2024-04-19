@@ -22,35 +22,35 @@ use Brick\Math\BigInteger;
 class RefHotelService implements RefHotelInterface
 {
     #region Private Function
-    private function getRefHotelByCode($hotel_code): RefHotel
+    private function getRefHotelByCode($hotel_code)
     {
         $hotel = RefHotel::where('hotel_code', $hotel_code)->first();
 
         return $hotel;
     }
 
-    private function getRefHotelById($ref_hotel_id): RefHotel
+    private function getRefHotelById($ref_hotel_id)
     {
         $hotel = RefHotel::where('ref_hotel_id', $ref_hotel_id)->first();
 
         return $hotel;
     }
 
-    private function getRefPictureByHotelId($ref_hotel_id): RefPicture
+    private function getRefPictureByHotelId($ref_hotel_id)
     {
         $hotelPicture = RefPicture::where('ref_hotel_id', $ref_hotel_id)->first();
 
         return $hotelPicture;
     }
 
-    private function getAgencyAffiliateByHotelId($ref_hotel_id): AgencyAffiliate
+    private function getAgencyAffiliateByHotelId($ref_hotel_id)
     {
         $agencyAffiliate = AgencyAffiliate::where('ref_hotel_id', $ref_hotel_id)->first();
 
         return $agencyAffiliate;
     }
 
-    private function getRefZipcodeById($ref_zipcode_id): RefZipcode
+    private function getRefZipcodeById($ref_zipcode_id)
     {
         $refZipcode = RefZipcode::where('ref_zipcode_id', $ref_zipcode_id)->first();
 
@@ -238,7 +238,7 @@ class RefHotelService implements RefHotelInterface
         return $hotel;
     }
 
-    private function getHotelsByAgencyId($agency_id, $limit)
+    private function getActiveHotelsByAgencyId($agency_id, $limit)
     {
         $hotel = RefHotel::
         join('agency_affiliates', 'ref_hotels.ref_hotel_id', '=', 'agency_affiliates.ref_hotel_id')->
@@ -492,7 +492,7 @@ class RefHotelService implements RefHotelInterface
 
     public function GetActiveHotelByAgencyId(AgencyIdRequest $request)
     {
-        $hotel = $this->getHotelsByAgencyId($request->agency_id, Constanta::$homepageDataCount);
+        $hotel = $this->getActiveHotelsByAgencyId($request->agency_id, Constanta::$homepageDataCount);
 
         return response()->json($hotel);
     }

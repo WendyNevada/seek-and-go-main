@@ -18,11 +18,49 @@ class Agency extends Model
         'location'
     ];
 
-    // public function accounts()
-    // {
-    //     return $this->belongsTo(Account::class, 'account_id', 'account_id');
-    // }
+    #region Getter Setter
+    public function getAgencyIdAttribute($value)
+    {
+        return $value;
+    }
 
+    public function setAgencyIdAttribute($value)
+    {
+        $this->attributes['agency_id'] = $value;
+    }
+
+    public function getAgencyNameAttribute($value)
+    {
+        return $value;
+    }
+
+    public function setAgencyNameAttribute($value)
+    {
+        $this->attributes['agency_name'] = $value;
+    }
+
+    public function getNpwpAttribute($value)
+    {
+        return $value;
+    }
+
+    public function setNpwpAttribute($value)
+    {
+        $this->attributes['npwp'] = $value;
+    }
+
+    public function getLocationAttribute($value)
+    {
+        return $value;
+    }
+
+    public function setLocationAttribute($value)
+    {
+        $this->attributes['location'] = $value;
+    }
+    #endregion
+
+    #region Relations
     public function agencyAffiliates()
     {
         return $this->hasMany(AgencyAffiliate::class);
@@ -42,4 +80,5 @@ class Agency extends Model
     {
         return $this->hasMany(PackageHistoryH::class);
     }
+    #endregion
 }

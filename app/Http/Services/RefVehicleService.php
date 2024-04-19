@@ -21,18 +21,39 @@ use App\Http\Requests\V2\GetRefVehicleByIdRequest;
 class RefVehicleService implements RefVehicleInterface
 {
     #region Private Function
-    private function getRefVehicleByCode($vehicle_code): RefVehicle
+    private function getRefVehicleByCode($vehicle_code)
     {
         $vehicle = RefVehicle::where('vehicle_code', $vehicle_code)->first();
 
         return $vehicle;
     }
 
-    private function getRefVehicleById($ref_vehicle_id): RefVehicle
+    private function getRefVehicleById($ref_vehicle_id)
     {
         $vehicle = RefVehicle::where('ref_vehicle_id', $ref_vehicle_id)->first();
 
         return $vehicle;
+    }
+
+    private function getRefPictureByVehicleId($ref_vehicle_id)
+    {
+        $hotelPicture = RefPicture::where('ref_vehicle_id', $ref_vehicle_id)->first();
+
+        return $hotelPicture;
+    }
+
+    private function getAgencyAffiliateByVehicleId($ref_vehicle_id)
+    {
+        $agencyAffiliate = AgencyAffiliate::where('ref_vehicle_id', $ref_vehicle_id)->first();
+
+        return $agencyAffiliate;
+    }
+
+    private function getRefZipcodeById($ref_zipcode_id)
+    {
+        $refZipcode = RefZipcode::where('ref_zipcode_id', $ref_zipcode_id)->first();
+
+        return $refZipcode;
     }
 
     private function getRefZipcodeIdByAllArea($area_1, $area_2, $area_3, $area_4)
@@ -98,6 +119,154 @@ class RefVehicleService implements RefVehicleInterface
                         'promo_code' => $promo_code_affiliate
                     ]
                 );
+    }
+
+    private function updatePriceAgencyAffiliateVehicle($ref_vehicle_id, $base_price): void
+    {
+        $agencyAffiliate = AgencyAffiliate::where('ref_vehicle_id', $ref_vehicle_id)->first();
+
+        $agencyAffiliate->update(
+            [
+                'base_price' => $base_price
+            ]
+        );
+    }
+
+    private function updateRefVehicle($ref_vehicle_id, $vehicle_type, $vehicle_brand, $vehicle_series, $vehicle_model, $vehicle_seat, $vehicle_year, $vehicle_name, $description, $with_driver, $address, $qty, $promo_code): void
+    {
+        $vehicle = RefVehicle::where('ref_vehicle_id', $ref_vehicle_id)->first();
+
+        $vehicle->update(
+            [
+                'vehicle_type' => $vehicle_type,
+                'vehicle_brand' => $vehicle_brand,
+                'vehicle_series' => $vehicle_series,
+                'vehicle_model' => $vehicle_model,
+                'vehicle_seat' => $vehicle_seat,
+                'vehicle_year' => $vehicle_year,
+                'vehicle_name' => $vehicle_name,
+                'description' => $description,
+                'with_driver' => $with_driver,
+                'address' => $address,
+                'qty' => $qty,
+                'promo_code' => $promo_code
+            ]
+        );
+    }
+
+    private function updateRefPictureVehicle($picture, $vehicle_code, $ref_vehicle_id)
+    {
+        $image = $picture;
+        $imageName =  $vehicle_code . '_' . time() . '.' . $image->getClientOriginalName();
+        $path = $image->storeAs(Constanta::$refVehiclePictureDirectory, $imageName, Constanta::$refPictureDisk);
+        $url = Storage::url($path);
+
+        $refPicture = RefPicture::where('ref_vehicle_id', $ref_vehicle_id)->first();
+        if($refPicture != null)
+        {
+            $refPicture->image_url = $url;
+            $refPicture->save();
+        }
+        else
+        {
+            $refPicture = new RefPicture();
+            $refPicture->ref_vehicle_id = $ref_vehicle_id;
+            $refPicture->image_url = $url;
+            $refPicture->save();
+        }
+    }
+
+    private function checkOrderForVehicle($ref_vehicle_id): bool
+    {
+        $orderHs = OrderH::with('orderDs')
+                ->whereHas('orderDs', function ($query) use ($ref_vehicle_id) {
+                    $query->where('ref_vehicle_id', $ref_vehicle_id);
+                })
+                ->whereIn('order_status', [
+                    Constanta::$orderStatusNew,
+                    Constanta::$orderStatusApproved,
+                    Constanta::$orderStatusPaid,
+                    Constanta::$orderStatusCustPaid,
+                    Constanta::$orderStatusRetryPay
+                ])
+                ->get();
+
+        if(count($orderHs) > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private function checkPackageForVehicle($ref_vehicle_id): bool
+    {
+        $packageHs = PackageH::with('packageDs')
+                ->whereHas('packageDs', function ($query) use ($ref_vehicle_id) {
+                    $query->where('ref_vehicle_id', $ref_vehicle_id);
+                })
+                ->where('is_active', true)
+                ->get();
+
+        if(count($packageHs) > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private function updateIsActiveVehicle($ref_vehicle_id, $status): void
+    {
+        $hotel = RefVehicle::where('ref_vehicle_id', $ref_vehicle_id)->first();
+
+        $hotel->update([
+            'is_active' => $status
+        ]);
+    }
+
+    private function getActiveVehicleDataSortedWithLimit($limit)
+    {
+        $hotel = RefVehicle::where('is_active', '1')->orderBy('rating', 'desc')->limit($limit)->get();
+
+        foreach ($hotel as $key => $value)
+        {
+            $picture = RefPicture::where('ref_vehicle_id', $value->ref_vehicle_id)->first();
+
+            $base_price = AgencyAffiliate::where('ref_vehicle_id', $value->ref_vehicle_id)->first()->base_price;
+
+            if($picture != null)
+            {
+                $image_url = $picture->image_url;
+            }
+            else
+            {
+                $image_url = "-";
+            }
+
+            $value->image_url = $image_url;
+            $value->base_price = $base_price;
+        }
+
+        return $hotel;
+    }
+
+    private function getActiveVehiclesByAgencyId($agency_id, $limit)
+    {
+        $vehicle = RefVehicle::
+        join('agency_affiliates', 'ref_vehicles.ref_vehicle_id', '=', 'agency_affiliates.ref_vehicle_id')->
+        leftjoin('ref_pictures', 'ref_vehicles.ref_vehicle_id', '=', 'ref_pictures.ref_vehicle_id')->
+        select('ref_vehicles.*', 'agency_affiliates.base_price', 'ref_pictures.image_url')->
+        where('ref_vehicles.is_active', true)->
+        where('agency_affiliates.agency_id', $agency_id)->
+        limit($limit)->
+        get();
+
+        return $vehicle;
     }
     #endregion
 
@@ -180,54 +349,29 @@ class RefVehicleService implements RefVehicleInterface
             {
                 DB::beginTransaction();
 
-                $agencyAffiliate = AgencyAffiliate::where('ref_vehicle_id', $vehicle->ref_vehicle_id)->first();
+                $this->updatePriceAgencyAffiliateVehicle($request->ref_vehicle_id, $request->base_price);
 
-                $agencyAffiliate
-                ->update(
-                    [
-                        'base_price' => $request->base_price
-                    ]
-                );
-
-                $vehicle->update(
-                    [
-                        'vehicle_type' => $request->vehicle_type,
-                        'vehicle_brand' => $request->vehicle_brand,
-                        'vehicle_series' => $request->vehicle_series,
-                        'vehicle_model' => $request->vehicle_model,
-                        'vehicle_seat' => $request->vehicle_seat,
-                        'vehicle_year' => $request->vehicle_year,
-                        'vehicle_name' => $request->vehicle_name,
-                        'description' => $request->description,
-                        'with_driver' => $request->with_driver,
-                        'address' => $request->address,
-                        'qty' => $request->qty,
-                        'promo_code' => $request->promo_code
-                    ]
+                $this->updateRefVehicle(
+                    $request->ref_vehicle_id,
+                    $request->vehicle_type,
+                    $request->vehicle_brand,
+                    $request->vehicle_series,
+                    $request->vehicle_model,
+                    $request->vehicle_seat,
+                    $request->vehicle_year,
+                    $request->vehicle_name,
+                    $request->description,
+                    $request->with_driver,
+                    $request->address,
+                    $request->qty,
+                    $request->promo_code
                 );
 
                 if($request->picture_url)
                 {
                     if($request->hasFile('picture'))
                     {
-                        $image = $request->file('picture');
-                        $imageName =  $vehicle->vehicle_code . '_' . time() . '.' . $image->getClientOriginalName();
-                        $path = $image->storeAs(Constanta::$refVehiclePictureDirectory, $imageName, Constanta::$refPictureDisk);
-                        $url = Storage::url($path);
-
-                        $refPicture = RefPicture::where('ref_vehicle_id', $vehicle->ref_vehicle_id)->first();
-                        if($refPicture != null)
-                        {
-                            $refPicture->image_url = $url;
-                            $refPicture->save();
-                        }
-                        else
-                        {
-                            $refPicture = new RefPicture();
-                            $refPicture->ref_vehicle_id = $vehicle->ref_vehicle_id;
-                            $refPicture->image_url = $url;
-                            $refPicture->save();
-                        }
+                        $this->updateRefPictureVehicle($request->file('picture'), $request->vehicle_code, $request->ref_vehicle_id);
                     }
                 }
 
@@ -264,24 +408,13 @@ class RefVehicleService implements RefVehicleInterface
     {
         try
         {
-            $vehicle = RefVehicle::where('ref_vehicle_id', $request->ref_vehicle_id)->first();
+            $vehicle = $this->getRefVehicleById($request->ref_vehicle_id);
 
             if($vehicle != null)
             {
-                $orderHs = OrderH::with('orderDs')
-                ->whereHas('orderDs', function ($query) use ($request) {
-                    $query->where('ref_vehicle_id', $request->ref_vehicle_id);
-                })
-                ->whereIn('order_status', [
-                    Constanta::$orderStatusNew,
-                    Constanta::$orderStatusApproved,
-                    Constanta::$orderStatusPaid,
-                    Constanta::$orderStatusCustPaid,
-                    Constanta::$orderStatusRetryPay
-                ])
-                ->get();
+                $orderHs = $this->checkOrderForVehicle($request->ref_vehicle_id);
 
-                if(count($orderHs) > 0)
+                if($orderHs == true)
                 {
                     return response()->json(
                         [
@@ -293,19 +426,14 @@ class RefVehicleService implements RefVehicleInterface
                     );
                 }
 
-                $packageHs = PackageH::with('packageDs')
-                ->whereHas('packageDs', function ($query) use ($request) {
-                    $query->where('ref_vehicle_id', $request->ref_vehicle_id);
-                })
-                ->where('is_active', true)
-                ->get();
+                $packageHs = $this->checkPackageForVehicle($request->ref_vehicle_id);
 
-                if(count($packageHs) > 0)
+                if($packageHs == true)
                 {
                     return response()->json(
                         [
                             'status' => "error",
-                            'message' => "Hotel is in active package",
+                            'message' => "Vehicle is in active package",
                             'ref_vehicle_id' => $request->ref_vehicle_id
                         ],
                         400
@@ -314,11 +442,7 @@ class RefVehicleService implements RefVehicleInterface
 
                 DB::beginTransaction();
 
-                $vehicle->update(
-                    [
-                        'is_active' => '0'
-                    ]
-                );
+                $this->updateIsActiveVehicle($request->ref_vehicle_id, false);
 
                 DB::commit();
 
@@ -351,13 +475,13 @@ class RefVehicleService implements RefVehicleInterface
 
     public function GetVehicleById(GetRefVehicleByIdRequest $request)
     {
-        $vehicle = RefVehicle::where('ref_vehicle_id', $request->ref_vehicle_id)->first();
+        $vehicle = $this->getRefVehicleById($request->ref_vehicle_id);
 
-        $vehiclePicture = RefPicture::where('ref_vehicle_id', $request->ref_vehicle_id)->first();
+        $vehiclePicture = $this->getRefPictureByVehicleId($request->ref_vehicle_id);;
 
-        $agencyAffiliate = AgencyAffiliate::where('ref_vehicle_id', $request->ref_vehicle_id)->first();
+        $agencyAffiliate = $this->getAgencyAffiliateByVehicleId($request->ref_vehicle_id);
 
-        $address = RefZipcode::where('ref_zipcode_id', $vehicle->ref_zipcode_id)->first();
+        $address = $this->getRefZipcodeById($vehicle->ref_zipcode_id);;
 
         if($vehicle != null)
         {
@@ -399,40 +523,14 @@ class RefVehicleService implements RefVehicleInterface
 
     public function GetVehicleHomepage()
     {
-        $vehicle = RefVehicle::where('is_active', '1')->orderBy('rating', 'desc')->limit(Constanta::$homepageDataCount)->get();
-
-        foreach ($vehicle as $key => $value)
-        {
-            $picture = RefPicture::where('ref_vehicle_id', $value->ref_vehicle_id)->first();
-
-            $base_price = AgencyAffiliate::where('ref_vehicle_id', $value->ref_vehicle_id)->first()->base_price;
-
-            if($picture != null)
-            {
-                $image_url = $picture->image_url;
-            }
-            else
-            {
-                $image_url = "-";
-            }
-
-            $value->image_url = $image_url;
-            $value->base_price = $base_price;
-        }
+        $vehicle = $this->getActiveVehicleDataSortedWithLimit(Constanta::$homepageDataCount);
 
         return response()->json($vehicle);
     }
 
     public function GetActiveVehicleByAgencyId(AgencyIdRequest $request)
     {
-        $vehicle = RefVehicle::
-        join('agency_affiliates', 'ref_vehicles.ref_vehicle_id', '=', 'agency_affiliates.ref_vehicle_id')->
-        leftjoin('ref_pictures', 'ref_vehicles.ref_vehicle_id', '=', 'ref_pictures.ref_vehicle_id')->
-        select('ref_vehicles.*', 'agency_affiliates.base_price', 'ref_pictures.image_url')->
-        where('ref_vehicles.is_active', true)->
-        where('agency_affiliates.agency_id', $request->agency_id)->
-        limit(Constanta::$homepageDataCount)->
-        get();
+        $vehicle = $this->getActiveVehiclesByAgencyId($request->agency_id, Constanta::$homepageDataCount);
 
         return response()->json($vehicle);
     }

@@ -21,7 +21,7 @@ class OrderHService implements OrderHInterface
 
     #region Private Function
 
-    private function getOrderHById($id): OrderH
+    private function getOrderHById($id)
     {
         $orderH = OrderH::where('order_h_id', $id)->first();
         return $orderH;
