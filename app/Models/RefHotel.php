@@ -23,6 +23,19 @@ class RefHotel extends Model
   
     protected $primaryKey = 'ref_hotel_id';
 
+    protected $casts = [
+        'ref_hotel_id' => 'biginteger',
+        'hotel_code' => 'string',
+        'ref_zipcode_id' => 'biginteger',
+        'hotel_name' => 'string',
+        'description' => 'string',
+        'address' => 'string',
+        'rating' => 'double',
+        'is_active' => 'boolean',
+        'qty' => 'integer',
+        'promo_code' => 'string'
+    ];
+
     #region Getter Setter
     public function getRefHotelIdAttribute($value)
     {

@@ -11,6 +11,23 @@ class RefPicture extends Model
 
     protected $primaryKey = 'ref_picture_id';
 
+    protected $fillable = [
+        'ref_hotel_id',
+        'ref_attraction_id',
+        'ref_vehicle_id',
+        'order_h_id',
+        'image_url'
+    ];
+
+    protected $casts = [
+        'ref_picture_id' => 'biginteger',
+        'ref_hotel_id' => 'biginteger',
+        'ref_attraction_id' => 'biginteger',
+        'ref_vehicle_id' => 'biginteger',
+        'order_h_id' => 'biginteger',
+        'image_url' => 'string'
+    ];
+
     #region Getter Setter
     public function getRefPictureIdAttribute($value)
     {

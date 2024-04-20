@@ -22,6 +22,19 @@ class RefAttraction extends Model
     ];
     protected $primaryKey = 'ref_attraction_id';
 
+    protected $casts = [
+        'ref_attraction_id' => 'biginteger',
+        'attraction_code' => 'string',
+        'ref_zipcode_id' => 'biginteger',
+        'attraction_name' => 'string',
+        'description' => 'string',
+        'address' => 'string',
+        'rating' => 'double',
+        'is_active' => 'boolean',
+        'qty' => 'integer',
+        'promo_code' => 'string'
+    ];
+
     #region Getter Setter
     public function getRefAttractionIdAttribute($value)
     {

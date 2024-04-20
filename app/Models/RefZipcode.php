@@ -11,6 +11,23 @@ class RefZipcode extends Model
 
     protected $primaryKey = 'ref_zipcode_id';
 
+    protected $fillable = [
+        'zipcode',
+        'area_1',
+        'area_2',
+        'area_3',
+        'area_4'
+    ];
+
+    protected $casts = [
+        'ref_zipcode_id' => 'biginteger',
+        'zipcode' => 'string',
+        'area_1' => 'string',
+        'area_2' => 'string',
+        'area_3' => 'string',
+        'area_4' => 'string'
+    ];
+
     #region Getter Setter
     public function getRefZipcodeIdAttribute($value)
     {

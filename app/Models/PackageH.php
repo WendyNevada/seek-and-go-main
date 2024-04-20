@@ -25,6 +25,20 @@ class PackageH extends Model
 
     protected $primaryKey = 'package_h_id';
 
+    protected $casts = [
+        'package_h_id' => 'biginteger',
+        'agency_id' => 'biginteger',
+        'customer_id' => 'biginteger',
+        'package_name' => 'string',
+        'description' => 'string',
+        'is_custom' => 'boolean',
+        'custom_status' => 'string',
+        'promo_code' => 'string',
+        'package_price' => 'double',
+        'is_active' => 'boolean',
+        'qty' => 'integer'
+    ];
+
     #region Getter Setter
     public function getPackageHIdAttribute($value)
     {

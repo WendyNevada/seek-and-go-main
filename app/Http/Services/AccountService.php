@@ -7,27 +7,30 @@ use App\Models\Account;
 use App\Models\Customer;
 use App\Models\Constanta;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\V2\LoginRequest;
+use Illuminate\Auth\Events\Registered;
 use App\Http\Interfaces\AccountInterface;
 use App\Http\Requests\V1\StoreAccountRequest;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use App\Http\Requests\V2\StoreAccountAgencyRequest;
 use App\Http\Requests\V2\UpdateAgencyAccountRequest;
 use App\Http\Requests\V2\UpdateCustomerAccountRequest;
-use App\Models\RefAttraction;
 
 class AccountService implements AccountInterface
 {
 
     #region Private Method
-    private function getAccountByEmail($email): Account
+    private function getAccountByEmail($email)
     {
         $account = Account::where('email', $email)->first();
+
         return $account;
     }
 
-    private function checkPassword($accPass, $reqPass): bool
+    private function checkPassword($reqPass, $accPass): bool
     {
-        if($accPass == $reqPass)
+        if(Hash::check($accPass, $reqPass))
         {
             return true;
         }
@@ -67,7 +70,7 @@ class AccountService implements AccountInterface
 
     private function reformatDate($date): string
     {
-        $strDate = $date->birth_date;
+        $strDate = $date;
                 
         if(strpos($strDate, "T") == true)
         {
@@ -128,6 +131,11 @@ class AccountService implements AccountInterface
         $agency->save();
         return $agency;
     }
+
+    private function verifyEmail($account)
+    {
+        $account->notify(new VerifyEmail);
+    }
     #endregion
 
     #region Public Method
@@ -156,6 +164,17 @@ class AccountService implements AccountInterface
                     return response()->json([
                         'status' => "error",
                         'message' => "Password does not match",
+                        'account_id' => "-",
+                        'role' => "-",
+                        'customer_id' => "-",
+                        'agency_id' => "-"
+                    ], 400);
+                }
+                else if($account->email_verified_at == null)
+                {
+                    return response()->json([
+                        'status' => "error",
+                        'message' => "Email is not verified",
                         'account_id' => "-",
                         'role' => "-",
                         'customer_id' => "-",
@@ -221,6 +240,10 @@ class AccountService implements AccountInterface
 
                 $customer = $this->createCustomer($accountId, $request->customer_name, $request->gender, $strBirthDate);
 
+                //$this->verifyEmail($account);
+
+                $account->sendEmailVerificationNotification();
+
                 DB::commit();
 
                 $message = "success";
@@ -269,6 +292,10 @@ class AccountService implements AccountInterface
                 $accountId = $account->account_id;
 
                 $agency = $this->createAgency($accountId, $request->agency_name, $request->npwp, $request->location);
+
+                $this->verifyEmail($account);
+
+                $account->sendEmailVerificationNotification();
 
                 DB::commit();
 

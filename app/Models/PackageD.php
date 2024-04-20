@@ -20,6 +20,16 @@ class PackageD extends Model
 
     protected $primaryKey = 'package_d_id';
 
+    protected $casts = [
+        'package_d_id' => 'biginteger',
+        'package_h_id' => 'biginteger',
+        'ref_hotel_id' => 'biginteger',
+        'ref_attraction_id' => 'biginteger',
+        'ref_vehicle_id' => 'biginteger',
+        'start_dt' => 'datetime',
+        'end_dt' => 'datetime'
+    ];
+
     #region Getter Setter
     public function getPackageDIdAttribute($value)
     {

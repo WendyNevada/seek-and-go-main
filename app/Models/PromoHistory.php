@@ -9,6 +9,19 @@ class PromoHistory extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'customer_id',
+        'promo_id',
+        'counter'
+    ];
+
+    protected $casts = [
+        'promo_history_id' => 'biginteger',
+        'customer_id' => 'biginteger',
+        'promo_id' => 'biginteger',
+        'counter' => 'integer'
+    ];
+
     protected $primaryKey = 'promo_history_id';
 
     #region Getter Setter

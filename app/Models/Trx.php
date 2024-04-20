@@ -11,6 +11,19 @@ class Trx extends Model
 
     protected $primaryKey = 'trx_id';
 
+    protected $fillable = [
+        'trx_no',
+        'order_h_id',
+        'payment_status'
+    ];
+
+    protected $casts = [
+        'trx_id' => 'biginteger',
+        'trx_no' => 'string',
+        'order_h_id' => 'biginteger',
+        'payment_status' => 'boolean'
+    ];
+
     #region Getter Setter
     public function getTrxIdAttribute($value)
     {

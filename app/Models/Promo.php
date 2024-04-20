@@ -11,6 +11,31 @@ class Promo extends Model
 
     protected $primaryKey = 'promo_id';
 
+    protected $fillable = [
+        'promo_code',
+        'start_date',
+        'end_date',
+        'is_hotel',
+        'is_attraction',
+        'is_vehicle',
+        'is_amount',
+        'amount',
+        'percent'
+    ];
+
+    protected $casts = [
+        'promo_id' => 'biginteger',
+        'promo_code' => 'string',
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'is_hotel' => 'boolean',
+        'is_attraction' => 'boolean',
+        'is_vehicle' => 'boolean',
+        'is_amount' => 'boolean',
+        'amount' => 'double',
+        'percent' => 'double'
+    ];
+
     #region Getter Setter
     public function getPromoIdAttribute($value)
     {
