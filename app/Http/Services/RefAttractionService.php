@@ -24,35 +24,35 @@ use Illuminate\Support\Facades\Storage;
 class RefAttractionService implements RefAttractionInterface
 {
     #region Private Function
-    private function getRefAttractionByCode($attraction_code): RefAttraction
+    private function getRefAttractionByCode($attraction_code)
     {
         $attraction = RefAttraction::where('attraction_code', $attraction_code)->first();
 
         return $attraction;
     }
 
-    private function getRefAttractionById($ref_attraction_id): RefAttraction
+    private function getRefAttractionById($ref_attraction_id)
     {
         $attraction = RefAttraction::where('ref_attraction_id', $ref_attraction_id)->first();
 
         return $attraction;
     }
 
-    private function getRefPictureByAttractionId($ref_attraction_id): RefPicture
+    private function getRefPictureByAttractionId($ref_attraction_id)
     {
         $attractionPicture = RefPicture::where('ref_attraction_id', $ref_attraction_id)->first();
 
         return $attractionPicture;
     }
 
-    private function getAgencyAffiliateByAttractionId($ref_attraction_id): AgencyAffiliate
+    private function getAgencyAffiliateByAttractionId($ref_attraction_id)
     {
         $agencyAffiliate = AgencyAffiliate::where('ref_attraction_id', $ref_attraction_id)->first();
 
         return $agencyAffiliate;
     }
 
-    private function getRefZipcodeById($ref_zipcode_id): RefZipcode
+    private function getRefZipcodeById($ref_zipcode_id)
     {
         $refZipcode = RefZipcode::where('ref_zipcode_id', $ref_zipcode_id)->first();
 
@@ -243,7 +243,7 @@ class RefAttractionService implements RefAttractionInterface
         return $attraction;
     }
 
-    private function getAttractionsByAgencyId($agency_id, $limit)
+    private function getActiveAttractionsByAgencyId($agency_id, $limit)
     {
         $attraction = RefAttraction::
         join('agency_affiliates', 'ref_attractions.ref_attraction_id', '=', 'agency_affiliates.ref_attraction_id')->
@@ -504,7 +504,7 @@ class RefAttractionService implements RefAttractionInterface
 
     public function GetActiveAttractionByAgencyId(AgencyIdRequest $request)
     {
-        $attraction = $this->getAttractionsByAgencyId($request->agency_id, Constanta::$homepageDataCount);
+        $attraction = $this->getActiveAttractionsByAgencyId($request->agency_id, Constanta::$homepageDataCount);
 
         return response()->json($attraction);
     }

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password', length:100);
             $table->string('role', length:10);
             $table->string('phone', length:20);
+            $table->timestamp('email_verified_at')->nullable();
             $table->timestamps();
         });
     }
