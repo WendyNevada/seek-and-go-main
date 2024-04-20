@@ -8,6 +8,7 @@ import AgencyAddAttractionPage from './views/Agency-page/AgencyAddAttractionPage
 import HomePage from './views/Home-Page/HomePage';
 import { useUserRole } from './context/CustomHook';
 import AgencyEditAttractionPage from './views/Agency-page/AgencyEditAttractionPage';
+import AgencyAddVehiclePage from './views/Agency-page/AgencyAddVehiclePage';
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function AgencyRoutes() {
         <Route path="Product" element={<AgencyProductPage />} />
         <Route path="AddAttraction" element={<AgencyAddAttractionPage />} />
         <Route path="EditAttraction/:ref_attraction_id" element={<AgencyEditAttractionPage />} />
+        <Route path="AddVehicle" element={<AgencyAddVehiclePage />}></Route>
     </Routes>
   );
 }
