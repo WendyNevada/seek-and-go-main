@@ -31,26 +31,6 @@ class RefVehicle extends Model
 
     protected $primaryKey = 'ref_vehicle_id';
 
-    protected $casts = [
-        'ref_vehicle_id' => 'biginteger',
-        'vehicle_code' => 'string',
-        'ref_zipcode_id' => 'biginteger',
-        'vehicle_type' => 'string',
-        'vehicle_brand' => 'string',
-        'vehicle_series' => 'string',
-        'vehicle_model' => 'string',
-        'vehicle_seat' => 'integer',
-        'vehicle_year' => 'string',
-        'vehicle_name' => 'string',
-        'description' => 'string',
-        'with_driver' => 'boolean',
-        'address' => 'string',
-        'rating' => 'double',
-        'is_active' => 'boolean',
-        'qty' => 'integer',
-        'promo_code' => 'string'
-    ];
-
     #region Getter Setter
     public function getRefVehicleIdAttribute($value)
     {

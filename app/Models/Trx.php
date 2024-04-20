@@ -17,13 +17,6 @@ class Trx extends Model
         'payment_status'
     ];
 
-    protected $casts = [
-        'trx_id' => 'biginteger',
-        'trx_no' => 'string',
-        'order_h_id' => 'biginteger',
-        'payment_status' => 'boolean'
-    ];
-
     #region Getter Setter
     public function getTrxIdAttribute($value)
     {

@@ -20,16 +20,6 @@ class AgencyAffiliate extends Model
 
     protected $primaryKey = 'agency_affiliate_id';
 
-    protected $casts = [
-        'agency_affiliate_id' => 'biginteger',
-        'ref_hotel_id' => 'biginteger',
-        'ref_attraction_id' => 'biginteger',
-        'ref_vehicle_id' => 'biginteger',
-        'agency_id' => 'biginteger',
-        'base_price' => 'float',
-        'promo_code' => 'string'
-    ];
-
     #region Getter Setter
     public function getAgencyAffiliateIdAttribute($value)
     {

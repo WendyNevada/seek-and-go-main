@@ -20,16 +20,6 @@ class OrderH extends Model
 
     protected $primaryKey = 'order_h_id';
 
-    protected $casts = [
-        'order_h_id' => 'biginteger',
-        'agency_id' => 'biginteger',
-        'customer_id' => 'biginteger',
-        'order_no' => 'string',
-        'order_dt' => 'datetime',
-        'total_price' => 'double',
-        'order_status' => 'string'
-    ];
-
     #region Getter Setter
     public function getOrderHIdAttribute($value)
     {

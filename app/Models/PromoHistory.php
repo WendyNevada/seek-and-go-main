@@ -15,13 +15,6 @@ class PromoHistory extends Model
         'counter'
     ];
 
-    protected $casts = [
-        'promo_history_id' => 'biginteger',
-        'customer_id' => 'biginteger',
-        'promo_id' => 'biginteger',
-        'counter' => 'integer'
-    ];
-
     protected $primaryKey = 'promo_history_id';
 
     #region Getter Setter

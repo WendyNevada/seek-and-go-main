@@ -24,20 +24,6 @@ class PackageHistoryD extends Model
 
     protected $primaryKey = 'package_history_d_id';
 
-    protected $casts = [
-        'package_history_d_id' => 'biginteger',
-        'package_history_h_id' => 'biginteger',
-        'hotel_name' => 'string',
-        'hotel_start_dt' => 'datetime',
-        'hotel_end_dt' => 'datetime',
-        'attraction_name' => 'string',
-        'attraction_start_dt' => 'datetime',
-        'attraction_end_dt' => 'datetime',
-        'vehicle_name' => 'string',
-        'vehicle_start_dt' => 'datetime',
-        'vehicle_end_dt' => 'datetime'
-    ];
-
     #region Getter Setter
     public function getPackageHistoryDIdAttribute($value)
     {

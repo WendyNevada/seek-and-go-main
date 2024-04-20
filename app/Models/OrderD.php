@@ -24,19 +24,6 @@ class OrderD extends Model
 
     protected $primaryKey = 'order_d_id';
 
-    protected $casts = [
-        'order_d_id' => 'biginteger',
-        'order_h_id' => 'biginteger',
-        'package_h_id' => 'biginteger',
-        'package_history_id' => 'biginteger',
-        'ref_hotel_id' => 'biginteger',
-        'ref_attraction_id' => 'biginteger',
-        'ref_vehicle_id' => 'biginteger',
-        'start_dt' => 'datetime',
-        'end_dt' => 'datetime',
-        'price' => 'double'
-    ];
-
     #region Getter Setter
     public function getOrderDIdAttribute($value)
     {
