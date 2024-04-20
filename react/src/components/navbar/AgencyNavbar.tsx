@@ -1,35 +1,41 @@
 import React, { useState } from 'react'
 // import './Navbar.css'
-import { BsCart2 } from 'react-icons/bs'
+// import { BsCart2 } from 'react-icons/bs'
 import { assetForWeb } from '../../assets/assetStatic'
 import HomeIcon from '@mui/icons-material/Home'
 import InfoIcon from '@mui/icons-material/Info'
-import CommentRoundedIcon from '@mui/icons-material/CommentRounded'
-import PhoneRoundedIcon from '@mui/icons-material/PhoneRounded'
-import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded'
-import { HiOutlineBars3 } from 'react-icons/hi2'
+// import CommentRoundedIcon from '@mui/icons-material/CommentRounded'
+// import PhoneRoundedIcon from '@mui/icons-material/PhoneRounded'
+// import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded'
+// import { HiOutlineBars3 } from 'react-icons/hi2'
 import { Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
-import Login from '@mui/icons-material/Login';
+// import Login from '@mui/icons-material/Login';
 import { Link } from 'react-router-dom'
+import LogoutIcon from '@mui/icons-material/Logout';
+import { useLogin } from '@/context/LoginContext'
+import { urlConstant } from '@/urlConstant'
 
 const Navbar = () => {
+    const { logout } = useLogin();
     const [openMenu, setOpenMenu] = useState(false)
     const menuOptions = [
         {
             text:"Product",
             icon:<HomeIcon/>,
-            link:"/Agency"
+            link: urlConstant.AgencyHomePage
         },
         {
             text:"About",
             icon:<InfoIcon/>,
             link:"/Agency/Product"
         },
-        // {
-        //     text:"Testimonials",
-        //     icon:<CommentRoundedIcon/>,
-        //     link:"/Detail"
-        // },
+        {
+            text:"Logout",
+            icon:<LogoutIcon/>,
+            onclick: () => {
+                logout
+            }
+        },
         // {
         //     text:"Contact",
         //     icon:<PhoneRoundedIcon/>
@@ -73,17 +79,9 @@ const Navbar = () => {
             </div>
 
             <div className='w-full hidden flex lg:flex lg:items-center lg:w-auto'>
-                <Link to='/Agency/DashBoard' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Dashboard</Link>
+                <Link to ={urlConstant.AgencyHomePage} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Dashboard</Link>
                 <Link to="/Agency/Product" className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Product</Link>
-                {/* <a href='\About' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>About</a>
-                <a href='\Detail' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Details</a>
-                <a href='' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Contact</a>
-                <a href='' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>
-                    <BsCart2 className='navbar-cart-icon'/>
-                </a>
-                <a href='\Register' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Register</a>
-                <a href='\Login' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1'>Login</a>
-                <button className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Bookings Now</button> */}
+                <button onClick={() => logout()} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Logout</button>
             </div>
         </nav>
       )
