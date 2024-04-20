@@ -18,14 +18,6 @@ class Agency extends Model
         'location'
     ];
 
-    protected $casts = [
-        'agency_id' => 'biginteger',
-        'account_id' => 'biginteger',
-        'agency_name' => 'string',
-        'npwp' => 'string',
-        'location' => 'string'
-    ];
-
     #region Getter Setter
     public function getAgencyIdAttribute($value)
     {

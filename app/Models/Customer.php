@@ -20,14 +20,6 @@ class Customer extends Model
         'birth_date'
     ];
 
-    protected $casts = [
-        'customer_id' => 'biginteger',
-        'account_id' => 'biginteger',
-        'customer_name' => 'string',
-        'gender' => 'string',
-        'birth_date' => 'date'
-    ];
-
     #region Getter Setter
     public function getCustomerIdAttribute($value)
     {

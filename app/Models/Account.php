@@ -28,16 +28,6 @@ class Account extends Authenticatable implements MustVerifyEmail
         'password',
     ];
 
-    protected $casts = [
-        'account_id' => 'biginteger',
-        'account_name' => 'string',
-        'email' => 'string',
-        'password' => 'string',
-        'role' => 'string',
-        'phone' => 'string',
-        'email_verified_at' => 'datetime',
-    ];
-
     #region Getter Setter
     public function getAccountIdAttribute($value)
     {

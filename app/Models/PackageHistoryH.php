@@ -21,17 +21,6 @@ class PackageHistoryH extends Model
 
     protected $primaryKey = 'package_history_h_id';
 
-    protected $casts = [
-        'package_history_h_id' => 'biginteger',
-        'package_code' => 'string',
-        'agency_id' => 'biginteger',
-        'customer_id' => 'biginteger',
-        'package_name' => 'string',
-        'is_custom' => 'boolean',
-        'promo_code' => 'string',
-        'package_price' => 'double'
-    ];
-
     #region Getter Setter
     public function getPackageHistoryHIdAttribute($value)
     {
