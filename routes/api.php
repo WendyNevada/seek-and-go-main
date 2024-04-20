@@ -42,6 +42,10 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('UpdateAgencyAccount', 'AccountController@UpdateAgencyAccount');
 
+    Route::get('email/verify/{id}', 'AccountController@verify')->name('verification.verify'); // Make sure to keep this as your route name
+
+    Route::get('email/resend', 'AccountController@resend')->name('verification.resend');
+
     #endregion
 
     #region Attraction

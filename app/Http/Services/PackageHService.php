@@ -23,7 +23,7 @@ class PackageHService implements PackageHInterface
 {
     #region Private Function
 
-    private function getPackageByPackageCode($package_code): PackageH
+    private function getPackageByPackageCode($package_code)
     {
         $packageH = PackageH::where('package_code', $package_code)->first();
         return $packageH;
