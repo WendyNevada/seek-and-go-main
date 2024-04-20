@@ -7,11 +7,15 @@ import InfoIcon from '@mui/icons-material/Info'
 import CommentRoundedIcon from '@mui/icons-material/CommentRounded'
 import PhoneRoundedIcon from '@mui/icons-material/PhoneRounded'
 import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded'
-import { HiOutlineBars3 } from 'react-icons/hi2'
+// import { HiOutlineBars3 } from 'react-icons/hi2'
 import { Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 import Login from '@mui/icons-material/Login';
+import { useLogin } from '@/context/LoginContext'
+import LogoutIcon from '@mui/icons-material/Logout';
+// import { Link } from 'react-router-dom'
 
 const Navbar = () => {
+    const { logout } = useLogin();
     const [openMenu, setOpenMenu] = useState(false)
     const menuOptions = [
         {
@@ -40,6 +44,13 @@ const Navbar = () => {
         {
             text:"Login",
             icon: <Login/>
+        },
+        {
+            text:"Logout",
+            icon:<LogoutIcon/>,
+            onclick: () => {
+                logout
+            }
         }
     ]
 
@@ -82,6 +93,7 @@ const Navbar = () => {
                 <a href='\Register' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Register</a>
                 <a href='\Login' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1'>Login</a>
                 <button className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Bookings Now</button>
+                <button onClick={() => logout()} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Logout</button>
             </div>
 
 

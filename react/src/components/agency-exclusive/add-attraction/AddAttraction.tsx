@@ -352,7 +352,7 @@ const AddAttraction = () => {
                         </form>
                     </Form>
                 </div>
-            </div>
+        </div>
     )
 }
 

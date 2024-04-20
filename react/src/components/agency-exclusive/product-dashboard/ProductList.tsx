@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import AttractionList from './AttractionList/AttractionList';
+import { urlConstant } from '@/urlConstant';
 
 const ProductList = () => {
     const navigate = useNavigate();
@@ -9,11 +10,15 @@ const ProductList = () => {
         navigate('/Agency/AddAttraction');
     };
 
+    const onRouteAddVehicle = () => {
+        navigate(urlConstant.AddVehicle);
+    };
+
     return (
         <div className='mt-20 mx-auto max-w-screen-lg'>
             <div className='flex flex-wrap justify-start mb-4'>
                 <Button onClick={onRoute} className='rounded-full mr-2 mb-2'>Add Attraction</Button>
-                <Button className='rounded-full mr-2 mb-2'>Add Vehicle</Button>
+                <Button onClick={onRouteAddVehicle} className='rounded-full mr-2 mb-2'>Add Vehicle</Button>
                 <Button className='rounded-full mr-2 mb-2'>Add Hotel</Button>
                 <Button className='rounded-full mr-2 mb-2'>Add Packages</Button>
             </div>
