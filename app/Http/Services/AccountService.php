@@ -74,7 +74,7 @@ class AccountService implements AccountInterface
                 
         if(strpos($strDate, "T") == true)
         {
-            $string = $date->birth_date;
+            $string = $date;
             $parts = explode("T", $string);
             $strDate = $parts[0];
         }

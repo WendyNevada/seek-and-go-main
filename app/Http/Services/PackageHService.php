@@ -22,7 +22,6 @@ use App\Http\Requests\V2\CreateCustomPackageCustomerRequest;
 class PackageHService implements PackageHInterface
 {
     #region Private Function
-
     private function getPackageByPackageCode($package_code)
     {
         $packageH = PackageH::where('package_code', $package_code)->first();
@@ -63,11 +62,11 @@ class PackageHService implements PackageHInterface
 
     private function reformatDate($date): string
     {
-        $strDate = $date->birth_date;
+        $strDate = $date;
                 
         if(strpos($strDate, "T") == true)
         {
-            $string = $date->birth_date;
+            $string = $date;
             $parts = explode("T", $string);
             $strDate = $parts[0];
         }
@@ -227,7 +226,6 @@ class PackageHService implements PackageHInterface
 
         return $orderD;
     }
-
     #endregion
 
     #region Public Function
