@@ -22,7 +22,6 @@ return new class extends Migration
             $table->bigInteger('agency_id')->unsigned();
             $table->foreign('agency_id')->references('agency_id')->on('agencies')->onDelete('cascade');
             $table->double('base_price', 17, 2);
-            $table->string('promo_code', length:50)->nullable();
             $table->timestamps();
         });
     }

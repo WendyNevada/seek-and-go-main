@@ -30,6 +30,7 @@ class CreatePackageAgencyRequest extends FormRequest
             'package_price' => ['required'],
             'is_active' => ['required'],
             'qty' => ['required'],
+            'total_days' => ['required'],
             'details' => ['required', 'array'],
             'details.*.ref_hotel_id' => ['nullable'],
             'details.*.ref_attraction_id' => ['nullable'],

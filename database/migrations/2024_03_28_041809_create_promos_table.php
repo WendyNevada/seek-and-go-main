@@ -19,6 +19,7 @@ return new class extends Migration
             $table->boolean('is_hotel');
             $table->boolean('is_vehicle');
             $table->boolean('is_attraction');
+            $table->boolean('is_package');
             $table->boolean('is_amount');
             $table->double('amount', 17, 2);
             $table->double('percent', 17, 2);

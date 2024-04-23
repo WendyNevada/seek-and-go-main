@@ -26,6 +26,7 @@ class CreateCustomPackageCustomerRequest extends FormRequest
             'customer_id' => ['required'],
             'package_name' => ['required'],
             'description' => ['required'],
+            'total_days' => ['required'],
             'details' => ['required', 'array'],
             'details.*.ref_hotel_id' => ['nullable'],
             'details.*.ref_attraction_id' => ['nullable'],
