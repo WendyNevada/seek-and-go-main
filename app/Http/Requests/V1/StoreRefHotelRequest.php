@@ -35,7 +35,6 @@ class StoreRefHotelRequest extends FormRequest
             'qty' => ['required'],
             'promo_code' => ['nullable'],
             'base_price' => ['required'],
-            'promo_code_affiliate' => ['nullable'],
             'picture' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif', 'max:10000']
         ];
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use Carbon\Carbon;
 use App\Models\Trx;
 use App\Models\OrderD;
 use App\Models\OrderH;
@@ -9,10 +10,11 @@ use App\Models\PackageH;
 use App\Models\Constanta;
 use App\Models\PackageHistoryH;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Http\Requests\V2\CustIdRequest;
 use App\Http\Interfaces\OrderHInterface;
 use App\Http\Requests\V2\OrderHIdRequest;
 use App\Http\Requests\V2\CreateOrderRequest;
-use App\Http\Requests\V2\CustIdRequest;
 use App\Http\Requests\V2\GetOrderByIdRequest;
 use App\Http\Requests\V2\GetOrderDashboardRequest;
 
@@ -71,13 +73,13 @@ class OrderHService implements OrderHInterface
         return $orderNo;
     }
 
-    private function createOrderH($order_no, $customer_id, $agency_id, $order_dt, $order_status, $total_price): OrderH
+    private function createNewOrderH($order_no, $customer_id, $agency_id): OrderH
     {
         $orderH = new OrderH();
         $orderH->agency_id = $agency_id;
         $orderH->customer_id = $customer_id;
         $orderH->order_dt = now();
-        $orderH->total_price = $total_price;
+        $orderH->total_price = 0;
         $orderH->order_no = $order_no;
         $orderH->order_status = Constanta::$orderStatusNew;
         $orderH->save();
@@ -85,13 +87,20 @@ class OrderHService implements OrderHInterface
         return $orderH;
     }
 
+    private function updateOrderTotalPrice($order_h_id, $total_price)
+    {
+        $orderH = OrderH::find($order_h_id);
+        $orderH->total_price = $total_price;
+        $orderH->save();
+    }
+
     private function reformatDate($date): string
     {
-        $strDate = $date->birth_date;
+        $strDate = $date;
                 
         if(strpos($strDate, "T") == true)
         {
-            $string = $date->birth_date;
+            $string = $date;
             $parts = explode("T", $string);
             $strDate = $parts[0];
         }
@@ -157,6 +166,39 @@ class OrderHService implements OrderHInterface
         return $trx;
     }
 
+    private function getTotalDays($dateEnd, $dateStart)
+    {
+        $dateEnd = Carbon::parse($dateEnd);
+        $dateStart = Carbon::parse($dateStart);
+
+        $diffInDays = $dateEnd->diffInDays($dateStart);
+
+        return $diffInDays;
+    }
+
+    private function getTotalPrice($price, $days)
+    {
+        $totalPrice = $price * $days;
+
+        return $totalPrice;
+    }
+
+    private function getPackageInsideOrder($order_h_id)
+    {
+        $packageHIds = OrderD::where('order_h_id', $order_h_id)->
+        where('package_h_id', '!=', null)->
+        distinct()->
+        select('package_h_id')->get();
+
+        return $packageHIds;
+    }
+
+    private function getPackagePrice($package_h_id)
+    {
+        $price = PackageH::where('package_h_id', $package_h_id)->first()->package_price;
+
+        return $price;
+    }
     #endregion
 
     #region Public Function
@@ -203,12 +245,22 @@ class OrderHService implements OrderHInterface
 
             $orderNo = $this->generateOrderNo();
 
-            $orderH = $this->createOrderH($orderNo, $request->customer_id, $request->agency_id, $request->order_dt, $request->order_status, $request->total_price);
+            $orderH = $this->createNewOrderH($orderNo, $request->customer_id, $request->agency_id);
+
+            $totPrice = 0;
 
             foreach($request->details as $detail)
             {
                 $strStartDate = $this->reformatDate($detail['start_dt']);
                 $strEndDate = $this->reformatDate($detail['end_dt']);
+
+                $price = $detail['price'];
+
+                if($detail['package_h_id'] == null)
+                {
+                    $totDays = $this->getTotalDays($strEndDate, $strStartDate);
+                    $price = $this->getTotalPrice($detail['price'], $totDays);
+                }
 
                 $orderD = $this->createOrderD(
                     $orderH->order_h_id,
@@ -218,8 +270,29 @@ class OrderHService implements OrderHInterface
                     $detail['ref_vehicle_id'],
                     $strStartDate,
                     $strEndDate,
-                    $detail['price']
+                    $price
                 );
+
+                if($detail['package_h_id'] == null)
+                {   
+                    $totPrice += $price;
+                }
+            }
+
+            $packageIds = $this->getPackageInsideOrder($orderH->order_h_id);
+
+            if(count($packageIds) > 0)
+            {
+                foreach($packageIds as $packageId)
+                {
+                    $totPrice += $this->getPackagePrice($packageId->package_h_id);
+                }
+
+                $this->updateOrderTotalPrice($orderH->order_h_id, $totPrice);
+            }
+            else
+            {
+                $this->updateOrderTotalPrice($orderH->order_h_id, $totPrice);
             }
 
             DB::commit();

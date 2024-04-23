@@ -50,4 +50,8 @@ class Constanta extends Model
     public static $refVehiclePictureDirectory = "ref_vehicle_pictures";
     public static $orderHPictureDirectory = "order_h_pictures";
     #endregion
+
+    #region list environment
+    public static $enviLocal = "http://localhost:3000/";
+    #endregion
 }

@@ -14,6 +14,7 @@ use App\Http\Resources\V1\CheckEmailResource;
 use App\Http\Requests\V2\StoreAccountAgencyRequest;
 use App\Http\Requests\V2\UpdateAgencyAccountRequest;
 use App\Http\Requests\V2\UpdateCustomerAccountRequest;
+use App\Models\Constanta;
 
 class AccountController extends Controller
 {
@@ -110,7 +111,7 @@ class AccountController extends Controller
             $account->markEmailAsVerified();
         }
 
-        return Redirect::to('http://localhost:3000/login');
+        return Redirect::to(Constanta::$enviLocal . 'login');
     }
 
     public function resend(Request $request)

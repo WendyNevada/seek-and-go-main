@@ -68,13 +68,13 @@ class AccountService implements AccountInterface
         return $createAccount;
     }
 
-    private function reformatDate($date): string
+    private function reformatDate($date)
     {
         $strDate = $date;
                 
         if(strpos($strDate, "T") == true)
         {
-            $string = $date->birth_date;
+            $string = $date;
             $parts = explode("T", $string);
             $strDate = $parts[0];
         }

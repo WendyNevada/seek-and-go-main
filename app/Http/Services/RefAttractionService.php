@@ -105,15 +105,14 @@ class RefAttractionService implements RefAttractionInterface
         $refPicture->save();
     }
 
-    private function insertAgencyAffiliateAttraction($ref_attraction_id, $agency_id, $base_price, $promo_code_affiliate): void
+    private function insertAgencyAffiliateAttraction($ref_attraction_id, $agency_id, $base_price): void
     {
         $affiliate = AgencyAffiliate::
                 create(
                     [
                         'ref_attraction_id' => $ref_attraction_id,
                         'agency_id' => $agency_id,
-                        'base_price' => $base_price,
-                        'promo_code' => $promo_code_affiliate
+                        'base_price' => $base_price
                     ]
                 );
     }
@@ -344,7 +343,7 @@ class RefAttractionService implements RefAttractionInterface
                     $this->insertRefPictureAttraction($request->file('picture'), $request->attraction_code, $refAttractionId);
                 }
 
-                $this->insertAgencyAffiliateAttraction($refAttractionId, $request->agency_id, $request->base_price, $request->promo_code_affiliate);
+                $this->insertAgencyAffiliateAttraction($refAttractionId, $request->agency_id, $request->base_price);
 
                 DB::commit();
 
