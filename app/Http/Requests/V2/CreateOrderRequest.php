@@ -24,7 +24,6 @@ class CreateOrderRequest extends FormRequest
         return [
             'agency_id' => ['required'],
             'customer_id' => ['required'],
-            'total_price' => ['required'],
             'details' => ['required', 'array'],
             'details.*.package_h_id' => ['nullable'],
             'details.*.ref_hotel_id' => ['nullable'],

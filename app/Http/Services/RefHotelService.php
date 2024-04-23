@@ -102,15 +102,14 @@ class RefHotelService implements RefHotelInterface
         $refPicture->save();
     }
 
-    private function insertAgencyAffiliateHotel($ref_hotel_id, $agency_id, $base_price, $promo_code_affiliate): void
+    private function insertAgencyAffiliateHotel($ref_hotel_id, $agency_id, $base_price): void
     {
         $affiliate = AgencyAffiliate::
                 create(
                     [
                         'ref_hotel_id' => $ref_hotel_id,
                         'agency_id' => $agency_id,
-                        'base_price' => $base_price,
-                        'promo_code' => $promo_code_affiliate
+                        'base_price' => $base_price
                     ]
                 );
     }
@@ -332,7 +331,7 @@ class RefHotelService implements RefHotelInterface
                     $this->insertRefPictureHotel($request->file('picture'), $request->hotel_code, $refHotelId);
                 }
 
-                $affiliate = $this->insertAgencyAffiliateHotel($refHotelId, $request->agency_id, $request->base_price, $request->promo_code_affiliate); 
+                $affiliate = $this->insertAgencyAffiliateHotel($refHotelId, $request->agency_id, $request->base_price); 
 
                 DB::commit();
 

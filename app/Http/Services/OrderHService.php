@@ -71,18 +71,25 @@ class OrderHService implements OrderHInterface
         return $orderNo;
     }
 
-    private function createOrderH($order_no, $customer_id, $agency_id, $order_dt, $order_status, $total_price): OrderH
+    private function createOrderH($order_no, $customer_id, $agency_id, $order_dt, $order_status): OrderH
     {
         $orderH = new OrderH();
         $orderH->agency_id = $agency_id;
         $orderH->customer_id = $customer_id;
         $orderH->order_dt = now();
-        $orderH->total_price = $total_price;
+        $orderH->total_price = 0;
         $orderH->order_no = $order_no;
         $orderH->order_status = Constanta::$orderStatusNew;
         $orderH->save();
 
         return $orderH;
+    }
+
+    private function updateOrderTotalPrice($order_h_id, $total_price)
+    {
+        $orderH = OrderH::find($order_h_id);
+        $orderH->total_price = $total_price;
+        $orderH->save();
     }
 
     private function reformatDate($date): string
@@ -157,6 +164,35 @@ class OrderHService implements OrderHInterface
         return $trx;
     }
 
+    private function getTotalDays($dateEnd, $dateStart)
+    {
+        $diffInDays = $dateEnd->diffInDays($dateStart);
+
+        return $diffInDays;
+    }
+
+    private function getTotalPrice($price, $days)
+    {
+        $totalPrice = $price * $days;
+
+        return $totalPrice;
+    }
+
+    private function getCountPackageInsideOrder($order_h_id)
+    {
+        $packageHIds = OrderD::where('order_h_id', $order_h_id)->
+        distinct()->
+        select('package_h_id')->get();
+
+        return $packageHIds;
+    }
+
+    private function getPackagePrice($package_h_id)
+    {
+        $price = PackageH::where('package_h_id', $package_h_id)->first()->price;
+
+        return $price;
+    }
     #endregion
 
     #region Public Function
@@ -205,10 +241,20 @@ class OrderHService implements OrderHInterface
 
             $orderH = $this->createOrderH($orderNo, $request->customer_id, $request->agency_id, $request->order_dt, $request->order_status, $request->total_price);
 
+            $totPrice = 0;
+
             foreach($request->details as $detail)
             {
                 $strStartDate = $this->reformatDate($detail['start_dt']);
                 $strEndDate = $this->reformatDate($detail['end_dt']);
+
+                $price = $detail['price'];
+
+                if($request->package_h_id == null)
+                {
+                    $totDays = $this->getTotalDays($strEndDate, $strStartDate);
+                    $price = $this->getTotalPrice($detail['price'], $totDays);
+                }
 
                 $orderD = $this->createOrderD(
                     $orderH->order_h_id,
@@ -218,8 +264,29 @@ class OrderHService implements OrderHInterface
                     $detail['ref_vehicle_id'],
                     $strStartDate,
                     $strEndDate,
-                    $detail['price']
+                    $price
                 );
+
+                if($orderD->package_h_id == null)
+                {   
+                    $totPrice += $price;
+                }
+            }
+
+            $countPackageId = $this->getCountPackageInsideOrder($orderH->order_h_id);
+
+            if(count($countPackageId) > 0)
+            {
+                foreach($countPackageId as $packageId)
+                {
+                    $totPrice += $this->getPackagePrice($packageId->package_h_id);
+                }
+
+                $this->updateOrderTotalPrice($orderH->order_h_id, $totPrice);
+            }
+            else
+            {
+                $this->updateOrderTotalPrice($orderH->order_h_id, $totPrice);
             }
 
             DB::commit();

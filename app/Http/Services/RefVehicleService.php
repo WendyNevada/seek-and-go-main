@@ -108,15 +108,14 @@ class RefVehicleService implements RefVehicleInterface
         $refPicture->save();
     }
 
-    private function insertAgencyAffiliateVehicle($ref_vehicle_id, $agency_id, $base_price, $promo_code_affiliate): void
+    private function insertAgencyAffiliateVehicle($ref_vehicle_id, $agency_id, $base_price): void
     {
         $affiliate = AgencyAffiliate::
                 create(
                     [
                         'ref_vehicle_id' => $ref_vehicle_id,
                         'agency_id' => $agency_id,
-                        'base_price' => $base_price,
-                        'promo_code' => $promo_code_affiliate
+                        'base_price' => $base_price
                     ]
                 );
     }
@@ -308,7 +307,7 @@ class RefVehicleService implements RefVehicleInterface
                     $this->insertRefPictureVehicle($request->file('picture'), $request->vehicle_code, $refVehicleId);
                 }
 
-                $this->insertAgencyAffiliateVehicle($refVehicleId, $request->agency_id, $request->base_price, $request->promo_code_affiliate);
+                $this->insertAgencyAffiliateVehicle($refVehicleId, $request->agency_id, $request->base_price);
 
                 DB::commit();
 

@@ -2,12 +2,15 @@
 
 namespace App\Providers;
 
+use App\Models\Promo;
 use App\Http\Services\TrxService;
+use App\Http\Services\PromoService;
 use App\Http\Services\OrderHService;
 use App\Http\Interfaces\TrxInterface;
 use App\Http\Services\AccountService;
 use App\Http\Services\PackageHService;
 use App\Http\Services\RefHotelService;
+use App\Http\Interfaces\PromoInterface;
 use Illuminate\Support\ServiceProvider;
 use App\Http\Interfaces\OrderHInterface;
 use App\Http\Services\RefVehicleService;
@@ -35,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(RefZipcodeInterface::class, RefZipcodeService::class);
         $this->app->bind(OrderHInterface::class, OrderHService::class);
         $this->app->bind(TrxInterface::class, TrxService::class);
+        $this->app->bind(PromoInterface::class, PromoService::class);
     }
 
     /**

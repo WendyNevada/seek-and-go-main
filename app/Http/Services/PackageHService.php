@@ -29,7 +29,7 @@ class PackageHService implements PackageHInterface
         return $packageH;
     }
 
-    private function createPackageHAgency($package_code, $agency_id, $package_name, $description, $promo_code, $package_price, $is_active, $qty): PackageH
+    private function createPackageHAgency($package_code, $agency_id, $package_name, $description, $promo_code, $package_price, $is_active, $qty, $total_days): PackageH
     {
         $packageH = PackageH::create([
             'package_code' => $package_code,
@@ -40,7 +40,8 @@ class PackageHService implements PackageHInterface
             'promo_code' => $promo_code,
             'package_price' => $package_price,
             'is_active' => $is_active,
-            'qty' => $qty
+            'qty' => $qty,
+            'total_days' => $total_days
         ]);
 
         return $packageH;
@@ -116,7 +117,7 @@ class PackageHService implements PackageHInterface
         return $customCode;
     }
 
-    private function createPackageHCustomer($customCode, $agency_id, $customer_id, $package_name, $description): PackageH
+    private function createPackageHCustomer($customCode, $agency_id, $customer_id, $package_name, $description, $total_days): PackageH
     {
         $packageHCustom = new PackageH();
         $packageHCustom->package_code = $customCode;
@@ -130,6 +131,7 @@ class PackageHService implements PackageHInterface
         $packageHCustom->package_price = null;
         $packageHCustom->is_active = true;
         $packageHCustom->qty = 1;
+        $packageHCustom->total_days = $total_days;
         $packageHCustom->save();
 
         return $packageHCustom;
@@ -239,7 +241,7 @@ class PackageHService implements PackageHInterface
             {
                 DB::beginTransaction();
 
-                $packageH = $this->createPackageHAgency($request->package_code, $request->agency_id, $request->package_name, $request->description, $request->promo_code, $request->package_price, $request->is_active, $request->qty);
+                $packageH = $this->createPackageHAgency($request->package_code, $request->agency_id, $request->package_name, $request->description, $request->promo_code, $request->package_price, $request->is_active, $request->qty, $request->total_days);
 
                 $packageHistoryH = $this->createPackageHistoryH($request->package_code, $request->agency_id, $request->package_name, $request->is_custom, $request->promo_code, $request->package_price);
 
@@ -297,7 +299,7 @@ class PackageHService implements PackageHInterface
 
             $customCode = $this->generateCustomCode();
 
-            $packageHCustom = $this->createPackageHCustomer($customCode, $request->agency_id, $request->customer_id, $request->package_name, $request->description);
+            $packageHCustom = $this->createPackageHCustomer($customCode, $request->agency_id, $request->customer_id, $request->package_name, $request->description, $request->total_days);
 
             foreach($request->details as $detail)
             {
