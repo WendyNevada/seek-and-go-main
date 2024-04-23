@@ -8,18 +8,14 @@ import { editAttractionSchema } from './utils/schema'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
-import { useLogin } from '@/context/LoginContext'
 import axiosClient from '@/axios.client'
-import AttractionObj from './utils/model'
 import { toast } from '@/components/ui/use-toast'
 import axios, { AxiosError } from 'axios'
 
 const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) => {
-    const [attractionData, setAttractionData] = useState<AttractionObj>(new AttractionObj());
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
     const [imageUrl, setImageUrl] = useState('');
     const navigate = useNavigate();
-    const { user } = useLogin();
 
     const form = useForm<z.infer<typeof editAttractionSchema>>({
         resolver: zodResolver(editAttractionSchema),
@@ -98,19 +94,6 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
             formData.append('picture_url', imageUrl);
         }
 
-        // if (imageUrl) {
-        //     try {
-        //         const response = await fetch(imageUrl);
-        //         const blob = await response.blob();
-        //         const file = new File([blob], "image.jpg", { type: "image/jpeg,image/jpg,image/png,image/webp" });
-        //         formData.append('picture', file);
-        //     } catch (error) {
-        //         console.error('Error downloading image:', error);
-        //     }
-        // }else{
-        //     formData.append('picture_url', imageUrl);
-        // }
-
         try{
             await axiosClient.post('/v1/EditAttractionById', formData, {
                 headers: {
@@ -183,64 +166,6 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                         </FormItem>
                                     )}
                                 />
-                                {/* <div className="flex flex-row">
-                                    <FormField
-                                        control={form.control}
-                                        name="area_1"
-                                        render={() => (
-                                            <FormItem className="custom-field mt-4 mr-8 flex flex-col">
-                                                <FormLabel>{"Province"}</FormLabel>
-                                                <FormMessage />
-                                                <FormControl>
-                                                    <ProvinceCombobox onSelectProvince={handleProvinceSelect}/>
-                                                </FormControl>
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="area_2"
-                                        render={() => (
-                                            <FormItem className="custom-field mt-4 flex flex-col">
-                                                <FormLabel>{"City"}</FormLabel>
-                                                <FormMessage />
-                                                <FormControl>
-                                                    <CityCombobox onSelectCity={handleCitySelect} selectedProvince={form.watch("area_1")}/>
-                                                </FormControl>
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-
-                                <div className="flex flex-row">
-                                    <FormField
-                                        control={form.control}
-                                        name="area_3"
-                                        render={() => (
-                                            <FormItem className="custom-field mt-4 mr-8 flex flex-col">
-                                                <FormLabel>{"District"}</FormLabel>
-                                                <FormMessage />
-                                                <FormControl>
-                                                    <KecamatanCombobox onSelectKecamatan={handleKecamatanSelect} selectedCity={form.watch("area_2")}/>
-                                                </FormControl>
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="area_4"
-                                        render={() => (
-                                            <FormItem className="custom-field mt-4 flex flex-col">
-                                                <FormLabel>{"Subdistrict"}</FormLabel>
-                                                <FormMessage />
-                                                <FormControl>
-                                                    <KelurahanCombobox onSelectKelurahan={handleKelurahanSelect} selectedKecamatan={form.watch("area_3")}/>
-                                                </FormControl>
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div> */}
-
                                 <FormField
                                     control={form.control}
                                     name="attraction_name"

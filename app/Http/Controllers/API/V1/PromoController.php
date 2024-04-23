@@ -4,64 +4,49 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Models\Promo;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StorePromoRequest;
-use App\Http\Requests\UpdatePromoRequest;
+use App\Http\Interfaces\PromoInterface;
+use App\Http\Requests\V1\StorePromoRequest;
+use App\Http\Requests\V2\PackageHIdRequest;
+use App\Http\Requests\V2\RefHotelIdRequest;
+use App\Http\Requests\V1\UpdatePromoRequest;
+use App\Http\Requests\V2\RefVehicleIdRequest;
+use App\Http\Requests\V2\RefAttractionIdRequest;
 
 class PromoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function AddPromo(PromoInterface $promoInterface, StorePromoRequest $request)
     {
-        //
+        $response = $promoInterface->AddPromo($request);
+
+        return $response;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function GetPromoDeductionPriceAttraction(PromoInterface $promoInterface, RefAttractionIdRequest $request)
     {
-        //
+        $response = $promoInterface->GetPromoDeductionPriceAttraction($request);
+
+        return $response;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StorePromoRequest $request)
+    public function GetPromoDeductionPriceHotel(PromoInterface $promoInterface, RefHotelIdRequest $request)
     {
-        //
+        $response = $promoInterface->GetPromoDeductionPriceHotel($request);
+
+        return $response;
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Promo $promo)
+    public function GetPromoDeductionPriceVehicle(PromoInterface $promoInterface, RefVehicleIdRequest $request)
     {
-        //
+        $response = $promoInterface->GetPromoDeductionPriceVehicle($request);
+
+        return $response;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Promo $promo)
+    public function GetPromoDeductionPricePackage(PromoInterface $promoInterface, PackageHIdRequest $request)
     {
-        //
+        $response = $promoInterface->GetPromoDeductionPricePackage($request);
+
+        return $response;
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdatePromoRequest $request, Promo $promo)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Promo $promo)
-    {
-        //
-    }
 }

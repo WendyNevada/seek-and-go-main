@@ -13,6 +13,7 @@ import { Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from '@
 import { Link } from 'react-router-dom'
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useLogin } from '@/context/LoginContext'
+import { urlConstant } from '@/urlConstant'
 
 const Navbar = () => {
     const { logout } = useLogin();
@@ -21,7 +22,7 @@ const Navbar = () => {
         {
             text:"Product",
             icon:<HomeIcon/>,
-            link:"/Agency"
+            link: urlConstant.AgencyHomePage
         },
         {
             text:"About",
@@ -78,7 +79,7 @@ const Navbar = () => {
             </div>
 
             <div className='w-full hidden flex lg:flex lg:items-center lg:w-auto'>
-                <Link to='/Agency' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Dashboard</Link>
+                <Link to ={urlConstant.AgencyHomePage} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Dashboard</Link>
                 <Link to="/Agency/Product" className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Product</Link>
                 <button onClick={() => logout()} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Logout</button>
             </div>

@@ -1,11 +1,4 @@
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-  } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle,} from '@/components/ui/card'
 import { useEffect, useState } from 'react';
 import { GetAttractionModel } from '../utils/AttractionModel';
 import { useLogin } from '@/context/LoginContext';
@@ -44,33 +37,7 @@ const AttractionList = () => {
         navigate(`/Agency/EditAttraction/${refAttractionId}`)
     }
 
-    //api untuk get
-    //GetActiveAttractionByAgencyId
     return (
-        // <div className='mt-4 flex flex-row'>
-        //     {attractions.map(attraction => {
-        //         return (
-        //             <Card key={attraction.ref_attraction_id} className='w-72 shadow-lg mr-10'>
-        //                 <CardHeader>
-        //                     <img src={enviUrl + attraction.image_url} alt={attraction.attraction_name} className="rounded-lg h-36 max-w-full shadow-lg" />
-        //                     <CardTitle>{attraction.attraction_name}</CardTitle>
-        //                     <CardDescription>{attraction.description}</CardDescription>
-        //                 </CardHeader>
-        //                 <CardContent>
-        //                     <p>{attraction.address}</p>
-        //                     <p>{attraction.rating}</p>
-        //                     <p>Base Price: Rp.{attraction.base_price}</p>
-        //                 </CardContent>
-        //                 {/* Add more card components based on other properties */}
-        //                 <CardFooter>
-        //                     <Button variant='primary' onClick={ () => onEditAttraction(attraction.ref_attraction_id)}>{<EditIcon/>}</Button>
-        //                     <AlertDialogProduct attractionId={attraction.ref_attraction_id}/>
-        //                     {/* <Button className='ml-2' variant="destructive">Delete</Button> */}
-        //                 </CardFooter>
-        //             </Card>
-        //         );
-        //     })}
-        // </div>
         <div className='mt-4 justify-between'>
             {attractions.reduce((rows: JSX.Element[][], attraction, index) => {
                 if (index % 4 === 0) {

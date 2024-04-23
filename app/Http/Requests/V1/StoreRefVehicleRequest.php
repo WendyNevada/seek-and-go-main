@@ -32,6 +32,7 @@ class StoreRefVehicleRequest extends FormRequest
             'vehicle_brand' => 'required',
             'vehicle_series' => 'required',
             'vehicle_model' => 'required',
+            'vehicle_seat' => 'required',
             'vehicle_year' => 'required',
             'vehicle_name' => 'required',
             'description' => 'required',
@@ -41,7 +42,6 @@ class StoreRefVehicleRequest extends FormRequest
             'qty' => 'required',
             'promo_code' => 'nullable',
             'base_price' => ['required'],
-            'promo_code_affiliate' => ['nullable'],
             'picture' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif', 'max:10000']
         ];
     }

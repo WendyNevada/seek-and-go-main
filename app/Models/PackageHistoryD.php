@@ -24,8 +24,122 @@ class PackageHistoryD extends Model
 
     protected $primaryKey = 'package_history_d_id';
 
+    #region Getter Setter
+    public function getPackageHistoryDIdAttribute($value)
+    {
+        return $value;
+    }
+
+    public function setPackageHistoryDIdAttribute($value)
+    {
+        $this->attributes['package_history_d_id'] = $value;
+    }
+
+    public function getPackageHistoryHIdAttribute($value)
+    {
+        return $value;
+    }
+
+    public function setPackageHistoryHIdAttribute($value)
+    {
+        $this->attributes['package_history_h_id'] = $value;
+    }
+
+    public function getHotelNameAttribute($value)
+    {
+        return $value;
+    }
+
+    public function setHotelNameAttribute($value)
+    {
+        $this->attributes['hotel_name'] = $value;
+    }
+
+    public function getHotelStartDtAttribute($value)
+    {
+        return $value;
+    }
+
+    public function setHotelStartDtAttribute($value)
+    {
+        $this->attributes['hotel_start_dt'] = $value;
+    }
+
+    public function getHotelEndDtAttribute($value)
+    {
+        return $value;
+    }
+
+    public function setHotelEndDtAttribute($value)
+    {
+        $this->attributes['hotel_end_dt'] = $value;
+    }
+
+    public function getAttractionNameAttribute($value)
+    {
+        return $value;
+    }
+
+    public function setAttractionNameAttribute($value)
+    {
+        $this->attributes['attraction_name'] = $value;
+    }
+
+    public function getAttractionStartDtAttribute($value)
+    {
+        return $value;
+    }
+
+    public function setAttractionStartDtAttribute($value)
+    {
+        $this->attributes['attraction_start_dt'] = $value;
+    }
+
+    public function getAttractionEndDtAttribute($value)
+    {
+        return $value;
+    }
+
+    public function setAttractionEndDtAttribute($value)
+    {
+        $this->attributes['attraction_end_dt'] = $value;
+    }
+
+    public function getVehicleNameAttribute($value)
+    {
+        return $value;
+    }
+
+    public function setVehicleNameAttribute($value)
+    {
+        $this->attributes['vehicle_name'] = $value;
+    }
+
+    public function getVehicleStartDtAttribute($value)
+    {
+        return $value;
+    }
+
+    public function setVehicleStartDtAttribute($value)
+    {
+        $this->attributes['vehicle_start_dt'] = $value;
+    }
+
+    public function getVehicleEndDtAttribute($value)
+    {
+        return $value;
+    }
+
+    public function setVehicleEndDtAttribute($value)
+    {
+        $this->attributes['vehicle_end_dt'] = $value;
+    }
+    #endregion
+
+    #region Relations
     public function packageHistoryH()
     {
         return $this->belongsTo(PackageHistoryH::class);
     }
+    #endregion
 }

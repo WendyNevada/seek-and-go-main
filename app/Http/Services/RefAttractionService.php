@@ -17,26 +17,263 @@ use App\Models\OrderH;
 use App\Models\PackageH;
 use App\Models\RefPicture;
 use App\Models\RefZipcode;
+use Brick\Math\BigInteger;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class RefAttractionService implements RefAttractionInterface
 {
+    #region Private Function
+    private function getRefAttractionByCode($attraction_code)
+    {
+        $attraction = RefAttraction::where('attraction_code', $attraction_code)->first();
+
+        return $attraction;
+    }
+
+    private function getRefAttractionById($ref_attraction_id)
+    {
+        $attraction = RefAttraction::where('ref_attraction_id', $ref_attraction_id)->first();
+
+        return $attraction;
+    }
+
+    private function getRefPictureByAttractionId($ref_attraction_id)
+    {
+        $attractionPicture = RefPicture::where('ref_attraction_id', $ref_attraction_id)->first();
+
+        return $attractionPicture;
+    }
+
+    private function getAgencyAffiliateByAttractionId($ref_attraction_id)
+    {
+        $agencyAffiliate = AgencyAffiliate::where('ref_attraction_id', $ref_attraction_id)->first();
+
+        return $agencyAffiliate;
+    }
+
+    private function getRefZipcodeById($ref_zipcode_id)
+    {
+        $refZipcode = RefZipcode::where('ref_zipcode_id', $ref_zipcode_id)->first();
+
+        return $refZipcode;
+    }
+
+    private function getRefZipcodeIdByAllArea($area_1, $area_2, $area_3, $area_4)
+    {
+        $refZipcodeId = RefZipcode::
+                    where('area_1', $area_1)->
+                    where('area_2', $area_2)->
+                    where('area_3', $area_3)->
+                    where('area_4', $area_4)->
+                    first()->ref_zipcode_id;
+
+        return $refZipcodeId;
+    }
+
+    private function createRefAttraction($attraction_code, $refZipcodeId, $attraction_name, $description, $address, $rating, $qty, $promo_code) : RefAttraction
+    {
+        $attraction = RefAttraction::
+                create(
+                    [
+                        'attraction_code' => $attraction_code,
+                        'ref_zipcode_id' => $refZipcodeId,
+                        'attraction_name' => $attraction_name,
+                        'description' => $description,
+                        'address' => $address,
+                        'rating' => $rating,
+                        'is_active' => true,
+                        'qty' => $qty,
+                        'promo_code' => $promo_code
+                    ]
+                );
+
+        return $attraction;
+    }
+
+    private function insertRefPictureAttraction($picture, $attraction_code, $ref_attraction_id): void
+    {
+        $image = $picture;
+        $imageName =  $attraction_code . '_' . time() . '.' . $image->getClientOriginalName();
+        $path = $image->storeAs(Constanta::$refAttractionPictureDirectory, $imageName, Constanta::$refPictureDisk);
+        $url = Storage::url($path);
+
+        $refPicture = new RefPicture();
+
+        $refPicture->ref_attraction_id = $ref_attraction_id;
+        $refPicture->image_url = $url;
+        $refPicture->save();
+    }
+
+    private function insertAgencyAffiliateAttraction($ref_attraction_id, $agency_id, $base_price): void
+    {
+        $affiliate = AgencyAffiliate::
+                create(
+                    [
+                        'ref_attraction_id' => $ref_attraction_id,
+                        'agency_id' => $agency_id,
+                        'base_price' => $base_price
+                    ]
+                );
+    }
+
+    private function updatePriceAgencyAffiliateAttraction($ref_attraction_id, $base_price): void
+    {
+        $agencyAffiliate = AgencyAffiliate::where('ref_attraction_id', $ref_attraction_id)->first();
+
+        $agencyAffiliate->update(
+            [
+                'base_price' => $base_price
+            ]
+        );
+    }
+
+    private function updateRefAttraction($ref_attraction_id, $attraction_name, $description, $address, $qty, $promo_code): void
+    {
+        $attraction = RefAttraction::where('ref_attraction_id', $ref_attraction_id)->first();
+
+        $attraction->update([
+            'attraction_name' => $attraction_name,
+            'description' => $description,
+            'address' => $address,
+            'qty' => $qty,
+            'promo_code' => $promo_code
+        ]);
+    }
+
+    private function updateRefPictureAttraction($picture, $attraction_code, $ref_attraction_id)
+    {
+        $image = $picture;
+        $imageName =  $attraction_code . '_' . time() . '.' . $image->getClientOriginalName();
+        $path = $image->storeAs(Constanta::$refAttractionPictureDirectory, $imageName, Constanta::$refPictureDisk);
+        $url = Storage::url($path);
+
+        $refPicture = RefPicture::where('ref_attraction_id', $ref_attraction_id)->first();
+        if($refPicture != null)
+        {
+            $refPicture->image_url = $url;
+            $refPicture->save();
+        }
+        else
+        {
+            $refPicture = new RefPicture();
+            $refPicture->ref_attraction_id = $ref_attraction_id;
+            $refPicture->image_url = $url;
+            $refPicture->save();
+        }
+    }
+
+    private function checkOrderForAttraction($ref_attraction_id): bool
+    {
+        $orderHs = OrderH::with('orderDs')
+                ->whereHas('orderDs', function ($query) use ($ref_attraction_id) {
+                    $query->where('ref_attraction_id', $ref_attraction_id);
+                })
+                ->whereIn('order_status', [
+                    Constanta::$orderStatusNew,
+                    Constanta::$orderStatusApproved,
+                    Constanta::$orderStatusPaid,
+                    Constanta::$orderStatusCustPaid,
+                    Constanta::$orderStatusRetryPay
+                ])
+                ->get();
+
+        if(count($orderHs) > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private function checkPackageForAttraction($ref_attraction_id): bool
+    {
+        $packageHs = PackageH::with('packageDs')
+                ->whereHas('packageDs', function ($query) use ($ref_attraction_id) {
+                    $query->where('ref_attraction_id', $ref_attraction_id);
+                })
+                ->where('is_active', true)
+                ->get();
+
+        if(count($packageHs) > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private function updateIsActiveAttraction($ref_attraction_id, $status): void
+    {
+        $attraction = RefAttraction::where('ref_attraction_id', $ref_attraction_id)->first();
+
+        $attraction->update([
+            'is_active' => $status
+        ]);
+    }
+
+    private function getActiveAttractionDataSortedWithLimit($limit)
+    {
+        $attraction = RefAttraction::where('is_active', '1')->orderBy('rating', 'desc')->limit($limit)->get();
+
+        foreach ($attraction as $key => $value)
+        {
+            $picture = RefPicture::where('ref_attraction_id', $value->ref_attraction_id)->first();
+
+            $base_price = AgencyAffiliate::where('ref_attraction_id', $value->ref_attraction_id)->first()->base_price;
+
+            if($picture != null)
+            {
+                $image_url = $picture->image_url;
+            }
+            else
+            {
+                $image_url = "-";
+            }
+
+            $value->image_url = $image_url;
+            $value->base_price = $base_price;
+        }
+
+        return $attraction;
+    }
+
+    private function getActiveAttractionsByAgencyId($agency_id, $limit)
+    {
+        $attraction = RefAttraction::
+        join('agency_affiliates', 'ref_attractions.ref_attraction_id', '=', 'agency_affiliates.ref_attraction_id')->
+        leftjoin('ref_pictures', 'ref_attractions.ref_attraction_id', '=', 'ref_pictures.ref_attraction_id')->
+        select('ref_attractions.*', 'agency_affiliates.base_price', 'ref_pictures.image_url')->
+        where('ref_attractions.is_active', true)->
+        where('agency_affiliates.agency_id', $agency_id)->
+        limit($limit)->
+        get();
+
+        return $attraction;
+    }
+    #endregion
+
+    #region Public Function
     public function GetAttractionByCode(GetRefAttractionByCodeRequest $request)
     {
-        $attraction = RefAttraction::where('attraction_code', $request->attraction_code)->first();
+        $attraction = $this->getRefAttractionByCode($request->attraction_code);
+
         return response()->json($attraction);
     }
 
     public function GetAttractionById(GetRefAttractionByIdRequest $request)
     {
-        $attraction = RefAttraction::where('ref_attraction_id', $request->ref_attraction_id)->first();
+        $attraction = $this->getRefAttractionById($request->ref_attraction_id);
 
-        $attractionPicture = RefPicture::where('ref_attraction_id', $request->ref_attraction_id)->first();
+        $attractionPicture = $this->getRefPictureByAttractionId($request->ref_attraction_id);
 
-        $agencyAffiliate = AgencyAffiliate::where('ref_attraction_id', $request->ref_attraction_id)->first();
+        $agencyAffiliate = $this->getAgencyAffiliateByAttractionId($request->ref_attraction_id);
 
-        $address = RefZipcode::where('ref_zipcode_id', $attraction->ref_zipcode_id)->first();
+        $address = $this->getRefZipcodeById($attraction->ref_zipcode_id);
 
         if($attraction != null)
         {
@@ -80,59 +317,33 @@ class RefAttractionService implements RefAttractionInterface
     {
         try
         {
-            $attractionCheck = RefAttraction::where('attraction_code', $request->attraction_code)->first();
+            $attractionCheck = $this->getRefAttractionByCode($request->attraction_code);
 
             if($attractionCheck == null)
             {
                 DB::beginTransaction();
 
-                $refZipcodeId = RefZipcode::
-                    where('area_1', $request->area_1)->
-                    where('area_2', $request->area_2)->
-                    where('area_3', $request->area_3)->
-                    where('area_4', $request->area_4)->
-                    first()->ref_zipcode_id;
+                $refZipcodeId = $this->getRefZipcodeIdByAllArea($request->area_1, $request->area_2, $request->area_3, $request->area_4);
 
-                $attraction = RefAttraction::
-                create(
-                    [
-                        'attraction_code' => $request->attraction_code,
-                        'ref_zipcode_id' => $refZipcodeId,
-                        'attraction_name' => $request->attraction_name,
-                        'description' => $request->description,
-                        'address' => $request->address,
-                        'rating' => $request->rating,
-                        'is_active' => true,
-                        'qty' => $request->qty,
-                        'promo_code' => $request->promo_code
-                    ]
+                $attraction = $this->createRefAttraction(
+                    $request->attraction_code,
+                    $refZipcodeId,
+                    $request->attraction_name,
+                    $request->description,
+                    $request->address,
+                    $request->rating,
+                    $request->qty,
+                    $request->promo_code
                 );
 
                 $refAttractionId = $attraction->ref_attraction_id;
 
                 if($request->hasFile('picture'))
                 {
-                    $image = $request->file('picture');
-                    $imageName =  $request->attraction_code . '_' . time() . '.' . $image->getClientOriginalName();
-                    $path = $image->storeAs(Constanta::$refAttractionPictureDirectory, $imageName, Constanta::$refPictureDisk);
-                    $url = Storage::url($path);
-
-                    $refPicture = new RefPicture();
-
-                    $refPicture->ref_attraction_id = $refAttractionId;
-                    $refPicture->image_url = $url;
-                    $refPicture->save();
+                    $this->insertRefPictureAttraction($request->file('picture'), $request->attraction_code, $refAttractionId);
                 }
 
-                $affiliate = AgencyAffiliate::
-                create(
-                    [
-                        'ref_attraction_id' => $refAttractionId,
-                        'agency_id' => $request->agency_id,
-                        'base_price' => $request->base_price,
-                        'promo_code' => $request->promo_code_affiliate
-                    ]
-                );
+                $this->insertAgencyAffiliateAttraction($refAttractionId, $request->agency_id, $request->base_price);
 
                 DB::commit();
 
@@ -167,50 +378,21 @@ class RefAttractionService implements RefAttractionInterface
     {
         try
         {
-            $attraction = RefAttraction::where('ref_attraction_id', $request->ref_attraction_id)->first();
+            $attraction = $this->getRefAttractionById($request->ref_attraction_id);
 
             if($attraction != null)
             {
                 DB::beginTransaction();
 
-                $agencyAffiliate = AgencyAffiliate::where('ref_attraction_id', $attraction->ref_attraction_id)->first();
+                $this->updatePriceAgencyAffiliateAttraction($request->ref_attraction_id, $request->base_price);
 
-                $agencyAffiliate->update(
-                    [
-                        'base_price' => $request->base_price
-                    ]
-                );
-
-                $attraction->update([
-                    'attraction_name' => $request->attraction_name,
-                    'description' => $request->description,
-                    'address' => $request->address,
-                    'qty' => $request->qty,
-                    'promo_code' => $request->promo_code
-                ]);
+                $this->updateRefAttraction($request->ref_attraction_id, $request->attraction_name, $request->description, $request->address, $request->qty, $request->promo_code);
 
                 if($request->picture_url == null)
                 {
                     if($request->hasFile('picture'))
                     {
-                        $image = $request->file('picture');
-                        $imageName =  $attraction->attraction_code . '_' . time() . '.' . $image->getClientOriginalName();
-                        $path = $image->storeAs(Constanta::$refAttractionPictureDirectory, $imageName, Constanta::$refPictureDisk);
-                        $url = Storage::url($path);
-
-                        $refPicture = RefPicture::where('ref_attraction_id', $attraction->ref_attraction_id)->first();
-                        if($refPicture != null)
-                        {
-                            $refPicture->image_url = $url;
-                            $refPicture->save();
-                        }
-                        else
-                        {
-                            $refPicture = new RefPicture();
-                            $refPicture->ref_attraction_id = $attraction->ref_attraction_id;
-                            $refPicture->image_url = $url;
-                            $refPicture->save();
-                        }
+                        $this->updateRefPictureAttraction($request->file('picture'), $request->attraction_code, $request->ref_attraction_id);
                     }
                 }
 
@@ -247,24 +429,13 @@ class RefAttractionService implements RefAttractionInterface
     {
         try
         {
-            $attraction = RefAttraction::where('ref_attraction_id', $request->ref_attraction_id)->first();
+            $attraction = $this->getRefAttractionById($request->ref_attraction_id);
 
             if($attraction != null)
             {
-                $orderHs = OrderH::with('orderDs')
-                ->whereHas('orderDs', function ($query) use ($request) {
-                    $query->where('ref_attraction_id', $request->ref_attraction_id);
-                })
-                ->whereIn('order_status', [
-                    Constanta::$orderStatusNew,
-                    Constanta::$orderStatusApproved,
-                    Constanta::$orderStatusPaid,
-                    Constanta::$orderStatusCustPaid,
-                    Constanta::$orderStatusRetryPay
-                ])
-                ->get();
+                $checkOrders = $this->checkOrderForAttraction($request->ref_attraction_id);
 
-                if(count($orderHs) > 0)
+                if($checkOrders == true)
                 {
                     return response()->json(
                         [
@@ -276,14 +447,9 @@ class RefAttractionService implements RefAttractionInterface
                     );
                 }
 
-                $packageHs = PackageH::with('packageDs')
-                ->whereHas('packageDs', function ($query) use ($request) {
-                    $query->where('ref_attraction_id', $request->ref_attraction_id);
-                })
-                ->where('is_active', true)
-                ->get();
+                $checkPackages = $this->checkPackageForAttraction($request->ref_attraction_id);
 
-                if(count($packageHs) > 0)
+                if($checkPackages == true)
                 {
                     return response()->json(
                         [
@@ -297,11 +463,7 @@ class RefAttractionService implements RefAttractionInterface
 
                 DB::beginTransaction();
 
-                $attraction->update(
-                    [
-                        'is_active' => '0'
-                    ]
-                );
+                $this->updateIsActiveAttraction($request->ref_attraction_id, false);
 
                 DB::commit();
 
@@ -334,42 +496,17 @@ class RefAttractionService implements RefAttractionInterface
 
     public function GetAttractionHomepage()
     {
-        $attraction = RefAttraction::where('is_active', '1')->orderBy('rating', 'desc')->limit(Constanta::$homepageDataCount)->get();
-
-        foreach ($attraction as $key => $value)
-        {
-            $picture = RefPicture::where('ref_attraction_id', $value->ref_attraction_id)->first();
-
-            $base_price = AgencyAffiliate::where('ref_attraction_id', $value->ref_attraction_id)->first()->base_price;
-
-            if($picture != null)
-            {
-                $image_url = $picture->image_url;
-            }
-            else
-            {
-                $image_url = "-";
-            }
-
-            $value->image_url = $image_url;
-            $value->base_price = $base_price;
-        }
+        $attraction = $this->getActiveAttractionDataSortedWithLimit(Constanta::$homepageDataCount);
 
         return response()->json($attraction);
     }
 
     public function GetActiveAttractionByAgencyId(AgencyIdRequest $request)
     {
-        $attraction = RefAttraction::
-        join('agency_affiliates', 'ref_attractions.ref_attraction_id', '=', 'agency_affiliates.ref_attraction_id')->
-        leftjoin('ref_pictures', 'ref_attractions.ref_attraction_id', '=', 'ref_pictures.ref_attraction_id')->
-        select('ref_attractions.*', 'agency_affiliates.base_price', 'ref_pictures.image_url')->
-        where('ref_attractions.is_active', true)->
-        where('agency_affiliates.agency_id', $request->agency_id)->
-        limit(Constanta::$homepageDataCount)->
-        get();
+        $attraction = $this->getActiveAttractionsByAgencyId($request->agency_id, Constanta::$homepageDataCount);
 
         return response()->json($attraction);
     }
+    #endregion
 
 }

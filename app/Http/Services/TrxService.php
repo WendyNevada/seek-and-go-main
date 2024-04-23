@@ -13,27 +13,42 @@ use App\Http\Requests\V2\OrderHIdRequest;
 
 class TrxService implements TrxInterface
 {
+    #region Private Function
+    private function updateOrderHStatus($order_h_id, $order_status)
+    {
+        $orderH = OrderH::where('order_h_id', $order_h_id)->first();
+        $orderH->order_status = $order_status;
+        $orderH->update();
+
+        return $orderH;
+    }
+
+    private function insertRefPictureOrder($picture, $order_no, $order_h_id)
+    {
+        $image = $picture;
+        $imageName =  $order_no . '.' . $image->getClientOriginalName();
+        $path = $image->storeAs(Constanta::$orderHPictureDirectory, $imageName, Constanta::$refPictureDisk);
+        $url = Storage::url($path);
+
+        $refPicture = new RefPicture();
+        $refPicture->order_h_id = $order_h_id;
+        $refPicture->image_url = $url;
+        $refPicture->save();
+    }
+    #endregion
+
+    #region Public Function
     public function CustPayment(CustPaymentRequest $request)
     {
         try
         {
             DB::beginTransaction();
 
-            $orderH = OrderH::where('order_h_id', $request->order_h_id)->first();
-            $orderH->order_status = Constanta::$orderStatusCustPaid;
-            $orderH->update();
+            $orderH = $this->updateOrderHStatus($request->order_h_id, Constanta::$orderStatusCustPaid);
 
             if($request->hasFile('picture'))
             {
-                $image = $request->file('picture');
-                $imageName =  $request->$orderH->order_no . '.' . $image->getClientOriginalName();
-                $path = $image->storeAs(Constanta::$orderHPictureDirectory, $imageName, Constanta::$refPictureDisk);
-                $url = Storage::url($path);
-
-                $refPicture = new RefPicture();
-                $refPicture->order_h_id = $orderH->order_h_id;
-                $refPicture->image_url = $url;
-                $refPicture->save();
+                $this->insertRefPictureOrder($request->file('picture'), $orderH->order_no, $orderH->order_h_id);
             }
 
             DB::commit();
@@ -60,9 +75,7 @@ class TrxService implements TrxInterface
         {
             DB::beginTransaction();
 
-            $orderH = OrderH::where('order_h_id', $request->order_h_id)->first();
-            $orderH->order_status = Constanta::$orderStatusCanceled;
-            $orderH->update();
+            $orderH = $this->updateOrderHStatus($request->order_h_id, Constanta::$orderStatusCanceled);
 
             DB::commit();
 
@@ -81,6 +94,6 @@ class TrxService implements TrxInterface
             ], 500);
         }
     }
-
+    #endregion
     
 }

@@ -3,19 +3,18 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Models\Account;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Interfaces\AccountInterface;
-use App\Http\Requests\V1\StoreAccountRequest;
-use App\Http\Requests\V1\UpdateAccountRequest;
-use App\Http\Requests\V2\UpdateCustomerAccountRequest;
-use App\Http\Requests\V2\CheckEmailRequest;
 use App\Http\Requests\V2\LoginRequest;
+use Illuminate\Support\Facades\Redirect;
+use App\Http\Interfaces\AccountInterface;
+use App\Http\Requests\V2\CheckEmailRequest;
+use App\Http\Requests\V1\StoreAccountRequest;
+use App\Http\Resources\V1\CheckEmailResource;
 use App\Http\Requests\V2\StoreAccountAgencyRequest;
 use App\Http\Requests\V2\UpdateAgencyAccountRequest;
-use App\Http\Resources\V1\CheckEmailResource;
-use App\Models\Agency;
-use App\Models\Customer;
-use Illuminate\Support\Facades\DB;
+use App\Http\Requests\V2\UpdateCustomerAccountRequest;
+use App\Models\Constanta;
 
 class AccountController extends Controller
 {
@@ -100,27 +99,32 @@ class AccountController extends Controller
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Account $account)
+    public function verify($account_id, Request $request)
     {
-        //
+        if (!$request->hasValidSignature()) {
+            return response()->json(["msg" => "Invalid/Expired URL provided."], 401);
+        }
+
+        $account = Account::findOrFail($account_id);
+
+        if (!$account->hasVerifiedEmail()) {
+            $account->markEmailAsVerified();
+        }
+
+        return Redirect::to(Constanta::$enviLocal . 'login');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateAccountRequest $request, Account $account)
+    public function resend(Request $request)
     {
-        //
+        $account = $request->user(); // Assuming you're using Laravel's built-in authentication
+
+        if ($account->hasVerifiedEmail()) {
+            return response()->json(["msg" => "Email already verified."], 400);
+        }
+
+        $account->sendEmailVerificationNotification();
+
+        return response()->json(["msg" => "Email verification link sent to your email address."]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Account $account)
-    {
-        //
-    }
 }

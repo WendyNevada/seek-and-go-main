@@ -11,7 +11,7 @@ class StorePromoRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,16 @@ class StorePromoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'promo_code' => 'required',
+            'start_date' => 'required',
+            'end_date' => 'required',
+            'is_hotel' => 'required',
+            'is_vehicle' => 'required',
+            'is_attraction' => 'required',
+            'is_amount' => 'required',
+            'is_package' => 'required',
+            'amount' => 'required',
+            'percent' => 'required'
         ];
     }
 }
