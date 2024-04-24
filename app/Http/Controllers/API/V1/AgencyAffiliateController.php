@@ -4,69 +4,34 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Models\AgencyAffiliate;
 use App\Http\Controllers\Controller;
+use App\Http\Interfaces\AgencyAffiliateInterface;
+use App\Http\Requests\V2\SearchBarCustomerRequest;
 use App\Http\Requests\V1\StoreAgencyAffiliateRequest;
 use App\Http\Requests\V1\UpdateAgencyAffiliateRequest;
 
 class AgencyAffiliateController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function GetSearchHomepageCustomerData(AgencyAffiliateInterface $agencyAffiliate, SearchBarCustomerRequest $request)
     {
-        //
+        $response = $agencyAffiliate->getSearchHomepageCustomerData($request);
+        return $response;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function SearchAttractionCustomer(AgencyAffiliateInterface $agencyAffiliate, SearchBarCustomerRequest $request)
     {
-        //
+        $response = $agencyAffiliate->SearchAttractionCustomer($request);
+        return $response;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreAgencyAffiliateRequest $request)
+    public function SearchHotelCustomer(AgencyAffiliateInterface $agencyAffiliate, SearchBarCustomerRequest $request)
     {
-        //
+        $response = $agencyAffiliate->SearchHotelCustomer($request);
+        return $response;
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(AgencyAffiliate $agencyAffiliate)
+    public function SearchVehicleCustomer(AgencyAffiliateInterface $agencyAffiliate, SearchBarCustomerRequest $request)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(AgencyAffiliate $agencyAffiliate)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateAgencyAffiliateRequest $request, AgencyAffiliate $agencyAffiliate)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(AgencyAffiliate $agencyAffiliate)
-    {
-        //
-    }
-
-    public function CreateAgencyAffiliateForProduct()
-    {
-        
+        $response = $agencyAffiliate->SearchVehicleCustomer($request);
+        return $response;
     }
 }
