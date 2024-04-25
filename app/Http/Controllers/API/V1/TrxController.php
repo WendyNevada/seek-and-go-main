@@ -2,82 +2,22 @@
 
 namespace App\Http\Controllers\API\V1;
 
-use App\Models\Trx;
+use App\Http\Services\TrxService;
 use App\Http\Controllers\Controller;
-use App\Http\Interfaces\TrxInterface;
-use App\Http\Requests\V1\StoreTrxRequest;
 use App\Http\Requests\V2\OrderHIdRequest;
-use App\Http\Requests\V1\UpdateTrxRequest;
 use App\Http\Requests\V2\CustPaymentRequest;
 
 class TrxController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function CustPayment(TrxService $trxService, CustPaymentRequest $request)
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-    
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreTrxRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Trx $trx)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Trx $trx)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateTrxRequest $request, Trx $trx)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Trx $trx)
-    {
-        //
-    }
-
-    public function CustPayment(TrxInterface $trxInterface, CustPaymentRequest $request)
-    {
-        $response = $trxInterface->CustPayment($request);
+        $response = $trxService->CustPayment($request);
         return $response;
     }
 
-    public function CancelCustPayment(TrxInterface $trxInterface, OrderHIdRequest $request)
+    public function CancelCustPayment(TrxService $trxService, OrderHIdRequest $request)
     {
-        $response = $trxInterface->CancelCustPayment($request);
+        $response = $trxService->CancelCustPayment($request);
         return $response;
     }
 }

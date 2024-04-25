@@ -28,7 +28,7 @@ class PackageHService implements PackageHInterface
         return $packageH;
     }
 
-    private function createPackageHAgency($package_code, $agency_id, $package_name, $description, $promo_code, $package_price, $is_active, $qty, $total_days): PackageH
+    private function createPackageHAgency($package_code, $agency_id, $package_name, $description, $package_price, $is_active, $qty, $total_days): PackageH
     {
         $packageH = PackageH::create([
             'package_code' => $package_code,
@@ -36,7 +36,6 @@ class PackageHService implements PackageHInterface
             'package_name' => $package_name,
             'description' => $description,
             'is_custom' => false,
-            'promo_code' => $promo_code,
             'package_price' => $package_price,
             'is_active' => $is_active,
             'qty' => $qty,
@@ -46,15 +45,15 @@ class PackageHService implements PackageHInterface
         return $packageH;
     }
 
-    private function createPackageHistoryH($package_code, $agency_id, $package_name, $is_custom, $promo_code, $package_price): PackageHistoryH
+    private function createPackageHistoryH($package_code, $agency_id, $package_name, $is_custom, $package_price, $total_days): PackageHistoryH
     {
         $packageHistoryH = PackageHistoryH::create([
             'package_code' => $package_code,
             'agency_id' => $agency_id,
             'package_name' => $package_name,
             'is_custom' => $is_custom,
-            'promo_code' => $promo_code,
             'package_price' => $package_price,
+            'total_days' => $total_days
         ]);
 
         return $packageHistoryH;
@@ -126,7 +125,6 @@ class PackageHService implements PackageHInterface
         $packageHCustom->description = $description;
         $packageHCustom->is_custom = true;
         $packageHCustom->custom_status = Constanta::$customPackageStatNew;
-        $packageHCustom->promo_code = null;
         $packageHCustom->package_price = null;
         $packageHCustom->is_active = true;
         $packageHCustom->qty = 1;
@@ -226,6 +224,39 @@ class PackageHService implements PackageHInterface
 
         return $orderD;
     }
+
+    private function getListAttractionByAgencyId($agency_id)
+    {
+        $listAttraction = RefAttraction::
+        join('agency_affiliates', 'agency_affiliates.ref_attraction_id', '=', 'ref_attractions.ref_attraction_id')->
+        where('agency_affiliates.agency_id', $agency_id)->
+        select('ref_attractions.ref_attraction_id', 'ref_attractions.attraction_name')->
+        get();
+        
+        return $listAttraction;
+    }
+
+    private function getListVehicleByAgencyId($agency_id)
+    {
+        $listVehicle = RefVehicle::
+        join('agency_affiliates', 'agency_affiliates.ref_vehicle_id', '=', 'ref_vehicles.ref_vehicle_id')->
+        where('agency_affiliates.agency_id', $agency_id)->
+        select('ref_vehicles.ref_vehicle_id', 'ref_vehicles.vehicle_name')->
+        get();
+        
+        return $listVehicle;
+    }
+
+    private function getListHotelByAgencyId($agency_id)
+    {
+        $listHotel = RefHotel::
+        join('agency_affiliates', 'agency_affiliates.ref_hotel_id', '=', 'ref_hotels.ref_hotel_id')->
+        where('agency_affiliates.agency_id', $agency_id)->
+        select('ref_hotels.ref_hotel_id', 'ref_hotels.hotel_name')->
+        get();
+        
+        return $listHotel;
+    }
     #endregion
 
     #region Public Function
@@ -239,9 +270,9 @@ class PackageHService implements PackageHInterface
             {
                 DB::beginTransaction();
 
-                $packageH = $this->createPackageHAgency($request->package_code, $request->agency_id, $request->package_name, $request->description, $request->promo_code, $request->package_price, $request->is_active, $request->qty, $request->total_days);
+                $packageH = $this->createPackageHAgency($request->package_code, $request->agency_id, $request->package_name, $request->description, $request->package_price, $request->is_active, $request->qty, $request->total_days);
 
-                $packageHistoryH = $this->createPackageHistoryH($request->package_code, $request->agency_id, $request->package_name, $request->is_custom, $request->promo_code, $request->package_price);
+                $packageHistoryH = $this->createPackageHistoryH($request->package_code, $request->agency_id, $request->package_name, $request->is_custom, $request->package_price, $request->total_days);
 
                 foreach($request->details as $detail)
                 {
@@ -356,7 +387,7 @@ class PackageHService implements PackageHInterface
 
             $packageH = $this->updatePackageH($request->package_h_id, Constanta::$customPackageStatApv, $request->new_price);
 
-            $packageHistoryH = $this->createPackageHistoryH($packageH->package_code, $packageH->agency_id, $packageH->package_name, true, $packageH->promo_code, $packageH->package_price);
+            $packageHistoryH = $this->createPackageHistoryH($packageH->package_code, $packageH->agency_id, $packageH->package_name, true, $packageH->package_price, $packageH->total_days);
 
             $orderNo = $this->generateOrderNo();
 
@@ -398,6 +429,27 @@ class PackageHService implements PackageHInterface
         $packageH = $this->getPackageByAgencyId($request->agency_id, false, Constanta::$homepageDataCount);
 
         return response()->json($packageH);
+    }
+
+    public function GetListAttractionForAgencyPackage(AgencyIdRequest $request)
+    {
+        $attraction = $this->getListAttractionByAgencyId($request->agency_id);
+
+        return response()->json($attraction);
+    }
+
+    public function GetListHotelForAgencyPackage(AgencyIdRequest $request)
+    {
+        $hotel = $this->getListHotelByAgencyId($request->agency_id);
+
+        return response()->json($hotel);
+    }
+
+    public function GetListVehicleForAgencyPackage(AgencyIdRequest $request)
+    {
+        $vehicle = $this->getListVehicleByAgencyId($request->agency_id);
+
+        return response()->json($vehicle);
     }
     #endregion
 }

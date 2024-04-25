@@ -32,5 +32,7 @@ interface OrderHInterface
 
     public function RetryPaymentOrder(OrderHIdRequest $request);
 
+    public function FinishOrder(OrderHIdRequest $request);
+
     public function GetCustPaidOrder(GetOrderDashboardRequest $request);
 }

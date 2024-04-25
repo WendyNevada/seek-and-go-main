@@ -3,64 +3,48 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Models\Account;
+use App\Models\Constanta;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Services\AccountService;
 use App\Http\Requests\V2\LoginRequest;
 use Illuminate\Support\Facades\Redirect;
-use App\Http\Interfaces\AccountInterface;
 use App\Http\Requests\V2\CheckEmailRequest;
 use App\Http\Requests\V1\StoreAccountRequest;
 use App\Http\Resources\V1\CheckEmailResource;
 use App\Http\Requests\V2\StoreAccountAgencyRequest;
 use App\Http\Requests\V2\UpdateAgencyAccountRequest;
 use App\Http\Requests\V2\UpdateCustomerAccountRequest;
-use App\Models\Constanta;
 
 class AccountController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function CreateAccountCustomer(AccountService $accountService, StoreAccountRequest $request)
     {
-        return Account::all();
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    public function CreateAccountCustomer(AccountInterface $accountInterface, StoreAccountRequest $request)
-    {
-        $response = $accountInterface->CreateAccountCustomer($request);
+        $response = $accountService->CreateAccountCustomer($request);
         return $response;
     }
 
-    public function CreateAccountAgency(AccountInterface $accountInterface, StoreAccountAgencyRequest $request)
+    public function CreateAccountAgency(AccountService $accountService, StoreAccountAgencyRequest $request)
     {
-        $response = $accountInterface->CreateAccountAgency($request);
+        $response = $accountService->CreateAccountAgency($request);
         return $response;
     }
 
-    public function Login(AccountInterface $accountInterface, LoginRequest $request)
+    public function Login(AccountService $accountService, LoginRequest $request)
     {
-        $response = $accountInterface->Login($request);
+        $response = $accountService->Login($request);
         return $response;
     }
 
-    public function UpdateCustomerAccount(AccountInterface $accountInterface, UpdateCustomerAccountRequest $request)
+    public function UpdateCustomerAccount(AccountService $accountService, UpdateCustomerAccountRequest $request)
     {
-        $response = $accountInterface->UpdateCustomerAccount($request);
+        $response = $accountService->UpdateCustomerAccount($request);
         return $response;
     }
 
-    public function UpdateAgencyAccount(AccountInterface $accountInterface, UpdateAgencyAccountRequest $request)
+    public function UpdateAgencyAccount(AccountService $accountService, UpdateAgencyAccountRequest $request)
     {
-        $response = $accountInterface->UpdateAgencyAccount($request);
+        $response = $accountService->UpdateAgencyAccount($request);
         return $response;
     }
 

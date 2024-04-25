@@ -8,16 +8,17 @@ use App\Models\RefHotel;
 use App\Models\Constanta;
 use App\Models\RefPicture;
 use App\Models\RefZipcode;
+use Brick\Math\BigInteger;
 use App\Models\AgencyAffiliate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Interfaces\RefHotelInterface;
 use App\Http\Requests\V2\RefHotelIdRequest;
+use App\Http\Requests\V2\RateProductRequest;
 use App\Http\Requests\V1\StoreRefHotelRequest;
 use App\Http\Requests\V1\UpdateRefHotelRequest;
 use App\Http\Requests\V2\GetRefHotelByIdRequest;
-use Brick\Math\BigInteger;
 
 class RefHotelService implements RefHotelInterface
 {
@@ -69,7 +70,7 @@ class RefHotelService implements RefHotelInterface
         return $refZipcodeId;
     }
 
-    private function createRefHotel($hotel_code, $refZipcodeId, $hotel_name, $description, $address, $rating, $qty, $promo_code): RefHotel
+    private function createRefHotel($hotel_code, $refZipcodeId, $hotel_name, $description, $address, $rating, $qty): RefHotel
     {
         $hotel = RefHotel::
                 create(
@@ -81,8 +82,7 @@ class RefHotelService implements RefHotelInterface
                         'address' => $address,
                         'rating' => $rating,
                         'is_active' => true,
-                        'qty' => $qty,
-                        'promo_code' => $promo_code
+                        'qty' => $qty
                     ]
                 );
 
@@ -102,37 +102,38 @@ class RefHotelService implements RefHotelInterface
         $refPicture->save();
     }
 
-    private function insertAgencyAffiliateHotel($ref_hotel_id, $agency_id, $base_price): void
+    private function insertAgencyAffiliateHotel($ref_hotel_id, $agency_id, $base_price, $promo_code): void
     {
         $affiliate = AgencyAffiliate::
                 create(
                     [
                         'ref_hotel_id' => $ref_hotel_id,
                         'agency_id' => $agency_id,
-                        'base_price' => $base_price
+                        'base_price' => $base_price,
+                        'promo_code' => $promo_code
                     ]
                 );
     }
 
-    private function updatePriceAgencyAffiliateHotel($ref_hotel_id, $base_price): void
+    private function updateAgencyAffiliateHotel($ref_hotel_id, $base_price, $promo_code): void
     {
         $agencyAffiliate = AgencyAffiliate::where('ref_hotel_id', $ref_hotel_id)->first();
 
         $agencyAffiliate->update(
             [
-                'base_price' => $base_price
+                'base_price' => $base_price,
+                'promo_code' => $promo_code
             ]
         );
     }
 
-    private function updateRefHotel($hotel, $hotel_name, $description, $address, $qty, $promo_code): void
+    private function updateRefHotel($hotel, $hotel_name, $description, $address, $qty): void
     {
         $hotel->update([
             'hotel_name' => $hotel_name,
             'description' => $description,
             'address' => $address,
-            'qty' => $qty,
-            'promo_code' => $promo_code
+            'qty' => $qty
         ]);
     }
 
@@ -152,7 +153,7 @@ class RefHotelService implements RefHotelInterface
         else
         {
             $refPicture = new RefPicture();
-            $refPicture->ref_attraction_id = $ref_hotel_id;
+            $refPicture->ref_hotel_id = $ref_hotel_id;
             $refPicture->image_url = $url;
             $refPicture->save();
         }
@@ -237,7 +238,7 @@ class RefHotelService implements RefHotelInterface
         return $hotel;
     }
 
-    private function getActiveHotelsByAgencyId($agency_id, $limit)
+    private function getActiveHotelsByAgencyId($agency_id)
     {
         $hotel = RefHotel::
         join('agency_affiliates', 'ref_hotels.ref_hotel_id', '=', 'agency_affiliates.ref_hotel_id')->
@@ -245,10 +246,25 @@ class RefHotelService implements RefHotelInterface
         select('ref_hotels.*', 'agency_affiliates.base_price', 'ref_pictures.image_url')->
         where('ref_hotels.is_active', true)->
         where('agency_affiliates.agency_id', $agency_id)->
-        limit($limit)->
         get();
 
         return $hotel;
+    }
+
+    private function updateRating($ref_hotel_id, $rating): void
+    {
+        $hotel = RefHotel::where('ref_hotel_id', $ref_hotel_id)->first();
+
+        $hotel->update([
+            'rating' => $rating
+        ]);
+    }
+
+    private function getAverage($numbers)
+    {
+        $sum = array_sum($numbers);
+        $count = count($numbers);
+        return $sum / $count;
     }
     #endregion
 
@@ -320,8 +336,7 @@ class RefHotelService implements RefHotelInterface
                     $request->description,
                     $request->address,
                     $request->rating,
-                    $request->qty,
-                    $request->promo_code
+                    $request->qty
                 );
 
                 $refHotelId = $hotel->ref_hotel_id;
@@ -331,7 +346,7 @@ class RefHotelService implements RefHotelInterface
                     $this->insertRefPictureHotel($request->file('picture'), $request->hotel_code, $refHotelId);
                 }
 
-                $affiliate = $this->insertAgencyAffiliateHotel($refHotelId, $request->agency_id, $request->base_price); 
+                $affiliate = $this->insertAgencyAffiliateHotel($refHotelId, $request->agency_id, $request->base_price, $request->promo_code); 
 
                 DB::commit();
 
@@ -372,9 +387,9 @@ class RefHotelService implements RefHotelInterface
             {
                 DB::beginTransaction();
 
-                $this->updatePriceAgencyAffiliateHotel($request->ref_hotel_id, $request->base_price);
+                $this->updateAgencyAffiliateHotel($request->ref_hotel_id, $request->base_price, $request->promo_code);
 
-                $this->updateRefHotel($request->ref_hotel_id, $request->hotel_name, $request->description, $request->address, $request->qty, $request->promo_code);
+                $this->updateRefHotel($request->ref_hotel_id, $request->hotel_name, $request->description, $request->address, $request->qty);
 
                 if($request->picture_url == null)
                 {
@@ -491,9 +506,54 @@ class RefHotelService implements RefHotelInterface
 
     public function GetActiveHotelByAgencyId(AgencyIdRequest $request)
     {
-        $hotel = $this->getActiveHotelsByAgencyId($request->agency_id, Constanta::$homepageDataCount);
+        $hotel = $this->getActiveHotelsByAgencyId($request->agency_id);
 
         return response()->json($hotel);
+    }
+
+    public function RateHotel(RateProductRequest $request)
+    {
+        try
+        {
+            DB::beginTransaction();
+
+            $hotel = $this->getRefHotelById($request->id);
+
+            if($hotel->rating != null)
+            {
+                $ratingAvg = $this->getAverage([$hotel->rating, $request->rating]);
+                
+                $this->updateRating($request->id, $ratingAvg);
+
+                DB::commit();
+
+                return response()->json([
+                    'status' => "ok",
+                    'message' => "Hotel has been rated",
+                    'ref_hotel_id' => $request->id
+                ], 200);
+            }
+            else
+            { 
+                $this->updateRating($request->id, $request->rating);
+
+                DB::commit();
+
+                return response()->json([
+                    'status' => "ok",
+                    'message' => "Hotel has been rated",
+                    'ref_hotel_id' => $request->id
+                ], 200);
+            }
+        }
+        catch (\Exception $e)
+        {
+            return response()->json([
+                'status' => "error",
+                'message' => $e->getMessage(),
+                'ref_hotel_id' => $request->id
+            ], 500);
+        }
     }
     #endregion
     

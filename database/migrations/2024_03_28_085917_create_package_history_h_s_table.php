@@ -20,8 +20,8 @@ return new class extends Migration
             $table->foreign('customer_id')->references('customer_id')->on('customers')->onDelete('cascade');
             $table->string('package_name', length:100);
             $table->boolean('is_custom');
-            $table->string('promo_code', length:50)->nullable();
             $table->double('package_price', 17, 2);
+            $table->integer('total_days');
             $table->timestamps();
         });
     }
