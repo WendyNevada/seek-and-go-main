@@ -173,4 +173,14 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('GetPromoDeductionPricePackage', 'PromoController@GetPromoDeductionPricePackage');
     #endregion
+
+    #region AgencyAffiliate
+    Route::post('GetSearchHomepageCustomerData', 'AgencyAffiliateController@GetSearchHomepageCustomerData');
+
+    Route::post('SearchAttractionCustomer', 'AgencyAffiliateController@SearchAttractionCustomer');
+
+    Route::post('SearchHotelCustomer', 'AgencyAffiliateController@SearchHotelCustomer');
+
+    Route::post('SearchVehicleCustomer', 'AgencyAffiliateController@SearchVehicleCustomer');
+    #endregion
 });
