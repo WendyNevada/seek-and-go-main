@@ -31,7 +31,8 @@ class StorePromoRequest extends FormRequest
             'is_amount' => 'required',
             'is_package' => 'required',
             'amount' => 'required',
-            'percent' => 'required'
+            'percent' => 'required',
+            'max_use' => 'required'
         ];
     }
 }

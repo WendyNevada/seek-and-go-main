@@ -9,6 +9,7 @@ use App\Http\Requests\V1\UpdateRefAttractionRequest;
 use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Requests\V2\GetRefAttractionByCodeRequest;
 use App\Http\Requests\V2\GetRefAttractionByIdRequest;
+use App\Http\Requests\V2\RateProductRequest;
 use App\Http\Requests\V2\RefAttractionIdRequest;
 use App\Models\AgencyAffiliate;
 use App\Models\Constanta;
@@ -71,7 +72,7 @@ class RefAttractionService implements RefAttractionInterface
         return $refZipcodeId;
     }
 
-    private function createRefAttraction($attraction_code, $refZipcodeId, $attraction_name, $description, $address, $rating, $qty, $promo_code) : RefAttraction
+    private function createRefAttraction($attraction_code, $refZipcodeId, $attraction_name, $description, $address, $rating, $qty) : RefAttraction
     {
         $attraction = RefAttraction::
                 create(
@@ -83,8 +84,7 @@ class RefAttractionService implements RefAttractionInterface
                         'address' => $address,
                         'rating' => $rating,
                         'is_active' => true,
-                        'qty' => $qty,
-                        'promo_code' => $promo_code
+                        'qty' => $qty
                     ]
                 );
 
@@ -105,25 +105,27 @@ class RefAttractionService implements RefAttractionInterface
         $refPicture->save();
     }
 
-    private function insertAgencyAffiliateAttraction($ref_attraction_id, $agency_id, $base_price): void
+    private function insertAgencyAffiliateAttraction($ref_attraction_id, $agency_id, $base_price, $promo_code): void
     {
         $affiliate = AgencyAffiliate::
                 create(
                     [
                         'ref_attraction_id' => $ref_attraction_id,
                         'agency_id' => $agency_id,
-                        'base_price' => $base_price
+                        'base_price' => $base_price,
+                        'promo_code' => $promo_code
                     ]
                 );
     }
 
-    private function updatePriceAgencyAffiliateAttraction($ref_attraction_id, $base_price): void
+    private function updateAgencyAffiliateAttraction($ref_attraction_id, $base_price, $promo_code): void
     {
         $agencyAffiliate = AgencyAffiliate::where('ref_attraction_id', $ref_attraction_id)->first();
 
         $agencyAffiliate->update(
             [
-                'base_price' => $base_price
+                'base_price' => $base_price,
+                'promo_code' => $promo_code
             ]
         );
     }
@@ -242,7 +244,7 @@ class RefAttractionService implements RefAttractionInterface
         return $attraction;
     }
 
-    private function getActiveAttractionsByAgencyId($agency_id, $limit)
+    private function getActiveAttractionsByAgencyId($agency_id)
     {
         $attraction = RefAttraction::
         join('agency_affiliates', 'ref_attractions.ref_attraction_id', '=', 'agency_affiliates.ref_attraction_id')->
@@ -250,10 +252,25 @@ class RefAttractionService implements RefAttractionInterface
         select('ref_attractions.*', 'agency_affiliates.base_price', 'ref_pictures.image_url')->
         where('ref_attractions.is_active', true)->
         where('agency_affiliates.agency_id', $agency_id)->
-        limit($limit)->
         get();
 
         return $attraction;
+    }
+
+    private function updateRating($ref_attraction_id, $rating): void
+    {
+        $attraction = RefAttraction::where('ref_attraction_id', $ref_attraction_id)->first();
+
+        $attraction->update([
+            'rating' => $rating
+        ]);
+    }
+
+    private function getAverage($numbers)
+    {
+        $sum = array_sum($numbers);
+        $count = count($numbers);
+        return $sum / $count;
     }
     #endregion
 
@@ -332,8 +349,7 @@ class RefAttractionService implements RefAttractionInterface
                     $request->description,
                     $request->address,
                     $request->rating,
-                    $request->qty,
-                    $request->promo_code
+                    $request->qty
                 );
 
                 $refAttractionId = $attraction->ref_attraction_id;
@@ -343,7 +359,7 @@ class RefAttractionService implements RefAttractionInterface
                     $this->insertRefPictureAttraction($request->file('picture'), $request->attraction_code, $refAttractionId);
                 }
 
-                $this->insertAgencyAffiliateAttraction($refAttractionId, $request->agency_id, $request->base_price);
+                $this->insertAgencyAffiliateAttraction($refAttractionId, $request->agency_id, $request->base_price, $request->promo_code);
 
                 DB::commit();
 
@@ -384,7 +400,7 @@ class RefAttractionService implements RefAttractionInterface
             {
                 DB::beginTransaction();
 
-                $this->updatePriceAgencyAffiliateAttraction($request->ref_attraction_id, $request->base_price);
+                $this->updateAgencyAffiliateAttraction($request->ref_attraction_id, $request->base_price, $request->promo_code);
 
                 $this->updateRefAttraction($request->ref_attraction_id, $request->attraction_name, $request->description, $request->address, $request->qty, $request->promo_code);
 
@@ -503,9 +519,54 @@ class RefAttractionService implements RefAttractionInterface
 
     public function GetActiveAttractionByAgencyId(AgencyIdRequest $request)
     {
-        $attraction = $this->getActiveAttractionsByAgencyId($request->agency_id, Constanta::$homepageDataCount);
+        $attraction = $this->getActiveAttractionsByAgencyId($request->agency_id);
 
         return response()->json($attraction);
+    }
+
+    public function RateAttraction(RateProductRequest $request)
+    {
+        try
+        {
+            DB::beginTransaction();
+
+            $attraction = $this->getRefAttractionById($request->id);
+
+            if($attraction->rating != null)
+            {
+                $ratingAvg = $this->getAverage([$attraction->rating, $request->rating]);
+                
+                $this->updateRating($request->id, $ratingAvg);
+
+                DB::commit();
+
+                return response()->json([
+                    'status' => "ok",
+                    'message' => "Attraction has been rated",
+                    'ref_attraction_id' => $request->id
+                ], 200);
+            }
+            else
+            { 
+                $this->updateRating($request->id, $request->rating);
+
+                DB::commit();
+
+                return response()->json([
+                    'status' => "ok",
+                    'message' => "Attraction has been rated",
+                    'ref_attraction_id' => $request->id
+                ], 200);
+            }
+        }
+        catch (\Exception $e)
+        {
+            return response()->json([
+                'status' => "error",
+                'message' => $e->getMessage(),
+                'ref_attraction_id' => $request->id
+            ], 500);
+        }
     }
     #endregion
 

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->boolean('is_amount');
             $table->double('amount', 17, 2);
             $table->double('percent', 17, 2);
+            $table->integer('max_use');
             $table->timestamps();
         });
     }
