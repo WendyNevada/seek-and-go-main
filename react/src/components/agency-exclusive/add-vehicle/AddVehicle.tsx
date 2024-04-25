@@ -11,11 +11,20 @@ import { KecamatanCombobox } from '../add-attraction/ComboBox.tsx/kecamatanCombo
 import { KelurahanCombobox } from '../add-attraction/ComboBox.tsx/kelurahanCombobox/KelurahanCombobox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from '@/components/ui/button'
+import { Switch } from '@/components/ui/switch'
+import axiosClient from '@/axios.client'
+import { toast } from '@/components/ui/use-toast'
+import { useLogin } from '@/context/LoginContext'
+import { useNavigate } from 'react-router-dom'
+import axios, { AxiosError } from 'axios'
+import { Textarea } from '@/components/ui/textarea'
 
 const AddVehicle = () => {
     const [imageUrl, setImageUrl] = useState('');
     const currentYear = new Date().getFullYear();
     const years: number[] = Array.from({ length: currentYear - 1949 }, (_, index) => currentYear - index);
+    const navigate = useNavigate();
+    const { user } = useLogin();
 
     const form = useForm<z.infer<typeof addVehicleSchema>>({
         resolver: zodResolver(addVehicleSchema),
@@ -23,6 +32,7 @@ const AddVehicle = () => {
             vehicle_code: "",
             vehicle_name : "",
             picture: undefined,
+            description: "",
             area_1: "",
             area_2: "",
             area_3: "",
@@ -37,8 +47,7 @@ const AddVehicle = () => {
             address : "",
             qty : 0,
             promo_code: "",
-            base_price: 0,
-            promo_code_affiliate: ""
+            base_price: 0
         }
     })
 
@@ -75,21 +84,51 @@ const AddVehicle = () => {
         form.setValue("area_4",kelurahan);
     }
 
-    const handleVehicleTypeChange = (newValue:string) => {
-        form.setValue("vehicle_type", newValue);
-    };
-
-    const handleVehicleSeatChange = (newValue:number) => {
-        form.setValue("vehicle_seat", newValue);
-    };
-
-    const handleSelectYear = () => {
-        //form.setValue("vehicle_year");
-        console.log('vehicle year : ');
-    };
-
     const onSubmit = async (values: z.infer<typeof addVehicleSchema>) => {
-        console.log(values);
+        const formData = new FormData();
+        formData.append('agency_id', String(user?.agency_id)); // Assuming agency_id is a string
+        formData.append('vehicle_code', values.vehicle_code);
+        formData.append('description', values.description);
+        formData.append('vehicle_name', values.vehicle_name);
+        formData.append('area_1', values.area_1);
+        formData.append('area_2', values.area_2);
+        formData.append('area_3', values.area_3);
+        formData.append('area_4', values.area_4);
+        formData.append('vehicle_type', values.vehicle_type);
+        formData.append('vehicle_brand', values.vehicle_brand);
+        formData.append('vehicle_seat', values.vehicle_seat.toString());
+        formData.append('vehicle_series', values.vehicle_series);
+        formData.append('vehicle_model', values.vehicle_model);
+        formData.append('vehicle_year', values.vehicle_year.toString());
+        formData.append('with_driver', values.with_driver ? '1' : '0');
+        formData.append('address', values.address);
+        formData.append('qty', values.qty.toString());
+        formData.append('promo_code', values.promo_code);
+        formData.append('base_price', values.base_price.toString());
+        //formData.append('promo_code_affiliate', values.promo_code_affiliate);
+
+        formData.append('picture', values.picture[0]);
+
+        try{
+            await axiosClient.post('/v1/AddVehicle', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data' // Set the content type to multipart/form-data
+                }
+            });
+            toast({
+                variant: "success",
+                description: "Item added."
+            });
+            navigate('/Agency');
+        }catch (response) {
+            const axiosError = response as AxiosError; // Cast the error to AxiosError
+            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
+                toast({
+                    variant: "destructive",
+                    description: (axiosError.response?.data as { message: string })?.message,
+                });
+            }
+        }
     }
 
     return (
@@ -98,23 +137,71 @@ const AddVehicle = () => {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <h1 className="text-2xl font-bold mb-8 text-center">Add Vehicle</h1>
-                        <FormField
+
+                        <div className="flex flex-row space-x-4">
+                            <FormField
+                                control={form.control}
+                                name="vehicle_code"
+                                render={({ field }) => (
+                                    <FormItem className="custom-field">
+                                        <FormLabel>{"Vehicle Code"}</FormLabel>
+                                        <FormMessage />
+                                        <FormControl className='w-full'>
+                                            <Input
+                                                placeholder={"Vehilce Code"}
+                                                {...field}
+                                                onChange={field.onChange}
+                                            />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="vehicle_name"
+                                render={({ field }) => (
+                                    <FormItem className="custom-field">
+                                        <FormLabel>{"Vehicle Name"}</FormLabel>
+                                        <FormMessage />
+                                        <FormControl>
+                                            <Input
+                                                placeholder={"Vehilce Name"}
+                                                {...field}
+                                                onChange={field.onChange}
+                                            />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
                             control={form.control}
-                            name="vehicle_code"
-                            render={({ field }) => (
+                            name="vehicle_year"
+                            render={() => (
                                 <FormItem className="custom-field">
-                                    <FormLabel>{"Vehicle Code"}</FormLabel>
+                                    <FormLabel>{"Vehicle Year"}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
-                                        <Input
-                                            placeholder={"Vehilce Code"}
-                                            {...field}
-                                            onChange={field.onChange}
-                                        />
+                                        <Select onValueChange={(newValue) => form.setValue("vehicle_year", parseInt(newValue, 10))}>
+                                            <SelectTrigger className='w-40'>
+                                                <SelectValue placeholder="Select Year" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                    {years.map((year) => (
+                                                        <SelectItem
+                                                            key={year}
+                                                            value={year.toString()}
+                                                        >
+                                                            {year}
+                                                        </SelectItem>
+                                                    ))}
+                                            </SelectContent>
+                                        </Select>
                                     </FormControl>
                                 </FormItem>
                             )}
                         />
+                        </div>
+
                         <FormField
                             control={form.control}
                             name="picture"
@@ -139,6 +226,7 @@ const AddVehicle = () => {
                                 </FormItem>
                             )}
                         />
+
                         <div className="flex flex-row">
                                 <FormField
                                     control={form.control}
@@ -212,8 +300,8 @@ const AddVehicle = () => {
                                                     <SelectValue placeholder="Vehicle Type" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="Car" onChange={() => handleVehicleTypeChange("Car")}>Car</SelectItem>
-                                                    <SelectItem value="Motorcycle" onChange={() => handleVehicleTypeChange("Motorcycle")}>Motorcycle</SelectItem>
+                                                    <SelectItem value="Car">Car</SelectItem>
+                                                    <SelectItem value="Motorcycle">Motorcycle</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </FormControl>
@@ -228,14 +316,14 @@ const AddVehicle = () => {
                                         <FormLabel>{"Vehicle Seat"}</FormLabel>
                                         <FormMessage />
                                         <FormControl>
-                                            <Select onValueChange={(newValue) => form.setValue("vehicle_type", newValue)}>
+                                            <Select onValueChange={(newValue) => form.setValue("vehicle_seat", parseInt(newValue))}>
                                                 <SelectTrigger className="w-[180px]">
                                                     <SelectValue placeholder="Vehicle Seat" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="2" onChange={() => handleVehicleSeatChange(2)}>2 Seat</SelectItem>
-                                                    <SelectItem value="4" onChange={() => handleVehicleSeatChange(4)}>4 Seat</SelectItem>
-                                                    <SelectItem value="6" onChange={() => handleVehicleSeatChange(6)}>6 Seat</SelectItem>
+                                                    <SelectItem value="2">2 Seat</SelectItem>
+                                                    <SelectItem value="4">4 Seat</SelectItem>
+                                                    <SelectItem value="6">6 Seat</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </FormControl>
@@ -298,35 +386,130 @@ const AddVehicle = () => {
                             />
                         </div>
 
-                        {/* <YearSelector onSelectYear={handleSelectYear} /> */}
                         <FormField
                             control={form.control}
-                            name="vehicle_year"
-                            render={() => (
-                                <FormItem className="custom-field">
-                                    <FormLabel>{"Vehicle Year"}</FormLabel>
+                            name="with_driver"
+                            render={({ field }) => (
+                                <FormItem className="custom-field mt-2">
+                                    <FormLabel className='mr-4 align-middle'>{"With Driver?"}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
-                                        <Select onValueChange={(newValue) => form.setValue("vehicle_year", parseInt(newValue, 10))}>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select Year" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                    {years.map((year) => (
-                                                        <SelectItem
-                                                            key={year}
-                                                            value={year.toString()}
-                                                            onSelect={() => handleSelectYear()}
-                                                        >
-                                                            {year}
-                                                        </SelectItem>
-                                                    ))}
-                                            </SelectContent>
-                                        </Select>
+                                        <Switch
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                            //onChange={field.onChange}
+                                        />
                                     </FormControl>
                                 </FormItem>
                             )}
                         />
+
+                        <div className="flex flex-row space-x-4">
+                            <FormField
+                                control={form.control}
+                                name="address"
+                                render={({ field }) => (
+                                    <FormItem className="custom-field">
+                                        <FormLabel>{"Address"}</FormLabel>
+                                        <FormMessage />
+                                        <FormControl className='w-full'>
+                                            <Input
+                                                placeholder={"Input Address"}
+                                                {...field}
+                                                onChange={field.onChange}
+                                            />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="qty"
+                                render={({ field }) => (
+                                    <FormItem className="custom-field">
+                                        <FormLabel>{"QTY"}</FormLabel>
+                                        <FormMessage />
+                                        <FormControl className='w-full'>
+                                            <Input
+                                                type='number'
+                                                placeholder={"Input Qty"}
+                                                {...field}
+                                                onChange={field.onChange}
+                                            />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="promo_code"
+                                render={({ field }) => (
+                                    <FormItem className="custom-field">
+                                        <FormLabel>{"Promo Code"}</FormLabel>
+                                        <FormMessage />
+                                        <FormControl className='w-full'>
+                                            <Input
+                                                placeholder={"Promo Code"}
+                                                {...field}
+                                                onChange={field.onChange}
+                                            />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        <FormField
+                            control={form.control}
+                            name="base_price"
+                            render={({ field }) => (
+                                <FormItem className="custom-field">
+                                    <FormLabel>{"Base Price (perhari)"}</FormLabel>
+                                    <FormMessage />
+                                    <FormControl>
+                                        <Input
+                                            type='number'
+                                            {...field}
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        {/* <FormField
+                            control={form.control}
+                            name="promo_code_affiliate"
+                            render={({ field }) => (
+                                <FormItem className="custom-field">
+                                    <FormLabel>{"Promo Code Affiliate"}</FormLabel>
+                                    <FormMessage />
+                                    <FormControl>
+                                        <Input
+                                            placeholder={"Promo Code Affiliate"}
+                                            {...field}
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        /> */}
+                        <FormField
+                                control={form.control}
+                                name="description"
+                                render={({ field }) => (
+                                    <FormItem className="custom-field">
+                                        <FormLabel>{"Description"}</FormLabel>
+                                        <FormMessage />
+                                        <FormControl>
+                                            <Textarea
+                                                placeholder={field.name}
+                                                {...field}
+                                                onChange={field.onChange}
+                                            />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
 
                         <div className="justify-center flex">
                             <Button type="submit" className='mt-6'>Add Attraction Product

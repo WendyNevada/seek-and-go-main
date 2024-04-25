@@ -54,5 +54,4 @@ export const editAttractionSchema = z.object({
     qty: z.coerce.number(),
     promo_code: z.string(),
     base_price: z.coerce.number(),
-    promo_code_affiliate: z.string(),
 })

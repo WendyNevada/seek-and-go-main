@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { GetVehicleModel } from '../utils/ProductModel'
+import { GetHotelModel } from '../utils/ProductModel';
 import { useNavigate } from 'react-router-dom';
 import { useLogin } from '@/context/LoginContext';
 import axiosClient from '@/axios.client';
@@ -7,54 +7,57 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { AlertDialogProduct } from '../ProductComponent/DeleteProductAlert';
 import EditIcon from '@mui/icons-material/Edit';
+import { urlConstant } from '@/urlConstant';
 
-const VehicleList = () => {
-    const [vehicle, setVehicle] = useState<GetVehicleModel[]>([]);
+const HotelList = () => {
+    const [hotel, setHotel] = useState<GetHotelModel[]>([]);
     const navigate = useNavigate();
+
     const { user } = useLogin();
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
-        const fetchVehicle = async () => {
+        // Fetch data from the API
+        const fetchAttractions = async () => {
             try {
-                const response = await axiosClient.post<GetVehicleModel[]>('/v1/GetActiveVehicleByAgencyId', {
+                const response = await axiosClient.post<GetHotelModel[]>('/v1/GetActiveHotelByAgencyId', {
                     agency_id: user?.agency_id
                 }); // Replace 'your-api-url' with the actual API endpoint
-                setVehicle(response.data); // Assuming the response data is an array of vehicles
+                setHotel(response.data); // Assuming the response data is an array of attractions
             } catch (error) {
-                console.error('Error fetching vehicles:', error);
+                console.error('Error fetching attractions:', error);
             }
-        }
-        fetchVehicle();
-    },[]);
+        };
+        fetchAttractions();
+    }, []);
 
-    const onEditVehicle = (refVehicleId: number) => {
-        //ref_attraction_id
-        navigate(`/Agency/EditVehicle/${refVehicleId}`)
+    const onEdithotel = (refHotelId: number) => {
+        //navigate(`/Agency/EditAttraction/${refAttractionId}`)
+        navigate(urlConstant.EditHotel + `/${refHotelId}`)
     }
 
     return (
         <div className='mt-4 justify-between'>
-            {vehicle.reduce((rows: JSX.Element[][], vehicle, index) => {
+            {hotel.reduce((rows: JSX.Element[][], hotel, index) => {
                 if (index % 4 === 0) {
                     rows.push([]);
                 }
                 rows[rows.length - 1].push(
-                    <div key={vehicle.ref_vehicle_id} className='flex-1'>
+                    <div key={hotel.ref_hotel_id} className='flex-1'>
                         <Card className='w-64 shadow-lg mt-10'>
-                        <img src={enviUrl + vehicle.image_url} alt={vehicle.vehicle_name} className="h-36 w-full shadow-lg" />
+                        <img src={enviUrl + hotel.image_url} alt={hotel.hotel_name} className="h-36 w-full shadow-lg" />
                             <CardHeader>
-                                <CardTitle>{vehicle.vehicle_name}</CardTitle>
-                                <CardDescription>{vehicle.description}</CardDescription>
+                                <CardTitle>{hotel.hotel_name}</CardTitle>
+                                <CardDescription>{hotel.description}</CardDescription>
                             </CardHeader>
                             <CardContent className='flex-1'>
-                                <p>{vehicle.address}</p>
-                                <p>{vehicle.rating}</p>
-                                <p>Base Price: Rp.{vehicle.base_price}</p>
+                                <p>{hotel.address}</p>
+                                <p>{hotel.rating}</p>
+                                <p>Base Price: Rp.{hotel.base_price}</p>
                             </CardContent>
                             <CardFooter>
-                                <Button variant='primary' onClick={() => onEditVehicle(vehicle.ref_vehicle_id)}>{<EditIcon />}</Button>
-                                <AlertDialogProduct attractionId={vehicle.ref_vehicle_id} />
+                                <Button variant='primary' onClick={() => onEdithotel(hotel.ref_hotel_id)}>{<EditIcon />}</Button>
+                                <AlertDialogProduct attractionId={hotel.ref_hotel_id} />
                                 {/* <Button className='ml-2' variant="destructive">Delete</Button> */}
                             </CardFooter>
                         </Card>
@@ -70,4 +73,4 @@ const VehicleList = () => {
     )
 }
 
-export default VehicleList
+export default HotelList
