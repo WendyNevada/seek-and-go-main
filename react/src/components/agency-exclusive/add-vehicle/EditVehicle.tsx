@@ -92,7 +92,6 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
     }, [ref_vehicle_id]);
 
     const onSubmit = async (values: z.infer<typeof editVehicleSchema>) => {
-        console.log(values);
         const formData = new FormData();
         formData.append('ref_vehicle_id', ref_vehicle_id.toString());
         formData.append('vehicle_code', values.vehicle_code);

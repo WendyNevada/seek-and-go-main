@@ -18,6 +18,7 @@ import { useLogin } from '@/context/LoginContext'
 import { useNavigate } from 'react-router-dom'
 import axios, { AxiosError } from 'axios'
 import { Textarea } from '@/components/ui/textarea'
+import { Required } from '@/components/ui/Custom/required'
 
 const AddVehicle = () => {
     const [imageUrl, setImageUrl] = useState('');
@@ -145,6 +146,7 @@ const AddVehicle = () => {
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
                                         <FormLabel>{"Vehicle Code"}</FormLabel>
+                                        <Required/>
                                         <FormMessage />
                                         <FormControl className='w-full'>
                                             <Input
@@ -162,6 +164,7 @@ const AddVehicle = () => {
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
                                         <FormLabel>{"Vehicle Name"}</FormLabel>
+                                        <Required/>
                                         <FormMessage />
                                         <FormControl>
                                             <Input
@@ -179,6 +182,7 @@ const AddVehicle = () => {
                             render={() => (
                                 <FormItem className="custom-field">
                                     <FormLabel>{"Vehicle Year"}</FormLabel>
+                                    <Required/>
                                     <FormMessage />
                                     <FormControl>
                                         <Select onValueChange={(newValue) => form.setValue("vehicle_year", parseInt(newValue, 10))}>
@@ -233,7 +237,7 @@ const AddVehicle = () => {
                                     name="area_1"
                                     render={() => (
                                         <FormItem className="custom-field mt-4 mr-8 flex flex-col">
-                                            <FormLabel>{"Province"}</FormLabel>
+                                            <FormLabel>{"Province"}<Required/></FormLabel>
                                             <FormMessage />
                                             <FormControl>
                                                 <ProvinceCombobox onSelectProvince={handleProvinceSelect}/>
@@ -246,7 +250,7 @@ const AddVehicle = () => {
                                     name="area_2"
                                     render={() => (
                                         <FormItem className="custom-field mt-4 flex flex-col">
-                                            <FormLabel>{"City"}</FormLabel>
+                                            <FormLabel>{"City"}<Required/></FormLabel>
                                             <FormMessage />
                                             <FormControl>
                                                 <CityCombobox onSelectCity={handleCitySelect} selectedProvince={form.watch("area_1")}/>
@@ -262,7 +266,7 @@ const AddVehicle = () => {
                                 name="area_3"
                                 render={() => (
                                     <FormItem className="custom-field mt-4 mr-8 flex flex-col">
-                                        <FormLabel>{"District"}</FormLabel>
+                                        <FormLabel>{"District"}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl>
                                             <KecamatanCombobox onSelectKecamatan={handleKecamatanSelect} selectedCity={form.watch("area_2")}/>
@@ -275,7 +279,7 @@ const AddVehicle = () => {
                                 name="area_4"
                                 render={() => (
                                     <FormItem className="custom-field mt-4 flex flex-col">
-                                        <FormLabel>{"Subdistrict"}</FormLabel>
+                                        <FormLabel>{"Subdistrict"}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl>
                                             <KelurahanCombobox onSelectKelurahan={handleKelurahanSelect} selectedKecamatan={form.watch("area_3")}/>
@@ -291,7 +295,7 @@ const AddVehicle = () => {
                                 name="vehicle_type"
                                 render={() => (
                                     <FormItem className="custom-field mr-10">
-                                        <FormLabel>{"Vehicle Type"}</FormLabel>
+                                        <FormLabel>{"Vehicle Type"}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl>
                                             <Select
@@ -313,7 +317,7 @@ const AddVehicle = () => {
                                 name="vehicle_seat"
                                 render={() => (
                                     <FormItem className="custom-field ml-3">
-                                        <FormLabel>{"Vehicle Seat"}</FormLabel>
+                                        <FormLabel>{"Vehicle Seat"}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl>
                                             <Select onValueChange={(newValue) => form.setValue("vehicle_seat", parseInt(newValue))}>
@@ -339,6 +343,7 @@ const AddVehicle = () => {
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
                                         <FormLabel>{"Vehicle Brand"}</FormLabel>
+                                        <Required/>
                                         <FormMessage />
                                         <FormControl>
                                             <Input
@@ -356,6 +361,7 @@ const AddVehicle = () => {
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
                                         <FormLabel>{"Vehicle Series"}</FormLabel>
+                                        <Required/>
                                         <FormMessage />
                                         <FormControl>
                                             <Input
@@ -373,6 +379,7 @@ const AddVehicle = () => {
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
                                         <FormLabel>{"Vehicle Model"}</FormLabel>
+                                        <Required/>
                                         <FormMessage />
                                         <FormControl>
                                             <Input
@@ -410,7 +417,7 @@ const AddVehicle = () => {
                                 name="address"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Address"}</FormLabel>
+                                        <FormLabel>{"Address"}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl className='w-full'>
                                             <Input
@@ -427,7 +434,7 @@ const AddVehicle = () => {
                                 name="qty"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"QTY"}</FormLabel>
+                                        <FormLabel>{"QTY"}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl className='w-full'>
                                             <Input
@@ -445,7 +452,7 @@ const AddVehicle = () => {
                                 name="promo_code"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Promo Code"}</FormLabel>
+                                        <FormLabel>{"Promo Code"}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl className='w-full'>
                                             <Input
@@ -464,7 +471,7 @@ const AddVehicle = () => {
                             name="base_price"
                             render={({ field }) => (
                                 <FormItem className="custom-field">
-                                    <FormLabel>{"Base Price (perhari)"}</FormLabel>
+                                    <FormLabel>{"Base Price (perhari)"}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
@@ -498,7 +505,7 @@ const AddVehicle = () => {
                                 name="description"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Description"}</FormLabel>
+                                        <FormLabel>{"Description"}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl>
                                             <Textarea

@@ -16,6 +16,7 @@ import axiosClient from '@/axios.client'
 import { toast } from '@/components/ui/use-toast'
 import axios, { AxiosError } from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { Required } from '@/components/ui/Custom/required'
 
 const AddHotel = () => {
     const [imageUrl, setImageUrl] = useState<string|undefined>('');
@@ -118,6 +119,7 @@ const AddHotel = () => {
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
                                         <FormLabel>{"Hotel Code"}</FormLabel>
+                                        <Required/>
                                         <FormMessage />
                                         <FormControl className='w-full'>
                                             <Input
@@ -135,6 +137,7 @@ const AddHotel = () => {
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
                                         <FormLabel>{"Hotel Name"}</FormLabel>
+                                        <Required/>
                                         <FormMessage />
                                         <FormControl className='w-full'>
                                             <Input
@@ -178,7 +181,7 @@ const AddHotel = () => {
                                     name="area_1"
                                     render={() => (
                                         <FormItem className="custom-field mt-4 mr-8 flex flex-col">
-                                            <FormLabel>{"Province"}</FormLabel>
+                                            <FormLabel>{"Province"} <Required/></FormLabel>
                                             <FormMessage />
                                             <FormControl>
                                                 <ProvinceCombobox onSelectProvince={handleProvinceSelect}/>
@@ -191,7 +194,7 @@ const AddHotel = () => {
                                     name="area_2"
                                     render={() => (
                                         <FormItem className="custom-field mt-4 flex flex-col">
-                                            <FormLabel>{"City"}</FormLabel>
+                                            <FormLabel>{"City"}<Required/></FormLabel>
                                             <FormMessage />
                                             <FormControl>
                                                 <CityCombobox onSelectCity={handleCitySelect} selectedProvince={form.watch("area_1")}/>
@@ -207,7 +210,7 @@ const AddHotel = () => {
                                 name="area_3"
                                 render={() => (
                                     <FormItem className="custom-field mt-4 mr-8 flex flex-col">
-                                        <FormLabel>{"District"}</FormLabel>
+                                        <FormLabel>{"District"}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl>
                                             <KecamatanCombobox onSelectKecamatan={handleKecamatanSelect} selectedCity={form.watch("area_2")}/>
@@ -220,7 +223,7 @@ const AddHotel = () => {
                                 name="area_4"
                                 render={() => (
                                     <FormItem className="custom-field mt-4 flex flex-col">
-                                        <FormLabel>{"Subdistrict"}</FormLabel>
+                                        <FormLabel>{"Subdistrict"}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl>
                                             <KelurahanCombobox onSelectKelurahan={handleKelurahanSelect} selectedKecamatan={form.watch("area_3")}/>
@@ -236,6 +239,7 @@ const AddHotel = () => {
                             render={({ field }) => (
                                 <FormItem className="custom-field">
                                     <FormLabel>{"Description"}</FormLabel>
+                                    <Required/>
                                     <FormMessage />
                                     <FormControl>
                                         <Textarea
@@ -255,6 +259,7 @@ const AddHotel = () => {
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
                                         <FormLabel>{"Address"}</FormLabel>
+                                        <Required/>
                                         <FormMessage />
                                         <FormControl className='w-full'>
                                             <Input
@@ -272,6 +277,7 @@ const AddHotel = () => {
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
                                         <FormLabel>{"QTY"}</FormLabel>
+                                        <Required/>
                                         <FormMessage />
                                         <FormControl className='w-full'>
                                             <Input
@@ -308,6 +314,7 @@ const AddHotel = () => {
                             render={({ field }) => (
                                 <FormItem className="custom-field">
                                     <FormLabel>{"Base Price (perhari)"}</FormLabel>
+                                    <Required/>
                                     <FormMessage />
                                     <FormControl>
                                         <Input

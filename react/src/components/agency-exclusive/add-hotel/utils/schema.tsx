@@ -9,8 +9,8 @@ const ACCEPTED_IMAGE_TYPES = [
 ];
 
 export const addHotelSchema = z.object({
-    hotel_code: z.string().min(1,  {message: "Product Name is required" }),
-    hotel_name: z.string().min(1,  {message: "Product Name is required" }),
+    hotel_code: z.string(),
+    hotel_name: z.string(),
     picture: z
         .any()
         .optional()
@@ -21,12 +21,12 @@ export const addHotelSchema = z.object({
         }, {
             message: "Invalid image format or size.",
         }),
-    description: z.string().min(1,  {message: "Product Description is required" }),
-    area_1: z.string().min(1,  {message: "province is required" }),
-    area_2: z.string().min(1,  {message: "city is required" }),
-    area_3: z.string().min(1,  {message: "district is required" }),
-    area_4: z.string().min(1,  {message: "sub district is required" }),
-    address: z.string().min(1,  {message: "Address is required" }),
+    description: z.string(),
+    area_1: z.string(),
+    area_2: z.string(),
+    area_3: z.string(),
+    area_4: z.string(),
+    address: z.string(),
     rating: z.coerce.number(),
     qty: z.coerce.number(),
     promo_code: z.string(),
@@ -34,8 +34,8 @@ export const addHotelSchema = z.object({
 })
 
 export const editHotelSchema = z.object({
-    hotel_code: z.string().min(1,  {message: "Product Name is required" }),
-    hotel_name: z.string().min(1,  {message: "Product Name is required" }),
+    hotel_code: z.string(),
+    hotel_name: z.string(),
     picture: z
         .any()
         .optional()
@@ -45,8 +45,8 @@ export const editHotelSchema = z.object({
         }, {
             message: "Invalid image format or size.",
         }),
-    description: z.string().min(1,  {message: "Product Description is required" }),
-    address: z.string().min(1,  {message: "Address is required" }),
+    description: z.string(),
+    address: z.string(),
     qty: z.coerce.number(),
     promo_code: z.string(),
     base_price: z.coerce.number(),

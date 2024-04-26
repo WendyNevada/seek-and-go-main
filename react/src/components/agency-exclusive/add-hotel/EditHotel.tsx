@@ -1,5 +1,5 @@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { editHotelSchema, handleImageUpload } from './utils/schema'
@@ -7,9 +7,16 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import axiosClient from '@/axios.client'
+import { toast } from '@/components/ui/use-toast'
+import axios, { AxiosError } from 'axios'
+import { useNavigate } from 'react-router-dom'
+import { Required } from '@/components/ui/Custom/required'
 
 const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
     const [imageUrl, setImageUrl] = useState<string|undefined>('');
+    const navigate = useNavigate()
+    const enviUrl = import.meta.env.VITE_API_BASE_URL;
 
     const form = useForm<z.infer<typeof editHotelSchema>>({
         resolver : zodResolver(editHotelSchema),
@@ -31,8 +38,68 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
         handleImageUpload(event, setImageUrl);
     };
 
-    const onSubmit = async(value: z.infer<typeof editHotelSchema>) => {
-        console.log(value)
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axiosClient.post('v1/GetHotelById', { ref_hotel_id: ref_hotel_id });
+
+                // patch data to form
+                setImageUrl(enviUrl + response.data.picture_url)
+                form.setValue('hotel_code', response.data.hotel.hotel_code);
+                form.setValue('hotel_name', response.data.hotel.hotel_name);
+                form.setValue('description', response.data.hotel.description);
+                form.setValue('address', response.data.hotel.address);
+                form.setValue('qty', response.data.hotel.qty);
+                form.setValue('promo_code', response.data.hotel.promo_code);
+                form.setValue('base_price', response.data.base_price);
+
+                //form.setValue('address2', response.data.address2);
+            } catch (error) {
+                console.error('Error fetching attraction data:', error);
+            }
+
+        };
+
+        fetchData();
+    }, [ref_hotel_id]);
+
+    const onSubmit = async(values: z.infer<typeof editHotelSchema>) => {
+        console.log(values)
+        const formData = new FormData();
+        formData.append('ref_hotel_id', ref_hotel_id.toString());
+        formData.append('hotel_code', values.hotel_code);
+        formData.append('hotel_name', values.hotel_name);
+        formData.append('description', values.description);
+        formData.append('address', values.address);
+        formData.append('qty', values.qty.toString());
+        formData.append('promo_code', values.promo_code);
+
+        if (values.picture[0]) {
+            formData.append('picture', values.picture[0]);
+        } else {
+            formData.append('picture_url', imageUrl || '');
+        }
+
+        try {
+            await axiosClient.post('/v1/EditHotelById', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data' // Set the content type to multipart/form-data
+                }
+            });
+            toast({
+                variant: "success",
+                description: "Item added."
+            });
+            navigate('/Agency');
+        }catch(response){
+            const axiosError = response as AxiosError; // Cast the error to AxiosError
+            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
+                toast({
+                    variant: "destructive",
+                    description: (axiosError.response?.data as { message: string })?.message,
+                });
+            }
+        }
     }
 
     return (
@@ -56,6 +123,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                                                 placeholder={"Hotel Code"}
                                                 {...field}
                                                 onChange={field.onChange}
+                                                disabled
                                             />
                                         </FormControl>
                                     </FormItem>
@@ -67,6 +135,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
                                         <FormLabel>{"Hotel Name"}</FormLabel>
+                                        <Required/>
                                         <FormMessage />
                                         <FormControl className='w-full'>
                                             <Input
