@@ -22,7 +22,8 @@ class GetOrderDashboardRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'agency_id' => ['required']
+            'agency_id' => ['required'],
+            'order_status' => ['nullable']
         ];
     }
 }

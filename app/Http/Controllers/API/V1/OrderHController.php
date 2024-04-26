@@ -97,4 +97,10 @@ class OrderHController extends Controller
         return $response;
     }
 
+    public function GetOrderDashboardByAgencyIdAndStatus(OrderHService $orderHService, GetOrderDashboardRequest $request)
+    {
+        $response = $orderHService->GetOrderDashboardByAgencyIdAndStatus($request);
+        return $response;
+    }
+
 }

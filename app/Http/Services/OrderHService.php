@@ -29,12 +29,21 @@ class OrderHService implements OrderHInterface
         return $orderH;
     }
 
-    private function getOrderByAgencyAndStatusAndLimit($agency_id, $order_status)
+    private function getOrderByAgencyAndStatus($agency_id, $order_status)
     {
-        $order = OrderH::where([
-            ['agency_id', $agency_id],
-            ['order_status', $order_status]
-        ])->with('orderDs')->orderBy('order_dt', 'asc')->get();
+        if($order_status == 'ALL')
+        {
+            $order = OrderH::where([
+                ['agency_id', $agency_id]
+            ])->with('orderDs')->orderBy('order_dt', 'asc')->get();
+        }
+        else
+        {
+            $order = OrderH::where([
+                ['agency_id', $agency_id],
+                ['order_status', $order_status]
+            ])->with('orderDs')->orderBy('order_dt', 'asc')->get();
+        }
         
         return $order;
     }
@@ -214,7 +223,7 @@ class OrderHService implements OrderHInterface
     #region Public Function
     public function GetNewOrderDashboard(GetOrderDashboardRequest $request)
     {
-        $order = $this->getOrderByAgencyAndStatusAndLimit($request->agency_id, Constanta::$orderStatusNew);
+        $order = $this->getOrderByAgencyAndStatus($request->agency_id, Constanta::$orderStatusNew);
         
         return response()->json($order);
     }
@@ -506,7 +515,7 @@ class OrderHService implements OrderHInterface
 
     public function GetCustPaidOrder(GetOrderDashboardRequest $request)
     {
-        $order = $this->getOrderByAgencyAndStatusAndLimit($request->agency_id, Constanta::$orderStatusCustPaid);
+        $order = $this->getOrderByAgencyAndStatus($request->agency_id, Constanta::$orderStatusCustPaid);
         
         return response()->json($order);
     }
@@ -516,6 +525,13 @@ class OrderHService implements OrderHInterface
         $orderH = $this->getOrderStatusWithCountByAgencyId($request->agency_id);
 
         return response()->json($orderH);
+    }
+
+    public function GetOrderDashboardByAgencyIdAndStatus(GetOrderDashboardRequest $request)
+    {
+        $order = $this->getOrderByAgencyAndStatus($request->agency_id, $request->status);
+        
+        return response()->json($order);
     }
 
     #endregion
