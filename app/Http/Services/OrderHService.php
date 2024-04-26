@@ -12,6 +12,7 @@ use App\Models\PackageHistoryH;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\V2\CustIdRequest;
 use App\Http\Interfaces\OrderHInterface;
+use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Requests\V2\OrderHIdRequest;
 use App\Http\Requests\V2\CreateOrderRequest;
 use App\Http\Requests\V2\GetOrderByIdRequest;
@@ -198,6 +199,16 @@ class OrderHService implements OrderHInterface
 
         return $price;
     }
+
+    private function getOrderStatusWithCountByAgencyId($agency_id)
+    {
+        $order = OrderH::where('agency_id', $agency_id)->
+        select('order_status', DB::raw('count(order_h_id) as total'))->
+        groupby('order_status')->
+        get();
+        return $order;
+    }
+
     #endregion
 
     #region Public Function
@@ -498,6 +509,13 @@ class OrderHService implements OrderHInterface
         $order = $this->getOrderByAgencyAndStatusAndLimit($request->agency_id, Constanta::$orderStatusCustPaid);
         
         return response()->json($order);
+    }
+
+    public function GetStatsForOrder(AgencyIdRequest $request)
+    {
+        $orderH = $this->getOrderStatusWithCountByAgencyId($request->agency_id);
+
+        return response()->json($orderH);
     }
 
     #endregion

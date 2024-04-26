@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Services\OrderHService;
 use App\Http\Requests\V2\CustIdRequest;
+use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Requests\V2\OrderHIdRequest;
 use App\Http\Requests\V2\CreateOrderRequest;
 use App\Http\Requests\V2\GetOrderByIdRequest;
@@ -87,6 +88,12 @@ class OrderHController extends Controller
     public function GetCustPaidOrder(OrderHService $orderHService, GetOrderDashboardRequest $request)
     {
         $response = $orderHService->GetCustPaidOrder($request);
+        return $response;
+    }
+
+    public function GetStatsForOrder(OrderHService $orderHService, AgencyIdRequest $request)
+    {
+        $response = $orderHService->GetStatsForOrder($request);
         return $response;
     }
 
