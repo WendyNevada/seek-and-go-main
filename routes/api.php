@@ -166,6 +166,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('GetCustPaidOrder', 'OrderHController@GetCustPaidOrder');
 
+    Route::post('GetStatsForOrder', 'OrderHController@GetStatsForOrder');
+
     #endregion
 
     #region Trx

@@ -3,6 +3,7 @@
 namespace App\Http\Interfaces;
 
 use App\Http\Requests\V2\CustIdRequest;
+use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Requests\V2\OrderHIdRequest;
 use App\Http\Requests\V2\CreateOrderRequest;
 use App\Http\Requests\V2\GetOrderByIdRequest;
@@ -35,4 +36,6 @@ interface OrderHInterface
     public function FinishOrder(OrderHIdRequest $request);
 
     public function GetCustPaidOrder(GetOrderDashboardRequest $request);
+
+    public function GetStatsForOrder(AgencyIdRequest $request);
 }
