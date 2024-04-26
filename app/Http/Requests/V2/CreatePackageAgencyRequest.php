@@ -26,7 +26,6 @@ class CreatePackageAgencyRequest extends FormRequest
             'agency_id' => ['required'],
             'package_name' => ['required'],
             'description' => ['required'],
-            'promo_code' => ['nullable'],
             'package_price' => ['required'],
             'is_active' => ['required'],
             'qty' => ['required'],

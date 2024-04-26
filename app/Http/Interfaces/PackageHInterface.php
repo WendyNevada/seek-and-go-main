@@ -22,4 +22,10 @@ interface PackageHInterface
     public function ApproveCustomPackage(ApproveCustomPackageRequest $request);
 
     public function GetActivePackageHByAgencyId(AgencyIdRequest $request);
+
+    public function GetListAttractionForAgencyPackage(AgencyIdRequest $request);
+
+    public function GetListHotelForAgencyPackage(AgencyIdRequest $request);
+
+    public function GetListVehicleForAgencyPackage(AgencyIdRequest $request);
 }

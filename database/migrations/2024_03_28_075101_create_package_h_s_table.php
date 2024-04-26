@@ -23,7 +23,6 @@ return new class extends Migration
             $table->string('description', length:1000);
             $table->boolean('is_custom');
             $table->string('custom_status', length:20)->nullable();
-            $table->string('promo_code', length:50)->nullable();
             $table->double('package_price', 17, 2)->nullable();
             $table->boolean('is_active');
             $table->integer('qty');

@@ -37,6 +37,7 @@ class Constanta extends Model
     public static $orderStatusPaid = "PAY";
     public static $orderStatusCustPaid = "CPY";
     public static $orderStatusRetryPay = "RTP";
+    public static $orderStatusFinished = "FIN";
     #endregion
 
     #region order dashboard
@@ -53,5 +54,11 @@ class Constanta extends Model
 
     #region list environment
     public static $enviLocal = "http://localhost:3000/";
+    #endregion
+
+    #region product
+    public static $attraction = "attraction";
+    public static $hotel = "hotel";
+    public static $vehicle = "vehicle";
     #endregion
 }

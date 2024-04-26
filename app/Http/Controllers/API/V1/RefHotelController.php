@@ -2,109 +2,56 @@
 
 namespace App\Http\Controllers\API\V1;
 
-use App\Models\RefHotel;
-use App\Models\Constanta;
-use App\Models\AgencyAffiliate;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Http\Services\RefHotelService;
 use App\Http\Requests\V2\AgencyIdRequest;
-use App\Http\Interfaces\RefHotelInterface;
 use App\Http\Requests\V2\RefHotelIdRequest;
+use App\Http\Requests\V2\RateProductRequest;
 use App\Http\Requests\V1\StoreRefHotelRequest;
 use App\Http\Requests\V1\UpdateRefHotelRequest;
 use App\Http\Requests\V2\GetRefHotelByIdRequest;
 
 class RefHotelController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function GetHotelById(RefHotelService $refHotelService, GetRefHotelByIdRequest $request)
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreRefHotelRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(RefHotel $refHotel)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(RefHotel $refHotel)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateRefHotelRequest $request, RefHotel $refHotel)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(RefHotel $refHotel)
-    {
-        //
-    }
-
-    public function GetHotelById(RefHotelInterface $refHotelInterface, GetRefHotelByIdRequest $request)
-    {
-        $response = $refHotelInterface->GetHotelById($request);
+        $response = $refHotelService->GetHotelById($request);
         return $response;
     }
 
-    public function AddHotel(RefHotelInterface $refHotelInterface, StoreRefHotelRequest $request)
+    public function AddHotel(RefHotelService $refHotelService, StoreRefHotelRequest $request)
     {
-        $response = $refHotelInterface->AddHotel($request);
+        $response = $refHotelService->AddHotel($request);
         return $response;
     }
 
-    public function EditHotelById(RefHotelInterface $refHotelInterface, UpdateRefHotelRequest $request)
+    public function EditHotelById(RefHotelService $refHotelService, UpdateRefHotelRequest $request)
     {
-        $response = $refHotelInterface->EditHotelById($request);
+        $response = $refHotelService->EditHotelById($request);
         return $response;
     }
 
-    public function DeactivateHotelById(RefHotelInterface $refHotelInterface, RefHotelIdRequest $request)
+    public function DeactivateHotelById(RefHotelService $refHotelService, RefHotelIdRequest $request)
     {
-        $response = $refHotelInterface->DeactivateHotelById($request);
+        $response = $refHotelService->DeactivateHotelById($request);
         return $response;
     }
 
-    public function GetHotelHomepage(RefHotelInterface $refHotelInterface)
+    public function GetHotelHomepage(RefHotelService $refHotelService)
     {
-        $response = $refHotelInterface->GetHotelHomepage();
+        $response = $refHotelService->GetHotelHomepage();
         return $response;
     }
 
-    public function GetActiveHotelByAgencyId(RefHotelInterface $refHotelInterface, AgencyIdRequest $request)
+    public function GetActiveHotelByAgencyId(RefHotelService $refHotelService, AgencyIdRequest $request)
     {
-        $response = $refHotelInterface->GetActiveHotelByAgencyId($request);
+        $response = $refHotelService->GetActiveHotelByAgencyId($request);
+        return $response;
+    }
+
+    public function RateHotel(RefHotelService $refHotelService, RateProductRequest $request)
+    {
+        $response = $refHotelService->RateHotel($request);
         return $response;
     }
 }

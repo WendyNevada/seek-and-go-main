@@ -3,6 +3,7 @@
 namespace App\Http\Interfaces;
 
 use App\Http\Requests\V2\AgencyIdRequest;
+use App\Http\Requests\V2\RateProductRequest;
 use App\Http\Requests\V2\RefVehicleIdRequest;
 use App\Http\Requests\V1\StoreRefVehicleRequest;
 use App\Http\Requests\V1\UpdateRefVehicleRequest;
@@ -21,4 +22,6 @@ interface RefVehicleInterface
     public function GetVehicleHomepage();
 
     public function GetActiveVehicleByAgencyId(AgencyIdRequest $request);
+
+    public function RateVehicle(RateProductRequest $request);
 }

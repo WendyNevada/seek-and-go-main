@@ -4,8 +4,8 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Models\PackageHistoryH;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StorePackageHistoryHRequest;
-use App\Http\Requests\UpdatePackageHistoryHRequest;
+use App\Http\Requests\V1\StorePackageHistoryHRequest;
+use App\Http\Requests\V1\UpdatePackageHistoryHRequest;
 
 class PackageHistoryHController extends Controller
 {

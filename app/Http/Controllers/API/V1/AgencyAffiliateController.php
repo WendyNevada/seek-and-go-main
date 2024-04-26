@@ -2,36 +2,33 @@
 
 namespace App\Http\Controllers\API\V1;
 
-use App\Models\AgencyAffiliate;
 use App\Http\Controllers\Controller;
-use App\Http\Interfaces\AgencyAffiliateInterface;
+use App\Http\Services\AgencyAffiliateService;
 use App\Http\Requests\V2\SearchBarCustomerRequest;
-use App\Http\Requests\V1\StoreAgencyAffiliateRequest;
-use App\Http\Requests\V1\UpdateAgencyAffiliateRequest;
 
 class AgencyAffiliateController extends Controller
 {
-    public function GetSearchHomepageCustomerData(AgencyAffiliateInterface $agencyAffiliate, SearchBarCustomerRequest $request)
+    public function GetSearchHomepageCustomerData(AgencyAffiliateService $agencyAffiliateService, SearchBarCustomerRequest $request)
     {
-        $response = $agencyAffiliate->getSearchHomepageCustomerData($request);
+        $response = $agencyAffiliateService->getSearchHomepageCustomerData($request);
         return $response;
     }
 
-    public function SearchAttractionCustomer(AgencyAffiliateInterface $agencyAffiliate, SearchBarCustomerRequest $request)
+    public function SearchAttractionCustomer(AgencyAffiliateService $agencyAffiliateService, SearchBarCustomerRequest $request)
     {
-        $response = $agencyAffiliate->SearchAttractionCustomer($request);
+        $response = $agencyAffiliateService->SearchAttractionCustomer($request);
         return $response;
     }
 
-    public function SearchHotelCustomer(AgencyAffiliateInterface $agencyAffiliate, SearchBarCustomerRequest $request)
+    public function SearchHotelCustomer(AgencyAffiliateService $agencyAffiliateService, SearchBarCustomerRequest $request)
     {
-        $response = $agencyAffiliate->SearchHotelCustomer($request);
+        $response = $agencyAffiliateService->SearchHotelCustomer($request);
         return $response;
     }
 
-    public function SearchVehicleCustomer(AgencyAffiliateInterface $agencyAffiliate, SearchBarCustomerRequest $request)
+    public function SearchVehicleCustomer(AgencyAffiliateService $agencyAffiliateService, SearchBarCustomerRequest $request)
     {
-        $response = $agencyAffiliate->SearchVehicleCustomer($request);
+        $response = $agencyAffiliateService->SearchVehicleCustomer($request);
         return $response;
     }
 }
