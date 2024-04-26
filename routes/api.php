@@ -168,6 +168,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('GetStatsForOrder', 'OrderHController@GetStatsForOrder');
 
+    Route::post('GetOrderDashboardByAgencyIdAndStatus', 'OrderHController@GetOrderDashboardByAgencyIdAndStatus');
+
     #endregion
 
     #region Trx
