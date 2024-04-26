@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers\API\V1;
 
-use App\Models\Constanta;
 use App\Models\RefVehicle;
-use App\Models\AgencyAffiliate;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Http\Services\RefVehicleService;
 use App\Http\Requests\V2\AgencyIdRequest;
-use App\Http\Interfaces\RefVehicleInterface;
+use App\Http\Requests\V2\RateProductRequest;
 use App\Http\Requests\V2\RefVehicleIdRequest;
 use App\Http\Requests\V1\StoreRefVehicleRequest;
 use App\Http\Requests\V1\UpdateRefVehicleRequest;
@@ -16,96 +14,45 @@ use App\Http\Requests\V2\GetRefVehicleByIdRequest;
 
 class RefVehicleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function AddVehicle(RefVehicleService $refVehicleService, StoreRefVehicleRequest $request)
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreRefVehicleRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(RefVehicle $refVehicle)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(RefVehicle $refVehicle)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateRefVehicleRequest $request, RefVehicle $refVehicle)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(RefVehicle $refVehicle)
-    {
-        //
-    }
-
-    public function AddVehicle(RefVehicleInterface $refVehicleInterface, StoreRefVehicleRequest $request)
-    {
-        $response = $refVehicleInterface->AddVehicle($request);
+        $response = $refVehicleService->AddVehicle($request);
         return $response;
     }
 
-    public function EditVehicleById(RefVehicleInterface $refVehicleInterface, UpdateRefVehicleRequest $request)
+    public function EditVehicleById(RefVehicleService $refVehicleService, UpdateRefVehicleRequest $request)
     {
-        $response = $refVehicleInterface->EditVehicleById($request);
+        $response = $refVehicleService->EditVehicleById($request);
         return $response;
     }
 
-    public function DeactivateVehicleById(RefVehicleInterface $refVehicleInterface, RefVehicleIdRequest $request)
+    public function DeactivateVehicleById(RefVehicleService $refVehicleService, RefVehicleIdRequest $request)
     {
-        $response = $refVehicleInterface->DeactivateVehicleById($request);
+        $response = $refVehicleService->DeactivateVehicleById($request);
         return $response;
     }
 
-    public function GetVehicleById(RefVehicleInterface $refVehicleInterface, GetRefVehicleByIdRequest $request)
+    public function GetVehicleById(RefVehicleService $refVehicleService, GetRefVehicleByIdRequest $request)
     {
-        $response = $refVehicleInterface->GetVehicleById($request);
+        $response = $refVehicleService->GetVehicleById($request);
         return $response;
     }
 
-    public function GetVehicleHomepage(RefVehicleInterface $refVehicleInterface)
+    public function GetVehicleHomepage(RefVehicleService $refVehicleService)
     {
-        $response = $refVehicleInterface->GetVehicleHomepage();
+        $response = $refVehicleService->GetVehicleHomepage();
         return $response;
     }
 
-    public function GetActiveVehicleByAgencyId(RefVehicleInterface $refVehicleInterface, AgencyIdRequest $request)
+    public function GetActiveVehicleByAgencyId(RefVehicleService $refVehicleService, AgencyIdRequest $request)
     {
-        $response = $refVehicleInterface->GetActiveVehicleByAgencyId($request);
+        $response = $refVehicleService->GetActiveVehicleByAgencyId($request);
         return $response;
     }
 
+    public function RateVehicle(RefVehicleService $refVehicleService, RateProductRequest $request)
+    {
+        $response = $refVehicleService->RateVehicle($request);
+        return $response;
+    }
 }

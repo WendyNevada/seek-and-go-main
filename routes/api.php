@@ -64,6 +64,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('GetActiveAttractionByAgencyId', 'RefAttractionController@GetActiveAttractionByAgencyId');
 
+    Route::post('RateAttraction', 'RefAttractionController@RateAttraction');
+
     #endregion
 
     #region Hotel
@@ -79,6 +81,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::post('GetHotelHomepage', 'RefHotelController@GetHotelHomepage');
 
     Route::post('GetActiveHotelByAgencyId', 'RefHotelController@GetActiveHotelByAgencyId');
+
+    Route::post('RateHotel', 'RefHotelController@RateHotel');
 
     #endregion
 
@@ -96,6 +100,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('GetActiveVehicleByAgencyId', 'RefVehicleController@GetActiveVehicleByAgencyId');
 
+    Route::post('RateVehicle', 'RefVehicleController@RateVehicle');
+
     #endregion
 
     #region Package
@@ -111,6 +117,12 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::post('ApproveCustomPackage', 'PackageHController@ApproveCustomPackage');
 
     Route::post('GetActivePackageHByAgencyId', 'PackageHController@GetActivePackageHByAgencyId');
+
+    Route::post('GetListAttractionForAgencyPackage', 'PackageHController@GetListAttractionForAgencyPackage');
+
+    Route::post('GetListHotelForAgencyPackage', 'PackageHController@GetListHotelForAgencyPackage');
+
+    Route::post('GetListVehicleForAgencyPackage', 'PackageHController@GetListVehicleForAgencyPackage');
 
     #endregion
 
@@ -150,7 +162,13 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('RetryPaymentOrder', 'OrderHController@RetryPaymentOrder');
 
+    Route::post('FinishOrder', 'OrderHController@FinishOrder');
+
     Route::post('GetCustPaidOrder', 'OrderHController@GetCustPaidOrder');
+
+    Route::post('GetStatsForOrder', 'OrderHController@GetStatsForOrder');
+
+    Route::post('GetOrderDashboardByAgencyIdAndStatus', 'OrderHController@GetOrderDashboardByAgencyIdAndStatus');
 
     #endregion
 
@@ -170,7 +188,15 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::post('GetPromoDeductionPriceHotel', 'PromoController@GetPromoDeductionPriceHotel');
 
     Route::post('GetPromoDeductionPriceVehicle', 'PromoController@GetPromoDeductionPriceVehicle');
+    #endregion
 
-    Route::post('GetPromoDeductionPricePackage', 'PromoController@GetPromoDeductionPricePackage');
+    #region AgencyAffiliate
+    Route::post('GetSearchHomepageCustomerData', 'AgencyAffiliateController@GetSearchHomepageCustomerData');
+
+    Route::post('SearchAttractionCustomer', 'AgencyAffiliateController@SearchAttractionCustomer');
+
+    Route::post('SearchHotelCustomer', 'AgencyAffiliateController@SearchHotelCustomer');
+
+    Route::post('SearchVehicleCustomer', 'AgencyAffiliateController@SearchVehicleCustomer');
     #endregion
 });

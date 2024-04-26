@@ -2,49 +2,38 @@
 
 namespace App\Http\Controllers\API\V1;
 
-use App\Models\Promo;
+use App\Http\Services\PromoService;
 use App\Http\Controllers\Controller;
-use App\Http\Interfaces\PromoInterface;
 use App\Http\Requests\V1\StorePromoRequest;
 use App\Http\Requests\V2\PackageHIdRequest;
-use App\Http\Requests\V2\RefHotelIdRequest;
-use App\Http\Requests\V1\UpdatePromoRequest;
-use App\Http\Requests\V2\RefVehicleIdRequest;
-use App\Http\Requests\V2\RefAttractionIdRequest;
+use App\Http\Requests\V2\PromoDeductionRequest;
 
 class PromoController extends Controller
 {
-    public function AddPromo(PromoInterface $promoInterface, StorePromoRequest $request)
+    public function AddPromo(PromoService $promoService, StorePromoRequest $request)
     {
-        $response = $promoInterface->AddPromo($request);
+        $response = $promoService->AddPromo($request);
 
         return $response;
     }
 
-    public function GetPromoDeductionPriceAttraction(PromoInterface $promoInterface, RefAttractionIdRequest $request)
+    public function GetPromoDeductionPriceAttraction(PromoService $promoService, PromoDeductionRequest $request)
     {
-        $response = $promoInterface->GetPromoDeductionPriceAttraction($request);
+        $response = $promoService->GetPromoDeductionPriceAttraction($request);
 
         return $response;
     }
 
-    public function GetPromoDeductionPriceHotel(PromoInterface $promoInterface, RefHotelIdRequest $request)
+    public function GetPromoDeductionPriceHotel(PromoService $promoService, PromoDeductionRequest $request)
     {
-        $response = $promoInterface->GetPromoDeductionPriceHotel($request);
+        $response = $promoService->GetPromoDeductionPriceHotel($request);
 
         return $response;
     }
 
-    public function GetPromoDeductionPriceVehicle(PromoInterface $promoInterface, RefVehicleIdRequest $request)
+    public function GetPromoDeductionPriceVehicle(PromoService $promoService, PromoDeductionRequest $request)
     {
-        $response = $promoInterface->GetPromoDeductionPriceVehicle($request);
-
-        return $response;
-    }
-
-    public function GetPromoDeductionPricePackage(PromoInterface $promoInterface, PackageHIdRequest $request)
-    {
-        $response = $promoInterface->GetPromoDeductionPricePackage($request);
+        $response = $promoService->GetPromoDeductionPriceVehicle($request);
 
         return $response;
     }

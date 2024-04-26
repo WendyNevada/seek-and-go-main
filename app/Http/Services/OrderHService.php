@@ -10,9 +10,9 @@ use App\Models\PackageH;
 use App\Models\Constanta;
 use App\Models\PackageHistoryH;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use App\Http\Requests\V2\CustIdRequest;
 use App\Http\Interfaces\OrderHInterface;
+use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Requests\V2\OrderHIdRequest;
 use App\Http\Requests\V2\CreateOrderRequest;
 use App\Http\Requests\V2\GetOrderByIdRequest;
@@ -29,12 +29,21 @@ class OrderHService implements OrderHInterface
         return $orderH;
     }
 
-    private function getOrderByAgencyAndStatusAndLimit($agency_id, $order_status, $limit)
+    private function getOrderByAgencyAndStatus($agency_id, $order_status)
     {
-        $order = OrderH::where([
-            ['agency_id', $agency_id],
-            ['order_status', $order_status]
-        ])->with('orderDs')->orderBy('order_dt', 'asc')->limit($limit)->get();
+        if($order_status == 'ALL')
+        {
+            $order = OrderH::where([
+                ['agency_id', $agency_id]
+            ])->with('orderDs')->orderBy('order_dt', 'asc')->get();
+        }
+        else
+        {
+            $order = OrderH::where([
+                ['agency_id', $agency_id],
+                ['order_status', $order_status]
+            ])->with('orderDs')->orderBy('order_dt', 'asc')->get();
+        }
         
         return $order;
     }
@@ -199,12 +208,22 @@ class OrderHService implements OrderHInterface
 
         return $price;
     }
+
+    private function getOrderStatusWithCountByAgencyId($agency_id)
+    {
+        $order = OrderH::where('agency_id', $agency_id)->
+        select('order_status', DB::raw('count(order_h_id) as total'))->
+        groupby('order_status')->
+        get();
+        return $order;
+    }
+
     #endregion
 
     #region Public Function
     public function GetNewOrderDashboard(GetOrderDashboardRequest $request)
     {
-        $order = $this->getOrderByAgencyAndStatusAndLimit($request->agency_id, Constanta::$orderStatusNew, Constanta::$orderDashboardDataCount);
+        $order = $this->getOrderByAgencyAndStatus($request->agency_id, Constanta::$orderStatusNew);
         
         return response()->json($order);
     }
@@ -225,7 +244,7 @@ class OrderHService implements OrderHInterface
 
     public function GetRetryPayOrderForCustomer(CustIdRequest $request)
     {
-        $order = $this->getOrderByCustomerAndStatusWithLimit($request->customer_id, Constanta::$orderStatusRetryPay, Constanta::$orderDashboardDataCount);
+        $order = $this->getOrderByCustomerAndStatusWithLimit($request->customer_id, Constanta::$orderStatusRetryPay);
         
         return response()->json($order);
     }
@@ -436,6 +455,36 @@ class OrderHService implements OrderHInterface
         }
     }
 
+    public function FinishOrder(OrderHIdRequest $request)
+    {
+        try
+        {
+            DB::beginTransaction();
+
+            $orderH = $this->updateOrderStatus($request->order_h_id, Constanta::$orderStatusFinished);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Order completed',
+                'order_no' => $orderH->order_no
+            ], 200);
+
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'order_no' => $orderH->order_no
+            ], 500);
+
+        }
+    }
+
     public function RetryPaymentOrder(OrderHIdRequest $request)
     {
         try
@@ -466,7 +515,21 @@ class OrderHService implements OrderHInterface
 
     public function GetCustPaidOrder(GetOrderDashboardRequest $request)
     {
-        $order = $this->getOrderByAgencyAndStatusAndLimit($request->agency_id, Constanta::$orderStatusCustPaid, Constanta::$orderDashboardDataCount);
+        $order = $this->getOrderByAgencyAndStatus($request->agency_id, Constanta::$orderStatusCustPaid);
+        
+        return response()->json($order);
+    }
+
+    public function GetStatsForOrder(AgencyIdRequest $request)
+    {
+        $orderH = $this->getOrderStatusWithCountByAgencyId($request->agency_id);
+
+        return response()->json($orderH);
+    }
+
+    public function GetOrderDashboardByAgencyIdAndStatus(GetOrderDashboardRequest $request)
+    {
+        $order = $this->getOrderByAgencyAndStatus($request->agency_id, $request->status);
         
         return response()->json($order);
     }

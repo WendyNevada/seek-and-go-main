@@ -30,7 +30,6 @@ return new class extends Migration
             $table->float('rating', 3, 1)->nullable();
             $table->boolean('is_active');
             $table->integer('qty');
-            $table->string('promo_code', length:50)->nullable();
             $table->timestamps();
         });
     }
