@@ -35,14 +35,14 @@ class OrderHService implements OrderHInterface
         {
             $order = OrderH::where([
                 ['agency_id', $agency_id]
-            ])->with('orderDs')->orderBy('order_dt', 'asc')->get();
+            ])->orderBy('order_dt', 'asc')->get();
         }
         else
         {
             $order = OrderH::where([
                 ['agency_id', $agency_id],
                 ['order_status', $order_status]
-            ])->with('orderDs')->orderBy('order_dt', 'asc')->get();
+            ])->orderBy('order_dt', 'asc')->get();
         }
         
         return $order;
