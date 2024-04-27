@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import axiosClient from '@/axios.client';
 import { useLogin } from '@/context/LoginContext';
 import { Order } from './utils/interface';
+import PayedOrder from './Acordion/PayedOrder';
 
 // interface NewOrderProps {
 //     orders: Order[];
@@ -18,20 +19,20 @@ const AgencyAccordion = () => {
   // Handler function to update the selected value
     const handleValueChange = (newValue: string) => {
         setSelectedValue(newValue);
+        console.log('hwhwhw', orders)
     };
 
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const response = await axiosClient.post('GetOrderDashboardByAgencyIdAndStatus', { agency_id: user?.agency_id, order_status: 'ALL' });
+                const response = await axiosClient.post('v1/GetOrderDashboardByAgencyIdAndStatus', { agency_id: user?.agency_id, status: 'ALL' });
                 setOrders(response.data);
-                console.log('hwhwhw', response.data);
             } catch (error) {
                 console.error('Error fetching orders:', error);
             }
         };
         fetchOrders();
-    }, []);
+    }, [selectedValue]);
 
     return (
         <div>
@@ -53,7 +54,10 @@ const AgencyAccordion = () => {
                 </SelectContent>
             </Select>
 
-            {(selectedValue === 'NEW' || selectedValue === 'ALL') && <NewOrder orders={orders}/>}
+            {(selectedValue === 'NEW' || selectedValue === 'ALL') &&
+            <NewOrder orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "NEW") : null} />}
+
+            {/* {(selectedValue === 'PAY' || selectedValue === 'ALL') && <PayedOrder orders={orders.length > 0 ? orders : null}/>} */}
         </div>
   )
 }
