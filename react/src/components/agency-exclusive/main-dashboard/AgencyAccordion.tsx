@@ -1,11 +1,10 @@
 
 import React, { useEffect, useState } from 'react'
-import NewOrder from './Acordion/NewOrder'
+import AcordionByStatus from './Acordion/AcordionByStatus'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import axiosClient from '@/axios.client';
 import { useLogin } from '@/context/LoginContext';
-import { Order } from './utils/interface';
-import PayedOrder from './Acordion/PayedOrder';
+import { OrderH } from './utils/interface';
 
 // interface NewOrderProps {
 //     orders: Order[];
@@ -13,7 +12,7 @@ import PayedOrder from './Acordion/PayedOrder';
 
 const AgencyAccordion = () => {
     const [selectedValue, setSelectedValue] = useState('ALL');
-    const [orders, setOrders] = useState<Order[]>([]);
+    const [orders, setOrders] = useState<OrderH[]>([]);
     const { user } = useLogin();
 
   // Handler function to update the selected value
@@ -55,9 +54,25 @@ const AgencyAccordion = () => {
             </Select>
 
             {(selectedValue === 'NEW' || selectedValue === 'ALL') &&
-            <NewOrder orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "NEW") : null} />}
+            <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "NEW") : null} title="New Orders"/>}
 
-            {/* {(selectedValue === 'PAY' || selectedValue === 'ALL') && <PayedOrder orders={orders.length > 0 ? orders : null}/>} */}
+            {(selectedValue === 'APV' || selectedValue === 'ALL') &&
+            <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "APV") : null} title="Approved Orders"/>}
+
+            {(selectedValue === 'RJT' || selectedValue === 'ALL') &&
+            <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "APV") : null} title="Rejected Orders"/>}
+
+            {(selectedValue === 'CAN' || selectedValue === 'ALL') &&
+            <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "CAN") : null} title="Cancel Orders"/>}
+
+            {(selectedValue === 'PAY' || selectedValue === 'ALL') &&
+            <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "PAY") : null} title="Payment"/>}
+
+            {(selectedValue === 'CPY' || selectedValue === 'ALL') &&
+            <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "CPY") : null} title="Cancel Payment"/>}
+
+            {(selectedValue === 'RTP' || selectedValue === 'ALL') &&
+            <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "RTP") : null} title="Retry Payment"/>}
         </div>
   )
 }

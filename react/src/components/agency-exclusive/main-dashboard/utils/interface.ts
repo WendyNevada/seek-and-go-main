@@ -1,4 +1,16 @@
-export interface Order {
+export interface OrderH {
+    order_h_id: number;
+    agency_id: number;
+    customer_id: number;
+    order_no: string;
+    order_dt: string;
+    total_price: number;
+    order_status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface OrderD {
     order_h_id: number;
     agency_id: number;
     customer_id: number;
@@ -23,3 +35,4 @@ export interface Order {
         updated_at: string;
     };
 }
+
