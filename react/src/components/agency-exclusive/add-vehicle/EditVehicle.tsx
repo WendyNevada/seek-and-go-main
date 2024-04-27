@@ -140,9 +140,10 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
 
     //editVehicleSchema
     return (
-        <div className="min-h-50 w-50 p-0 sm:p-12">
-            <div className="mx-auto max-w-2xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
-                        <Form {...form}>
+        <div className="flex justify-center items-center h-screen">
+            <div className="min-h-50 w-50 p-0 sm:p-12 mt-80">
+            <div className="x-auto max-w-2xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
+                <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)}>
                                 <h1 className="text-2xl font-bold mb-8 text-center">Edit Attraction</h1>
 
@@ -451,8 +452,10 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                 </div>
                             </form>
                         </Form>
-                    </div>
+            </div>
         </div>
+        </div>
+
     )
 }
 

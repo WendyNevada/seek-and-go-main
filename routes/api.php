@@ -21,7 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], function () {
-    
+
     Route::apiResource('GetAccount', AccountController::class);
 
     Route::get('articles', 'AccountController@index'); //langsung pada url
@@ -29,7 +29,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::get('articles/{id}', 'AccountController@showId'); //langsung pada url
 
     #region Account
-    
+
     Route::post('checkEmail', 'AccountController@checkEmail'); //pake postman
 
     Route::post('CreateAccountCustomer', 'AccountController@CreateAccountCustomer');
@@ -107,7 +107,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     #region Package
 
     Route::post('CreatePackageAgency', 'PackageHController@CreatePackageAgency');
-    
+
     Route::post('CreateCustomPackageCustomer', 'PackageHController@CreateCustomPackageCustomer');
 
     Route::post('GetNewCustomPackageByAgencyId', 'PackageHController@GetNewCustomPackageByAgencyId');
@@ -131,7 +131,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::post('GetAllArea1', 'RefZipcodeController@GetAllArea1');
 
     Route::post('GetArea2ByArea1', 'RefZipcodeController@GetArea2ByArea1');
-    
+
     Route::post('GetArea3ByArea2', 'RefZipcodeController@GetArea3ByArea2');
 
     Route::post('GetArea4ByArea3', 'RefZipcodeController@GetArea4ByArea3');

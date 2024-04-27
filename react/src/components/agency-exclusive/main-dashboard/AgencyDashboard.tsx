@@ -1,28 +1,37 @@
 import axiosClient from '@/axios.client';
 import DoughnutChart from '@/components/ui/Chart/dougnutChart'
+import { useLogin } from '@/context/LoginContext';
 import React, { useEffect, useState } from 'react'
 
-const AgencyDashboard = () => {
+interface OrderStatus {
+    order_status: string;
+    total: number;
+}
 
-    const [chartData, setChartData] = useState(null); // State to hold fetched data
+const AgencyDashboard = () => {
+    const { user } = useLogin();
+    const [chartData, setChartData] = useState<OrderStatus[]>([]); // State to hold fetched data
 
     useEffect(() => {
         const fetchData = async () => {
-        try {
-            const response = await axiosClient.post('v1/GetVehicleById', { ref_vehicle_id: ref_vehicle_id });
-            setChartData(response.data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
+            try {
+                const response = await axiosClient.post('v1/GetStatsForOrder', { agency_id : user?.agency_id });
+                setChartData(response.data);
+            }
+            catch (error) {
+                console.error('Error fetching data:', error);
+            }
         }
-        };
+        fetchData();
+    },[user?.agency_id]);
 
-  return (
-    <div>
-        <div className="max-w-2xl mx-auto p-6 lg:p-8">
-            <DoughnutChart/>
+    return (
+        <div>
+            <div className="x-auto max-w-2xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
+                <DoughnutChart orderData={chartData}/>
+            </div>
         </div>
-    </div>
-  )
+    )
 }
 
-export default AgencyDashboard
+export default AgencyDashboard;
