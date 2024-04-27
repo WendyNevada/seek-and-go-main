@@ -38,4 +38,6 @@ interface OrderHInterface
     public function GetCustPaidOrder(GetOrderDashboardRequest $request);
 
     public function GetStatsForOrder(AgencyIdRequest $request);
+
+    public function GetOrderDashboardByAgencyIdAndStatus(GetOrderDashboardRequest $request);
 }
