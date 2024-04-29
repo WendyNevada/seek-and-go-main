@@ -19,6 +19,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import axiosClient from "@/axios.client"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface Province {
     value: string;
@@ -75,6 +76,7 @@ export function ProvinceCombobox({onSelectProvince}: ProvinceComboboxProps) {
         <Command>
           <CommandInput placeholder="Search Province..." />
           <CommandEmpty>No framework found.</CommandEmpty>
+          <ScrollArea className="h-48 overflow-auto">
           <CommandGroup>
             {provinces.map((provinces) => (
                 <CommandList>
@@ -99,6 +101,7 @@ export function ProvinceCombobox({onSelectProvince}: ProvinceComboboxProps) {
 
             ))}
           </CommandGroup>
+          </ScrollArea>
         </Command>
       </PopoverContent>
     </Popover>

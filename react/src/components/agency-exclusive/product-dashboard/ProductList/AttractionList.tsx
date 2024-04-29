@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle,} from '@/components/ui/card'
 import { useEffect, useState } from 'react';
-import { GetAttractionModel } from '../utils/AttractionModel';
+import { GetAttractionModel } from '../utils/ProductModel';
 import { useLogin } from '@/context/LoginContext';
 import axiosClient from '@/axios.client';
 import { Button } from '@/components/ui/button';
@@ -47,7 +47,7 @@ const AttractionList = () => {
                     <div key={attraction.ref_attraction_id} className='flex-1'>
                         <Card className='w-72 shadow-lg mr-6 mt-10'>
                             <CardHeader>
-                                <img src={enviUrl + attraction.image_url} alt={attraction.attraction_name} className="rounded-lg h-36 max-w-full shadow-lg" />
+                                <img src={enviUrl + attraction.image_url} alt={attraction.attraction_name} className="rounded-lg h-36 w-full shadow-lg" />
                                 <CardTitle>{attraction.attraction_name}</CardTitle>
                                 <CardDescription>{attraction.description}</CardDescription>
                                 {/* {showFullDescription ? (

@@ -9,6 +9,9 @@ import HomePage from './views/Home-Page/HomePage';
 import { useUserRole } from './context/CustomHook';
 import AgencyEditAttractionPage from './views/Agency-page/AgencyEditAttractionPage';
 import AgencyAddVehiclePage from './views/Agency-page/AgencyAddVehiclePage';
+import AgencyEditVehiclePage from './views/Agency-page/AgencyEditVehiclePage';
+import AgencyAddHotelPage from './views/Agency-page/AgencyAddHotelPage';
+import AgencyEditHotelPage from './views/Agency-page/AgencyEditHotelPage';
 
 function App() {
   return (
@@ -31,12 +34,12 @@ function App() {
 
 // Nested component to handle Agency routes
 function AgencyRoutes() {
-  const hasAgencyRole = useUserRole('Agency');
+    const hasAgencyRole = useUserRole('Agency');
 
-  // If user doesn't have the required role, redirect to login
-  if (!hasAgencyRole) {
-    return <Navigate to="/Login" />;
-  }
+    // If user doesn't have the required role, redirect to login
+    if (!hasAgencyRole) {
+        return <Navigate to="/Login" />;
+    }
 
   return (
     <Routes>
@@ -46,6 +49,9 @@ function AgencyRoutes() {
         <Route path="AddAttraction" element={<AgencyAddAttractionPage />} />
         <Route path="EditAttraction/:ref_attraction_id" element={<AgencyEditAttractionPage />} />
         <Route path="AddVehicle" element={<AgencyAddVehiclePage />}></Route>
+        <Route path="EditVehicle/:ref_vehicle_id" element={<AgencyEditVehiclePage />}></Route>
+        <Route path="AddHotel" element={<AgencyAddHotelPage />}></Route>
+        <Route path="EditHotel/:ref_hotel_id" element={<AgencyEditHotelPage />}></Route>
     </Routes>
   );
 }

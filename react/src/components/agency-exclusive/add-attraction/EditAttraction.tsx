@@ -29,8 +29,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
             is_active: true,
             qty: 0,
             promo_code: "",
-            base_price: 0,
-            promo_code_affiliate: ""
+            base_price: 0
         }
     })
 
@@ -118,7 +117,6 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
 
     return (
         <div className='min-h-50 w-50 p-0 sm:p-12'>
-            <h1>{ref_attraction_id}</h1>
             <div className="mx-auto max-w-xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -235,23 +233,6 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                         </FormItem>
                                     )}
                                 />
-                                {/* <FormField
-                                    control={form.control}
-                                    name="is_active"
-                                    render={({ field }) => (
-                                        <FormItem className="custom-field mt-2">
-                                            <FormLabel className='mr-4 align-middle'>{"Is Active"}</FormLabel>
-                                            <FormMessage />
-                                            <FormControl>
-                                                <Switch
-                                                    checked={field.value}
-                                                    onCheckedChange={field.onChange}
-                                                    //onChange={field.onChange}
-                                                />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                /> */}
                                 <FormField
                                     control={form.control}
                                     name="qty"
