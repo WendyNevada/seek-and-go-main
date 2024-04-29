@@ -70,7 +70,7 @@ class OrderHService implements OrderHInterface
 
     private function getOrderHByIdWithOrderD($order_h_id)
     {
-        $order = OrderH::where('order_h_id', $order_h_id)->with('orderDs')->get();
+        $order = OrderH::where('order_h_id', $order_h_id)->with('orderDs')->first();
 
         return $order;
     }
