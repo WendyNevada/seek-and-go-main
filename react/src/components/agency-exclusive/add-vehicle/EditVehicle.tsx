@@ -107,7 +107,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
         formData.append('address', values.address);
         //formData.append('address', values.address);
         formData.append('qty', values.qty.toString());
-        formData.append('promo_code', values.promo_code);
+        formData.append('promo_code', values.promo_code !== null && values.promo_code !== undefined ? String(values.promo_code) : '');
         formData.append('base_price', values.base_price.toString());
 
         if (values.picture[0]) {

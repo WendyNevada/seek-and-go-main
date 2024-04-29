@@ -61,7 +61,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                 form.setValue('address', response.data.attraction.address);
                 form.setValue('address2', response.data.address);
                 form.setValue('qty', response.data.attraction.qty);
-                form.setValue('promo_code', response.data.attraction.promo_code);
+                form.setValue('promo_code', response.data.attraction.promo_code ? response.data.attraction.promo_code : '');
                 form.setValue('base_price', response.data.base_price);
                 setImageUrl(enviUrl + response.data.picture_url)
 
@@ -82,7 +82,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
         formData.append('description', values.description);
         formData.append('address', values.address);
         formData.append('qty', values.qty.toString());
-        formData.append('promo_code', values.promo_code);
+        formData.append('promo_code', values.promo_code !== null && values.promo_code !== undefined ? String(values.promo_code) : 'null');
         formData.append('base_price', values.base_price.toString());
 
         if (values.picture[0]) {
@@ -273,7 +273,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
                                             <FormLabel>{"Base Price"}</FormLabel>
-                                            <FormMessage />
+                                            {/* <FormMessage /> */}
                                             <FormControl>
                                                 <Input
                                                     type='number'

@@ -104,7 +104,7 @@ const AddVehicle = () => {
         formData.append('with_driver', values.with_driver ? '1' : '0');
         formData.append('address', values.address);
         formData.append('qty', values.qty.toString());
-        formData.append('promo_code', values.promo_code);
+        formData.append('promo_code', values.promo_code !== null && values.promo_code !== undefined ? String(values.promo_code) : '');
         formData.append('base_price', values.base_price.toString());
         //formData.append('promo_code_affiliate', values.promo_code_affiliate);
 
