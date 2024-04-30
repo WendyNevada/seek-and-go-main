@@ -33,6 +33,7 @@ const Header = () => {
                 style={{
                     backgroundImage: `url(${assetForWeb.HomePageBackground})`,
                     height: "100%",
+                    width: "100%",
                     zIndex: -50,
                 }}
             >

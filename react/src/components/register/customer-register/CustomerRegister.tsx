@@ -16,12 +16,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import axiosClient from '@/axios.client';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/components/ui/use-toast';
-import axios, { AxiosError } from 'axios';
 import { Required } from '@/components/ui/Custom/required';
+import { hitAddApi } from '@/context/HitApi';
 
 const CustomerRegisterComponent = () => {
     const navigate = useNavigate();
@@ -47,7 +46,7 @@ const CustomerRegisterComponent = () => {
         return new Date(date.getFullYear(), date.getMonth(), date.getDate());
     }
 
-    const onSubmit = (values: z.infer<typeof customerSchema>) => {
+    const onSubmit = async (values: z.infer<typeof customerSchema>) => {
         values.birth_date = formatDate(values.birth_date);
         console.log(values.birth_date);
 
@@ -55,21 +54,13 @@ const CustomerRegisterComponent = () => {
         values.role="Customer";
         console.log(values);
 
-        try{
-            axiosClient.post('/v1/CreateAccountCustomer', values);
-            toast({
-                variant: "success",
-                description: "Register Success."
-            });
-            navigate('/Login');
-        }catch (response) {
-            const axiosError = response as AxiosError; // Cast the error to AxiosError
-            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
-                toast({
-                    variant: "destructive",
-                    description: (axiosError.response?.data as { message: string })?.message,
-                });
-            }
+        const response = await hitAddApi("/v1/CreateAccountCustomer",values);
+        toast({
+            variant: "success",
+            description: "Please Check Your Email",
+        });
+        if(response === 200){
+            navigate("/Login");
         }
     };
 

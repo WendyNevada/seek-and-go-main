@@ -50,7 +50,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                 form.setValue('description', response.data.hotel.description);
                 form.setValue('address', response.data.hotel.address);
                 form.setValue('qty', response.data.hotel.qty);
-                form.setValue('promo_code', response.data.hotel.promo_code);
+                form.setValue('promo_code', response.data.attraction.promo_code ? response.data.attraction.promo_code : '');
                 form.setValue('base_price', response.data.base_price);
 
                 //form.setValue('address2', response.data.address2);
@@ -72,7 +72,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
         formData.append('description', values.description);
         formData.append('address', values.address);
         formData.append('qty', values.qty.toString());
-        formData.append('promo_code', values.promo_code);
+        formData.append('promo_code', values.promo_code !== null && values.promo_code !== undefined ? String(values.promo_code) : 'null');
 
         if (values.picture[0]) {
             formData.append('picture', values.picture[0]);

@@ -37,7 +37,7 @@ const HotelList = () => {
     }
 
     return (
-        <div className='mt-4 justify-between'>
+        <div className='mt-2 justify-between'>
             {hotel.reduce((rows: JSX.Element[][], hotel, index) => {
                 if (index % 4 === 0) {
                     rows.push([]);

@@ -91,7 +91,7 @@ const AddAttraction = () => {
         formData.append('rating', '0'); // Assuming rating is a string or number
         formData.append('is_active', '1'); // Convert boolean to string
         formData.append('qty', values.qty.toString()); // Convert number to string
-        formData.append('promo_code', values.promo_code);
+        formData.append('promo_code', values.promo_code !== null && values.promo_code !== undefined ? String(values.promo_code) : 'null');
         formData.append('base_price', values.base_price.toString()); // Convert number to string
         formData.append('promo_code_affiliate', values.promo_code_affiliate);
 

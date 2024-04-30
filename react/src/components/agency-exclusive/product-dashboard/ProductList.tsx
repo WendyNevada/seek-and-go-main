@@ -30,9 +30,9 @@ const ProductList = () => {
             </div>
             <h1 className='text-3xl font-bold'>List Attraction</h1>
             <AttractionList/>
-            <h1 className='text-3xl font-bold'>List Vehicle</h1>
+            <h1 className='text-3xl font-bold mt-8'>List Vehicle</h1>
             <VehicleList/>
-            <h1 className='text-3xl font-bold'>List Hotel</h1>
+            <h1 className='text-3xl font-bold mt-8'>List Hotel</h1>
             <HotelList/>
         </div>
     );
