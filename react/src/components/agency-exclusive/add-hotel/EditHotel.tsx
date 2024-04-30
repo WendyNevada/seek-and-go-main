@@ -117,6 +117,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
                                         <FormLabel>{"Hotel Code"}</FormLabel>
+                                        <Required/>
                                         <FormMessage />
                                         <FormControl className='w-full'>
                                             <Input
@@ -178,6 +179,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                             render={({ field }) => (
                                 <FormItem className="custom-field">
                                     <FormLabel>{"Description"}</FormLabel>
+                                    <Required/>
                                     <FormMessage />
                                     <FormControl>
                                         <Textarea
@@ -196,6 +198,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
                                         <FormLabel>{"Address"}</FormLabel>
+                                        <Required/>
                                         <FormMessage />
                                         <FormControl className='w-full'>
                                             <Input
@@ -213,6 +216,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
                                         <FormLabel>{"QTY"}</FormLabel>
+                                        <Required/>
                                         <FormMessage />
                                         <FormControl className='w-full'>
                                             <Input
@@ -249,6 +253,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                             render={({ field }) => (
                                 <FormItem className="custom-field">
                                     <FormLabel>{"Base Price (perhari)"}</FormLabel>
+                                    <Required/>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
