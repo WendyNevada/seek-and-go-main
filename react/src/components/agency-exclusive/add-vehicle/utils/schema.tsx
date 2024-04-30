@@ -34,7 +34,7 @@ export const addVehicleSchema = z.object({
     with_driver : z.boolean(),
     address : z.string().min(1,  {message: "Vehicle Address is required" }),
     qty : z.coerce.number(),
-    promo_code: z.string().nullable(),
+    promo_code: z.string(),
     base_price: z.coerce.number(),
     //promo_code_affiliate: z.string(),
 })
@@ -63,6 +63,6 @@ export const editVehicleSchema = z.object({
     with_driver : z.boolean(),
     //is_active: z.boolean(),
     qty: z.coerce.number(),
-    promo_code: z.string().nullable(),
+    promo_code: z.string(),
     base_price: z.coerce.number(),
 })

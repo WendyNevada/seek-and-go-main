@@ -519,7 +519,7 @@ const AddVehicle = () => {
                             />
 
                         <div className="justify-center flex">
-                            <Button type="submit" className='mt-6'>Add Attraction Product
+                            <Button type="submit" className='mt-6'>Add Vehicle Product
                             </Button>
                         </div>
                     </form>

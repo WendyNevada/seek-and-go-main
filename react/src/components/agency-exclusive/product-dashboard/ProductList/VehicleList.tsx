@@ -34,7 +34,7 @@ const VehicleList = () => {
     }
 
     return (
-        <div className='mt-4 justify-between'>
+        <div className='mt-2 justify-between'>
             {vehicle.reduce((rows: JSX.Element[][], vehicle, index) => {
                 if (index % 4 === 0) {
                     rows.push([]);

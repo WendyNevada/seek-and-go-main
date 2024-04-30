@@ -78,7 +78,7 @@ const AddHotel = () => {
         formData.append('address', values.address);
         formData.append('rating', '0');
         formData.append('qty', values.qty.toString());
-        formData.append('promo_code', values.promo_code);
+        formData.append('promo_code', values.promo_code !== null && values.promo_code !== undefined ? String(values.promo_code) : 'null');
         formData.append('base_price', values.base_price.toString());
 
         formData.append('picture', values.picture[0]);

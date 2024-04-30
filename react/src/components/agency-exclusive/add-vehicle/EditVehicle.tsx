@@ -79,7 +79,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                 form.setValue('description', response.data.vehicle.description);
                 form.setValue('address', response.data.vehicle.address);
                 form.setValue('qty', response.data.vehicle.qty);
-                form.setValue('promo_code', response.data.vehicle.promo_code);
+                form.setValue('promo_code', response.data.vehicle.promo_code ? response.data.attraction.promo_code : '');
 
                 //form.setValue('address2', response.data.address2);
             } catch (error) {
@@ -447,7 +447,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                 />
 
                                 <div className="justify-center flex">
-                                    <Button type="submit" className='mt-4'>Edit Attraction Product
+                                    <Button type="submit" className='mt-4'>Edit Vehicle Product
                                     </Button>
                                 </div>
                             </form>
