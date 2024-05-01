@@ -8,9 +8,9 @@ import DisplayHotel from "./Display/DisplayHotel";
 
 const Home = () => {
     return (
-        <div className="flex flex-col items-center justify-center h-[40rem]">
+        <div className="flex flex-col justify-center">
             <Header />
-            <div className="absolute left-[25rem] mt-[100rem]">
+            <div className="mx-80">
                 <DisplayVehicle />
                 <DisplayAttraction/>
                 <DisplayHotel/>

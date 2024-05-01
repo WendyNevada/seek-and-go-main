@@ -1,5 +1,6 @@
 import { assetForWeb } from "@/assets/assetStatic";
 import { TypewriterEffect } from "@/components/ui/AceTernity/typewriter-effect";
+import SearchComponent from "@/components/ui/Custom/search";
 import React from "react";
 
 const Header = () => {
@@ -23,20 +24,25 @@ const Header = () => {
     ];
 
     return (
-        <div
-            className="bg-cover bg-center mt-[3.5rem] absolute inset-0 place-content-center"
-            style={{ height: "40rem" }}
-        >
-            <TypewriterEffect words={words} />
+        <div className="relative mt-[2rem]">
+            {/* Background with typewriter effect */}
             <div
-                className="bg-cover bg-center absolute inset-0 place-content-center"
+                className="bg-cover bg-center inset-0 flex items-center justify-center flex-col"
+                style={{ height: "40rem", zIndex: 10, backgroundImage: `url(${assetForWeb.HomePageBackground})`, backgroundSize: "cover",}}
+            >
+                <TypewriterEffect words={words} className="z-40"/>
+                <br></br>
+                <div className="z-40 text-white dark:text-white-500 text-7xl font-semibold">FIND WHAT ARE YOU LOOKING FOR</div>
+                <SearchComponent className="mt-6 z-40 w-1/3"/>
+            </div>
+            {/* Background image */}
+            <div
+                className="bg-cover bg-center inset-0 "
                 style={{
-                    backgroundImage: `url(${assetForWeb.HomePageBackground})`,
-                    height: "100%",
-                    width: "100%",
                     zIndex: -50,
                 }}
             >
+                {/* Gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-50"></div>
             </div>
         </div>
