@@ -380,7 +380,7 @@ class RefVehicleService implements RefVehicleInterface
                     $request->qty
                 );
 
-                if($request->picture_url)
+                if($request->picture_url == null)
                 {
                     if($request->hasFile('picture'))
                     {

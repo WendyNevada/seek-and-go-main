@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom'
 import axiosClient from '@/axios.client'
 import { toast } from '@/components/ui/use-toast'
 import axios, { AxiosError } from 'axios'
+import { Required } from '@/components/ui/Custom/required'
 
 const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) => {
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
@@ -128,6 +129,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
                                             <FormLabel>{"Attraction Code"}</FormLabel>
+                                            <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Input
@@ -170,6 +172,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
                                             <FormLabel>{"Attraction Name"}</FormLabel>
+                                            <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Input
@@ -187,6 +190,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
                                             <FormLabel>{"Description"}</FormLabel>
+                                            <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Textarea
@@ -204,6 +208,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
                                             <FormLabel>{"Nama Jalan"}</FormLabel>
+                                            <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Input
@@ -221,6 +226,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
                                             <FormLabel>{"Address"}</FormLabel>
+                                            <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Textarea
@@ -239,6 +245,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
                                             <FormLabel>{"QTY"}</FormLabel>
+                                            <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Input
@@ -273,6 +280,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
                                             <FormLabel>{"Base Price"}</FormLabel>
+                                            <Required/>
                                             {/* <FormMessage /> */}
                                             <FormControl>
                                                 <Input

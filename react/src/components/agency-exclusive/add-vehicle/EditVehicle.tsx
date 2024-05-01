@@ -13,6 +13,7 @@ import { toast } from '@/components/ui/use-toast';
 import axios, { AxiosError } from 'axios';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { Required } from '@/components/ui/Custom/required';
 
 const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
@@ -154,6 +155,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                         render={({ field }) => (
                                             <FormItem className="custom-field">
                                                 <FormLabel>{"Vehicle Code"}</FormLabel>
+                                                <Required/>
                                                 <FormMessage />
                                                 <FormControl className='w-full'>
                                                     <Input
@@ -171,6 +173,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                         render={({ field }) => (
                                             <FormItem className="custom-field">
                                                 <FormLabel>{"Vehicle Name"}</FormLabel>
+                                                <Required/>
                                                 <FormMessage />
                                                 <FormControl>
                                                     <Input
@@ -188,6 +191,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                     render={() => (
                                         <FormItem className="custom-field">
                                             <FormLabel>{"Vehicle Year"}</FormLabel>
+                                            <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Select
@@ -244,6 +248,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                         render={() => (
                                             <FormItem className="custom-field mr-10">
                                                 <FormLabel>{"Vehicle Type"}</FormLabel>
+                                                <Required/>
                                                 <FormMessage />
                                                 <FormControl>
                                                     <Select onValueChange={(newValue) => form.setValue("vehicle_type", newValue)}>
@@ -265,6 +270,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                         render={() => (
                                             <FormItem className="custom-field ml-3">
                                                 <FormLabel>{"Vehicle Seat"}</FormLabel>
+                                                <Required/>
                                                 <FormMessage />
                                                 <FormControl>
                                                     <Select onValueChange={(newValue) => form.setValue("vehicle_seat", parseInt(newValue))}>
@@ -290,6 +296,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                         render={({ field }) => (
                                             <FormItem className="custom-field">
                                                 <FormLabel>{"Vehicle Brand"}</FormLabel>
+                                                <Required/>
                                                 <FormMessage />
                                                 <FormControl>
                                                     <Input
@@ -307,6 +314,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                         render={({ field }) => (
                                             <FormItem className="custom-field">
                                                 <FormLabel>{"Vehicle Series"}</FormLabel>
+                                                <Required/>
                                                 <FormMessage />
                                                 <FormControl>
                                                     <Input
@@ -324,6 +332,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                         render={({ field }) => (
                                             <FormItem className="custom-field">
                                                 <FormLabel>{"Vehicle Model"}</FormLabel>
+                                                <Required/>
                                                 <FormMessage />
                                                 <FormControl>
                                                     <Input
@@ -362,6 +371,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                         render={({ field }) => (
                                             <FormItem className="custom-field">
                                                 <FormLabel>{"Address"}</FormLabel>
+                                                <Required/>
                                                 <FormMessage />
                                                 <FormControl className='w-full'>
                                                     <Input
@@ -379,6 +389,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                         render={({ field }) => (
                                             <FormItem className="custom-field">
                                                 <FormLabel>{"QTY"}</FormLabel>
+                                                <Required/>
                                                 <FormMessage />
                                                 <FormControl className='w-full'>
                                                     <Input
@@ -416,6 +427,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
                                             <FormLabel>{"Base Price (perhari)"}</FormLabel>
+                                            <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Input
@@ -434,6 +446,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
                                             <FormLabel>{"Description"}</FormLabel>
+                                            <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Textarea
