@@ -55,7 +55,7 @@ const Navbar = () => {
     ]
 
     return (
-        <nav className='flex-no-wrap fixed top-0 flex w-full items-center justify-between bg-blue-800 lg:flex-wrap lg:py-4 p-6 z-10'>
+        <nav className='flex-no-wrap fixed top-0 flex w-full items-center justify-between bg-blue-800 lg:flex-wrap lg:py-4 p-6 z-50'>
 
             <div className='fill-current h-14 w-14 mr-4 width=70 flex flex-row text-teal-200 '>
                 <img src={assetForWeb.logo}/>

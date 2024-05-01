@@ -1,5 +1,6 @@
 import axiosClient from '@/axios.client';
 import { GetHotelModel } from '@/components/agency-exclusive/product-dashboard/utils/ProductModel'
+import rating from '@/components/ui/Custom/rating';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import React, { useEffect, useState } from 'react'
 
@@ -8,37 +9,38 @@ const DisplayHotel = () => {
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
-        const fetchVehicle = async () => {
+        const fetchHotel = async () => {
             try {
                 const response = await axiosClient.post<GetHotelModel[]>('/v1/GetHotelHomepage'); // Replace 'your-api-url' with the actual API endpoint
                 setHotel(response.data); // Assuming the response data is an array of vehicles
             } catch (error) {
-                console.error('Error fetching vehicles:', error);
+                console.error('Error fetching hotels:', error);
             }
         }
-        fetchVehicle();
+        fetchHotel();
     },[])
 
     return (
-        <div className='mt-4 justify-between'>
-            <h2>Daftar Hotel</h2>
+        <div className='mt-12 justify-between'>
+            <h2 className='text-2xl font-semibold'>Daftar Hotel</h2>
 
-            {hotel.reduce((rows: JSX.Element[][], vehicle, index) => {
+            {hotel.reduce((rows: JSX.Element[][], hotel, index) => {
                 if (index % 4 === 0) {
                     rows.push([]);
                 }
                 rows[rows.length - 1].push(
-                    <div key={vehicle.ref_hotel_id} className='flex-1'>
-                        <Card className='w-64 shadow-lg mt-10'>
-                        <img src={enviUrl + vehicle.image_url} alt={vehicle.hotel_name} className="h-36 w-full shadow-lg" />
+                    <div key={hotel.ref_hotel_id} className='flex-1'>
+                        <Card className='w-64 shadow-lg mt-8 hover:shadow-2xl cursor-pointer overflow-hidden'>
+                        <img src={enviUrl + hotel.image_url} alt={hotel.hotel_name} className="h-36 w-full shadow-lg hover:scale-110" />
                             <CardHeader>
-                                <CardTitle>{vehicle.hotel_name}</CardTitle>
-                                <CardDescription>{vehicle.description}</CardDescription>
+                                <CardTitle>{hotel.hotel_name}</CardTitle>
+                                <CardDescription>{hotel.description}</CardDescription>
                             </CardHeader>
                             <CardContent className='flex-1'>
-                                <p>{vehicle.address}</p>
-                                <p>{vehicle.rating}</p>
-                                <p>Base Price: Rp.{vehicle.base_price}</p>
+                                <p>{hotel.address}</p>
+                                {/* <p>{hotel.rating}</p> */}
+                                {rating(hotel.rating)}
+                                <p>Base Price: Rp.{hotel.base_price}</p>
                             </CardContent>
                             <CardFooter className="justify-center">
                                 {/* <Button className='ml-2' variant="destructive">Delete</Button> */}
@@ -53,6 +55,7 @@ const DisplayHotel = () => {
                     {row}
                 </div>
             ))}
+            <hr className='mt-12'></hr>
         </div>
     )
 }
