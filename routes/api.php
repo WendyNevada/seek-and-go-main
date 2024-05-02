@@ -122,6 +122,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('GetActivePackageHByAgencyId', 'PackageHController@GetActivePackageHByAgencyId');
 
+    Route::post('GetPackageDataById', 'PackageHController@GetPackageDataById');
+
     Route::post('GetListAttractionForAgencyPackage', 'PackageHController@GetListAttractionForAgencyPackage');
 
     Route::post('GetListHotelForAgencyPackage', 'PackageHController@GetListHotelForAgencyPackage');
