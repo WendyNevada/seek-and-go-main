@@ -7,15 +7,21 @@ use App\Models\Trx;
 use App\Models\OrderD;
 use App\Models\OrderH;
 use App\Models\PackageH;
+use App\Models\RefHotel;
 use App\Models\Constanta;
+use App\Models\RefVehicle;
+use App\Models\RefAttraction;
+use App\Models\PackageHistoryD;
 use App\Models\PackageHistoryH;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Requests\V2\CustIdRequest;
 use App\Http\Interfaces\OrderHInterface;
 use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Requests\V2\OrderHIdRequest;
 use App\Http\Requests\V2\CreateOrderRequest;
 use App\Http\Requests\V2\GetOrderByIdRequest;
+use App\Http\Requests\V2\GetCustomerOrderRequest;
 use App\Http\Requests\V2\GetOrderDashboardRequest;
 
 class OrderHService implements OrderHInterface
@@ -70,7 +76,7 @@ class OrderHService implements OrderHInterface
 
     private function getOrderHByIdWithOrderD($order_h_id)
     {
-        $order = OrderH::where('order_h_id', $order_h_id)->with('orderDs')->get();
+        $order = OrderH::where('order_h_id', $order_h_id)->with('orderDs')->first();
 
         return $order;
     }
@@ -122,21 +128,22 @@ class OrderHService implements OrderHInterface
         $orderD = new OrderD();
         $orderD->order_h_id = $order_h_id;
         $orderD->package_h_id = $package_h_id;
-
-        $orderD->package_history_id = $orderD->package_h_id == null ? null : 
-            PackageHistoryH::where('package_code', 
-                (PackageH::where('package_h_id', $orderD->package_h_id)->first()->package_code)
-            )->first()->package_history_h_id;
-        
-        $orderD->ref_hotel_id = $ref_hotel_id == "" ? null : $ref_hotel_id;
-        $orderD->ref_attraction_id = $ref_attraction_id == "" ? null : $ref_attraction_id;
-        $orderD->ref_vehicle_id = $ref_vehicle_id == "" ? null : $ref_vehicle_id;
+        $orderD->package_history_id = null;
+        $orderD->ref_hotel_id = $ref_hotel_id == null ? null : $ref_hotel_id;
+        $orderD->ref_attraction_id = $ref_attraction_id == null ? null : $ref_attraction_id;
+        $orderD->ref_vehicle_id = $ref_vehicle_id == null ? null : $ref_vehicle_id;
         $orderD->start_dt = $strStartDate;
         $orderD->end_dt = $strEndDate;
         $orderD->price = $price;
         $orderD->save();
 
         return $orderD;
+    }
+
+    private function updateOrderDPackageHistoryByOrderHId($order_h_id, $package_history_h_id)
+    {
+        OrderD::where('order_h_id', $order_h_id)
+            ->update(['package_history_id' => $package_history_h_id]);
     }
 
     private function updateOrderStatus($order_h_id, $order_status): OrderH
@@ -218,6 +225,54 @@ class OrderHService implements OrderHInterface
         return $order;
     }
 
+    private function getPackageHById($package_h_id)
+    {
+        $packageH = PackageH::where('package_h_id', $package_h_id)->first();
+        return $packageH;
+    }
+
+    private function generatePackageCodePerOrder($package_code, $order_no)
+    {
+        $packageCode = $package_code . $order_no;
+        return $packageCode;
+    }
+
+    private function createPackageHistoryH($package_code, $agency_id, $package_name, $is_custom, $package_price, $total_days)
+    {
+        Log::info('total days = ' . $total_days);
+
+        $packageHistoryH = PackageHistoryH::create([
+            'package_code' => $package_code,
+            'agency_id' => $agency_id,
+            'package_name' => $package_name,
+            'is_custom' => $is_custom,
+            'package_price' => $package_price,
+            'total_days' => $total_days
+        ]);
+
+        return $packageHistoryH;
+    }
+
+    private function createPackageHistoryD($package_history_h_id, $packageD)
+    {
+        foreach ($packageD as $item) {
+            $packageHistoryD = PackageHistoryD::create([
+                'package_history_h_id' => $package_history_h_id,
+
+                'hotel_name' => $item->ref_hotel_id == null ? null : RefHotel::where('ref_hotel_id', $item->ref_hotel_id)->first()->hotel_name,
+                'hotel_start_dt' => $item->ref_hotel_id == null ? null : $item->start_dt,
+                'hotel_end_dt' => $item->ref_hotel_id == null ? null : $item->end_dt,
+
+                'attraction_name' => $item->ref_attraction_id == null ? null : RefAttraction::where('ref_attraction_id', $item->ref_attraction_id)->first()->attraction_name,
+                'attraction_start_dt' => $item->ref_attraction_id == null ? null : $item->start_dt,
+                'attraction_end_dt' => $item->ref_attraction_id == null ? null : $item->end_dt,
+
+                'vehicle_name' => $item->ref_vehicle_id == null ? null : RefVehicle::where('ref_vehicle_id', $item->ref_vehicle_id)->first()->vehicle_name,
+                'vehicle_start_dt' => $item->ref_vehicle_id == null ? null : $item->start_dt,
+                'vehicle_end_dt' => $item->ref_vehicle_id == null ? null : $item->end_dt
+            ]);
+        }
+    }
     #endregion
 
     #region Public Function
@@ -245,6 +300,13 @@ class OrderHService implements OrderHInterface
     public function GetRetryPayOrderForCustomer(CustIdRequest $request)
     {
         $order = $this->getOrderByCustomerAndStatusWithLimit($request->customer_id, Constanta::$orderStatusRetryPay);
+        
+        return response()->json($order);
+    }
+
+    public function GetCustomerOrderByIdAndStatus(GetCustomerOrderRequest $request)
+    {
+        $order = $this->getOrderByCustomerAndStatusWithLimit($request->customer_id, $request->order_status);
         
         return response()->json($order);
     }
@@ -304,6 +366,16 @@ class OrderHService implements OrderHInterface
             {
                 foreach($packageIds as $packageId)
                 {
+                    $packageH = $this->getPackageHById($packageId->package_h_id);
+                    
+                    $packageCodePerOrder = $this->generatePackageCodePerOrder($packageH->package_code, $orderNo);
+
+                    $packageHistH = $this->createPackageHistoryH($packageCodePerOrder, $packageH->agency_id, $packageH->package_name, $packageH->is_custom, $packageH->package_price, $packageH->total_days);
+
+                    $this->createPackageHistoryD($packageHistH->package_history_h_id, $packageH->packageDs);
+
+                    $this->updateOrderDPackageHistoryByOrderHId($orderH->order_h_id, $packageHistH->package_history_h_id);
+
                     $totPrice += $this->getPackagePrice($packageId->package_h_id);
                 }
 

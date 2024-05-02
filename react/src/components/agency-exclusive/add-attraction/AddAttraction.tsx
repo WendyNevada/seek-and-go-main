@@ -16,6 +16,7 @@ import { toast } from '@/components/ui/use-toast'
 import axios, { AxiosError } from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { useLogin } from '@/context/LoginContext'
+import { Required } from '@/components/ui/Custom/required'
 
 const AddAttraction = () => {
     //const attractionObj:AttractionObj = new AttractionObj();
@@ -90,7 +91,7 @@ const AddAttraction = () => {
         formData.append('rating', '0'); // Assuming rating is a string or number
         formData.append('is_active', '1'); // Convert boolean to string
         formData.append('qty', values.qty.toString()); // Convert number to string
-        formData.append('promo_code', values.promo_code);
+        formData.append('promo_code', values.promo_code !== null && values.promo_code !== undefined ? String(values.promo_code) : 'null');
         formData.append('base_price', values.base_price.toString()); // Convert number to string
         formData.append('promo_code_affiliate', values.promo_code_affiliate);
 
@@ -125,19 +126,20 @@ const AddAttraction = () => {
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)}>
                             <h1 className="text-2xl font-bold mb-8 text-center">Add Attraction</h1>
-
                             <FormField
                                 control={form.control}
                                 name="attraction_code"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
                                         <FormLabel>{"Attraction Code"}</FormLabel>
+                                        <Required/>
                                         <FormMessage />
                                         <FormControl>
                                             <Input
                                                 placeholder={"Attraction Code"}
                                                 {...field}
                                                 onChange={field.onChange}
+                                                maxLength={7} //Add Felix
                                             />
                                         </FormControl>
                                     </FormItem>
@@ -173,7 +175,7 @@ const AddAttraction = () => {
                                     name="area_1"
                                     render={() => (
                                         <FormItem className="custom-field mt-4 mr-8 flex flex-col">
-                                            <FormLabel>{"Province"}</FormLabel>
+                                            <FormLabel>{"Province"}<Required/></FormLabel>
                                             <FormMessage />
                                             <FormControl>
                                                 <ProvinceCombobox onSelectProvince={handleProvinceSelect}/>
@@ -186,7 +188,7 @@ const AddAttraction = () => {
                                     name="area_2"
                                     render={() => (
                                         <FormItem className="custom-field mt-4 flex flex-col">
-                                            <FormLabel>{"City"}</FormLabel>
+                                            <FormLabel>{"City"}<Required/></FormLabel>
                                             <FormMessage />
                                             <FormControl>
                                                 <CityCombobox onSelectCity={handleCitySelect} selectedProvince={form.watch("area_1")}/>
@@ -202,7 +204,7 @@ const AddAttraction = () => {
                                     name="area_3"
                                     render={() => (
                                         <FormItem className="custom-field mt-4 mr-8 flex flex-col">
-                                            <FormLabel>{"District"}</FormLabel>
+                                            <FormLabel>{"District"}<Required/></FormLabel>
                                             <FormMessage />
                                             <FormControl>
                                                 <KecamatanCombobox onSelectKecamatan={handleKecamatanSelect} selectedCity={form.watch("area_2")}/>
@@ -215,7 +217,7 @@ const AddAttraction = () => {
                                     name="area_4"
                                     render={() => (
                                         <FormItem className="custom-field mt-4 flex flex-col">
-                                            <FormLabel>{"Subdistrict"}</FormLabel>
+                                            <FormLabel>{"Subdistrict"}<Required/></FormLabel>
                                             <FormMessage />
                                             <FormControl>
                                                 <KelurahanCombobox onSelectKelurahan={handleKelurahanSelect} selectedKecamatan={form.watch("area_3")}/>
@@ -230,7 +232,7 @@ const AddAttraction = () => {
                                 name="attraction_name"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Attraction Name"}</FormLabel>
+                                        <FormLabel>{"Attraction Name"}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl>
                                             <Input
@@ -247,7 +249,7 @@ const AddAttraction = () => {
                                 name="description"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Description"}</FormLabel>
+                                        <FormLabel>{"Description"}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl>
                                             <Textarea
@@ -264,7 +266,7 @@ const AddAttraction = () => {
                                 name="address"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Address"}</FormLabel>
+                                        <FormLabel>{"Address"}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl>
                                             <Input
@@ -276,29 +278,12 @@ const AddAttraction = () => {
                                     </FormItem>
                                 )}
                             />
-                            {/* <FormField
-                                control={form.control}
-                                name="is_active"
-                                render={({ field }) => (
-                                    <FormItem className="custom-field mt-2">
-                                        <FormLabel className='mr-4 align-middle'>{"Is Active"}</FormLabel>
-                                        <FormMessage />
-                                        <FormControl>
-                                            <Switch
-                                                checked={field.value}
-                                                onCheckedChange={field.onChange}
-                                                //onChange={field.onChange}
-                                            />
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            /> */}
                             <FormField
                                 control={form.control}
                                 name="qty"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"QTY"}</FormLabel>
+                                        <FormLabel>{"QTY"}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl>
                                             <Input
@@ -332,7 +317,7 @@ const AddAttraction = () => {
                                 name="base_price"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Base Price"}</FormLabel>
+                                        <FormLabel>{"Base Price"}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl>
                                             <Input

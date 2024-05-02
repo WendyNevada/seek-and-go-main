@@ -27,15 +27,14 @@ class CreatePackageAgencyRequest extends FormRequest
             'package_name' => ['required'],
             'description' => ['required'],
             'package_price' => ['required'],
-            'is_active' => ['required'],
             'qty' => ['required'],
             'total_days' => ['required'],
             'details' => ['required', 'array'],
             'details.*.ref_hotel_id' => ['nullable'],
             'details.*.ref_attraction_id' => ['nullable'],
             'details.*.ref_vehicle_id' => ['nullable'],
-            'details.*.start_dt' => ['required','string'],
-            'details.*.end_dt' => ['required', 'string']
+            'details.*.start_dt' => ['nullable','string'],
+            'details.*.end_dt' => ['nullable', 'string']
         ];
     }
 }

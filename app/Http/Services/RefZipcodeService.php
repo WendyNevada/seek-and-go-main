@@ -2,12 +2,14 @@
 
 namespace App\Http\Services;
 
-use App\Http\Interfaces\RefZipcodeInterface;
 use App\Models\RefZipcode;
 use App\Http\Controllers\Controller;
+use App\Http\Interfaces\RefZipcodeInterface;
 use App\Http\Requests\V1\StoreRefZipcodeRequest;
 use App\Http\Requests\V1\UpdateRefZipcodeRequest;
 use App\Http\Requests\V2\GetRefZipcodeByAreaRequest;
+use App\Http\Requests\V2\GetRefZipcodeBy2AreaRequest;
+use App\Http\Requests\V2\GetRefZipcodeBy3AreaRequest;
 use App\Http\Requests\V2\GetRefZipcodeIdByArea3AndArea4;
 
 class RefZipcodeService implements RefZipcodeInterface
@@ -29,13 +31,27 @@ class RefZipcodeService implements RefZipcodeInterface
         return $areas;
     }
 
-    private function getRefZipcodeIdByAreaCode3AndAreaCode4($area3, $area4)
+    private function getAreaBy2AreaCode($area_select, $area_where_1, $area_where_2, $area_1, $area_2)
     {
-        $refZipcodeId = RefZipcode::where('area_3', 'like', "%$area3%")
-            ->where('area_4', 'like', "%$area4%")
-            ->value('ref_zipcode_id');
+        $areas = RefZipcode::select("$area_select")
+            ->where("$area_where_1", 'like', "%$area_1%")
+            ->where("$area_where_2", 'like', "%$area_2%")
+            ->distinct()
+            ->get();
+        
+        return $areas;
+    }
 
-        return $refZipcodeId;
+    private function getAreaBy3AreaCode($area_select, $area_where_1, $area_where_2, $area_where_3, $area_1, $area_2, $area_3)
+    {
+        $areas = RefZipcode::select("$area_select")
+            ->where("$area_where_1", 'like', "%$area_1%")
+            ->where("$area_where_2", 'like', "%$area_2%")
+            ->where("$area_where_3", 'like', "%$area_3%")
+            ->distinct()
+            ->get();
+        
+        return $areas;
     }
     #endregion
 
@@ -56,34 +72,22 @@ class RefZipcodeService implements RefZipcodeInterface
         return response()->json($areas, 200);
     }
 
-    public function GetArea3ByArea2(GetRefZipcodeByAreaRequest $request)
+    public function GetArea3ByArea2AndArea1(GetRefZipcodeBy2AreaRequest $request)
     {
         $area_code = $request->area_code;
 
-        $areas = $this->getAreaByAreaCode('area_3', 'area_2', $area_code);
+        $areas = $this->getAreaBy2AreaCode('area_3', 'area_1', 'area_2', $request->area_1, $request->area_2);
 
         return response()->json($areas, 200);
     }
 
-    public function GetArea4ByArea3(GetRefZipcodeByAreaRequest $request)
+    public function GetArea4ByArea3AndArea2AndArea1(GetRefZipcodeBy3AreaRequest $request)
     {
         $area_code = $request->area_code;
 
-        $areas = $this->getAreaByAreaCode('area_4', 'area_3', $area_code);
+        $areas = $this->getAreaBy3AreaCode('area_4', 'area_1', 'area_2', 'area_3', $request->area_1, $request->area_2, $request->area_3);
 
         return response()->json($areas, 200);
-    }
-
-    public function GetRefZipcodeIdByArea4AndArea3(GetRefZipcodeIdByArea3AndArea4 $request)
-    {
-        $area3 = $request->area_3;
-        $area4 = $request->area_4;
-
-        $refZipcodeId = $this->getRefZipcodeIdByAreaCode3AndAreaCode4($area3, $area4);
-
-        return response()->json(
-            ['ref_zipcode_id' => $refZipcodeId]
-        ,200);
     }
     #endregion
 }

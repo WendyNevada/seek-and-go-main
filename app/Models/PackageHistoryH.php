@@ -16,7 +16,8 @@ class PackageHistoryH extends Model
         'package_name',
         'is_custom',
         'promo_code',
-        'package_price'
+        'package_price',
+        'total_days'
     ];
 
     protected $primaryKey = 'package_history_h_id';
@@ -100,6 +101,16 @@ class PackageHistoryH extends Model
     public function setPackagePriceAttribute($value)
     {
         $this->attributes['package_price'] = $value;
+    }
+
+    public function getTotalDaysAttribute($value)
+    {
+        return $value;
+    }
+
+    public function setTotalDaysAttribute($value)
+    {
+        $this->attributes['total_days'] = $value;
     }
     #endregion
 

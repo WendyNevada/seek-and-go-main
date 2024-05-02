@@ -16,11 +16,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import axiosClient from '@/axios.client';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/components/ui/use-toast';
-import axios, { AxiosError } from 'axios';
+import { Required } from '@/components/ui/Custom/required';
+import { hitAddApi } from '@/context/HitApi';
 
 const CustomerRegisterComponent = () => {
     const navigate = useNavigate();
@@ -46,37 +46,19 @@ const CustomerRegisterComponent = () => {
         return new Date(date.getFullYear(), date.getMonth(), date.getDate());
     }
 
-    const onSubmit = (values: z.infer<typeof customerSchema>) => {
+    const onSubmit = async (values: z.infer<typeof customerSchema>) => {
         values.birth_date = formatDate(values.birth_date);
         console.log(values.birth_date);
         console.log(values);
 
-        try{
-            axiosClient.post('/v1/CreateAccountCustomer', values);
-            toast({
-                variant: "success",
-                description: "Register Success."
-            });
-            navigate('/Login');
-        }catch (response) {
-            const axiosError = response as AxiosError; // Cast the error to AxiosError
-            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
-                toast({
-                    variant: "destructive",
-                    description: (axiosError.response?.data as { message: string })?.message,
-                });
-            }
+        const response = await hitAddApi("/v1/CreateAccountCustomer",values);
+        toast({
+            variant: "success",
+            description: "Please Check Your Email",
+        });
+        if(response === 200){
+            navigate("/Login");
         }
-    //   .then(({data}) => {
-    //     setUser(data.user)
-    //     setToken(data.token);
-    //   })
-    //   .catch(err => {
-    //     const response = err.response;
-    //     if (response && response.status === 422) {
-    //       setErrors(response.data.errors)
-    //     }
-    //   })
     };
 
     return (
@@ -90,7 +72,7 @@ const CustomerRegisterComponent = () => {
                             name="customer_name"
                             render={({ field }) => (
                                 <FormItem className="custom-field">
-                                    <FormLabel>{"Customer Name"}</FormLabel>
+                                    <FormLabel>{"Customer Name"}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
@@ -107,7 +89,7 @@ const CustomerRegisterComponent = () => {
                             name="account_name"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Account Name"}</FormLabel>
+                                    <FormLabel>{"Account Name"}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
@@ -124,7 +106,7 @@ const CustomerRegisterComponent = () => {
                             name="email"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Email"}</FormLabel>
+                                    <FormLabel>{"Email"}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
@@ -142,7 +124,7 @@ const CustomerRegisterComponent = () => {
                             name="phone"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Phone"}</FormLabel>
+                                    <FormLabel>{"Phone"}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
@@ -159,33 +141,31 @@ const CustomerRegisterComponent = () => {
                             name="password"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Password"}</FormLabel>
+                                    <FormLabel className='mr-4'>{"Tanggal Lahir"}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
-                                        <Input
-                                            type="password"
-                                            placeholder={field.name}
-                                            {...field}
-                                            onChange={field.onChange}
-                                        />
-                                    </FormControl>
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="confirmPassword"
-                            render={({ field }) => (
-                                <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Confirm Password"}</FormLabel>
-                                    <FormMessage />
-                                    <FormControl>
-                                        <Input
-                                            type="password"
-                                            placeholder={field.name}
-                                            {...field}
-                                            onChange={field.onChange}
-                                        />
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <Button
+                                                variant={"outline"}
+                                                className={cn(
+                                                    "w-[300px] justify-start text-left font-normal",
+                                                    !field.value && "text-muted-foreground"
+                                                )}
+                                                >
+                                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                                {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0">
+                                                <Calendar
+                                                mode="single"
+                                                selected={field.value}
+                                                onSelect={field.onChange}
+                                                initialFocus
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
                                     </FormControl>
                                 </FormItem>
                             )}
@@ -195,7 +175,7 @@ const CustomerRegisterComponent = () => {
                             name="gender"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Gender"}</FormLabel>
+                                    <FormLabel>{"Gender"}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <RadioGroup className='flex flex-row' defaultValue="option-one" onChange={newValue => field.onChange(newValue)}>
@@ -217,7 +197,7 @@ const CustomerRegisterComponent = () => {
                             name="birth_date"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Birth Date"}</FormLabel>
+                                    <FormLabel>{"Password"}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input

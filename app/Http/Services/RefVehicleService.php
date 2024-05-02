@@ -380,7 +380,7 @@ class RefVehicleService implements RefVehicleInterface
                     $request->qty
                 );
 
-                if($request->picture_url)
+                if($request->picture_url == null)
                 {
                     if($request->hasFile('picture'))
                     {
@@ -506,6 +506,7 @@ class RefVehicleService implements RefVehicleInterface
                     'vehicle' => $vehicle,
                     'picture_url' => $vehiclePicture->image_url,
                     'base_price' => $agencyAffiliate->base_price,
+                    'agency_id' => $agencyAffiliate->agency_id,
                     'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
                 ], 200);
             }
@@ -517,6 +518,7 @@ class RefVehicleService implements RefVehicleInterface
                     'vehicle' => $vehicle,
                     'picture_url' => "-",
                     'base_price' => $agencyAffiliate->base_price,
+                    'agency_id' => $agencyAffiliate->agency_id,
                     'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
                 ], 200);
             }
@@ -529,6 +531,7 @@ class RefVehicleService implements RefVehicleInterface
                 'vehicle' => "-",
                 'picture_url' => "-",
                 'base_price' => "-",
+                'agency_id' => "-",
                 'address' => "-"
             ], 400);
         }

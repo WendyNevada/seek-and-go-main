@@ -9,6 +9,7 @@ use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Requests\V2\OrderHIdRequest;
 use App\Http\Requests\V2\CreateOrderRequest;
 use App\Http\Requests\V2\GetOrderByIdRequest;
+use App\Http\Requests\V2\GetCustomerOrderRequest;
 use App\Http\Requests\V2\GetOrderDashboardRequest;
 
 class OrderHController extends Controller
@@ -40,6 +41,12 @@ class OrderHController extends Controller
     public function GetRetryPayOrderForCustomer(OrderHService $orderHService, CustIdRequest $request)
     {
         $response = $orderHService->GetRetryPayOrderForCustomer($request);
+        return $response;
+    }
+
+    public function GetCustomerOrderByIdAndStatus(OrderHService $orderHService, GetCustomerOrderRequest $request)
+    {
+        $response = $orderHService->GetCustomerOrderByIdAndStatus($request);
         return $response;
     }
 

@@ -130,7 +130,7 @@ class RefAttractionService implements RefAttractionInterface
         );
     }
 
-    private function updateRefAttraction($ref_attraction_id, $attraction_name, $description, $address, $qty, $promo_code): void
+    private function updateRefAttraction($ref_attraction_id, $attraction_name, $description, $address, $qty): void
     {
         $attraction = RefAttraction::where('ref_attraction_id', $ref_attraction_id)->first();
 
@@ -138,8 +138,7 @@ class RefAttractionService implements RefAttractionInterface
             'attraction_name' => $attraction_name,
             'description' => $description,
             'address' => $address,
-            'qty' => $qty,
-            'promo_code' => $promo_code
+            'qty' => $qty
         ]);
     }
 
@@ -302,6 +301,7 @@ class RefAttractionService implements RefAttractionInterface
                     'attraction' => $attraction,
                     'picture_url' => $attractionPicture->image_url,
                     'base_price' => $agencyAffiliate->base_price,
+                    'agency_id' => $agencyAffiliate->agency_id,
                     'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
                 ], 200);
             }
@@ -313,6 +313,7 @@ class RefAttractionService implements RefAttractionInterface
                     'attraction' => $attraction,
                     'picture_url' => "-",
                     'base_price' => $agencyAffiliate->base_price,
+                    'agency_id' => $agencyAffiliate->agency_id,
                     'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
                 ], 200);
             }
@@ -325,6 +326,7 @@ class RefAttractionService implements RefAttractionInterface
                 'attraction' => "-",
                 'picture_url' => "-",
                 'base_price' => "-",
+                'agency_id' => "-",
                 'address' => "-"
             ], 400);
         }
@@ -402,7 +404,7 @@ class RefAttractionService implements RefAttractionInterface
 
                 $this->updateAgencyAffiliateAttraction($request->ref_attraction_id, $request->base_price, $request->promo_code);
 
-                $this->updateRefAttraction($request->ref_attraction_id, $request->attraction_name, $request->description, $request->address, $request->qty, $request->promo_code);
+                $this->updateRefAttraction($request->ref_attraction_id, $request->attraction_name, $request->description, $request->address, $request->qty);
 
                 if($request->picture_url == null)
                 {

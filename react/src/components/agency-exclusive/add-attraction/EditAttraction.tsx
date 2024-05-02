@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom'
 import axiosClient from '@/axios.client'
 import { toast } from '@/components/ui/use-toast'
 import axios, { AxiosError } from 'axios'
+import { Required } from '@/components/ui/Custom/required'
 
 const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) => {
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
@@ -29,8 +30,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
             is_active: true,
             qty: 0,
             promo_code: "",
-            base_price: 0,
-            promo_code_affiliate: ""
+            base_price: 0
         }
     })
 
@@ -62,7 +62,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                 form.setValue('address', response.data.attraction.address);
                 form.setValue('address2', response.data.address);
                 form.setValue('qty', response.data.attraction.qty);
-                form.setValue('promo_code', response.data.attraction.promo_code);
+                form.setValue('promo_code', response.data.attraction.promo_code ? response.data.attraction.promo_code : '');
                 form.setValue('base_price', response.data.base_price);
                 setImageUrl(enviUrl + response.data.picture_url)
 
@@ -83,7 +83,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
         formData.append('description', values.description);
         formData.append('address', values.address);
         formData.append('qty', values.qty.toString());
-        formData.append('promo_code', values.promo_code);
+        formData.append('promo_code', values.promo_code !== null && values.promo_code !== undefined ? String(values.promo_code) : 'null');
         formData.append('base_price', values.base_price.toString());
 
         if (values.picture[0]) {
@@ -118,7 +118,6 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
 
     return (
         <div className='min-h-50 w-50 p-0 sm:p-12'>
-            <h1>{ref_attraction_id}</h1>
             <div className="mx-auto max-w-xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -130,6 +129,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
                                             <FormLabel>{"Attraction Code"}</FormLabel>
+                                            <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Input
@@ -172,6 +172,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
                                             <FormLabel>{"Attraction Name"}</FormLabel>
+                                            <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Input
@@ -189,6 +190,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
                                             <FormLabel>{"Description"}</FormLabel>
+                                            <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Textarea
@@ -206,6 +208,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
                                             <FormLabel>{"Nama Jalan"}</FormLabel>
+                                            <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Input
@@ -223,6 +226,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
                                             <FormLabel>{"Address"}</FormLabel>
+                                            <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Textarea
@@ -235,29 +239,13 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                         </FormItem>
                                     )}
                                 />
-                                {/* <FormField
-                                    control={form.control}
-                                    name="is_active"
-                                    render={({ field }) => (
-                                        <FormItem className="custom-field mt-2">
-                                            <FormLabel className='mr-4 align-middle'>{"Is Active"}</FormLabel>
-                                            <FormMessage />
-                                            <FormControl>
-                                                <Switch
-                                                    checked={field.value}
-                                                    onCheckedChange={field.onChange}
-                                                    //onChange={field.onChange}
-                                                />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                /> */}
                                 <FormField
                                     control={form.control}
                                     name="qty"
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
                                             <FormLabel>{"QTY"}</FormLabel>
+                                            <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Input
@@ -292,7 +280,8 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
                                             <FormLabel>{"Base Price"}</FormLabel>
-                                            <FormMessage />
+                                            <Required/>
+                                            {/* <FormMessage /> */}
                                             <FormControl>
                                                 <Input
                                                     type='number'
