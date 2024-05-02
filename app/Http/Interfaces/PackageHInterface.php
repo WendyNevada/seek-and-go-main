@@ -27,6 +27,8 @@ interface PackageHInterface
 
     public function GetActivePackageHByAgencyId(AgencyIdRequest $request);
 
+    public function GetPackageDataById(PackageHIdRequest $request);
+
     public function GetListAttractionForAgencyPackage(AgencyIdRequest $request);
 
     public function GetListHotelForAgencyPackage(AgencyIdRequest $request);
