@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Services\PackageHService;
 use App\Http\Requests\V2\AgencyIdRequest;
+use App\Http\Requests\V2\PackageHIdRequest;
+use App\Http\Requests\V2\EditPackageAgencyRequest;
 use App\Http\Requests\V2\CreatePackageAgencyRequest;
 use App\Http\Requests\V2\ApproveCustomPackageRequest;
 use App\Http\Requests\V2\CreateCustomPackageCustomerRequest;
@@ -14,6 +16,18 @@ class PackageHController extends Controller
     public function CreatePackageAgency(PackageHService $packageHService, CreatePackageAgencyRequest $request)
     {
         $response = $packageHService->CreatePackageAgency($request);
+        return $response;
+    }
+
+    public function EditPackageAgency(PackageHService $packageHService, EditPackageAgencyRequest $request)
+    {
+        $response = $packageHService->EditPackageAgency($request);
+        return $response;
+    }
+
+    public function DeactivatePackageAgency(PackageHService $packageHService, PackageHIdRequest $request)
+    {
+        $response = $packageHService->DeactivatePackageAgency($request);
         return $response;
     }
 
