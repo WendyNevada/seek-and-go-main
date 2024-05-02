@@ -15,6 +15,8 @@ use App\Models\PackageHistoryH;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Interfaces\PackageHInterface;
+use App\Http\Requests\V2\PackageHIdRequest;
+use App\Http\Requests\V2\EditPackageAgencyRequest;
 use App\Http\Requests\V2\CreatePackageAgencyRequest;
 use App\Http\Requests\V2\ApproveCustomPackageRequest;
 use App\Http\Requests\V2\CreateCustomPackageCustomerRequest;
@@ -22,13 +24,25 @@ use App\Http\Requests\V2\CreateCustomPackageCustomerRequest;
 class PackageHService implements PackageHInterface
 {
     #region Private Function
+    private function getPackageHById($package_h_id)
+    {
+        $packageH = PackageH::find($package_h_id);
+        return $packageH;
+    }
+
+    private function getPackageHWithDById($package_h_id)
+    {
+        $packageH = PackageH::with('packageDs')->find($package_h_id);
+        return $packageH;
+    }
+
     private function getPackageByPackageCode($package_code)
     {
         $packageH = PackageH::where('package_code', $package_code)->first();
         return $packageH;
     }
 
-    private function createPackageHAgency($package_code, $agency_id, $package_name, $description, $package_price, $is_active, $qty, $total_days): PackageH
+    private function createPackageHAgency($package_code, $agency_id, $package_name, $description, $package_price, $qty, $total_days): PackageH
     {
         $packageH = PackageH::create([
             'package_code' => $package_code,
@@ -37,7 +51,7 @@ class PackageHService implements PackageHInterface
             'description' => $description,
             'is_custom' => false,
             'package_price' => $package_price,
-            'is_active' => $is_active,
+            'is_active' => true,
             'qty' => $qty,
             'total_days' => $total_days
         ]);
@@ -87,27 +101,6 @@ class PackageHService implements PackageHInterface
         return $packageD;
     }
 
-    private function createPackageHistoryD($package_history_h_id, $packageD): PackageHistoryD
-    {
-        $packageHistoryD = PackageHistoryD::create([
-            'package_history_h_id' => $package_history_h_id,
-
-            'hotel_name' => $packageD->ref_hotel_id == null ? null : RefHotel::where('ref_hotel_id', $packageD->ref_hotel_id)->first()->hotel_name,
-            'hotel_start_dt' => $packageD->ref_hotel_id == null ? null : $packageD->start_dt,
-            'hotel_end_dt' => $packageD->ref_hotel_id == null ? null : $packageD->end_dt,
-
-            'attraction_name' => $packageD->ref_attraction_id == null ? null : RefAttraction::where('ref_attraction_id', $packageD->ref_attraction_id)->first()->attraction_name,
-            'attraction_start_dt' => $packageD->ref_attraction_id == null ? null : $packageD->start_dt,
-            'attraction_end_dt' => $packageD->ref_attraction_id == null ? null : $packageD->end_dt,
-
-            'vehicle_name' => $packageD->ref_vehicle_id == null ? null : RefVehicle::where('ref_vehicle_id', $packageD->ref_vehicle_id)->first()->vehicle_name,
-            'vehicle_start_dt' => $packageD->ref_vehicle_id == null ? null : $packageD->start_dt,
-            'vehicle_end_dt' => $packageD->ref_vehicle_id == null ? null : $packageD->end_dt
-        ]);
-
-        return $packageHistoryD;
-    }
-
     private function generateCustomCode(): string
     {
         $customCode = "CUST" . date("YmdHis") . rand(0, 9);
@@ -147,13 +140,25 @@ class PackageHService implements PackageHInterface
         return $packageH;
     }
 
-    private function getPackageByAgencyId($agency_id, $is_custom = false, $limit)
+    private function getPackageByAgencyId($agency_id, $is_custom = false, $limit = null)
     {
-        $packageH = PackageH::where('agency_id', $agency_id)
+        if($limit == null)
+        {
+            $packageH = PackageH::where('agency_id', $agency_id)
             ->where('is_custom', $is_custom)
-            ->limit($limit)
+            ->with('packageDs')
             ->get();
 
+        }
+        else
+        {
+            $packageH = PackageH::where('agency_id', $agency_id)
+                ->where('is_custom', $is_custom)
+                ->limit($limit)
+                ->with('packageDs')
+                ->get();
+        }
+        
         return $packageH;
     }
 
@@ -257,6 +262,39 @@ class PackageHService implements PackageHInterface
         
         return $listHotel;
     }
+
+    private function updateIsActivePackageH($package_h_id, $is_active)
+    {
+        PackageH::where('package_h_id', $package_h_id)->
+        update([
+            'is_active' => $is_active
+        ]);
+    }
+
+    private function updatePackageHForAgency($package_h_id, $package_name, $description, $package_price, $qty, $total_days)
+    {
+        $packageH = PackageH::where('package_h_id', $package_h_id)->
+        update([
+            'package_name' => $package_name,
+            'description' => $description,
+            'package_price' => $package_price,
+            'qty' => $qty,
+            'total_days' => $total_days
+        ]);
+
+        return $packageH;
+    }
+
+    private function deleteRangePackageD($package_h_id)
+    {
+        $packageH = PackageH::where('package_h_id', $package_h_id)->first();
+
+        if($packageH != null)
+        {
+            $packageH->packageDs()->delete();
+        }
+    }
+
     #endregion
 
     #region Public Function
@@ -270,9 +308,7 @@ class PackageHService implements PackageHInterface
             {
                 DB::beginTransaction();
 
-                $packageH = $this->createPackageHAgency($request->package_code, $request->agency_id, $request->package_name, $request->description, $request->package_price, $request->is_active, $request->qty, $request->total_days);
-
-                $packageHistoryH = $this->createPackageHistoryH($request->package_code, $request->agency_id, $request->package_name, $request->is_custom, $request->package_price, $request->total_days);
+                $packageH = $this->createPackageHAgency($request->package_code, $request->agency_id, $request->package_name, $request->description, $request->package_price, $request->qty, $request->total_days);
 
                 foreach($request->details as $detail)
                 {
@@ -286,8 +322,6 @@ class PackageHService implements PackageHInterface
                     }
 
                     $packageD = $this->createPackageD($packageH->package_h_id, $detail['ref_hotel_id'], $detail['ref_attraction_id'], $detail['ref_vehicle_id'], $strStartDate, $strEndDate);
-
-                    $packageHistoryD = $this->createPackageHistoryD($packageHistoryH->package_history_h_id, $packageD);
                 }
 
                 DB::commit();
@@ -316,6 +350,84 @@ class PackageHService implements PackageHInterface
                 'status' => 'error',
                 'message' => $e->getMessage(),
                 'package_h_id' => '-'
+            ], 500);
+        }
+    }
+
+    public function EditPackageAgency(EditPackageAgencyRequest $request)
+    {
+        try
+        {
+            DB::beginTransaction();
+
+            $packageH = $this->updatePackageHForAgency($request->package_h_id, $request->package_name, $request->description, $request->package_price, $request->qty, $request->total_days);
+
+            $this->deleteRangePackageD($request->package_h_id);
+            
+            foreach($request->details as $detail)
+            {
+                $strStartDate = null;
+                $strEndDate = null;
+
+                if($detail['start_dt'] != null && $detail['end_dt'] != null || $detail['start_dt'] != "" && $detail['end_dt'] != "")
+                {
+                    $strStartDate = $this->reformatDate($detail['start_dt']);
+                    $strEndDate = $this->reformatDate($detail['end_dt']);
+                }
+
+                $packageD = $this->createPackageD($request->package_h_id, $detail['ref_hotel_id'], $detail['ref_attraction_id'], $detail['ref_vehicle_id'], $strStartDate, $strEndDate);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Package successfully updated'
+            ], 200);
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function DeactivatePackageAgency(PackageHIdRequest $request)
+    {
+        try
+        {
+            $packageH = $this->getPackageHById($request->package_h_id);
+
+            if($packageH == null)
+            {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Package not found'
+                ], 400);
+            }
+
+            DB::beginTransaction();
+
+            $this->updateIsActivePackageH($request->package_h_id, false);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Package deactivated'
+            ], 200);
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
             ], 500);
         }
     }
@@ -426,9 +538,16 @@ class PackageHService implements PackageHInterface
 
     public function GetActivePackageHByAgencyId(AgencyIdRequest $request)
     {
-        $packageH = $this->getPackageByAgencyId($request->agency_id, false, Constanta::$homepageDataCount);
+        $packageH = $this->getPackageByAgencyId($request->agency_id);
 
         return response()->json($packageH);
+    }
+
+    public function GetPackageDataById(PackageHIdRequest $request)
+    {
+        $package = $this->getPackageHWithDById($request->package_h_id);
+
+        return response()->json($package);
     }
 
     public function GetListAttractionForAgencyPackage(AgencyIdRequest $request)

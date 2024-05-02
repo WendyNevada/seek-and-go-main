@@ -7,6 +7,7 @@ use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Requests\V2\OrderHIdRequest;
 use App\Http\Requests\V2\CreateOrderRequest;
 use App\Http\Requests\V2\GetOrderByIdRequest;
+use App\Http\Requests\V2\GetCustomerOrderRequest;
 use App\Http\Requests\V2\GetOrderDashboardRequest;
 
 interface OrderHInterface
@@ -20,6 +21,8 @@ interface OrderHInterface
     public function GetApvOrderForCustomer(CustIdRequest $request);
 
     public function GetRetryPayOrderForCustomer(CustIdRequest $request);
+
+    public function GetCustomerOrderByIdAndStatus(GetCustomerOrderRequest $request);
 
     public function GetOrderById(GetOrderByIdRequest $request);
 

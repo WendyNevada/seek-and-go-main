@@ -145,6 +145,16 @@ class PackageH extends Model
     {
         $this->attributes['qty'] = $value;
     }
+
+    public function getTotalDaysAttribute($value)
+    {
+        return $value;
+    }
+
+    public function setTotalDaysAttribute($value)
+    {
+        $this->attributes['total_days'] = $value;
+    }
     #endregion
 
     #region Relations

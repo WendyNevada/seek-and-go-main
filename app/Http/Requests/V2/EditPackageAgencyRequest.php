@@ -4,7 +4,7 @@ namespace App\Http\Requests\V2;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreatePackageAgencyRequest extends FormRequest
+class EditPackageAgencyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,7 @@ class CreatePackageAgencyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'package_code' => ['required'],
-            'agency_id' => ['required'],
+            'package_h_id' => ['required'],
             'package_name' => ['required'],
             'description' => ['required'],
             'package_price' => ['required'],
@@ -33,8 +32,8 @@ class CreatePackageAgencyRequest extends FormRequest
             'details.*.ref_hotel_id' => ['nullable'],
             'details.*.ref_attraction_id' => ['nullable'],
             'details.*.ref_vehicle_id' => ['nullable'],
-            'details.*.start_dt' => ['nullable','string'],
-            'details.*.end_dt' => ['nullable', 'string']
+            'details.*.start_dt' => ['required','string'],
+            'details.*.end_dt' => ['required', 'string']
         ];
     }
 }

@@ -108,6 +108,10 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('CreatePackageAgency', 'PackageHController@CreatePackageAgency');
 
+    Route::post('EditPackageAgency', 'PackageHController@EditPackageAgency');
+
+    Route::post('DeactivatePackageAgency', 'PackageHController@DeactivatePackageAgency');
+
     Route::post('CreateCustomPackageCustomer', 'PackageHController@CreateCustomPackageCustomer');
 
     Route::post('GetNewCustomPackageByAgencyId', 'PackageHController@GetNewCustomPackageByAgencyId');
@@ -117,6 +121,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::post('ApproveCustomPackage', 'PackageHController@ApproveCustomPackage');
 
     Route::post('GetActivePackageHByAgencyId', 'PackageHController@GetActivePackageHByAgencyId');
+
+    Route::post('GetPackageDataById', 'PackageHController@GetPackageDataById');
 
     Route::post('GetListAttractionForAgencyPackage', 'PackageHController@GetListAttractionForAgencyPackage');
 
@@ -132,11 +138,9 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('GetArea2ByArea1', 'RefZipcodeController@GetArea2ByArea1');
 
-    Route::post('GetArea3ByArea2', 'RefZipcodeController@GetArea3ByArea2');
+    Route::post('GetArea3ByArea2AndArea1', 'RefZipcodeController@GetArea3ByArea2AndArea1');
 
-    Route::post('GetArea4ByArea3', 'RefZipcodeController@GetArea4ByArea3');
-
-    Route::post('GetRefZipcodeIdByArea4AndArea3', 'RefZipcodeController@GetRefZipcodeIdByArea4AndArea3');
+    Route::post('GetArea4ByArea3AndArea2AndArea1', 'RefZipcodeController@GetArea4ByArea3AndArea2AndArea1');
 
     #endregion
 
@@ -149,6 +153,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::post('GetNewOrderForCustomer', 'OrderHController@GetNewOrderForCustomer');
 
     Route::post('GetApvOrderForCustomer', 'OrderHController@GetApvOrderForCustomer');
+
+    Route::post('GetCustomerOrderByIdAndStatus', 'OrderHController@GetCustomerOrderByIdAndStatus');
 
     Route::post('GetOrderById', 'OrderHController@GetOrderById');
 

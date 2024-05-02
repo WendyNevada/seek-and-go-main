@@ -139,6 +139,7 @@ const AddAttraction = () => {
                                                 placeholder={"Attraction Code"}
                                                 {...field}
                                                 onChange={field.onChange}
+                                                maxLength={7} //Add Felix
                                             />
                                         </FormControl>
                                     </FormItem>
