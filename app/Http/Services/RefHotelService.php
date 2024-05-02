@@ -289,6 +289,7 @@ class RefHotelService implements RefHotelInterface
                     'hotel' => $hotel,
                     'picture_url' => $hotelPicture->image_url,
                     'base_price' => $agencyAffiliate->base_price,
+                    'agency_id' => $agencyAffiliate->agency_id,
                     'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
                 ], 200);
             }
@@ -300,6 +301,7 @@ class RefHotelService implements RefHotelInterface
                     'hotel' => $hotel,
                     'picture_url' => "-",
                     'base_price' => $agencyAffiliate->base_price,
+                    'agency_id' => $agencyAffiliate->agency_id,
                     'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
                 ], 200);
             }
@@ -312,6 +314,7 @@ class RefHotelService implements RefHotelInterface
                 'hotel' => "-",
                 'picture_url' => "-",
                 'base_price' => "-",
+                'agency_id' => "-",
                 'address' => "-"
             ], 400);
         }

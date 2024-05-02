@@ -301,6 +301,7 @@ class RefAttractionService implements RefAttractionInterface
                     'attraction' => $attraction,
                     'picture_url' => $attractionPicture->image_url,
                     'base_price' => $agencyAffiliate->base_price,
+                    'agency_id' => $agencyAffiliate->agency_id,
                     'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
                 ], 200);
             }
@@ -312,6 +313,7 @@ class RefAttractionService implements RefAttractionInterface
                     'attraction' => $attraction,
                     'picture_url' => "-",
                     'base_price' => $agencyAffiliate->base_price,
+                    'agency_id' => $agencyAffiliate->agency_id,
                     'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
                 ], 200);
             }
@@ -324,6 +326,7 @@ class RefAttractionService implements RefAttractionInterface
                 'attraction' => "-",
                 'picture_url' => "-",
                 'base_price' => "-",
+                'agency_id' => "-",
                 'address' => "-"
             ], 400);
         }
