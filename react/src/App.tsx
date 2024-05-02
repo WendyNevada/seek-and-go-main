@@ -12,6 +12,8 @@ import AgencyAddVehiclePage from './views/Agency-page/AgencyAddVehiclePage';
 import AgencyEditVehiclePage from './views/Agency-page/AgencyEditVehiclePage';
 import AgencyAddHotelPage from './views/Agency-page/AgencyAddHotelPage';
 import AgencyEditHotelPage from './views/Agency-page/AgencyEditHotelPage';
+import VehicleDetailPage from './views/Customer-page/VehilcleDetailPage';
+import { toast } from './components/ui/use-toast';
 
 function App() {
   return (
@@ -22,8 +24,11 @@ function App() {
           <Route path="/Register" element={<LoginRegisterPage />} />
           <Route path="/Login" element={<LoginPage />} />
 
-          {/* Protected Routes for Agency section */}
-          <Route path="/Agency/*" element={<AgencyRoutes />} />
+            {/* Protected Routes for Agency section */}
+            <Route path="/Agency/*" element={<AgencyRoutes />} />
+
+            {/* Protected Routes for Customer section */}
+            <Route path="/Customer/*" element={<CustomerRoutes />} />
 
           {/* <Route path="/TEST" element={ <ComboboxDemo/>}/> */}
         </Routes>
@@ -52,6 +57,27 @@ function AgencyRoutes() {
         <Route path="EditVehicle/:ref_vehicle_id" element={<AgencyEditVehiclePage />}></Route>
         <Route path="AddHotel" element={<AgencyAddHotelPage />}></Route>
         <Route path="EditHotel/:ref_hotel_id" element={<AgencyEditHotelPage />}></Route>
+    </Routes>
+  );
+}
+
+
+function CustomerRoutes() {
+    const hasCustomerRole = useUserRole('Customer');
+
+    // If user doesn't have the required role, redirect to login
+    // if (!hasCustomerRole) {
+    //     toast({
+    //         variant: "destructive",
+    //         description: "please Login first"
+    //     });
+    //     return <Navigate to="/Login" />;
+    // }
+
+  return (
+    <Routes>
+        <Route path="VehicleOrderDetail/:ref_vehicle_id" element={<VehicleDetailPage/>} />
+
     </Routes>
   );
 }
