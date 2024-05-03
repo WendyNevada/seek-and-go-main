@@ -24,7 +24,7 @@ const Header = () => {
     ];
 
     return (
-        <div className="relative mt-[2rem]">
+        <div className="relative mt-[2rem] w-full">
             {/* Background with typewriter effect */}
             <div
                 className="bg-cover bg-center inset-0 flex items-center justify-center flex-col"

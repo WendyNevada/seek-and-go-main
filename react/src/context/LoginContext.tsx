@@ -93,6 +93,16 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     navigate('/Login');
   };
 
+  const navigatedTo = (path: string) => {
+    // Store the last visited route in localStorage
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const userData: User = JSON.parse(storedUser);
+      localStorage.setItem(`${userData.role}-lastVisitedRoute`, path);
+    }
+    navigate(path);
+  };
+
   // Value to be provided by the context
   const contextValue: LoginContextType = {
     user,

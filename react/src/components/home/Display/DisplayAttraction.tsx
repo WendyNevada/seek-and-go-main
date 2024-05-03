@@ -3,6 +3,7 @@ import { GetAttractionModel } from '@/components/agency-exclusive/product-dashbo
 import rating from '@/components/ui/Custom/rating';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import React, { useEffect, useState } from 'react'
+import {Carousel,CarouselContent,CarouselItem,CarouselNext,CarouselPrevious} from "@/components/ui/carousel"
 
 const DisplayAttraction = () => {
     const [attraction, setAttractions] = useState<GetAttractionModel[]>([])
@@ -24,37 +25,33 @@ const DisplayAttraction = () => {
         <div className='mt-12 justify-between'>
             <h2 className='text-2xl font-semibold'>Daftar Destinasi Wisata</h2>
 
-            {attraction.reduce((rows: JSX.Element[][], attraction, index) => {
-                if (index % 4 === 0) {
-                    rows.push([]);
-                }
-                rows[rows.length - 1].push(
-                    <div key={attraction.ref_attraction_id} className='flex-1'>
-                        <Card className='w-64 shadow-lg mt-8 hover:shadow-2xl cursor-pointer overflow-hidden'>
-                        <img src={enviUrl + attraction.image_url} alt={attraction.attraction_name} className="h-36 w-full shadow-lg hover:scale-110"/>
-                            <CardHeader>
-                                <CardTitle>{attraction.attraction_name}</CardTitle>
-                                <CardDescription>{attraction.description}</CardDescription>
-                            </CardHeader>
-                            <CardContent className='flex-1'>
-                                <p>{attraction.address}</p>
-                                {/* <p>{attraction.rating}</p> */}
-                                {rating(attraction.rating)}
-                                <p>Base Price: Rp.{attraction.base_price}</p>
-                            </CardContent>
-                            <CardFooter className="justify-center">
-                                {/* <Button className='ml-2' variant="destructive">Delete</Button> */}
-                                ====
-                            </CardFooter>
-                        </Card>
-                    </div>
-                );
-                return rows;
-            }, []).map((row, index) => (
-                <div key={index} className='flex flex-row'>
-                    {row}
-                </div>
-            ))}
+            <Carousel opts={{align: "start",}} className="w-full">
+                <CarouselContent>
+                    {attraction.map(item => (
+                        <CarouselItem key={item.ref_attraction_id} className="md:basis-1/2 lg:basis-1/4">
+                            <div className='flex-1'>
+                                <Card className='w-64 shadow-lg mt-8 hover:shadow-2xl cursor-pointer overflow-hidden'>
+                                    <img src={enviUrl + item.image_url} alt={item.attraction_name} className="h-36 w-full shadow-lg hover:scale-110" />
+                                    <CardHeader>
+                                        <CardTitle>{item.attraction_name}</CardTitle>
+                                        <CardDescription>{item.description}</CardDescription>
+                                    </CardHeader>
+                                    <CardContent className='flex-1'>
+                                        <p>{item.address}</p>
+                                        {rating(item.rating)}
+                                        <p>Base Price: Rp.{item.base_price}</p>
+                                    </CardContent>
+                                    <CardFooter className="justify-center">
+                                        ====
+                                    </CardFooter>
+                                </Card>
+                            </div>
+                        </CarouselItem>
+                    ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+            </Carousel>
             <hr className='mt-12'></hr>
         </div>
     )

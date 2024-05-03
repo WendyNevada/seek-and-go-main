@@ -30,6 +30,12 @@ class PackageHService implements PackageHInterface
         return $packageH;
     }
 
+    private function getPackageHWithDById($package_h_id)
+    {
+        $packageH = PackageH::with('packageDs')->find($package_h_id);
+        return $packageH;
+    }
+
     private function getPackageByPackageCode($package_code)
     {
         $packageH = PackageH::where('package_code', $package_code)->first();
@@ -134,13 +140,25 @@ class PackageHService implements PackageHInterface
         return $packageH;
     }
 
-    private function getPackageByAgencyId($agency_id, $is_custom = false, $limit)
+    private function getPackageByAgencyId($agency_id, $is_custom = false, $limit = null)
     {
-        $packageH = PackageH::where('agency_id', $agency_id)
+        if($limit == null)
+        {
+            $packageH = PackageH::where('agency_id', $agency_id)
             ->where('is_custom', $is_custom)
-            ->limit($limit)
+            ->with('packageDs')
             ->get();
 
+        }
+        else
+        {
+            $packageH = PackageH::where('agency_id', $agency_id)
+                ->where('is_custom', $is_custom)
+                ->limit($limit)
+                ->with('packageDs')
+                ->get();
+        }
+        
         return $packageH;
     }
 
@@ -520,9 +538,16 @@ class PackageHService implements PackageHInterface
 
     public function GetActivePackageHByAgencyId(AgencyIdRequest $request)
     {
-        $packageH = $this->getPackageByAgencyId($request->agency_id, false, Constanta::$homepageDataCount);
+        $packageH = $this->getPackageByAgencyId($request->agency_id);
 
         return response()->json($packageH);
+    }
+
+    public function GetPackageDataById(PackageHIdRequest $request)
+    {
+        $package = $this->getPackageHWithDById($request->package_h_id);
+
+        return response()->json($package);
     }
 
     public function GetListAttractionForAgencyPackage(AgencyIdRequest $request)

@@ -61,6 +61,12 @@ class PackageHController extends Controller
         return $response;
     }
 
+    public function GetPackageDataById(PackageHService $packageHService, PackageHIdRequest $request)
+    {
+        $response = $packageHService->GetPackageDataById($request);
+        return $response;
+    }
+
     public function GetListAttractionForAgencyPackage(PackageHService $packageHService, AgencyIdRequest $request)
     {
         $response = $packageHService->GetListAttractionForAgencyPackage($request);
