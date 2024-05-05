@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { AlertDialogProduct } from '../ProductComponent/DeleteProductAlert';
 import EditIcon from '@mui/icons-material/Edit';
+import rating from '@/components/ui/Custom/rating';
 
 const VehicleList = () => {
     const [vehicle, setVehicle] = useState<GetVehicleModel[]>([]);
@@ -34,14 +35,14 @@ const VehicleList = () => {
     }
 
     return (
-        <div className='mt-2 justify-between'>
+        <div className='mt-2 justify-left'>
             {vehicle.reduce((rows: JSX.Element[][], vehicle, index) => {
                 if (index % 4 === 0) {
                     rows.push([]);
                 }
                 rows[rows.length - 1].push(
                     <div key={vehicle.ref_vehicle_id} className='flex-1'>
-                        <Card className='w-64 shadow-lg mt-10'>
+                        <Card className='w-64 shadow-lg mt-10 mr-16'>
                         <img src={enviUrl + vehicle.image_url} alt={vehicle.vehicle_name} className="h-36 w-full shadow-lg" />
                             <CardHeader>
                                 <CardTitle>{vehicle.vehicle_name}</CardTitle>
@@ -49,12 +50,15 @@ const VehicleList = () => {
                             </CardHeader>
                             <CardContent className='flex-1'>
                                 <p>{vehicle.address}</p>
-                                <p>{vehicle.rating}</p>
+                                <div className="flex flex-row  align-middle">
+                                    {rating(vehicle.rating)}
+                                    {vehicle.rating ? vehicle.rating : 0 }
+                                </div>
                                 <p>Base Price: Rp.{vehicle.base_price}</p>
                             </CardContent>
                             <CardFooter>
                                 <Button variant='primary' onClick={() => onEditVehicle(vehicle.ref_vehicle_id)}>{<EditIcon />}</Button>
-                                <AlertDialogProduct attractionId={vehicle.ref_vehicle_id} />
+                                <AlertDialogProduct apiPath='/v1/DeactivateVehicleById' attractionId={vehicle.ref_vehicle_id} param='ref_vehicle_id'/>
                                 {/* <Button className='ml-2' variant="destructive">Delete</Button> */}
                             </CardFooter>
                         </Card>
@@ -62,8 +66,13 @@ const VehicleList = () => {
                 );
                 return rows;
             }, []).map((row, index) => (
-                <div key={index} className='flex flex-row'>
-                    {row}
+                <div key={index} className='flex flex-row justify-left w-64'>
+                    {/* {row} */}
+                    {row.map((card, i) => (
+                    <div key={i} className='flex-1 bg-red-50'>
+                        {card}
+                    </div>
+                ))}
                 </div>
             ))}
         </div>

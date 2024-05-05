@@ -12,16 +12,18 @@ interface Area {
 
 interface UseKelurahanQueryProps {
     selectedKecamatan: string;
+    selectedCity: string;
+    selectedProvince: string;
 }
 
-export function useKelurahanQuery({ selectedKecamatan }: UseKelurahanQueryProps) {
+export function useKelurahanQuery({ selectedKecamatan, selectedCity, selectedProvince }: UseKelurahanQueryProps) {
     const [kelurahan, setKelurahan] = useState<Kelurahan[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
     const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await axiosClient.post("/v1/GetArea4ByArea3", { area_code: selectedKecamatan });
+            const response = await axiosClient.post("/v1/GetArea4ByArea3AndArea2AndArea1", { area_1: selectedProvince, area_2 : selectedCity, area_3 : selectedKecamatan});
             if (response.status !== 200) {
                 throw new Error("Failed to fetch data");
             }

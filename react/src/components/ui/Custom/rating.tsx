@@ -5,7 +5,7 @@ import StarBorderIcon from "@mui/icons-material/StarBorder";
 
 const rating = (rating: number) => {
     const stars = [];
-    const remainingRating = rating;
+    //const remainingRating = rating;
     const maxRating = 5;
     const threshold = 0.5;
 
@@ -30,26 +30,6 @@ const rating = (rating: number) => {
     for (let i = 0; i <d; i++) {
         stars.push(<StarBorderIcon className="text-yellow-500" />);
     }
-
-    // // Render full stars
-    // for (let i = 0; i < Math.floor(remainingRating); i++) {
-    //     stars.push(<StarOutlinedIcon className="text-yellow-500" />);
-    //     // remainingRating -= 1;
-    // }
-
-    // // Render half star if remainingRating is greater than 0.5
-    // if ((remainingRating * 10) % 10 >= 5) {
-    //     stars.push(<StarHalfOutlinedIcon className="text-yellow-500" />);
-    // }
-    // else if (remainingRating > 0) {
-    //     // Render empty star if remainingRating is less than 0.5 but greater than 0
-    //     stars.push(<StarBorderIcon className="text-yellow-500" />);
-    //     console.log(remainingRating)
-    // }
-    // else {
-    //     console.log('empty');
-    // }
-
     return stars;
 };
 

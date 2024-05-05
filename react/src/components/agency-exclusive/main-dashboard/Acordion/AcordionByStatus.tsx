@@ -6,7 +6,7 @@ import {Table,TableBody,TableCaption,TableCell,TableHead,TableHeader,TableRow} f
 const AcordionByStatus = ( { orders, title }: { orders: OrderH[] | null ; title: string}) => {
   return (
     <div>
-        {orders === null ? (
+        {(orders === null) ? (
         <Accordion key="no-data" type="single" collapsible>
           <AccordionItem value="item-no-data">
             <AccordionTrigger className="text-2xl font-bold">{title}</AccordionTrigger>
@@ -16,21 +16,10 @@ const AcordionByStatus = ( { orders, title }: { orders: OrderH[] | null ; title:
           </AccordionItem>
         </Accordion>
         ) : (
-            // orders.map((order) => (
-            // <Accordion key={order.order_h_id} type="single" collapsible>
-            //     <AccordionItem value={`item-${order.order_h_id}`}>
-            //     <AccordionTrigger className="text-2xl font-bold">New Orders</AccordionTrigger>
-            //     <AccordionContent>
-            //         {/* Render order details here */}
-            //         {JSON.stringify(order)}
-            //     </AccordionContent>
-            //     </AccordionItem>
-            // </Accordion>
                 <Accordion type="single" collapsible>
                     <AccordionItem value="item-orders">
                         <AccordionTrigger className="text-2xl font-bold">{title}</AccordionTrigger>
                         <AccordionContent>
-
                                     {/* TABLE */}
                                     <Table>
                                         <TableCaption>A list of your recent Activities.</TableCaption>
@@ -42,16 +31,24 @@ const AcordionByStatus = ( { orders, title }: { orders: OrderH[] | null ; title:
                                             <TableHead className="text-right">Total Price</TableHead>
                                             </TableRow>
                                         </TableHeader>
-                                        <TableBody>
-                                            {orders.map((order) => (
-                                                <TableRow key={order.order_h_id}>
-                                                <TableCell className="font-medium">{order.order_no}</TableCell>
-                                                <TableCell>{order.order_dt.slice(0, 10)}</TableCell>
-                                                <TableCell>{order.order_status} </TableCell>
-                                                <TableCell className="text-right">{order.total_price}</TableCell>
+                                        {orders.length === 0 ? (
+                                            <TableBody>
+                                                <TableRow>
+                                                    <TableCell colSpan={parseInt("4")} className="text-center">No data</TableCell>
                                                 </TableRow>
-                                            ))}
-                                        </TableBody>
+                                            </TableBody>
+                                        ) : (
+                                            <TableBody>
+                                                {orders.map((order) => (
+                                                    <TableRow key={order.order_h_id}>
+                                                        <TableCell className="font-medium">{order.order_no}</TableCell>
+                                                        <TableCell>{order.order_dt.slice(0, 10)}</TableCell>
+                                                        <TableCell>{order.order_status} </TableCell>
+                                                        <TableCell className="text-right">{order.total_price}</TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        )}
                                     </Table>
 
                         </AccordionContent>

@@ -17,7 +17,7 @@ const VehicleDetailPage = () => {
     // // </div> */}
     <div>
         <Navbar/>
-            <div className="flex mt-[7rem] lg:mt-[6rem] justify-center items-center">
+            <div className="flex mt-[7rem] lg:mt-[6rem]  items-center sm:justify-start xl:justify-center">
                 <OrderDetail ref_vehicle_id={Number(ref_vehicle_id) || 0}/>
             </div>
         <Footer/>

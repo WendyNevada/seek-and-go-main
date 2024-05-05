@@ -7,7 +7,7 @@ const AgencyProductPage = () => {
   return (
     <div>
         <AgencyNavbar/>
-        <div className='min-w-28 mt-40 mt-20 sm:mt-40 md:mt-40 mx-80 max-w-screen-lg'>
+        <div className='min-w-28 mt-40 sm:mt-40 md:mt-40 max-w-screen-lg sm:mx-80'>
             <ProductList/>
         </div>
     </div>
