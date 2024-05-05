@@ -13,10 +13,16 @@ import {
 import { Button } from "@/components/ui/button";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
-export function AlertDialogProduct({attractionId} : {attractionId: number}) {
+interface DeleteProductAlertProps {
+    apiPath: string;
+    attractionId: number;
+    param: string;
+}
+
+export function AlertDialogProduct({ apiPath, attractionId, param }: DeleteProductAlertProps) {
     //DeactivateAttractionById
     const handleDelete = () => {
-        axiosClient.post('/v1/DeactivateAttractionById', {ref_attraction_id: attractionId})
+        axiosClient.post(apiPath, {[param]: attractionId})
         .then(() => {
             window.location.reload();
         });

@@ -270,7 +270,7 @@ const AddVehicle = () => {
                                         <FormLabel>{"District"}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl>
-                                            <KecamatanCombobox onSelectKecamatan={handleKecamatanSelect} selectedCity={form.watch("area_2")}/>
+                                            <KecamatanCombobox onSelectKecamatan={handleKecamatanSelect} selectedCity={form.watch("area_2")} selectedProvince={form.watch("area_1")}/>
                                         </FormControl>
                                     </FormItem>
                                 )}
@@ -283,7 +283,7 @@ const AddVehicle = () => {
                                         <FormLabel>{"Subdistrict"}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl>
-                                            <KelurahanCombobox onSelectKelurahan={handleKelurahanSelect} selectedKecamatan={form.watch("area_3")}/>
+                                            <KelurahanCombobox onSelectKelurahan={handleKelurahanSelect} selectedKecamatan={form.watch("area_3")} selectedCity={form.watch("area_2")} selectedProvince={form.watch("area_1")}/>
                                         </FormControl>
                                     </FormItem>
                                 )}
@@ -453,7 +453,7 @@ const AddVehicle = () => {
                                 name="promo_code"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Promo Code"}<Required/></FormLabel>
+                                        <FormLabel>{"Promo Code"}</FormLabel>
                                         <FormMessage />
                                         <FormControl className='w-full'>
                                             <Input
@@ -484,23 +484,6 @@ const AddVehicle = () => {
                                 </FormItem>
                             )}
                         />
-                        {/* <FormField
-                            control={form.control}
-                            name="promo_code_affiliate"
-                            render={({ field }) => (
-                                <FormItem className="custom-field">
-                                    <FormLabel>{"Promo Code Affiliate"}</FormLabel>
-                                    <FormMessage />
-                                    <FormControl>
-                                        <Input
-                                            placeholder={"Promo Code Affiliate"}
-                                            {...field}
-                                            onChange={field.onChange}
-                                        />
-                                    </FormControl>
-                                </FormItem>
-                            )}
-                        /> */}
                         <FormField
                                 control={form.control}
                                 name="description"

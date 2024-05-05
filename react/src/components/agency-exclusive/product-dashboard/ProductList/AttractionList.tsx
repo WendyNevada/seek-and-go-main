@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { AlertDialogProduct } from '../ProductComponent/DeleteProductAlert';
 import EditIcon from '@mui/icons-material/Edit';
 import { useNavigate } from 'react-router-dom';
+import rating from '@/components/ui/Custom/rating';
 
 const AttractionList = () => {
     const [attractions, setAttractions] = useState<GetAttractionModel[]>([]);
@@ -61,12 +62,15 @@ const AttractionList = () => {
                             </CardHeader>
                             <CardContent className='flex-1'>
                                 <p>{attraction.address}</p>
-                                <p>{attraction.rating}</p>
+                                <div className="flex flex-row  align-middle">
+                                    {rating(attraction.rating)}
+                                    {attraction.rating ? attraction.rating : 0 }
+                                </div>
                                 <p>Base Price: Rp.{attraction.base_price}</p>
                             </CardContent>
                             <CardFooter>
                                 <Button variant='primary' onClick={() => onEditAttraction(attraction.ref_attraction_id)}>{<EditIcon />}</Button>
-                                <AlertDialogProduct attractionId={attraction.ref_attraction_id} />
+                                <AlertDialogProduct apiPath='/v1/DeactivateAttractionById' attractionId={attraction.ref_attraction_id} param='ref_attraction_id'/>
                                 {/* <Button className='ml-2' variant="destructive">Delete</Button> */}
                             </CardFooter>
                         </Card>

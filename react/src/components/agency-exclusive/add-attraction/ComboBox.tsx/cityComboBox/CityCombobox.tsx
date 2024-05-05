@@ -19,6 +19,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { useCityQuery } from "./CityCombobox-hook"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
     interface CityComboboxProps {
         onSelectCity: (city: string) => void;
@@ -55,6 +56,7 @@ export function CityCombobox({onSelectCity, selectedProvince} : CityComboboxProp
           {!loading && cities.length === 0 && <CommandEmpty>No city found.</CommandEmpty>}
           {/* <CommandEmpty>No City found.</CommandEmpty> */}
           {!loading && cities.length > 0 && (
+            <ScrollArea className="h-48 overflow-auto">
             <CommandGroup>
             {cities.map((cities:City) => (
                 <CommandList>
@@ -79,6 +81,7 @@ export function CityCombobox({onSelectCity, selectedProvince} : CityComboboxProp
 
             ))}
           </CommandGroup>
+          </ScrollArea>
           )
         }
         </Command>
