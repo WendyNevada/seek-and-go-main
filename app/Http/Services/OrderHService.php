@@ -123,7 +123,7 @@ class OrderHService implements OrderHInterface
         return $strDate;
     }
 
-    private function createOrderD($order_h_id, $package_h_id, $ref_hotel_id, $ref_attraction_id, $ref_vehicle_id, $strStartDate, $strEndDate, $price): OrderD
+    private function createOrderD($order_h_id, $package_h_id, $ref_hotel_id, $ref_attraction_id, $ref_vehicle_id, $strStartDate, $strEndDate, $price, $qty): OrderD
     {
         $orderD = new OrderD();
         $orderD->order_h_id = $order_h_id;
@@ -135,6 +135,7 @@ class OrderHService implements OrderHInterface
         $orderD->start_dt = $strStartDate;
         $orderD->end_dt = $strEndDate;
         $orderD->price = $price;
+        $orderD->qty = $qty;
         $orderD->save();
 
         return $orderD;
@@ -273,6 +274,68 @@ class OrderHService implements OrderHInterface
             ]);
         }
     }
+
+    private function checkProductAvailable($product, $product_type, $qtyOrder, &$messageRet)
+    {
+        if($product_type == Constanta::$attraction)
+        {
+            $product = RefAttraction::where('ref_attraction_id', $product['ref_attraction_id'])->first();
+            $message = $product->attraction_name;
+        }
+        else if($product_type == Constanta::$hotel)
+        {
+            $product = RefHotel::where('ref_hotel_id', $product['ref_hotel_id'])->first();
+            $message = $product->hotel_name;
+        }
+        else if($product_type == Constanta::$vehicle)
+        {
+            $product = RefVehicle::where('ref_vehicle_id', $product['ref_vehicle_id'])->first();
+            $message = $product->vehicle_name;
+        }
+        else if($product_type == Constanta::$package)
+        {
+            $product = PackageH::where('package_h_id', $product['package_h_id'])->first();
+            $message = $product->package_name;
+        }
+        
+        $qty = $product->qty;
+        $total = $qty - $qtyOrder;
+
+        $messageRet = $message;
+
+        if($total < 0)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    private function reduceProductQty($product, $product_type)
+    {
+        if($product_type == Constanta::$attraction)
+        {
+            $product = RefAttraction::where('ref_attraction_id', $product['ref_attraction_id'])->first();
+        }
+        else if($product_type == Constanta::$hotel)
+        {
+            $product = RefHotel::where('ref_hotel_id', $product['ref_hotel_id'])->first();
+        }
+        else if($product_type == Constanta::$vehicle)
+        {
+            $product = RefVehicle::where('ref_vehicle_id', $product['ref_vehicle_id'])->first();
+        }
+        else if($product_type == Constanta::$package)
+        {
+            $product = PackageH::where('package_h_id', $product['package_h_id'])->first();
+        }
+
+        $product->update([
+            'qty' => $product->qty - 1
+        ]);
+    }
     #endregion
 
     #region Public Function
@@ -324,6 +387,22 @@ class OrderHService implements OrderHInterface
         {
             DB::beginTransaction();
 
+            foreach($request->details as $detail)
+            {
+                $prodName = "";
+                $isAvail = $this->checkProductAvailable($detail, $detail['product_type'], $detail['qty'], $prodName);
+
+                if(!$isAvail)
+                {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Product '. $prodName . ' is not available',
+                        'order_h_id' => "-",
+                        'order_no' => "-"
+                    ], 400);
+                }
+            }
+
             $orderNo = $this->generateOrderNo();
 
             $orderH = $this->createNewOrderH($orderNo, $request->customer_id, $request->agency_id);
@@ -351,13 +430,16 @@ class OrderHService implements OrderHInterface
                     $detail['ref_vehicle_id'],
                     $strStartDate,
                     $strEndDate,
-                    $price
+                    $price,
+                    $detail['qty']
                 );
 
                 if($detail['package_h_id'] == null)
                 {   
                     $totPrice += $price;
                 }
+
+                $this->reduceProductQty($detail, $detail['product_type']);
             }
 
             $packageIds = $this->getPackageInsideOrder($orderH->order_h_id);
