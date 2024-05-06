@@ -2,8 +2,17 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import React from 'react'
 import { OrderH } from '../utils/interface'
 import {Table,TableBody,TableCaption,TableCell,TableHead,TableHeader,TableRow} from "@/components/ui/table"
+import EditIcon from '@mui/icons-material/Edit';
+import { useNavigate } from 'react-router-dom';
 
 const AcordionByStatus = ( { orders, title }: { orders: OrderH[] | null ; title: string}) => {
+    const navigate = useNavigate();
+
+    const onViewApprovalDetail = (id: number) => {
+        navigate(`/Agency/Approval/${id}`)
+        console.log('hwhwhw', id)
+    }
+
   return (
     <div>
         {(orders === null) ? (
@@ -25,16 +34,17 @@ const AcordionByStatus = ( { orders, title }: { orders: OrderH[] | null ; title:
                                         <TableCaption>A list of your recent Activities.</TableCaption>
                                         <TableHeader>
                                             <TableRow>
-                                            <TableHead className="w-[100px]">Order No</TableHead>
-                                            <TableHead>Order Date</TableHead>
-                                            <TableHead>Order Status</TableHead>
-                                            <TableHead className="text-right">Total Price</TableHead>
+                                                <TableHead className="w-[100px]">Order No</TableHead>
+                                                <TableHead>Order Date</TableHead>
+                                                <TableHead>Order Status</TableHead>
+                                                <TableHead className="text-right">Total Price</TableHead>
+                                                <TableHead className="text-right">Detail</TableHead>
                                             </TableRow>
                                         </TableHeader>
                                         {orders.length === 0 ? (
                                             <TableBody>
                                                 <TableRow>
-                                                    <TableCell colSpan={parseInt("4")} className="text-center">No data</TableCell>
+                                                    <TableCell colSpan={parseInt("5")} className="text-center">No data</TableCell>
                                                 </TableRow>
                                             </TableBody>
                                         ) : (
@@ -45,6 +55,7 @@ const AcordionByStatus = ( { orders, title }: { orders: OrderH[] | null ; title:
                                                         <TableCell>{order.order_dt.slice(0, 10)}</TableCell>
                                                         <TableCell>{order.order_status} </TableCell>
                                                         <TableCell className="text-right">{order.total_price}</TableCell>
+                                                        <TableCell className="text-right"><EditIcon className='cursor-pointer hover:text-indigo-600' onClick={() => onViewApprovalDetail(order.order_h_id)}/></TableCell>
                                                     </TableRow>
                                                 ))}
                                             </TableBody>
