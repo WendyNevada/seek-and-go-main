@@ -207,7 +207,7 @@ const AddAttraction = () => {
                                             <FormLabel>{"District"}<Required/></FormLabel>
                                             <FormMessage />
                                             <FormControl>
-                                                <KecamatanCombobox onSelectKecamatan={handleKecamatanSelect} selectedCity={form.watch("area_2")}/>
+                                                <KecamatanCombobox onSelectKecamatan={handleKecamatanSelect} selectedCity={form.watch("area_2")} selectedProvince={form.watch("area_1")}/>
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -220,7 +220,7 @@ const AddAttraction = () => {
                                             <FormLabel>{"Subdistrict"}<Required/></FormLabel>
                                             <FormMessage />
                                             <FormControl>
-                                                <KelurahanCombobox onSelectKelurahan={handleKelurahanSelect} selectedKecamatan={form.watch("area_3")}/>
+                                                <KelurahanCombobox onSelectKelurahan={handleKelurahanSelect} selectedKecamatan={form.watch("area_3")} selectedCity={form.watch("area_2")} selectedProvince={form.watch("area_1")}/>
                                             </FormControl>
                                         </FormItem>
                                     )}

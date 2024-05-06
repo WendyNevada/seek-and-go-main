@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { AlertDialogProduct } from '../ProductComponent/DeleteProductAlert';
 import EditIcon from '@mui/icons-material/Edit';
 import { urlConstant } from '@/urlConstant';
+import rating from '@/components/ui/Custom/rating';
 
 const HotelList = () => {
     const [hotel, setHotel] = useState<GetHotelModel[]>([]);
@@ -52,12 +53,15 @@ const HotelList = () => {
                             </CardHeader>
                             <CardContent className='flex-1'>
                                 <p>{hotel.address}</p>
-                                <p>{hotel.rating}</p>
+                                <div className="flex flex-row  align-middle">
+                                    {rating(hotel.rating)}
+                                    {hotel.rating ? hotel.rating : 0 }
+                                </div>
                                 <p>Base Price: Rp.{hotel.base_price}</p>
                             </CardContent>
                             <CardFooter>
                                 <Button variant='primary' onClick={() => onEdithotel(hotel.ref_hotel_id)}>{<EditIcon />}</Button>
-                                <AlertDialogProduct attractionId={hotel.ref_hotel_id} />
+                                <AlertDialogProduct apiPath='/v1/DeactivateHotelById' attractionId={hotel.ref_hotel_id} param='ref_hotel_id'/>
                                 {/* <Button className='ml-2' variant="destructive">Delete</Button> */}
                             </CardFooter>
                         </Card>

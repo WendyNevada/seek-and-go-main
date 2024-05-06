@@ -19,10 +19,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { useKecamatanQuery } from "./KecamatanCombobox-hook"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface KecamatanComboboxProps {
     onSelectKecamatan: (kecamatan: string) => void;
     selectedCity: string;
+    selectedProvince: string;
 }
 
 interface Kecamatan {
@@ -30,10 +32,10 @@ interface Kecamatan {
     label: string;
 }
 
-export function KecamatanCombobox({onSelectKecamatan, selectedCity} : KecamatanComboboxProps) {
+export function KecamatanCombobox({onSelectKecamatan, selectedCity, selectedProvince} : KecamatanComboboxProps) {
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState("")
-  const { kecamatan, loading } = useKecamatanQuery({selectedCity});
+  const { kecamatan, loading } = useKecamatanQuery({selectedCity, selectedProvince});
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -55,6 +57,7 @@ export function KecamatanCombobox({onSelectKecamatan, selectedCity} : KecamatanC
           <CommandInput placeholder="Search Kecamatan..." />
           {!loading && kecamatan.length === 0 && <CommandEmpty>No district found.</CommandEmpty>}
           {/* <CommandEmpty>No framework found.</CommandEmpty> */}
+          <ScrollArea className="h-48 overflow-auto">
           <CommandGroup>
             {kecamatan.map((kecamatan:Kecamatan) => (
                 <CommandList>
@@ -76,9 +79,9 @@ export function KecamatanCombobox({onSelectKecamatan, selectedCity} : KecamatanC
                         {kecamatan.label}
                     </CommandItem>
                 </CommandList>
-
             ))}
           </CommandGroup>
+          </ScrollArea>
         </Command>
       </PopoverContent>
     </Popover>
