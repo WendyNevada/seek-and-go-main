@@ -14,6 +14,7 @@ import AgencyAddHotelPage from './views/Agency-page/AgencyAddHotelPage';
 import AgencyEditHotelPage from './views/Agency-page/AgencyEditHotelPage';
 import VehicleDetailPage from './views/Customer-page/VehilcleDetailPage';
 import { toast } from './components/ui/use-toast';
+import AgencyOrderApprovalPage from './views/Agency-page/AgencyOrderApprovalPage';
 
 function App() {
   return (
@@ -57,6 +58,9 @@ function AgencyRoutes() {
         <Route path="EditVehicle/:ref_vehicle_id" element={<AgencyEditVehiclePage />}></Route>
         <Route path="AddHotel" element={<AgencyAddHotelPage />}></Route>
         <Route path="EditHotel/:ref_hotel_id" element={<AgencyEditHotelPage />}></Route>
+
+        {/* order approval page */}
+        <Route path="Approval/:order_h_id" element={<AgencyOrderApprovalPage/>} />
     </Routes>
   );
 }
