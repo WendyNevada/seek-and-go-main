@@ -27,6 +27,7 @@ return new class extends Migration
             $table->dateTime('start_dt');
             $table->dateTime('end_dt');
             $table->double('price', 17, 2)->nullable();
+            $table->integer('qty');
             $table->timestamps();
         });
     }

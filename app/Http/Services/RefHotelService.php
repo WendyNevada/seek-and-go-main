@@ -266,6 +266,18 @@ class RefHotelService implements RefHotelInterface
         $count = count($numbers);
         return $sum / $count;
     }
+
+    private function checkDataEmpty($data)
+    {
+        if(empty($data))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     #endregion
 
     #region Public Function
@@ -504,7 +516,27 @@ class RefHotelService implements RefHotelInterface
     {
         $hotel = $this->getActiveHotelDataSortedWithLimit(Constanta::$homepageDataCount);
 
-        return response()->json($hotel);
+        if($this->checkDataEmpty($hotel) == true)
+        {
+            return response()->json(
+                [
+                    'status' => "error",
+                    'message' => "Data not found",
+                    'data'=> []
+                ]
+                ,400
+            );
+        }
+        else
+        {
+            return response()->json(
+                [
+                    'status' => "ok",
+                    'message' => "Success",
+                    'data'=> $hotel
+                ]
+            );
+        }
     }
 
     public function GetActiveHotelByAgencyId(AgencyIdRequest $request)
