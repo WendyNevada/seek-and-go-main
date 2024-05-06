@@ -142,6 +142,18 @@ class AgencyAffiliateService implements AgencyAffiliateInterface
 
         return $vehicleByAddress;
     }
+
+    private function checkDataEmpty($data)
+    {
+        if(count($data) == 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     #endregion
 
     #region Public Function
@@ -153,11 +165,26 @@ class AgencyAffiliateService implements AgencyAffiliateInterface
 
         $vehicle = $this->getVehicleByKeyword($request->keyword);
 
-        return response()->json([
-            'attraction' => $attraction,
-            'hotel' => $hotel,
-            'vehicle' => $vehicle
-        ]);
+        if($this->checkDataEmpty($attraction) && $this->checkDataEmpty($hotel) && $this->checkDataEmpty($vehicle))
+        {
+            return response()->json([
+                'status' => "error",
+                'message' => "Data not found",
+                'attraction' => [],
+                'hotel' => [],
+                'vehicle' => []
+            ]);
+        }
+        else
+        {
+            return response()->json([
+                'status' => "ok",
+                'message' => "Success",
+                'attraction' => $attraction,
+                'hotel' => $hotel,
+                'vehicle' => $vehicle
+            ]);
+        }
     }
 
     public function SearchAttractionCustomer(SearchBarCustomerRequest $request)  
@@ -169,7 +196,22 @@ class AgencyAffiliateService implements AgencyAffiliateInterface
 
         $attraction = $this->mergeDataQuery($attractionByName, $attractionByAddress);
 
-        return response()->json($attraction);
+        if($this->checkDataEmpty($attraction))
+        {
+            return response()->json([
+                'status' => "error",
+                'message' => "Data not found",
+                'data' => []
+            ]);
+        }
+        else
+        {
+            return response()->json([
+                'status' => "ok",
+                'message' => "Success",
+                'data' => $attraction
+            ]);
+        }
     }
 
     public function SearchHotelCustomer(SearchBarCustomerRequest $request)
@@ -180,7 +222,22 @@ class AgencyAffiliateService implements AgencyAffiliateInterface
 
         $hotel = $this->mergeDataQuery($hotelByName, $hotelByAddress);
 
-        return response()->json($hotel);
+        if($this->checkDataEmpty($hotel))
+        {
+            return response()->json([
+                'status' => "error",
+                'message' => "Data not found",
+                'data' => []
+            ]);
+        }
+        else
+        {
+            return response()->json([
+                'status' => "ok",
+                'message' => "Success",
+                'data' => $hotel
+            ]);
+        }
     }
 
     public function SearchVehicleCustomer(SearchBarCustomerRequest $request)
@@ -191,7 +248,22 @@ class AgencyAffiliateService implements AgencyAffiliateInterface
 
         $vehicle = $this->mergeDataQuery($vehicleByName, $vehicleByAddress);
 
-        return response()->json($vehicle);
+        if($this->checkDataEmpty($vehicle))
+        {
+            return response()->json([
+                'status' => "error",
+                'message' => "Data not found",
+                'data' => []
+            ]);
+        }
+        else
+        {
+            return response()->json([
+                'status' => "ok",
+                'message' => "Success",
+                'data' => $vehicle
+            ]);
+        }
     }
     #endregion
 }

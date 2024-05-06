@@ -19,7 +19,8 @@ class OrderD extends Model
         'ref_vehicle_id',
         'start_dt',
         'end_dt',
-        'price'
+        'price',
+        'qty'
     ];
 
     protected $primaryKey = 'order_d_id';
@@ -123,6 +124,16 @@ class OrderD extends Model
     public function setPriceAttribute($value)
     {
         $this->attributes['price'] = $value;
+    }
+
+    public function getQtyAttribute($value)
+    {
+        return $value;
+    }
+
+    public function setQtyAttribute($value)
+    {
+        $this->attributes['qty'] = $value;
     }
     #endregion
 

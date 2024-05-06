@@ -283,6 +283,18 @@ class RefVehicleService implements RefVehicleInterface
         $count = count($numbers);
         return $sum / $count;
     }
+
+    private function checkDataEmpty($data)
+    {
+        if(empty($data))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     #endregion
 
     #region Public Function
@@ -541,7 +553,27 @@ class RefVehicleService implements RefVehicleInterface
     {
         $vehicle = $this->getActiveVehicleDataSortedWithLimit(Constanta::$homepageDataCount);
 
-        return response()->json($vehicle);
+        if($this->checkDataEmpty($vehicle) == true)
+        {
+            return response()->json(
+                [
+                    'status' => "error",
+                    'message' => "Data not found",
+                    'data'=> []
+                ]
+                ,400
+            );
+        }
+        else
+        {
+            return response()->json(
+                [
+                    'status' => "ok",
+                    'message' => "Success",
+                    'data'=> $vehicle
+                ]
+            );
+        }
     }
 
     public function GetActiveVehicleByAgencyId(AgencyIdRequest $request)
