@@ -105,7 +105,6 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
     return (
         <div className="min-h-50 w-50 p-0 sm:p-12">
             <div className="mx-auto max-w-2xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
-                {ref_hotel_id}
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <h1 className="text-2xl font-bold mb-8 text-center">Edit Hotel</h1>

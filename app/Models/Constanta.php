@@ -60,5 +60,6 @@ class Constanta extends Model
     public static $attraction = "attraction";
     public static $hotel = "hotel";
     public static $vehicle = "vehicle";
+    public static $package = "package";
     #endregion
 }

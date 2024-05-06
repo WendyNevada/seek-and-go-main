@@ -22,7 +22,7 @@ class UpdateCustomerAccountRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string'],
+            'account_id' => ['required'],
             'account_name' => ['string', 'nullable'],
             'password' => ['string', 'nullable'],
             'phone' => ['string', 'nullable']

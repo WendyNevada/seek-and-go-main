@@ -28,6 +28,13 @@ class AccountService implements AccountInterface
         return $account;
     }
 
+    private function getAccountById($account_id)
+    {
+        $account = Account::where('account_id', $account_id)->first();
+
+        return $account;
+    }
+
     private function checkPassword($reqPass, $accPass): bool
     {
         if(Hash::check($accPass, $reqPass))
@@ -132,9 +139,16 @@ class AccountService implements AccountInterface
         return $agency;
     }
 
-    private function verifyEmail($account)
+    private function checkEmailVerified($emailVerifiedAt)
     {
-        $account->notify(new VerifyEmail);
+        if($emailVerifiedAt != null)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
     #endregion
 
@@ -170,7 +184,7 @@ class AccountService implements AccountInterface
                         'agency_id' => "-"
                     ], 400);
                 }
-                else if($account->email_verified_at == null)
+                else if($this->checkEmailVerified($account->email_verified_at))
                 {
                     return response()->json([
                         'status' => "error",
@@ -240,8 +254,6 @@ class AccountService implements AccountInterface
 
                 $customer = $this->createCustomer($accountId, $request->customer_name, $request->gender, $strBirthDate);
 
-                //$this->verifyEmail($account);
-
                 $account->sendEmailVerificationNotification();
 
                 DB::commit();
@@ -293,8 +305,6 @@ class AccountService implements AccountInterface
 
                 $agency = $this->createAgency($accountId, $request->agency_name, $request->npwp, $request->location);
 
-                $this->verifyEmail($account);
-
                 $account->sendEmailVerificationNotification();
 
                 DB::commit();
@@ -334,30 +344,18 @@ class AccountService implements AccountInterface
     {
         try 
         {
-            $account = $this->getAccountByEmail($request->email);
-    
-            if ($account != null) 
-            {
-                DB::beginTransaction();
-                
-                $this->updateAccount($account->account_id, $request->account_name, $request->email, $request->password, $request->role, $request->phone);
-    
-                DB::commit();
+            DB::beginTransaction();
+            
+            $account = $this->updateAccount($request->account_id, $request->account_name, $request->email, $request->password, $request->role, $request->phone);
 
-                return response()->json([
-                    'status' => "ok",
-                    'message' => "success",
-                    'account_id' => $account->account_id
-                ], 200);
-            } 
-            else 
-            {
-                return response()->json([
-                    'status' => "error",
-                    'message' => "Email not found",
-                    'account_id' => "-"
-                ], 400);
-            }
+            DB::commit();
+
+            return response()->json([
+                'status' => "ok",
+                'message' => "success",
+                'account_id' => $account->account_id
+            ], 200);
+            
         }
         catch(\Exception $e)
         {
@@ -376,33 +374,21 @@ class AccountService implements AccountInterface
     public function UpdateAgencyAccount(UpdateAgencyAccountRequest $request)
     {
         try 
-        {
-            $account = $this->getAccountByEmail($request->email);
-    
-            if ($account != null) 
-            {
-                DB::beginTransaction();
+        {   
+            DB::beginTransaction();
 
-                $account = $this->updateAccount($account->account_id, $request->account_name, $request->email, $request->password, $request->role, $request->phone);
+            $account = $this->updateAccount($request->account_id, $request->account_name, $request->email, $request->password, $request->role, $request->phone);
 
-                $agency = $this->updateAgency($account->account_id, $request->agency_name, $request->npwp, $request->location);
-    
-                DB::commit();
+            $agency = $this->updateAgency($account->account_id, $request->agency_name, $request->npwp, $request->location);
 
-                return response()->json([
-                    'status' => "ok",
-                    'message' => "success",
-                    'account_id' => $account->account_id
-                ], 200);
-            } 
-            else 
-            {
-                return response()->json([
-                    'status' => "error",
-                    'message' => "Email not found",
-                    'account_id' => "-"
-                ], 400);
-            }
+            DB::commit();
+
+            return response()->json([
+                'status' => "ok",
+                'message' => "success",
+                'account_id' => $account->account_id
+            ], 200);
+            
         }
         catch(\Exception $e)
         {

@@ -31,7 +31,9 @@ class CreateOrderRequest extends FormRequest
             'details.*.ref_vehicle_id' => ['nullable'],
             'details.*.start_dt' => ['required','string'],
             'details.*.end_dt' => ['required', 'string'],
-            'details.*.price' => ['required']
+            'details.*.price' => ['required'],
+            'details.*.qty' => ['required'],
+            'details.*.product_type' => ['required']
         ];
     }
 }

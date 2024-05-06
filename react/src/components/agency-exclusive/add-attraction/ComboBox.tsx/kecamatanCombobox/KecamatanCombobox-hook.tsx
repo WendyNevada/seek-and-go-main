@@ -12,16 +12,17 @@ interface Area {
 
 interface UseKecamatanQueryProps {
     selectedCity: string;
+    selectedProvince: string;
 }
 
-export function useKecamatanQuery({ selectedCity }: UseKecamatanQueryProps) {
+export function useKecamatanQuery({ selectedCity, selectedProvince }: UseKecamatanQueryProps) {
     const [kecamatan, setKecamatan] = useState<Kecamatan[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
     const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await axiosClient.post("/v1/GetArea3ByArea2", { area_code: selectedCity });
+            const response = await axiosClient.post("/v1/GetArea3ByArea2AndArea1", { area_1: selectedProvince, area_2 : selectedCity});
             if (response.status !== 200) {
                 throw new Error("Failed to fetch data");
             }

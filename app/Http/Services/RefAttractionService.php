@@ -271,6 +271,18 @@ class RefAttractionService implements RefAttractionInterface
         $count = count($numbers);
         return $sum / $count;
     }
+
+    private function checkDataEmpty($data)
+    {
+        if(empty($data))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     #endregion
 
     #region Public Function
@@ -516,7 +528,27 @@ class RefAttractionService implements RefAttractionInterface
     {
         $attraction = $this->getActiveAttractionDataSortedWithLimit(Constanta::$homepageDataCount);
 
-        return response()->json($attraction);
+        if($this->checkDataEmpty($attraction) == true)
+        {
+            return response()->json(
+                [
+                    'status' => "error",
+                    'message' => "Data not found",
+                    'data'=> []
+                ]
+                ,400
+            );
+        }
+        else
+        {
+            return response()->json(
+                [
+                    'status' => "ok",
+                    'message' => "Success",
+                    'data'=> $attraction
+                ]
+            , 200);
+        }
     }
 
     public function GetActiveAttractionByAgencyId(AgencyIdRequest $request)
