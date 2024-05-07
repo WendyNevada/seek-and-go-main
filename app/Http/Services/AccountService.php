@@ -47,15 +47,21 @@ class AccountService implements AccountInterface
         }
     }
 
-    private function checkRole($accRole, $reqRole): bool
+    private function checkRoleAndReturnData($account)
     {
-        if($accRole == $reqRole)
+        if($account->role == Constanta::$roleCustomer)
         {
-            return true;
+            return [
+                'customer_id' => $account->customers->customer_id,
+                'agency_id' => "-"
+            ];
         }
         else
         {
-            return false;
+            return [
+                'customer_id' => "-",
+                'agency_id' => $account->agencies->agency_id
+            ];
         }
     }
 
@@ -164,7 +170,7 @@ class AccountService implements AccountInterface
             {
                 return response()->json([
                     'status' => "error",
-                    'message' => "Email not found",
+                    'message' => "Account not found",
                     'account_id' => "-",
                     'role' => "-",
                     'customer_id' => "-",
@@ -197,28 +203,16 @@ class AccountService implements AccountInterface
                 }
                 else
                 {
-                    if($this->checkRole($account->role, Constanta::$roleCustomer))
-                    {
-                        return response()->json([
-                            'status' => "ok",
-                            'message' => "success",
-                            'account_id' => $account->account_id,
-                            'role' => $account->role,
-                            'customer_id' => $account->customers->customer_id,
-                            'agency_id' => "-"
-                        ], 200);
-                    }
-                    else
-                    {
-                        return response()->json([
-                            'status' => "ok",
-                            'message' => "success",
-                            'account_id' => $account->account_id,
-                            'role' => $account->role,
-                            'customer_id' => "-",
-                            'agency_id' => $account->agencies->agency_id
-                        ], 200);
-                    }
+                    $data = $this->checkRoleAndReturnData($account);
+                    
+                    return response()->json([
+                        'status' => "ok",
+                        'message' => "Success",
+                        'account_id' => $account->account_id,
+                        'role' => $account->role,
+                        'customer_id' => $data['customer_id'],
+                        'agency_id' => $data['agency_id']
+                    ], 200);
                 }
             }
         }
