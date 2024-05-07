@@ -20,7 +20,7 @@ export interface OrderD {
     order_status: string;
     created_at: string;
     updated_at: string;
-    order_ds: {
+    order_ds: [{
         order_d_id: number;
         order_h_id: number;
         package_h_id: number;
@@ -33,6 +33,7 @@ export interface OrderD {
         price: number | null;
         created_at: string;
         updated_at: string;
-    };
+        qty: number;
+    }];
 }
 
