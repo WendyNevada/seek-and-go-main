@@ -2,8 +2,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import React from 'react'
 import { OrderH } from '../utils/interface'
 import {Table,TableBody,TableCaption,TableCell,TableHead,TableHeader,TableRow} from "@/components/ui/table"
-import EditIcon from '@mui/icons-material/Edit';
 import { useNavigate } from 'react-router-dom';
+import NoteAltIcon from '@mui/icons-material/NoteAlt';
 
 const AcordionByStatus = ( { orders, title }: { orders: OrderH[] | null ; title: string}) => {
     const navigate = useNavigate();
@@ -55,7 +55,7 @@ const AcordionByStatus = ( { orders, title }: { orders: OrderH[] | null ; title:
                                                         <TableCell>{order.order_dt.slice(0, 10)}</TableCell>
                                                         <TableCell>{order.order_status} </TableCell>
                                                         <TableCell className="text-right">{order.total_price}</TableCell>
-                                                        <TableCell className="text-right"><EditIcon className='cursor-pointer hover:text-indigo-600' onClick={() => onViewApprovalDetail(order.order_h_id)}/></TableCell>
+                                                        <TableCell className="text-right"><NoteAltIcon className='cursor-pointer hover:text-indigo-600' onClick={() => onViewApprovalDetail(order.order_h_id)}/></TableCell>
                                                     </TableRow>
                                                 ))}
                                             </TableBody>

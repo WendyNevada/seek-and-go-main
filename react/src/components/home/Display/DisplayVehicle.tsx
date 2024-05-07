@@ -10,13 +10,13 @@ import { useNavigate } from "react-router-dom";
 const DisplayVehicle = () => {
     // const { navigatedTo } = LoginProvider();
     const navigate = useNavigate();
-    const [vehicle, setVehicle] = useState<GetVehicleModel[]>([]);
+    const [vehicle, setVehicle] = useState<GetVehicleModel>();
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
         const fetchVehicle = async () => {
             try {
-                const response = await axiosClient.post<GetVehicleModel[]>('/v1/GetVehicleHomepage'); // Replace 'your-api-url' with the actual API endpoint
+                const response = await axiosClient.post<GetVehicleModel>('/v1/GetVehicleHomepage'); // Replace 'your-api-url' with the actual API endpoint
                 setVehicle(response.data); // Assuming the response data is an array of vehicles
             } catch (error) {
                 console.error('Error fetching vehicles:', error);
@@ -37,7 +37,8 @@ const DisplayVehicle = () => {
             <h2 className='text-2xl font-semibold'>Daftar Kendaraan</h2>
             <Carousel opts={{align: "start",}} className="w-full">
                 <CarouselContent>
-                    {vehicle.map(item => (
+                    {vehicle?.data && vehicle.data.length > 0 ? (
+                        vehicle.data.map(item => (
                         <CarouselItem key={item.ref_vehicle_id} className="md:basis-1/2 lg:basis-1/4">
                             <div className='flex-1'>
                                 <Card className='w-64 shadow-lg mt-8 hover:shadow-2xl cursor-pointer overflow-hidden' onClick={() => selectItem(item.ref_vehicle_id)}>
@@ -57,7 +58,10 @@ const DisplayVehicle = () => {
                                 </Card>
                             </div>
                         </CarouselItem>
-                    ))}
+                    ))
+                ) : (
+                    <p>Loading...</p>
+                )}
                 </CarouselContent>
                 <CarouselPrevious />
                 <CarouselNext />

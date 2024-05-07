@@ -45,13 +45,13 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
 
                 // patch data to form
                 setImageUrl(enviUrl + response.data.picture_url)
+                form.setValue('base_price', response.data.base_price);
                 form.setValue('hotel_code', response.data.hotel.hotel_code);
                 form.setValue('hotel_name', response.data.hotel.hotel_name);
                 form.setValue('description', response.data.hotel.description);
                 form.setValue('address', response.data.hotel.address);
                 form.setValue('qty', response.data.hotel.qty);
                 form.setValue('promo_code', response.data.attraction.promo_code ? response.data.attraction.promo_code : '');
-                form.setValue('base_price', response.data.base_price);
 
                 //form.setValue('address2', response.data.address2);
             } catch (error) {

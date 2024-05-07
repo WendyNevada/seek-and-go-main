@@ -6,13 +6,13 @@ import React, { useEffect, useState } from 'react'
 import {Carousel,CarouselContent,CarouselItem,CarouselNext,CarouselPrevious} from "@/components/ui/carousel"
 
 const DisplayAttraction = () => {
-    const [attraction, setAttractions] = useState<GetAttractionModel[]>([])
+    const [attraction, setAttractions] = useState<GetAttractionModel>()
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
         const fetchAttraction = async () => {
             try {
-                const response = await axiosClient.post<GetAttractionModel[]>('/v1/GetAttractionHomepage'); // Replace 'your-api-url' with the actual API endpoint
+                const response = await axiosClient.post<GetAttractionModel>('/v1/GetAttractionHomepage'); // Replace 'your-api-url' with the actual API endpoint
                 setAttractions(response.data); // Assuming the response data is an array of vehicles
             } catch (error) {
                 console.error('Error fetching vehicles:', error);
@@ -27,7 +27,8 @@ const DisplayAttraction = () => {
 
             <Carousel opts={{align: "start",}} className="w-full">
                 <CarouselContent>
-                    {attraction.map(item => (
+                    {attraction?.data && attraction.data.length > 0 ? (
+                        attraction.data.map(item => (
                         <CarouselItem key={item.ref_attraction_id} className="md:basis-1/2 lg:basis-1/4">
                             <div className='flex-1'>
                                 <Card className='w-64 shadow-lg mt-8 hover:shadow-2xl cursor-pointer overflow-hidden'>
@@ -47,7 +48,10 @@ const DisplayAttraction = () => {
                                 </Card>
                             </div>
                         </CarouselItem>
-                    ))}
+                    ))
+                ) : (
+                    <p>Loading...</p>
+                )}
                 </CarouselContent>
                 <CarouselPrevious />
                 <CarouselNext />
