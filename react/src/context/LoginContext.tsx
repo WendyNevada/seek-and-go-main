@@ -1,4 +1,5 @@
 import axiosClient from '@/axios.client';
+import { toast } from '@/components/ui/use-toast';
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -71,9 +72,14 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       setUser(userData);
       setError(null);
       handleNavigation(userData);
-    } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error : any) {
       // Handle errors
-      setError('Login failed. Please check your credentials.');
+        toast({
+            variant: "destructive",
+            description: error.response.data.message,
+        });
+    setError('Login failed. Please check your credentials.');
     }
   };
 
@@ -93,15 +99,15 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     navigate('/Login');
   };
 
-  const navigatedTo = (path: string) => {
-    // Store the last visited route in localStorage
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const userData: User = JSON.parse(storedUser);
-      localStorage.setItem(`${userData.role}-lastVisitedRoute`, path);
-    }
-    navigate(path);
-  };
+//   const navigatedTo = (path: string) => {
+//     // Store the last visited route in localStorage
+//     const storedUser = localStorage.getItem('user');
+//     if (storedUser) {
+//       const userData: User = JSON.parse(storedUser);
+//       localStorage.setItem(`${userData.role}-lastVisitedRoute`, path);
+//     }
+//     navigate(path);
+//   };
 
   // Value to be provided by the context
   const contextValue: LoginContextType = {
