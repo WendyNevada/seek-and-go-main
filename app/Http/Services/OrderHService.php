@@ -577,6 +577,36 @@ class OrderHService implements OrderHInterface
         }
     }
 
+    public function CustPaidOrder(OrderHIdRequest $request)
+    {
+        try
+        {
+            DB::beginTransaction();
+
+            $orderH = $this->updateOrderStatus($request->order_h_id, Constanta::$orderStatusCustPaid);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Customer payment accepted, please wait for payment confirmation',
+                'order_no' => $orderH->order_no
+            ], 200);
+
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'order_no' => $orderH->order_no
+            ], 500);
+
+        }
+    }
+
     public function PaidOrder(OrderHIdRequest $request)
     {
         try

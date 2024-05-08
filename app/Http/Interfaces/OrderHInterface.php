@@ -32,6 +32,8 @@ interface OrderHInterface
 
     public function CancelOrder(OrderHIdRequest $request);
 
+    public function CustPaidOrder(OrderHIdRequest $request);
+
     public function PaidOrder(OrderHIdRequest $request);
 
     public function RetryPaymentOrder(OrderHIdRequest $request);

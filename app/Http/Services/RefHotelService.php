@@ -214,7 +214,16 @@ class RefHotelService implements RefHotelInterface
 
     private function getActiveHotelDataSortedWithLimit($limit)
     {
-        $hotel = RefHotel::where('is_active', '1')->orderBy('rating', 'desc')->limit($limit)->get();
+        $hotel = RefHotel::
+            join('agency_affiliates', 'ref_hotels.ref_hotel_id', '=', 'agency_affiliates.ref_hotel_id')->
+            select('ref_hotels.*', 'agency_affiliates.base_price')->
+            where('is_active', '1')->
+            where('qty', '>', '0')->
+            orderBy('rating', 'desc')->
+            orderBy('updated_at', 'desc')->
+            orderby('agency_affiliates.base_price', 'asc')->
+            orderBy('qty', 'desc')->
+            limit($limit)->get();
 
         foreach ($hotel as $key => $value)
         {

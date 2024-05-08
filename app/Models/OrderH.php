@@ -111,5 +111,9 @@ class OrderH extends Model
     public function trxs() {
         return $this->hasOne(Trx::class);
     }
+
+    public function refPictures() {
+        return $this->hasOne(RefPicture::class);
+    }
     #endregion
 }

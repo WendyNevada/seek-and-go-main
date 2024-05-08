@@ -231,7 +231,16 @@ class RefVehicleService implements RefVehicleInterface
 
     private function getActiveVehicleDataSortedWithLimit($limit)
     {
-        $vehicle = RefVehicle::where('is_active', '1')->orderBy('rating', 'desc')->limit($limit)->get();
+        $vehicle = RefVehicle::
+            join('agency_affiliates', 'ref_vehicles.ref_vehicle_id', '=', 'agency_affiliates.ref_hotel_id')->
+            select('ref_vehicles.*', 'agency_affiliates.base_price')->
+            where('is_active', '1')->
+            where('qty', '>', '0')->
+            orderBy('rating', 'desc')->
+            orderBy('updated_at', 'desc')->
+            orderby('agency_affiliates.base_price', 'asc')->
+            orderBy('qty', 'desc')->
+            limit($limit)->get();
 
         foreach ($vehicle as $key => $value)
         {

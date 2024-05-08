@@ -16,6 +16,7 @@ class RefPicture extends Model
         'ref_attraction_id',
         'ref_vehicle_id',
         'order_h_id',
+        'agency_payment_id',
         'image_url'
     ];
 
@@ -78,6 +79,16 @@ class RefPicture extends Model
     public function setImageUrlAttribute($value)
     {
         $this->attributes['image_url'] = $value;
+    }
+
+    public function getAgencyPaymentIdAttribute($value)
+    {
+        return $value;
+    }
+
+    public function setAgencyPaymentIdAttribute($value)
+    {
+        $this->attributes['agency_payment_id'] = $value;
     }
     #endregion
 

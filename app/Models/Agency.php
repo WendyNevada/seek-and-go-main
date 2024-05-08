@@ -80,5 +80,10 @@ class Agency extends Model
     {
         return $this->hasMany(PackageHistoryH::class);
     }
+
+    public function agencyPayments()
+    {
+        return $this->hasMany(AgencyPayment::class);
+    }
     #endregion
 }
