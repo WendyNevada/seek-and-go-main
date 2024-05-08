@@ -164,6 +164,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('CancelOrder', 'OrderHController@CancelOrder');
 
+    Route::post('CustPaidOrder', 'OrderHController@CustPaidOrder');
+
     Route::post('PaidOrder', 'OrderHController@PaidOrder');
 
     Route::post('RetryPaymentOrder', 'OrderHController@RetryPaymentOrder');

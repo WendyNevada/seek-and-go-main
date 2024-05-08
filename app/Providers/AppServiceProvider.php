@@ -17,10 +17,12 @@ use App\Http\Services\RefZipcodeService;
 use App\Http\Interfaces\AccountInterface;
 use App\Http\Interfaces\PackageHInterface;
 use App\Http\Interfaces\RefHotelInterface;
+use App\Http\Services\AgencyPaymentService;
 use App\Http\Services\RefAttractionService;
 use App\Http\Interfaces\RefVehicleInterface;
 use App\Http\Interfaces\RefZipcodeInterface;
 use App\Http\Services\AgencyAffiliateService;
+use App\Http\Interfaces\AgencyPaymentInterface;
 use App\Http\Interfaces\RefAttractionInterface;
 use App\Http\Interfaces\AgencyAffiliateInterface;
 
@@ -41,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TrxInterface::class, TrxService::class);
         $this->app->bind(PromoInterface::class, PromoService::class);
         $this->app->bind(AgencyAffiliateInterface::class, AgencyAffiliateService::class);
+        $this->app->bind(AgencyPaymentInterface::class, AgencyPaymentService::class);
     }
 
     /**

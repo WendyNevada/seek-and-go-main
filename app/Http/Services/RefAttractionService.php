@@ -219,7 +219,16 @@ class RefAttractionService implements RefAttractionInterface
 
     private function getActiveAttractionDataSortedWithLimit($limit)
     {
-        $attraction = RefAttraction::where('is_active', '1')->orderBy('rating', 'desc')->limit($limit)->get();
+        $attraction = RefAttraction::
+            join('agency_affiliates', 'ref_attractions.ref_attraction_id', '=', 'agency_affiliates.ref_attraction_id')->
+            select('ref_attractions.*', 'agency_affiliates.base_price')->
+            where('is_active', '1')->
+            where('qty', '>', '0')->
+            orderBy('rating', 'desc')->
+            orderBy('updated_at', 'desc')->
+            orderby('agency_affiliates.base_price', 'asc')->
+            orderBy('qty', 'desc')->
+            limit($limit)->get();
 
         foreach ($attraction as $key => $value)
         {

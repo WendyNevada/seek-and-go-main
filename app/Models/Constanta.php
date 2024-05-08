@@ -50,6 +50,7 @@ class Constanta extends Model
     public static $refHotelPictureDirectory = "ref_hotel_pictures";
     public static $refVehiclePictureDirectory = "ref_vehicle_pictures";
     public static $orderHPictureDirectory = "order_h_pictures";
+    public static $agencyPaymentPictureDirectory = "agency_payment_pictures";
     #endregion
 
     #region list environment
@@ -61,5 +62,10 @@ class Constanta extends Model
     public static $hotel = "hotel";
     public static $vehicle = "vehicle";
     public static $package = "package";
+    #endregion
+
+    #region Payment
+    public static $paymentTypeBank = "Bank";
+    public static $paymentTypeQris = "Qris";
     #endregion
 }

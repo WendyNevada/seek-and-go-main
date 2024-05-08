@@ -74,6 +74,12 @@ class OrderHController extends Controller
         return $response;
     }
 
+    public function CustPaidOrder(OrderHService $orderHService, OrderHIdRequest $request)
+    {
+        $response = $orderHService->CustPaidOrder($request);
+        return $response;
+    }
+
     public function PaidOrder(OrderHService $orderHService, OrderHIdRequest $request)
     {
         $response = $orderHService->PaidOrder($request);
