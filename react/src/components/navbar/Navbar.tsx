@@ -12,9 +12,18 @@ import { Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from '@
 import Login from '@mui/icons-material/Login';
 import { useLogin } from '@/context/LoginContext'
 import LogoutIcon from '@mui/icons-material/Logout';
+import { Button } from '../ui/button'
+import { useTranslation } from 'react-i18next'
 // import { Link } from 'react-router-dom'
 
 const Navbar = () => {
+
+    const { i18n } = useTranslation();
+
+    const changeLanguage = (language: string) => {
+    i18n.changeLanguage(language);
+    };
+
     const { logout } = useLogin();
     const [openMenu, setOpenMenu] = useState(false)
     const menuOptions = [
@@ -94,6 +103,8 @@ const Navbar = () => {
                 <a href='\Login' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1'>Login</a>
                 <button className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Bookings Now</button>
                 <button onClick={() => logout()} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Logout</button>
+                <button onClick={() => changeLanguage('en')} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1' >English</button>
+                <button onClick={() => changeLanguage('id')} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1'>Indonesia</button>
             </div>
 
 

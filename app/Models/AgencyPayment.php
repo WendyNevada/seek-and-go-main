@@ -14,6 +14,7 @@ class AgencyPayment extends Model
     protected $fillable = [
         'agency_id',
         'payment_type',
+        'bank_name',
         'account_no'
     ];
 

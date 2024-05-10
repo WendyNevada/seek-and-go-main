@@ -17,6 +17,7 @@ import AgencyOrderApprovalPage from './views/Agency-page/AgencyOrderApprovalPage
 import HotelDetailPage from './views/Customer-page/HotelDetailPage';
 import AttractionDetailPage from './views/Customer-page/AttractionDetailPage';
 import AgencyAddPackage from './views/Agency-page/AgencyAddPackage';
+import '@/context/language/i18n';
 
 function App() {
   return (

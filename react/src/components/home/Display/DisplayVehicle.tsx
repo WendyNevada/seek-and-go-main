@@ -7,10 +7,13 @@ import {Carousel,CarouselContent,CarouselItem,CarouselNext,CarouselPrevious} fro
 import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatPrice } from "@/utils/priceFormating";
+import { useTranslation } from "react-i18next";
 // import { LoginProvider } from "@/context/LoginContext";
 
 const DisplayVehicle = () => {
     // const { navigatedTo } = LoginProvider();
+    const { t } = useTranslation();
+    
     const navigate = useNavigate();
     const [vehicle, setVehicle] = useState<GetVehicleModel>();
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
@@ -36,7 +39,7 @@ const DisplayVehicle = () => {
 
     return (
         <div className='mt-12 justify-between'>
-            <h2 className='text-2xl font-semibold'>Daftar Kendaraan</h2>
+            <h2 className='text-2xl font-semibold'>{t('Vehicle List')}</h2>
             <Carousel opts={{align: "start",}} className="w-full">
                 <CarouselContent>
                     {vehicle?.data && vehicle.data.length > 0 ? (
@@ -52,7 +55,7 @@ const DisplayVehicle = () => {
                                     <CardContent className='flex-1'>
                                         <p>{item.address}</p>
                                         {rating(item.rating)}
-                                        <p>Base Price: {formatPrice(item.base_price ?? 0)}</p>
+                                        <p>{t('Price')}: {formatPrice(item.base_price ?? 0)}</p>
                                     </CardContent>
                                     <CardFooter className="justify-center">
                                         ====

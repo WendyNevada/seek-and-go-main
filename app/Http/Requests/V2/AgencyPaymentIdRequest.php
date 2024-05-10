@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\V1;
+namespace App\Http\Requests\V2;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreAgencyPaymentRequest extends FormRequest
+class AgencyPaymentIdRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,11 +22,7 @@ class StoreAgencyPaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'agency_id' => 'required',
-            'payment_type' => 'required',
-            'bank_name' => 'required',
-            'account_no' => 'nullable',
-            'picture' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif', 'max:10000']
+            'agency_payment_id' => 'required'
         ];
     }
 }
