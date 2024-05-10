@@ -7,8 +7,11 @@ import {Carousel,CarouselContent,CarouselItem,CarouselNext,CarouselPrevious} fro
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
 import { formatPrice } from '@/utils/priceFormating';
+import { useTranslation } from 'react-i18next';
 
 const DisplayAttraction = () => {
+    const { t } = useTranslation();
+
     const navigate = useNavigate();
     const [attraction, setAttractions] = useState<GetAttractionModel>()
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
@@ -32,7 +35,7 @@ const DisplayAttraction = () => {
 
     return (
         <div className='mt-12 justify-between'>
-            <h2 className='text-2xl font-semibold'>Daftar Destinasi Wisata</h2>
+            <h2 className='text-2xl font-semibold'>{t('Attraction List')}</h2>
 
             <Carousel opts={{align: "start",}} className="w-full">
                 <CarouselContent>
@@ -49,7 +52,7 @@ const DisplayAttraction = () => {
                                     <CardContent className='flex-1'>
                                         <p>{item.address}</p>
                                         {rating(item.rating)}
-                                        <p>Base Price: {formatPrice(item.base_price ?? 0)}</p>
+                                        <p>{t('Price')}: {formatPrice(item.base_price ?? 0)}</p>
                                     </CardContent>
                                     <CardFooter className="justify-center">
                                         ====

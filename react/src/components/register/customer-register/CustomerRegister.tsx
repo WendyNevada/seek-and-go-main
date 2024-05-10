@@ -21,8 +21,11 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from '@/components/ui/use-toast';
 import { Required } from '@/components/ui/Custom/required';
 import { hitAddApi } from '@/context/HitApi';
+import { useTranslation } from 'react-i18next';
 
 const CustomerRegisterComponent = () => {
+    const { t } = useTranslation();
+
     const navigate = useNavigate();
     // const {setUser, setToken} = useStateContext()
     // const [errors, setErrors] = useState(null)
@@ -69,17 +72,17 @@ const CustomerRegisterComponent = () => {
             <div className="mx-auto max-w-xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <h1 className="text-2xl font-bold mb-8 text-center">Customer Register</h1>
+                        <h1 className="text-2xl font-bold mb-8 text-center">{t('Customer Register')}</h1>
                         <FormField
                             control={form.control}
                             name="customer_name"
                             render={({ field }) => (
                                 <FormItem className="custom-field">
-                                    <FormLabel>{"Customer Name"}<Required/></FormLabel>
+                                    <FormLabel>{t('Customer Name')}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
-                                            placeholder={field.name}
+                                            placeholder={t('Customer Name')}
                                             {...field}
                                             onChange={field.onChange}
                                         />
@@ -92,11 +95,11 @@ const CustomerRegisterComponent = () => {
                             name="account_name"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Account Name"}<Required/></FormLabel>
+                                    <FormLabel>{t('Account Name')}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
-                                            placeholder={field.name}
+                                            placeholder={t('Account Name')}
                                             {...field}
                                             onChange={field.onChange}
                                         />
@@ -109,12 +112,12 @@ const CustomerRegisterComponent = () => {
                             name="email"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Email"}<Required/></FormLabel>
+                                    <FormLabel>{t('Email')}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
                                             type='email'
-                                            placeholder={field.name}
+                                            placeholder={t('Email')}
                                             {...field}
                                             onChange={field.onChange}
                                         />
@@ -127,11 +130,11 @@ const CustomerRegisterComponent = () => {
                             name="phone"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Phone"}<Required/></FormLabel>
+                                    <FormLabel>{t('Phone Number')}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
-                                            placeholder={field.name}
+                                            placeholder={t('Phone Number')}
                                             {...field}
                                             onChange={field.onChange}
                                         />
@@ -144,7 +147,7 @@ const CustomerRegisterComponent = () => {
                             name="birth_date"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel className='mr-4'>{"Tanggal Lahir"}<Required/></FormLabel>
+                                    <FormLabel className='mr-4'>{t("Birth Date")}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Popover>
@@ -178,17 +181,17 @@ const CustomerRegisterComponent = () => {
                             name="gender"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Gender"}<Required/></FormLabel>
+                                    <FormLabel>{t('Gender')}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <RadioGroup className='flex flex-row' defaultValue="option-one" onChange={newValue => field.onChange(newValue)}>
                                             <div className="flex items-center space-x-2">
                                                 <RadioGroupItem value="M" id="option-one"/>
-                                                <Label htmlFor="option-one">Male</Label>
+                                                <Label htmlFor="option-one">{t('Male')}</Label>
                                             </div>
                                             <div className="flex items-center space-x-2">
                                                 <RadioGroupItem value="F" id="option-two"/>
-                                                <Label htmlFor="option-two">Female</Label>
+                                                <Label htmlFor="option-two">{t('Female')}</Label>
                                             </div>
                                         </RadioGroup>
                                     </FormControl>
@@ -200,12 +203,12 @@ const CustomerRegisterComponent = () => {
                             name="password"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Password"}<Required/></FormLabel>
+                                    <FormLabel>{t('Password')}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
                                             type="password"
-                                            placeholder={field.name}
+                                            placeholder={t('Password')}
                                             {...field}
                                             onChange={field.onChange}
                                         />
@@ -214,7 +217,7 @@ const CustomerRegisterComponent = () => {
                             )}
                         />
                         <div className="justify-center flex">
-                            <Button type="submit" className='mt-4'>Register</Button>
+                            <Button type="submit" className='mt-4'>{t('Register')}</Button>
                         </div>
                     </form>
                 </Form>

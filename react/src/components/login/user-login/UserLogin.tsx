@@ -7,8 +7,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useLogin } from '@/context/LoginContext'
+import { useTranslation } from 'react-i18next'
 
 const UserLogin = () => {
+    const { t } = useTranslation();
     //const userLogin:UserLogin = new UserLogin();
     const { login } = useLogin();
     // const navigate = useNavigate();
@@ -34,18 +36,18 @@ const UserLogin = () => {
             <div className="mx-auto max-w-xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <h1 className="text-2xl font-bold mb-8 text-center">Login</h1>
+                        <h1 className="text-2xl font-bold mb-8 text-center">{t('Login')}</h1>
                         <FormField
                             control={form.control}
                             name="email"
                             render={({ field }) => (
                                 <FormItem className="custom-field">
-                                    <FormLabel>{"Email"}</FormLabel>
+                                    <FormLabel>{t('Email')}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
                                             type='email'
-                                            placeholder={field.name}
+                                            placeholder={t('Email')}
                                             {...field}
                                             onChange={field.onChange}
                                         />
@@ -58,12 +60,12 @@ const UserLogin = () => {
                             name="password"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Password"}</FormLabel>
+                                    <FormLabel>{t('Password')}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
                                             type='password'
-                                            placeholder={field.name}
+                                            placeholder={t('Password')}
                                             {...field}
                                             onChange={field.onChange}
                                         />
@@ -72,7 +74,7 @@ const UserLogin = () => {
                             )}
                         />
                         <div className="justify-center flex">
-                            <Button type="submit" className='mt-4'>Login</Button>
+                            <Button type="submit" className='mt-4'>{t('Login')}</Button>
                         </div>
                     </form>
                 </Form>
