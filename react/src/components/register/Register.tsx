@@ -4,8 +4,11 @@ import { TextField } from '@mui/material';
 import CustomerRegisterComponent from './customer-register/CustomerRegister';
 import AgencyRegisterComponent from './agency-register/AgencyRegister';
 import { Button } from '../ui/button';
+import { useTranslation } from 'react-i18next';
 
 const Register = () => {
+    const { t } = useTranslation();
+
     const [isRegisCustomer, setisRegisCustomer] = useState(true);
 
     const toggleForm = () => {
@@ -17,7 +20,7 @@ const Register = () => {
             <div id="container" className="bg-gray-100 p-0 sm:p-12">
                 {/* <AgencyRegisterComponent></AgencyRegisterComponent> */}
                 <div className='justify-center flex'>
-                    {isRegisCustomer ? <Button onClick={toggleForm}>Register as Agency?</Button> : <Button onClick={toggleForm}>Register as Customer?</Button>}
+                    {isRegisCustomer ? <Button onClick={toggleForm}>{t('Register as Agency?')}</Button> : <Button onClick={toggleForm}>{t('Register as Customer?')}</Button>}
                 </div>
                 {isRegisCustomer ? <CustomerRegisterComponent/> : <AgencyRegisterComponent/>}
 

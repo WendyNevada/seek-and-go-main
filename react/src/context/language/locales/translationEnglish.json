@@ -1,0 +1,21 @@
+{
+    "greeting": "FIND WHAT ARE YOU LOOKING FOR",
+    "Price": "Price",
+    "Vehicle List" : "Vehicle List",
+    "Attraction List": "Attraction List",
+    "Hotel List": "Hotel List",
+    "Login": "Login",
+    "Email": "Email",
+    "Password": "Password",
+    "Customer Register": "Customer Register",
+    "Customer Name": "Customer Name",
+    "Account Name": "Account Name",
+    "Phone Number": "Phone Number",
+    "Birth Date": "Birth Date",
+    "Gender": "Gender",
+    "Male": "Male",
+    "Female": "Female",
+    "Register": "Register",
+    "Register as Agency?": "Register as Agency?",
+    "Register as Customer?": "Register as Customer?"
+}
