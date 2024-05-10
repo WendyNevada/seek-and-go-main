@@ -13,8 +13,10 @@ import AgencyEditVehiclePage from './views/Agency-page/AgencyEditVehiclePage';
 import AgencyAddHotelPage from './views/Agency-page/AgencyAddHotelPage';
 import AgencyEditHotelPage from './views/Agency-page/AgencyEditHotelPage';
 import VehicleDetailPage from './views/Customer-page/VehilcleDetailPage';
-import { toast } from './components/ui/use-toast';
 import AgencyOrderApprovalPage from './views/Agency-page/AgencyOrderApprovalPage';
+import HotelDetailPage from './views/Customer-page/HotelDetailPage';
+import AttractionDetailPage from './views/Customer-page/AttractionDetailPage';
+import AgencyAddPackage from './views/Agency-page/AgencyAddPackage';
 
 function App() {
   return (
@@ -30,6 +32,9 @@ function App() {
 
             {/* Protected Routes for Customer section */}
             <Route path="/Customer/*" element={<CustomerRoutes />} />
+            <Route path="/Customer/VehicleOrderDetail/:ref_vehicle_id" element={<VehicleDetailPage/>} />
+            <Route path="/Customer/HotelOrderDetail/:ref_hotel_id" element={<HotelDetailPage/>} />
+            <Route path="/Customer/AttractionOrderDetail/:ref_attraction_id" element={<AttractionDetailPage/>} />
 
           {/* <Route path="/TEST" element={ <ComboboxDemo/>}/> */}
         </Routes>
@@ -58,6 +63,11 @@ function AgencyRoutes() {
         <Route path="EditVehicle/:ref_vehicle_id" element={<AgencyEditVehiclePage />}></Route>
         <Route path="AddHotel" element={<AgencyAddHotelPage />}></Route>
         <Route path="EditHotel/:ref_hotel_id" element={<AgencyEditHotelPage />}></Route>
+        <Route path="AddPackage" element={<AgencyAddPackage/>}></Route>
+
+
+        {/* order detail page */}
+        <Route path="OrderDetail/:order_h_id" element={<AgencyOrderApprovalPage/>} />
 
         {/* order approval page */}
         <Route path="Approval/:order_h_id" element={<AgencyOrderApprovalPage/>} />
@@ -67,7 +77,7 @@ function AgencyRoutes() {
 
 
 function CustomerRoutes() {
-    const hasCustomerRole = useUserRole('Customer');
+    //const hasCustomerRole = useUserRole('Customer');
 
     // If user doesn't have the required role, redirect to login
     // if (!hasCustomerRole) {
@@ -80,7 +90,7 @@ function CustomerRoutes() {
 
   return (
     <Routes>
-        <Route path="VehicleOrderDetail/:ref_vehicle_id" element={<VehicleDetailPage/>} />
+        {/* <Route path="VehicleOrderDetail/:ref_vehicle_id" element={<VehicleDetailPage/>} /> */}
 
     </Routes>
   );

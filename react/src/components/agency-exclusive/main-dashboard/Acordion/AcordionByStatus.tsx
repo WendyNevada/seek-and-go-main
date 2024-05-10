@@ -4,13 +4,13 @@ import { OrderH } from '../utils/interface'
 import {Table,TableBody,TableCaption,TableCell,TableHead,TableHeader,TableRow} from "@/components/ui/table"
 import { useNavigate } from 'react-router-dom';
 import NoteAltIcon from '@mui/icons-material/NoteAlt';
+import { formatPrice } from '@/utils/priceFormating';
 
 const AcordionByStatus = ( { orders, title }: { orders: OrderH[] | null ; title: string}) => {
     const navigate = useNavigate();
 
     const onViewApprovalDetail = (id: number) => {
         navigate(`/Agency/Approval/${id}`)
-        console.log('hwhwhw', id)
     }
 
   return (
@@ -54,7 +54,7 @@ const AcordionByStatus = ( { orders, title }: { orders: OrderH[] | null ; title:
                                                         <TableCell className="font-medium">{order.order_no}</TableCell>
                                                         <TableCell>{order.order_dt.slice(0, 10)}</TableCell>
                                                         <TableCell>{order.order_status} </TableCell>
-                                                        <TableCell className="text-right">{order.total_price}</TableCell>
+                                                        <TableCell className="text-right">{formatPrice(order.total_price)}</TableCell>
                                                         <TableCell className="text-right"><NoteAltIcon className='cursor-pointer hover:text-indigo-600' onClick={() => onViewApprovalDetail(order.order_h_id)}/></TableCell>
                                                     </TableRow>
                                                 ))}

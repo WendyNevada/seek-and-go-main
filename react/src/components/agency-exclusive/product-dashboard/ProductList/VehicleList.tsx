@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { GetVehicleModel } from '../utils/ProductModel'
+import { DaumVehicle } from '../utils/ProductModel'
 import { useNavigate } from 'react-router-dom';
 import { useLogin } from '@/context/LoginContext';
 import axiosClient from '@/axios.client';
@@ -10,7 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import rating from '@/components/ui/Custom/rating';
 
 const VehicleList = () => {
-    const [vehicle, setVehicle] = useState<GetVehicleModel[]>([]);
+    const [vehicle, setVehicle] = useState<DaumVehicle[]>([]);
     const navigate = useNavigate();
     const { user } = useLogin();
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
@@ -18,7 +18,7 @@ const VehicleList = () => {
     useEffect(() => {
         const fetchVehicle = async () => {
             try {
-                const response = await axiosClient.post<GetVehicleModel[]>('/v1/GetActiveVehicleByAgencyId', {
+                const response = await axiosClient.post<DaumVehicle[]>('/v1/GetActiveVehicleByAgencyId', {
                     agency_id: user?.agency_id
                 }); // Replace 'your-api-url' with the actual API endpoint
                 setVehicle(response.data); // Assuming the response data is an array of vehicles
@@ -69,7 +69,7 @@ const VehicleList = () => {
                 <div key={index} className='flex flex-row justify-left w-64'>
                     {/* {row} */}
                     {row.map((card, i) => (
-                    <div key={i} className='flex-1 bg-red-50'>
+                    <div key={i} className='flex-1'>
                         {card}
                     </div>
                 ))}
