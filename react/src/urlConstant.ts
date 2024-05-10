@@ -4,6 +4,7 @@ export const urlConstant = {
     AgencyHomePage: "/Agency",
     AddVehicle :  "/Agency/AddVehicle",
     AddHotel : "/Agency/AddHotel",
-    EditHotel : "/Agency/EditHotel"
+    EditHotel : "/Agency/EditHotel",
+    AddPackage : "/Agency/AddPackage",
 
   } as const;

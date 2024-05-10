@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { GetHotelModel } from '../utils/ProductModel';
+import { DaumHotel } from '../utils/ProductModel';
 import { useNavigate } from 'react-router-dom';
 import { useLogin } from '@/context/LoginContext';
 import axiosClient from '@/axios.client';
@@ -11,7 +11,7 @@ import { urlConstant } from '@/urlConstant';
 import rating from '@/components/ui/Custom/rating';
 
 const HotelList = () => {
-    const [hotel, setHotel] = useState<GetHotelModel[]>([]);
+    const [hotel, setHotel] = useState<DaumHotel[]>([]);
     const navigate = useNavigate();
 
     const { user } = useLogin();
@@ -21,7 +21,7 @@ const HotelList = () => {
         // Fetch data from the API
         const fetchAttractions = async () => {
             try {
-                const response = await axiosClient.post<GetHotelModel[]>('/v1/GetActiveHotelByAgencyId', {
+                const response = await axiosClient.post<DaumHotel[]>('/v1/GetActiveHotelByAgencyId', {
                     agency_id: user?.agency_id
                 }); // Replace 'your-api-url' with the actual API endpoint
                 setHotel(response.data); // Assuming the response data is an array of attractions
@@ -69,8 +69,13 @@ const HotelList = () => {
                 );
                 return rows;
             }, []).map((row, index) => (
-                <div key={index} className='flex flex-row'>
-                    {row}
+                <div key={index} className='flex flex-row justify-left w-64'>
+                    {/* {row} */}
+                    {row.map((card, i) => (
+                        <div key={i} className='flex-1'>
+                            {card}
+                        </div>
+                    ))}
                 </div>
             ))}
         </div>

@@ -6,6 +6,9 @@ import { HotelH } from '../utils/interfaceHotel';
 import { VehicleH } from '../utils/interfaceVehicle';
 import { AttractionH } from '../utils/interfaceAttraction';
 import { Button } from "@/components/ui/button"
+import { toast } from '@/components/ui/use-toast';
+import axios, { AxiosError } from 'axios';
+import { TableFooter } from '@mui/material';
 
 const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
     const [order, setOrder] = useState<OrderD>({} as OrderD);
@@ -55,6 +58,27 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
         }
     };
 
+    const onApproveOrder = async (order_h_id : number) => {
+        try {
+            const response = await axiosClient.post('v1/ApproveOrder', { order_h_id: order_h_id });
+
+            if(response.data.Status == "ok") {
+                toast({
+                    variant: "success",
+                    description: "Item added."
+                });
+            }
+        } catch (response) {
+            const axiosError = response as AxiosError; // Cast the error to AxiosError
+            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
+                toast({
+                    variant: "destructive",
+                    description: (axiosError.response?.data as { message: string })?.message,
+                });
+            }
+        }
+    }
+
     return (
         <div className='shadow-lg sm:rounded-3xl'>
             {/* Header */}
@@ -83,14 +107,20 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                     <TableCaption>A list of your recent invoices.</TableCaption>
                     <TableHeader>
                         <TableRow>
-                        <TableHead className="w-36">From</TableHead>
-                        <TableHead>To</TableHead>
-                        <TableHead>Qty</TableHead>
-                        <TableHead className="text-right">Base Price</TableHead>
+                            <TableHead>Product</TableHead>
+                            <TableHead className="w-36">From</TableHead>
+                            <TableHead>To</TableHead>
+                            <TableHead>Qty</TableHead>
+                            <TableHead className="text-right">Base Price</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         <TableRow>
+                            <TableCell>{hotel || vehicle || attraction ?
+                                (hotel ? hotel.hotel.hotel_name :
+                                    (vehicle ? vehicle.vehicle.vehicle_name :
+                                        (attraction ? attraction.attraction.attraction_name : "N/A"))) :"N/A"}
+                            </TableCell>
                             <TableCell>{order.order_ds && order.order_ds.length > 0 ? order.order_ds[0].start_dt.split(" ")[0] : "N/A"}</TableCell>
                             <TableCell>{order.order_ds && order.order_ds.length > 0 ? order.order_ds[0].end_dt.split(" ")[0] : "N/A"}</TableCell>
                             <TableCell>{order.order_ds && order.order_ds.length > 0 ? order.order_ds[0].qty : "N/A"}</TableCell>
@@ -99,12 +129,18 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                             </TableCell>
                         </TableRow>
                     </TableBody>
+                    <TableFooter>
+                        <TableRow className='bg-slate-100'>
+                            <TableCell colSpan={4}>Total Price</TableCell>
+                            <TableCell className="text-right">{formatPrice(order.total_price)}</TableCell>
+                        </TableRow>
+                    </TableFooter>
                     </Table>
                 </div>
             </div>
 
             <div className="flex justify-end m-4 p-4">
-                <Button className=' bg-blue-500 p-2 hover:bg-blue-700 px-4'>Approve</Button>
+                <Button className=' bg-blue-500 p-2 hover:bg-blue-700 px-4' onClick={() => onApproveOrder(order.order_h_id)}>Approve</Button>
             </div>
         </div>
     )

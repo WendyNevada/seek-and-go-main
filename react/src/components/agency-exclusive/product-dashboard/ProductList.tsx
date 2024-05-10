@@ -20,13 +20,17 @@ const ProductList = () => {
         navigate(urlConstant.AddHotel);
     }
 
+    const onRouteAddPackage = () => {
+        navigate(urlConstant.AddPackage);
+    }
+
     return (
         <div className='mt-20 mx-auto max-w-screen-lg'>
             <div className='flex flex-wrap justify-start mb-4'>
                 <Button onClick={onRoute} className='rounded-full mr-2 mb-2'>Add Attraction</Button>
                 <Button onClick={onRouteAddVehicle} className='rounded-full mr-2 mb-2'>Add Vehicle</Button>
                 <Button onClick={onRouteAddHotel} className='rounded-full mr-2 mb-2'>Add Hotel</Button>
-                <Button className='rounded-full mr-2 mb-2'>Add Packages</Button>
+                <Button onClick={onRouteAddPackage} className='rounded-full mr-2 mb-2'>Add Packages</Button>
             </div>
             <h1 className='text-3xl font-bold'>List Attraction</h1>
             <AttractionList/>

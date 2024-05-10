@@ -1,0 +1,21 @@
+import OrderAttractionDetail from '@/components/customer-exclusive/product-detail/ProductAttractionDetail';
+import Footer from '@/components/navbar/Footer';
+import Navbar from '@/components/navbar/Navbar';
+import React from 'react'
+import { useParams } from 'react-router-dom';
+
+const AttractionDetailPage = () => {
+    const {ref_attraction_id} = useParams();
+
+  return (
+    <div className="">
+        <Navbar/>
+            <div className="flex mt-[7rem] lg:mt-[6rem]  items-center sm:justify-start xl:justify-center">
+                <OrderAttractionDetail ref_attraction_id={Number(ref_attraction_id) || 0}/>
+            </div>
+        <Footer/>
+    </div>
+  )
+}
+
+export default AttractionDetailPage

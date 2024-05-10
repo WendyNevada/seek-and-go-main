@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle,} from '@/components/ui/card'
 import { useEffect, useState } from 'react';
-import { GetAttractionModel } from '../utils/ProductModel';
+import { DaumAttraction } from '../utils/ProductModel';
 import { useLogin } from '@/context/LoginContext';
 import axiosClient from '@/axios.client';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import rating from '@/components/ui/Custom/rating';
 
 const AttractionList = () => {
-    const [attractions, setAttractions] = useState<GetAttractionModel[]>([]);
+    const [attractions, setAttractions] = useState<DaumAttraction[]>([]);
     const navigate = useNavigate();
     //const [selectedAttraction, setSelectedAttraction] = useState<GetAttractionModel | null>(null);
     const { user } = useLogin();
@@ -22,7 +22,7 @@ const AttractionList = () => {
         const fetchAttractions = async () => {
             console.log('uwu ', user?.agency_id)
             try {
-                const response = await axiosClient.post<GetAttractionModel[]>('/v1/GetActiveAttractionByAgencyId', {
+                const response = await axiosClient.post<DaumAttraction[]>('/v1/GetActiveAttractionByAgencyId', {
                     agency_id: user?.agency_id
                 }); // Replace 'your-api-url' with the actual API endpoint
                 setAttractions(response.data); // Assuming the response data is an array of attractions
@@ -78,8 +78,13 @@ const AttractionList = () => {
                 );
                 return rows;
             }, []).map((row, index) => (
-                <div key={index} className='flex flex-row'>
-                    {row}
+                <div key={index} className='flex flex-row justify-left w-64'>
+                    {/* {row} */}
+                    {row.map((card, i) => (
+                        <div key={i} className='flex-1'>
+                            {card}
+                        </div>
+                    ))}
                 </div>
             ))}
         </div>
