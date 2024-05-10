@@ -112,6 +112,7 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                             <TableHead>To</TableHead>
                             <TableHead>Qty</TableHead>
                             <TableHead className="text-right">Base Price</TableHead>
+                            <TableHead className="text-right">Sub Price</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -127,11 +128,12 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                             <TableCell className="text-right">{hotel || vehicle || attraction ?
                                 (hotel ? formatPrice(hotel.base_price) : vehicle ? formatPrice(vehicle.base_price) : attraction ? formatPrice(attraction.base_price) : 0) : "N/A"}
                             </TableCell>
+                            <TableCell className="text-right">{formatPrice(order.total_price)}</TableCell>
                         </TableRow>
                     </TableBody>
                     <TableFooter>
-                        <TableRow className='bg-slate-100'>
-                            <TableCell colSpan={4}>Total Price</TableCell>
+                        <TableRow className='bg-slate-500 hover:bg-slate-500 text-white'>
+                            <TableCell colSpan={5}>Total Price</TableCell>
                             <TableCell className="text-right">{formatPrice(order.total_price)}</TableCell>
                         </TableRow>
                     </TableFooter>

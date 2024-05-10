@@ -4,14 +4,19 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/
 import { Required } from '@/components/ui/Custom/required'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
 import AttractionQty from './ProductQty/AttractionQty'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import VehicleQty from './ProductQty/VehicleQty'
+import HotelQty from './ProductQty/HotelQty'
 
 const AddPackage = () => {
     const [attractionQty, setAttractionQty] = useState<number>(0);
-    const [details, setDetails] = useState<addPackage['details']>([]);
+    const [vehicleQty, setVehicleQty] = useState<number>(0);
+    const [hotelQty, setHotelQty] = useState<number>(0);
+    const [attractionDetails, setAttractionDetails] = useState<addPackage['details']>([]);
+    const [vehicleDetails, setVehicleDetails] = useState<addPackage['details']>([]);
+    const [hotelDetails, setHotelDetails] = useState<addPackage['details']>([]);
 
     const form = useForm<addPackage>({
         defaultValues: {
@@ -26,12 +31,26 @@ const AddPackage = () => {
         }
     })
 
-    const handleDetailsChange = (newDetails: addPackage['details']) => {
-        setDetails(newDetails);
+    const handleAttractionDetailsChange = (newDetails: addPackage['details']) => {
+        setAttractionDetails(newDetails);
+        console.log('attraction details : ', newDetails);
     };
 
+    const handleVehicleDetailsChange = (newDetails: addPackage['details']) => {
+        setVehicleDetails(newDetails);
+        console.log('vehicle details : ', newDetails);
+    };
+
+    const handleHotelDetailsChange = (newDetails: addPackage['details']) => {
+        setHotelDetails(newDetails);
+        console.log('hotel details : ', newDetails);
+    }
+
     const onSubmit = async (values: addPackage) => {
-        console.log(values);
+        const mergedDetails = [...attractionDetails, ...vehicleDetails, ...hotelDetails];
+        const payload = { ...values, details: mergedDetails };
+        console.log('merged details : ',mergedDetails);
+        console.log('merged values : ',payload);
     }
 
     return (
@@ -153,18 +172,36 @@ const AddPackage = () => {
                             )}
                         />
 
-                        <h1 className="text-xl mb-8 mt-6">Detail Package</h1>
+                        <h1 className="text-xl mb-4 mt-6">Detail Package</h1>
 
                         <div className="flex flex-row space-x-4">
-                            <div className="grid w-36 max-w-sm items-center gap-1.5">
-                                <Label htmlFor="email">Attraction qty</Label>
+                            <div className="grid w-32 max-w-sm items-center text-center my-2">
                                 {/* <Input className='w-24' type="number" placeholder="Attraction qty" value={attractionQty} onChange={handleAttractionQtyChange}/> */}
                                 <Button variant={"outline"} className='w-32' onClick={() => setAttractionQty(attractionQty + 1)}>+ Add Attraction</Button>
                             </div>
                         </div>
-                        <AttractionQty attractionQty={attractionQty} onDetailsChange={handleDetailsChange} onAttractionQtyChange={setAttractionQty}/>
+                        <AttractionQty attractionQty={attractionQty} onDetailsChange={handleAttractionDetailsChange} onAttractionQtyChange={setAttractionQty}/>
 
+                        <div className="flex flex-row space-x-4">
+                            <div className="grid w-32 max-w-sm items-center text-center my-2">
+                                {/* <Input className='w-24' type="number" placeholder="Attraction qty" value={attractionQty} onChange={handleAttractionQtyChange}/> */}
+                                <Button variant={"outline"} className='w-32' onClick={() => setVehicleQty(vehicleQty + 1)}>+ Add Vehicle</Button>
+                            </div>
+                        </div>
+                        <VehicleQty vehicleQty={vehicleQty} onDetailsChange={handleVehicleDetailsChange} onVehicleQtyChange={setVehicleQty}/>
 
+                        <div className="flex flex-row space-x-4">
+                            <div className="grid w-32 max-w-sm items-center text-center my-2">
+                                {/* <Input className='w-24' type="number" placeholder="Attraction qty" value={attractionQty} onChange={handleAttractionQtyChange}/> */}
+                                <Button variant={"outline"} className='w-32' onClick={() => setHotelQty(hotelQty + 1)}>+ Add Hotel</Button>
+                            </div>
+                        </div>
+                        <HotelQty hotelQty={hotelQty} onDetailsChange={handleHotelDetailsChange} onHotelQtyChange={setHotelQty}/>
+
+                        <div className="justify-center flex">
+                            <Button type="submit" className='mt-4'>Add Package
+                            </Button>
+                        </div>
                     </form>
                 </Form>
             </div>

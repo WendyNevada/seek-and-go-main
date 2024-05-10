@@ -15,39 +15,48 @@ interface VehicleQtyProps {
     onVehicleQtyChange: (vehicleQty: number) => void;
 }
 
-const VehicleQty = ({vehicleQty, onDetailsChange, onVehicleQtyChange } : VehicleQtyProps) => {
+const VehicleQty = ({ vehicleQty, onDetailsChange, onVehicleQtyChange }: VehicleQtyProps) => {
     const { user } = useLogin();
     const [vehicle, setVehicle] = useState<DaumVehicle[]>([]);
-    const [details, setDetails] = useState<{ ref_vehicle_id?: string | null }[]>([]);
+    const [details, setDetails] = useState<{ ref_vehicle_id?: string | null }[]>(Array.from({ length: vehicleQty }, () => ({ ref_vehicle_id: null })));
+    const [newVehicles, setNewVehicles] = useState<DaumVehicle[]>(Array.from({ length: vehicleQty }, () => ({} as DaumVehicle)));
+
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
 
-    //GetActiveVehicleByAgencyId
     useEffect(() => {
         const fetchAttraction = async () => {
             try {
                 const response = await axiosClient.post<DaumVehicle[]>('/v1/GetActiveVehicleByAgencyId', {
                     agency_id: user?.agency_id
-                }); // Replace 'your-api-url' with the actual API endpoint
-                setVehicle(response.data); // Assuming the response data is an array of vehicles
+                });
+                setVehicle(response.data);
             } catch (error) {
                 console.error('Error fetching vehicles:', error);
             }
-        }
+        };
         fetchAttraction();
-    },[]);
-
+    }, []);
 
     const handleDetailChange = (index: number, value: string) => {
         const newDetails = [...details];
-        newDetails[index] = { ref_vehicle_id: value }; // Create a new object for the detail
+        newDetails[index] = { ref_vehicle_id: value };
         setDetails(newDetails);
         onDetailsChange(newDetails);
 
-        const selectedAttraction = vehicle.find(vehicleItem => vehicleItem.vehicle_name === value);
-        if (selectedAttraction) {
-            const updatedVehicle = [...vehicle];
-            updatedVehicle[index].image_url = selectedAttraction.image_url;
-            setVehicle(updatedVehicle);
+        const selectedVehicle = vehicle.find(vehicleItem => Number(vehicleItem.ref_vehicle_id) === Number(value));
+        if (selectedVehicle) {
+            setNewVehicles(prevVehicles => {
+                const updatedVehicles = [...prevVehicles];
+                updatedVehicles[index] = {
+                    ...updatedVehicles[index],
+                    vehicle_code: selectedVehicle.vehicle_code,
+                    image_url: selectedVehicle.image_url,
+                    base_price: selectedVehicle.base_price,
+                    address: selectedVehicle.address,
+                    description: selectedVehicle.description
+                };
+                return updatedVehicles;
+            });
         }
     };
 
@@ -59,7 +68,6 @@ const VehicleQty = ({vehicleQty, onDetailsChange, onVehicleQtyChange } : Vehicle
         onVehicleQtyChange(vehicleQty - 1);
     };
 
-
     return (
         <div>
             {Array.from({ length: vehicleQty }).map((_, index) => (
@@ -67,26 +75,26 @@ const VehicleQty = ({vehicleQty, onDetailsChange, onVehicleQtyChange } : Vehicle
                     <div className="flex flex-row">
                         <Select onValueChange={(newValue) => handleDetailChange(index, newValue)}>
                             <SelectTrigger>
-                                <SelectValue placeholder="Select Attraction" />
+                                <SelectValue placeholder="Select Vehicle" />
                             </SelectTrigger>
                             <SelectContent>
                                 {vehicle.map((vehicleItem) => (
-                                    <SelectItem key={vehicleItem.ref_vehicle_id} value={vehicleItem.vehicle_name}>
+                                    <SelectItem key={vehicleItem.ref_vehicle_id} value={vehicleItem.ref_vehicle_id.toString()}>
                                         {vehicleItem.vehicle_name}
                                     </SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
-
-                        <Button className='ml-2' variant={'destructive'} onClick={() => handleRemoveDetail(index)}>{<HighlightOffIcon/>}</Button>
+                        <Button className='ml-2' variant={'destructive'} onClick={() => handleRemoveDetail(index)}>
+                            {<HighlightOffIcon />}
+                        </Button>
                     </div>
-
                     <div className="border-2 rounded-md">
-                        {details[index]?.ref_vehicle_id && vehicle[index]?.image_url ? (
+                        {details[index]?.ref_vehicle_id && newVehicles[index]?.image_url ? (
                             <div className='flex flex-row'>
                                 <div className="ml-1 mt-4">
                                     {details[index]?.ref_vehicle_id && (
-                                        <img src={enviUrl + vehicle[index]?.image_url} className='w-64 ml-4 rounded-md'/>
+                                        <img src={enviUrl + newVehicles[index]?.image_url} className='w-64 ml-4 rounded-md' />
                                     )}
                                 </div>
                                 <div className="">
@@ -96,19 +104,19 @@ const VehicleQty = ({vehicleQty, onDetailsChange, onVehicleQtyChange } : Vehicle
                                                 <TableBody>
                                                     <TableRow>
                                                         <TableCell className="font-medium">Product Name :</TableCell>
-                                                        <TableCell className="font-medium">{vehicle[index]?.vehicle_name}</TableCell>
+                                                        <TableCell className="font-medium">{newVehicles[index]?.vehicle_code}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
                                                         <TableCell className="font-medium">Base Price :</TableCell>
-                                                        <TableCell className="font-medium">{vehicle[index]?.base_price}</TableCell>
+                                                        <TableCell className="font-medium">{newVehicles[index]?.base_price}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
                                                         <TableCell className="font-medium">Address :</TableCell>
-                                                        <TableCell className="font-medium">{vehicle[index]?.address}</TableCell>
+                                                        <TableCell className="font-medium">{newVehicles[index]?.address}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
                                                         <TableCell className="font-medium">Description :</TableCell>
-                                                        <TableCell className="font-medium">{vehicle[index]?.description}</TableCell>
+                                                        <TableCell className="font-medium">{newVehicles[index]?.description}</TableCell>
                                                     </TableRow>
                                                 </TableBody>
                                             </Table>
@@ -117,14 +125,14 @@ const VehicleQty = ({vehicleQty, onDetailsChange, onVehicleQtyChange } : Vehicle
                                 </div>
                             </div>
                         ) : (
-                            <p className='text-center text-sm'>No vehicle selected</p> // Fallback message or content
+                            <p className='text-center text-sm'>No vehicle selected</p>
                         )}
                     </div>
-
                 </div>
             ))}
         </div>
-    )
-}
+    );
+};
 
-export default VehicleQty
+export default VehicleQty;
+

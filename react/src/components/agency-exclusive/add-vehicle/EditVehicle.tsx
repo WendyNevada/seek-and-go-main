@@ -141,12 +141,11 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
 
     //editVehicleSchema
     return (
-        <div className="flex justify-center items-center h-screen">
-            <div className="min-h-50 w-50 p-0 sm:p-12 mt-80">
+        <div className="flex justify-center items-center h-screen min-h-50 w-50 p-0 sm:p-12 mt-80">
             <div className="x-auto max-w-2xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
                 <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)}>
-                                <h1 className="text-2xl font-bold mb-8 text-center">Edit Attraction</h1>
+                                <h1 className="text-2xl font-bold mb-8 text-center">Edit Vehicle</h1>
 
                                 <div className="flex flex-row space-x-4">
                                     <FormField
@@ -159,9 +158,10 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                                 <FormMessage />
                                                 <FormControl className='w-full'>
                                                     <Input
-                                                        placeholder={"Vehilce Code"}
+                                                        placeholder={"Vehicle Code"}
                                                         {...field}
                                                         onChange={field.onChange}
+                                                        disabled
                                                     />
                                                 </FormControl>
                                             </FormItem>
@@ -466,7 +466,6 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                             </form>
                         </Form>
             </div>
-        </div>
         </div>
 
     )
