@@ -46,7 +46,7 @@ const AttractionList = () => {
                 }
                 rows[rows.length - 1].push(
                     <div key={attraction.ref_attraction_id} className='flex-1'>
-                        <Card className='w-64 shadow-lg mt-10'>
+                        <Card className='w-64 shadow-lg mt-10 mr-16'>
                         <img src={enviUrl + attraction.image_url} alt={attraction.attraction_name} className="h-36 w-full shadow-lg" />
                             <CardHeader>
                                 <CardTitle>{attraction.attraction_name}</CardTitle>
