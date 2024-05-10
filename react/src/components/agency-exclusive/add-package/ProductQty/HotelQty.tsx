@@ -1,7 +1,7 @@
+import axiosClient from '@/axios.client';
 import { useLogin } from '@/context/LoginContext';
 import React, { useEffect, useState } from 'react'
-import { DaumAttraction } from '../../product-dashboard/utils/ProductModel';
-import axiosClient from '@/axios.client';
+import { DaumHotel } from '../../product-dashboard/utils/ProductModel';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -9,55 +9,53 @@ import { Button } from '@/components/ui/button';
 //  icon
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
-
-interface AttractionQtyProps {
-    attractionQty: number;
-    onDetailsChange: (details: { ref_attraction_id?: string | null }[]) => void; // Function to handle details change
-    onAttractionQtyChange: (attractionQty: number) => void;
+interface HotelQtyProps {
+    hotelQty: number;
+    onDetailsChange: (details: { ref_hotel_id?: string | null }[]) => void; // Function to handle details change
+    onHotelQtyChange: (hotelQty: number) => void;
 }
 
-const AttractionQty = ( {attractionQty, onDetailsChange, onAttractionQtyChange } : AttractionQtyProps ) => {
+const HotelQty = ({hotelQty, onDetailsChange, onHotelQtyChange} : HotelQtyProps) => {
     const { user } = useLogin();
-    const [attraction, setAttraction] = useState<DaumAttraction[]>([]);
-    const [details, setDetails] = useState<{ ref_attraction_id?: string | null }[]>([]);
-    const [newAttractions, setNewAttractions] = useState<DaumAttraction[]>(Array.from({ length: attractionQty }, () => ({} as DaumAttraction)));
+    const [hotel, setHotel] = useState<DaumHotel[]>([]);
+    const [details, setDetails] = useState<{ ref_hotel_id?: string | null }[]>(Array.from({ length: hotelQty }, () => ({ ref_hotel_id: null })));
+    const [newHotels, setNewHotels] = useState<DaumHotel[]>(Array.from({ length: hotelQty }, () => ({} as DaumHotel)));
 
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
         const fetchAttraction = async () => {
             try {
-                const response = await axiosClient.post<DaumAttraction[]>('/v1/GetActiveAttractionByAgencyId', {
+                const response = await axiosClient.post<DaumHotel[]>('/v1/GetActiveHotelByAgencyId', {
                     agency_id: user?.agency_id
-                }); // Replace 'your-api-url' with the actual API endpoint
-                setAttraction(response.data);
+                });
+                setHotel(response.data);
             } catch (error) {
-                console.error('Error fetching attractions:', error);
+                console.error('Error fetching vehicles:', error);
             }
-        }
+        };
         fetchAttraction();
-    },[]);
-
+    }, []);
 
     const handleDetailChange = (index: number, value: string) => {
         const newDetails = [...details];
-        newDetails[index] = { ref_attraction_id: value }; // Create a new object for the detail
+        newDetails[index] = { ref_hotel_id: value }; // Create a new object for the detail
         setDetails(newDetails);
         onDetailsChange(newDetails);
 
-        const selectedAttraction = attraction.find(attractionItem => Number(attractionItem.ref_attraction_id) === Number(value));
-        if (selectedAttraction) {
-            setNewAttractions(prevAttractions => {
-                const updatedAttractions = [...prevAttractions];
-                updatedAttractions[index] = {
-                    ...updatedAttractions[index],
-                    attraction_name: selectedAttraction.attraction_name,
-                    image_url: selectedAttraction.image_url,
-                    base_price: selectedAttraction.base_price,
-                    address: selectedAttraction.address,
-                    description: selectedAttraction.description
+        const selectedHotel = hotel.find(hotelItem => Number(hotelItem.ref_hotel_id) === Number(value));
+        if (selectedHotel) {
+            setNewHotels(prevHotels => {
+                const updatedHotels = [...prevHotels];
+                updatedHotels[index] = {
+                    ...updatedHotels[index],
+                    hotel_name: selectedHotel.hotel_name,
+                    image_url: selectedHotel.image_url,
+                    base_price: selectedHotel.base_price,
+                    address: selectedHotel.address,
+                    description: selectedHotel.description
                 };
-                return updatedAttractions;
+                return updatedHotels;
             });
         }
     };
@@ -67,22 +65,22 @@ const AttractionQty = ( {attractionQty, onDetailsChange, onAttractionQtyChange }
         newDetails.splice(index, 1);
         setDetails(newDetails);
         onDetailsChange(newDetails);
-        onAttractionQtyChange(attractionQty - 1);
+        onHotelQtyChange(hotelQty - 1);
     };
 
     return (
         <div>
-            {Array.from({ length: attractionQty }).map((_, index) => (
+            {Array.from({ length: hotelQty }).map((_, index) => (
                 <div key={index} className="flex flex-col gap-4 my-2">
                     <div className="flex flex-row">
                         <Select onValueChange={(newValue) => handleDetailChange(index, newValue)}>
                             <SelectTrigger>
-                                <SelectValue placeholder="Select Attraction" />
+                                <SelectValue placeholder="Select Hotel" />
                             </SelectTrigger>
                             <SelectContent>
-                                {attraction.map((attractionItem) => (
-                                    <SelectItem key={attractionItem.ref_attraction_id} value={attractionItem.ref_attraction_id.toString()}>
-                                        {attractionItem.attraction_name}
+                                {hotel.map((hotelItem) => (
+                                    <SelectItem key={hotelItem.ref_hotel_id} value={hotelItem.ref_hotel_id.toString()}>
+                                        {hotelItem.hotel_name}
                                     </SelectItem>
                                 ))}
                             </SelectContent>
@@ -92,33 +90,33 @@ const AttractionQty = ( {attractionQty, onDetailsChange, onAttractionQtyChange }
                     </div>
 
                     <div className="border-2 rounded-md">
-                        {details[index]?.ref_attraction_id && newAttractions[index]?.image_url ? (
+                        {details[index]?.ref_hotel_id && newHotels[index]?.image_url ? (
                             <div className='flex flex-row'>
                                 <div className="ml-1 mt-4">
-                                    {details[index]?.ref_attraction_id && (
-                                        <img src={enviUrl + newAttractions[index]?.image_url} className='w-64 ml-4 rounded-md'/>
+                                    {details[index]?.ref_hotel_id && (
+                                        <img src={enviUrl + newHotels[index]?.image_url} className='w-64 ml-4 rounded-md'/>
                                     )}
                                 </div>
                                 <div className="">
-                                    {details[index]?.ref_attraction_id && (
+                                    {details[index]?.ref_hotel_id && (
                                         <div className="flex flex-col m-2 space-y-4">
                                             <Table>
                                                 <TableBody>
                                                     <TableRow>
                                                         <TableCell className="font-medium">Product Name :</TableCell>
-                                                        <TableCell className="font-medium">{newAttractions[index]?.attraction_name}</TableCell>
+                                                        <TableCell className="font-medium">{newHotels[index]?.hotel_name}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
                                                         <TableCell className="font-medium">Base Price :</TableCell>
-                                                        <TableCell className="font-medium">{newAttractions[index]?.base_price}</TableCell>
+                                                        <TableCell className="font-medium">{newHotels[index]?.base_price}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
                                                         <TableCell className="font-medium">Address :</TableCell>
-                                                        <TableCell className="font-medium">{newAttractions[index]?.address}</TableCell>
+                                                        <TableCell className="font-medium">{newHotels[index]?.address}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
                                                         <TableCell className="font-medium">Description :</TableCell>
-                                                        <TableCell className="font-medium">{newAttractions[index]?.description}</TableCell>
+                                                        <TableCell className="font-medium">{newHotels[index]?.description}</TableCell>
                                                     </TableRow>
                                                 </TableBody>
                                             </Table>
@@ -127,7 +125,7 @@ const AttractionQty = ( {attractionQty, onDetailsChange, onAttractionQtyChange }
                                 </div>
                             </div>
                         ) : (
-                            <p className='text-center text-sm'>No attraction selected</p> // Fallback message or content
+                            <p className='text-center text-sm'>No hotel selected</p> // Fallback message or content
                         )}
                     </div>
 
@@ -137,4 +135,4 @@ const AttractionQty = ( {attractionQty, onDetailsChange, onAttractionQtyChange }
     )
 }
 
-export default AttractionQty
+export default HotelQty
