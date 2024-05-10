@@ -207,4 +207,14 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('SearchVehicleCustomer', 'AgencyAffiliateController@SearchVehicleCustomer');
     #endregion
+
+    #region AgencyPayment
+    Route::post('GetAllAgencyPaymentByAgencyId', 'AgencyPaymentController@GetAllAgencyPaymentByAgencyId');
+
+    Route::post('InsertAgencyPayment', 'AgencyPaymentController@InsertAgencyPayment');
+
+    Route::post('EditAgencyPayment', 'AgencyPaymentController@EditAgencyPayment');
+
+    Route::post('RemoveAgencyPayment', 'AgencyPaymentController@RemoveAgencyPayment');
+    #endregion
 });

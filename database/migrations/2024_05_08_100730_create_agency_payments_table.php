@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreign('agency_id')->references('agency_id')->on('agencies')->onDelete('cascade');
             $table->string('payment_type', length:50);
             $table->string('bank_name', length:100);
-            $table->string('account_no', length:100);
+            $table->string('account_no', length:100)->nullable();
             $table->timestamps();
         });
     }
