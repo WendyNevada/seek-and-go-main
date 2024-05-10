@@ -1,67 +1,37 @@
 <?php
 
-namespace App\Http\V1\Controllers;
+namespace App\Http\Controllers\API\V1;
 
-use App\Models\AgencyPayment;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\V2\AgencyIdRequest;
+use App\Http\Services\AgencyPaymentService;
+use App\Http\Requests\V2\AgencyPaymentIdRequest;
 use App\Http\Requests\V1\StoreAgencyPaymentRequest;
 use App\Http\Requests\V1\UpdateAgencyPaymentRequest;
 
 class AgencyPaymentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function GetAllAgencyPaymentByAgencyId(AgencyPaymentService $agencyPaymentService, AgencyIdRequest $request)
     {
-        //
+        $response = $agencyPaymentService->GetAllAgencyPaymentByAgencyId($request);
+        return $response;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function InsertAgencyPayment(AgencyPaymentService $agencyPaymentService, StoreAgencyPaymentRequest $request)
     {
-        //
+        $response = $agencyPaymentService->InsertAgencyPayment($request);
+        return $response;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreAgencyPaymentRequest $request)
+    public function EditAgencyPayment(AgencyPaymentService $agencyPaymentService, UpdateAgencyPaymentRequest $request)
     {
-        //
+        $response = $agencyPaymentService->EditAgencyPayment($request);
+        return $response;
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(AgencyPayment $agencyPayment)
+    public function RemoveAgencyPayment(AgencyPaymentService $agencyPaymentService, AgencyPaymentIdRequest $request)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(AgencyPayment $agencyPayment)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateAgencyPaymentRequest $request, AgencyPayment $agencyPayment)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(AgencyPayment $agencyPayment)
-    {
-        //
+        $response = $agencyPaymentService->RemoveAgencyPayment($request);
+        return $response;
     }
 }

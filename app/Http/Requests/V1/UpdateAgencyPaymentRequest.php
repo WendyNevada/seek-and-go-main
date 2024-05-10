@@ -11,7 +11,7 @@ class UpdateAgencyPaymentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class UpdateAgencyPaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'agency_payment_id' => 'required',
+            'account_no' => 'nullable',
+            'picture' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif', 'max:10000']
         ];
     }
 }
