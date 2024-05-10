@@ -23,7 +23,7 @@ class GetOrderDashboardRequest extends FormRequest
     {
         return [
             'agency_id' => ['required'],
-            'order_status' => ['nullable']
+            'status' => ['nullable']
         ];
     }
 }

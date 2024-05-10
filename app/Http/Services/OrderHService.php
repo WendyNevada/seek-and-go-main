@@ -336,6 +336,18 @@ class OrderHService implements OrderHInterface
             'qty' => $product->qty - 1
         ]);
     }
+
+    private function checkOrderDataEmpty($data)
+    {
+        if(count($data) <= 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     #endregion
 
     #region Public Function
@@ -343,7 +355,29 @@ class OrderHService implements OrderHInterface
     {
         $order = $this->getOrderByAgencyAndStatus($request->agency_id, Constanta::$orderStatusNew);
         
-        return response()->json($order);
+        $empty = $this->checkOrderDataEmpty($order);
+
+        if($empty == true)
+        {
+            return response()->json(
+                [
+                    'status' => 'error', 
+                    'message' => 'Order data not found',
+                    'data' => []
+                ]
+                , 400);
+        }
+        else
+        {
+            
+            return response()->json(
+                [
+                    'status' => 'ok', 
+                    'message' => 'Order data found',
+                    'data' => $order
+                ]
+                , 200);
+        }
     }
 
     public function GetNewOrderForCustomer(CustIdRequest $request)
@@ -371,7 +405,29 @@ class OrderHService implements OrderHInterface
     {
         $order = $this->getOrderByCustomerAndStatusWithLimit($request->customer_id, $request->order_status);
         
-        return response()->json($order);
+        $empty = $this->checkOrderDataEmpty($order);
+
+        if($empty == true)
+        {
+            return response()->json(
+                [
+                    'status' => 'error', 
+                    'message' => 'Order data not found',
+                    'data' => []
+                ]
+                , 400);
+        }
+        else
+        {
+            
+            return response()->json(
+                [
+                    'status' => 'ok', 
+                    'message' => 'Order data found',
+                    'data' => $order
+                ]
+                , 200);
+        }
     }
 
     public function GetOrderById(GetOrderByIdRequest $request)
@@ -715,7 +771,29 @@ class OrderHService implements OrderHInterface
     {
         $order = $this->getOrderByAgencyAndStatus($request->agency_id, $request->status);
         
-        return response()->json($order);
+        $empty = $this->checkOrderDataEmpty($order);
+
+        if($empty == true)
+        {
+            return response()->json(
+                [
+                    'status' => 'error', 
+                    'message' => 'Order data not found',
+                    'data' => []
+                ]
+                , 400);
+        }
+        else
+        {
+            
+            return response()->json(
+                [
+                    'status' => 'ok', 
+                    'message' => 'Order data found',
+                    'data' => $order
+                ]
+                , 200);
+        }
     }
 
     #endregion
