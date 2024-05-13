@@ -4,17 +4,23 @@ namespace App\Http\Services;
 
 use Carbon\Carbon;
 use App\Models\Trx;
+use App\Models\Agency;
 use App\Models\OrderD;
 use App\Models\OrderH;
+use App\Models\Account;
+use App\Models\Customer;
 use App\Models\PackageH;
 use App\Models\RefHotel;
 use App\Models\Constanta;
 use App\Models\RefVehicle;
+use App\Mail\CustPaidEmail;
 use App\Models\RefAttraction;
 use App\Models\PackageHistoryD;
 use App\Models\PackageHistoryH;
+use App\Mail\OrderApprovedEmail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\V2\CustIdRequest;
 use App\Http\Interfaces\OrderHInterface;
 use App\Http\Requests\V2\AgencyIdRequest;
@@ -348,6 +354,42 @@ class OrderHService implements OrderHInterface
             return false;
         }
     }
+
+    private function getEmailByForeignId($id, $role)
+    {
+        if($role == Constanta::$roleCustomer)
+        {
+            $customer = Customer::where('customer_id', $id)->first();
+            $email = Account::where('account_id', $customer->account_id)->first()->email;
+        }
+        else
+        {
+            $agency = Agency::where('agency_id', $id)->first();
+            $email = Account::where('account_id', $agency->account_id)->first()->email;
+        }
+
+        return $email;
+    }
+
+    private function sendEmailApvOrder($mailTo, $orderNo, $agencyName)
+    {
+        Mail::to($mailTo)->send(new OrderApprovedEmail($orderNo, $agencyName));
+    }
+
+    private function sendEmailCustPaidOrder($mailTo, $orderNo, $custName)
+    {
+        Mail::to($mailTo)->send(new CustPaidEmail($orderNo, $custName));
+    }
+
+    private function getAgencyByAgencyId($agency_id)
+    {
+        return Agency::where('agency_id', $agency_id)->first();
+    }
+
+    private function getCustomerByCustomerId($customer_id)
+    {
+        return Customer::where('customer_id', $customer_id)->first();
+    }
     #endregion
 
     #region Public Function
@@ -558,6 +600,12 @@ class OrderHService implements OrderHInterface
 
             $trx = $this->createTrx($trxNo, $request->order_h_id);
 
+            $email = $this->getEmailByForeignId($orderH->customer_id, Constanta::$roleCustomer);
+
+            $agencyName = $this->getAgencyByAgencyId($orderH->agency_id)->agency_name;
+
+            $this->sendEmailApvOrder($email, $orderH->order_no, $agencyName);
+
             DB::commit();
 
             return response()->json([
@@ -640,6 +688,12 @@ class OrderHService implements OrderHInterface
             DB::beginTransaction();
 
             $orderH = $this->updateOrderStatus($request->order_h_id, Constanta::$orderStatusCustPaid);
+
+            $email = $this->getEmailByForeignId($orderH->agency_id, Constanta::$roleAgency);
+
+            $customerName = $this->getCustomerByCustomerId($orderH->customer_id)->customer_name;
+
+            $this->sendEmailCustPaidOrder($email, $orderH->order_no, $customerName);
 
             DB::commit();
 

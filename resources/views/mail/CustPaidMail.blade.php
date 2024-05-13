@@ -1,0 +1,1 @@
+The order with order number {{ $orderNo }} has been paid by the customer {{ $custName }}.

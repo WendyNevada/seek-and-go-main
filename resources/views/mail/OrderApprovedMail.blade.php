@@ -1,0 +1,1 @@
+Your order with order number {{ $orderNo }} has been approved by the agency {{ $agencyName }}.
