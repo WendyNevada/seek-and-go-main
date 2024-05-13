@@ -287,6 +287,18 @@ class RefHotelService implements RefHotelInterface
             return false;
         }
     }
+
+    private function checkDataNull($data)
+    {
+        if($data == null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     #endregion
 
     #region Public Function
@@ -300,9 +312,9 @@ class RefHotelService implements RefHotelInterface
 
         $address = $this->getRefZipcodeById($hotel->ref_zipcode_id);
 
-        if($hotel != null)
+        if($this->checkDataNull($hotel) == false)
         {
-            if($hotelPicture != null)
+            if($this->checkDataNull($hotelPicture) == false)
             {
                 return response()->json([
                     'status' => "ok",

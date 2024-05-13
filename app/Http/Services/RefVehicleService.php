@@ -304,6 +304,18 @@ class RefVehicleService implements RefVehicleInterface
             return false;
         }
     }
+
+    private function checkDataNull($data)
+    {
+        if($data == null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     #endregion
 
     #region Public Function
@@ -517,9 +529,9 @@ class RefVehicleService implements RefVehicleInterface
 
         $address = $this->getRefZipcodeById($vehicle->ref_zipcode_id);;
 
-        if($vehicle != null)
+        if($this->checkDataNull($vehicle) == false)
         {
-            if($vehiclePicture != null)
+            if($this->checkDataNull($vehiclePicture) == false)
             {
                 return response()->json([
                     'status' => "ok",

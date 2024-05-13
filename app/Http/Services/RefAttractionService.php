@@ -292,6 +292,18 @@ class RefAttractionService implements RefAttractionInterface
             return false;
         }
     }
+
+    private function checkDataNull($data)
+    {
+        if($data == null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     #endregion
 
     #region Public Function
@@ -312,9 +324,9 @@ class RefAttractionService implements RefAttractionInterface
 
         $address = $this->getRefZipcodeById($attraction->ref_zipcode_id);
 
-        if($attraction != null)
+        if($this->checkDataNull($attraction) == false)
         {
-            if($attractionPicture != null)
+            if($this->checkDataNull($attractionPicture) == false)
             {
                 return response()->json([
                     'status' => "ok",
