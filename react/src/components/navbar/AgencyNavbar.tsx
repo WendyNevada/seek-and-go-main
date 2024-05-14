@@ -1,20 +1,16 @@
 import React, { useState } from 'react'
-// import './Navbar.css'
-// import { BsCart2 } from 'react-icons/bs'
 import { assetForWeb } from '../../assets/assetStatic'
 import HomeIcon from '@mui/icons-material/Home'
 import InfoIcon from '@mui/icons-material/Info'
-// import CommentRoundedIcon from '@mui/icons-material/CommentRounded'
-// import PhoneRoundedIcon from '@mui/icons-material/PhoneRounded'
-// import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded'
-// import { HiOutlineBars3 } from 'react-icons/hi2'
 import { Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
-// import Login from '@mui/icons-material/Login';
 import { Link } from 'react-router-dom'
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useLogin } from '@/context/LoginContext'
 import { urlConstant } from '@/urlConstant'
 import { useTranslation } from 'react-i18next'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu'
+import { Avatar, AvatarFallback } from '../ui/avatar'
+import LanguageIcon from '@mui/icons-material/Language';
 
 const Navbar = () => {
 
@@ -90,8 +86,31 @@ const Navbar = () => {
                 <Link to ={urlConstant.AgencyHomePage} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Dashboard</Link>
                 <Link to="/Agency/Product" className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Product</Link>
                 <button onClick={() => logout()} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Logout</button>
-                <button onClick={() => changeLanguage('en')} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1' >English</button>
-                <button onClick={() => changeLanguage('id')} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1'>Indonesia</button>
+                {/* <button onClick={() => changeLanguage('en')} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1' >English</button>
+                <button onClick={() => changeLanguage('id')} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1'>Indonesia</button> */}
+
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Avatar className="h-9 w-9 hover:cursor-pointer">
+                        <AvatarFallback><LanguageIcon className='text-blue-600'/></AvatarFallback>
+                        <span className="sr-only">Toggle language menu</span>
+                        </Avatar>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-24 mr-2">
+                        <DropdownMenuItem>
+                            <div className="flex items-center space-x-1" onClick={() => changeLanguage('en')}>
+                                <span className="fi fi-us rounded-full"></span>
+                                <span>English</span>
+                            </div>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                            <div className="flex items-center space-x-1" onClick={() => changeLanguage('id')}>
+                                <span className="fi fi-id rounded-full"></span>
+                                <span>Indonesia</span>
+                            </div>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
         </nav>
       )

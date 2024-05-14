@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-// import './Navbar.css'
 import { BsCart2 } from 'react-icons/bs'
 import { assetForWeb } from '../../assets/assetStatic'
 import HomeIcon from '@mui/icons-material/Home'
@@ -7,7 +6,6 @@ import InfoIcon from '@mui/icons-material/Info'
 import CommentRoundedIcon from '@mui/icons-material/CommentRounded'
 import PhoneRoundedIcon from '@mui/icons-material/PhoneRounded'
 import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded'
-// import { HiOutlineBars3 } from 'react-icons/hi2'
 import { Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 import Login from '@mui/icons-material/Login';
 import { useLogin } from '@/context/LoginContext'
@@ -116,7 +114,7 @@ const Navbar = () => {
                         <span className="sr-only">Toggle language menu</span>
                         </Avatar>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-24">
+                    <DropdownMenuContent className="w-24 mr-2">
                         <DropdownMenuItem>
                             <div className="flex items-center space-x-1" onClick={() => changeLanguage('en')}>
                                 <span className="fi fi-us rounded-full"></span>
