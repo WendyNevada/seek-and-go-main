@@ -18,14 +18,13 @@ const AgencyAccordion = () => {
   // Handler function to update the selected value
     const handleValueChange = (newValue: string) => {
         setSelectedValue(newValue);
-        console.log('hwhwhw', orders)
     };
 
     useEffect(() => {
         const fetchOrders = async () => {
             try {
                 const response = await axiosClient.post('v1/GetOrderDashboardByAgencyIdAndStatus', { agency_id: user?.agency_id, status: 'ALL' });
-                setOrders(response.data);
+                setOrders(response.data.data);
             } catch (error) {
                 console.error('Error fetching orders:', error);
             }

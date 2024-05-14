@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 
 //  icon
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import { formatPrice } from '@/utils/priceFormating';
 
 interface VehicleQtyProps {
     vehicleQty: number;
@@ -108,7 +109,7 @@ const VehicleQty = ({ vehicleQty, onDetailsChange, onVehicleQtyChange }: Vehicle
                                                     </TableRow>
                                                     <TableRow>
                                                         <TableCell className="font-medium">Base Price :</TableCell>
-                                                        <TableCell className="font-medium">{newVehicles[index]?.base_price}</TableCell>
+                                                        <TableCell className="font-medium">{formatPrice(newVehicles[index]?.base_price)}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
                                                         <TableCell className="font-medium">Address :</TableCell>

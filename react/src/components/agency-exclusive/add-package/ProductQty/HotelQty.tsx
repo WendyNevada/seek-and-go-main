@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 
 //  icon
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import { formatPrice } from '@/utils/priceFormating';
 
 interface HotelQtyProps {
     hotelQty: number;
@@ -108,7 +109,7 @@ const HotelQty = ({hotelQty, onDetailsChange, onHotelQtyChange} : HotelQtyProps)
                                                     </TableRow>
                                                     <TableRow>
                                                         <TableCell className="font-medium">Base Price :</TableCell>
-                                                        <TableCell className="font-medium">{newHotels[index]?.base_price}</TableCell>
+                                                        <TableCell className="font-medium">{formatPrice(newHotels[index]?.base_price)}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
                                                         <TableCell className="font-medium">Address :</TableCell>

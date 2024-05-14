@@ -45,9 +45,11 @@ export function CityCombobox({onSelectCity, selectedProvince} : CityComboboxProp
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {value
-            ? cities.find((cities:City) => cities.value === value)?.label
-            : t('Select City...')}
+            <span className="truncate">
+                {value
+                ? cities.find((cities:City) => cities.value === value)?.label
+                : t('Select City...')}
+            </span>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
