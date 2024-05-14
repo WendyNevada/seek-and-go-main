@@ -12,8 +12,10 @@ import axiosClient from '@/axios.client'
 import { toast } from '@/components/ui/use-toast'
 import axios, { AxiosError } from 'axios'
 import { Required } from '@/components/ui/Custom/required'
+import { useTranslation } from 'react-i18next'
 
 const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) => {
+    const { t } = useTranslation();
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
     const [imageUrl, setImageUrl] = useState('');
     const navigate = useNavigate();
@@ -121,19 +123,19 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
             <div className="mx-auto max-w-xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)}>
-                                <h1 className="text-2xl font-bold mb-8 text-center">Edit Attraction</h1>
+                                <h1 className="text-2xl font-bold mb-8 text-center">{t('Edit Attraction')}</h1>
 
                                 <FormField
                                     control={form.control}
                                     name="attraction_code"
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
-                                            <FormLabel>{"Attraction Code"}</FormLabel>
+                                            <FormLabel>{t('Attraction Code')}</FormLabel>
                                             <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Input
-                                                    placeholder={"Attraction Code"}
+                                                    placeholder={t('Attraction Code')}
                                                     {...field}
                                                     onChange={field.onChange}
                                                     disabled
@@ -147,7 +149,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     name="picture"
                                     render={() => (
                                         <FormItem className="custom-field">
-                                            <FormLabel>{"Picture"}</FormLabel>
+                                            <FormLabel>{t('Picture')}</FormLabel>
                                             <FormMessage />
                                             <FormControl>
                                                 <Input
@@ -171,12 +173,12 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     name="attraction_name"
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
-                                            <FormLabel>{"Attraction Name"}</FormLabel>
+                                            <FormLabel>{t('Attraction Name')}</FormLabel>
                                             <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Input
-                                                    placeholder={"Attraction Name"}
+                                                    placeholder={t('Attraction Name')}
                                                     {...field}
                                                     onChange={field.onChange}
                                                 />
@@ -189,12 +191,12 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     name="description"
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
-                                            <FormLabel>{"Description"}</FormLabel>
+                                            <FormLabel>{t('Description')}</FormLabel>
                                             <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Textarea
-                                                    placeholder={field.name}
+                                                    placeholder={t('Description')}
                                                     {...field}
                                                     onChange={field.onChange}
                                                 />
@@ -207,12 +209,12 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     name="address"
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
-                                            <FormLabel>{"Nama Jalan"}</FormLabel>
+                                            <FormLabel>{t('Street Address')}</FormLabel>
                                             <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Input
-                                                    placeholder={"Address"}
+                                                    placeholder={t('Street Address')}
                                                     {...field}
                                                     onChange={field.onChange}
                                                 />
@@ -225,12 +227,12 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     name="address2"
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
-                                            <FormLabel>{"Address"}</FormLabel>
+                                            <FormLabel>{t('Address')}</FormLabel>
                                             <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Textarea
-                                                    placeholder={"Address"}
+                                                    placeholder={t('Address')}
                                                     {...field}
                                                     onChange={field.onChange}
                                                     disabled
@@ -244,7 +246,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     name="qty"
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
-                                            <FormLabel>{"QTY"}</FormLabel>
+                                            <FormLabel>{t('QTY')}</FormLabel>
                                             <Required/>
                                             <FormMessage />
                                             <FormControl>
@@ -262,11 +264,11 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     name="promo_code"
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
-                                            <FormLabel>{"Promo Code"}</FormLabel>
+                                            <FormLabel>{t('Promo Code')}</FormLabel>
                                             <FormMessage />
                                             <FormControl>
                                                 <Input
-                                                    placeholder={"Promo Code"}
+                                                    placeholder={t('Promo Code')}
                                                     {...field}
                                                     onChange={field.onChange}
                                                 />
@@ -279,7 +281,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     name="base_price"
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
-                                            <FormLabel>{"Base Price"}</FormLabel>
+                                            <FormLabel>{t('Price')}</FormLabel>
                                             <Required/>
                                             {/* <FormMessage /> */}
                                             <FormControl>
@@ -294,7 +296,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                 />
 
                                 <div className="justify-center flex">
-                                    <Button type="submit" className='mt-4'>Edit Attraction Product
+                                    <Button type="submit" className='mt-4'>{t('Edit Attraction Product')}
                                     </Button>
                                 </div>
                             </form>

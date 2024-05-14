@@ -2,8 +2,11 @@
 
 namespace App\Http\Services;
 
+use App\Models\Agency;
 use App\Models\OrderD;
 use App\Models\OrderH;
+use App\Models\Account;
+use App\Models\Customer;
 use App\Models\PackageD;
 use App\Models\PackageH;
 use App\Models\RefHotel;
@@ -13,6 +16,8 @@ use App\Models\RefAttraction;
 use App\Models\PackageHistoryD;
 use App\Models\PackageHistoryH;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\CustomPackageRequestEmail;
 use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Interfaces\PackageHInterface;
 use App\Http\Requests\V2\PackageHIdRequest;
@@ -295,6 +300,48 @@ class PackageHService implements PackageHInterface
         }
     }
 
+    private function checkPackageDataEmpty($data)
+    {
+        if(count($data) <= 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private function getAgencyByAgencyId($agency_id)
+    {
+        return Agency::where('agency_id', $agency_id)->first();
+    }
+
+    private function getCustomerByCustomerId($customer_Id)
+    {
+        return Customer::where('customer_id', $customer_Id)->first();
+    }
+
+    private function getEmailByForeignId($id, $role)
+    {
+        if($role == Constanta::$roleCustomer)
+        {
+            $customer = Customer::where('customer_id', $id)->first();
+            $email = Account::where('account_id', $customer->account_id)->first()->email;
+        }
+        else
+        {
+            $agency = Agency::where('agency_id', $id)->first();
+            $email = Account::where('account_id', $agency->account_id)->first()->email;
+        }
+
+        return $email;
+    }
+
+    private function sendEmailCustomPackageRequest($mailTo, $customerName)
+    {
+        Mail::to($mailTo)->send(new CustomPackageRequestEmail($customerName));
+    }
     #endregion
 
     #region Public Function
@@ -457,6 +504,12 @@ class PackageHService implements PackageHInterface
 
             }
 
+            $email = $this->getEmailByForeignId($request->agency_id, Constanta::$roleAgency);
+
+            $customerName = $this->getCustomerByCustomerId($packageHCustom->customer_id)->customer_name;
+
+            $this->sendEmailCustomPackageRequest($email, $customerName);
+
             DB::commit();
 
             return response()->json([
@@ -540,7 +593,22 @@ class PackageHService implements PackageHInterface
     {
         $packageH = $this->getPackageByAgencyId($request->agency_id);
 
-        return response()->json($packageH);
+        if($this->checkPackageDataEmpty($packageH) == true)
+        {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No active package for this agency',
+                'data' => []
+            ]);
+        }
+        else
+        {
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'success',
+                'data' => $packageH
+            ]);
+        }
     }
 
     public function GetPackageDataById(PackageHIdRequest $request)

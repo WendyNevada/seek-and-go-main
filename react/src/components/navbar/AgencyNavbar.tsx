@@ -14,8 +14,16 @@ import { Link } from 'react-router-dom'
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useLogin } from '@/context/LoginContext'
 import { urlConstant } from '@/urlConstant'
+import { useTranslation } from 'react-i18next'
 
 const Navbar = () => {
+
+    const { i18n } = useTranslation();
+
+    const changeLanguage = (language: string) => {
+    i18n.changeLanguage(language);
+    };
+
     const { logout } = useLogin();
     const [openMenu, setOpenMenu] = useState(false)
     const menuOptions = [
@@ -82,6 +90,8 @@ const Navbar = () => {
                 <Link to ={urlConstant.AgencyHomePage} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Dashboard</Link>
                 <Link to="/Agency/Product" className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Product</Link>
                 <button onClick={() => logout()} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Logout</button>
+                <button onClick={() => changeLanguage('en')} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1' >English</button>
+                <button onClick={() => changeLanguage('id')} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1'>Indonesia</button>
             </div>
         </nav>
       )

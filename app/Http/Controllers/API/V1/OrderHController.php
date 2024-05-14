@@ -7,6 +7,7 @@ use App\Http\Services\OrderHService;
 use App\Http\Requests\V2\CustIdRequest;
 use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Requests\V2\OrderHIdRequest;
+use App\Http\Requests\V2\CancelOrderRequest;
 use App\Http\Requests\V2\CreateOrderRequest;
 use App\Http\Requests\V2\GetOrderByIdRequest;
 use App\Http\Requests\V2\GetCustomerOrderRequest;
@@ -68,7 +69,7 @@ class OrderHController extends Controller
         return $response;
     }
 
-    public function CancelOrder(OrderHService $orderHService, OrderHIdRequest $request)
+    public function CancelOrder(OrderHService $orderHService, CancelOrderRequest $request)
     {
         $response = $orderHService->CancelOrder($request);
         return $response;

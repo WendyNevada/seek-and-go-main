@@ -287,6 +287,18 @@ class RefHotelService implements RefHotelInterface
             return false;
         }
     }
+
+    private function checkDataNull($data)
+    {
+        if($data == null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     #endregion
 
     #region Public Function
@@ -300,9 +312,9 @@ class RefHotelService implements RefHotelInterface
 
         $address = $this->getRefZipcodeById($hotel->ref_zipcode_id);
 
-        if($hotel != null)
+        if($this->checkDataNull($hotel) == false)
         {
-            if($hotelPicture != null)
+            if($this->checkDataNull($hotelPicture) == false)
             {
                 return response()->json([
                     'status' => "ok",
@@ -407,38 +419,27 @@ class RefHotelService implements RefHotelInterface
         {
             $hotel = $this->getRefHotelById($request->ref_hotel_id);
 
-            if($hotel != null)
+            DB::beginTransaction();
+
+            $this->updateAgencyAffiliateHotel($request->ref_hotel_id, $request->base_price, $request->promo_code);
+
+            $this->updateRefHotel($request->ref_hotel_id, $request->hotel_name, $request->description, $request->address, $request->qty);
+
+            if($request->picture_url == null)
             {
-                DB::beginTransaction();
-
-                $this->updateAgencyAffiliateHotel($request->ref_hotel_id, $request->base_price, $request->promo_code);
-
-                $this->updateRefHotel($request->ref_hotel_id, $request->hotel_name, $request->description, $request->address, $request->qty);
-
-                if($request->picture_url == null)
+                if($request->hasFile('picture'))
                 {
-                    if($request->hasFile('picture'))
-                    {
-                        $this->updateRefPictureHotel($request->file('picture'), $request->hotel_code, $request->ref_hotel_id);
-                    }
+                    $this->updateRefPictureHotel($request->file('picture'), $request->hotel_code, $request->ref_hotel_id);
                 }
-
-                DB::commit();
-
-                return response()->json([
-                    'status' => "ok",
-                    'message' => "Hotel edited successfully",
-                    'ref_hotel_id' => $request->ref_hotel_id
-                ], 200);
             }
-            else
-            {
-                return response()->json([
-                    'status' => "error",
-                    'message' => "Data not found",
-                    'ref_hotel_id' => "-"
-                ], 400);
-            }
+
+            DB::commit();
+
+            return response()->json([
+                'status' => "ok",
+                'message' => "Hotel edited successfully",
+                'ref_hotel_id' => $request->ref_hotel_id
+            ], 200);
         }
         catch (\Exception $e)
         {

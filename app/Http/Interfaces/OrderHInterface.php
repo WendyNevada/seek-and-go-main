@@ -5,6 +5,7 @@ namespace App\Http\Interfaces;
 use App\Http\Requests\V2\CustIdRequest;
 use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Requests\V2\OrderHIdRequest;
+use App\Http\Requests\V2\CancelOrderRequest;
 use App\Http\Requests\V2\CreateOrderRequest;
 use App\Http\Requests\V2\GetOrderByIdRequest;
 use App\Http\Requests\V2\GetCustomerOrderRequest;
@@ -30,7 +31,7 @@ interface OrderHInterface
 
     public function RejectOrder(OrderHIdRequest $request);
 
-    public function CancelOrder(OrderHIdRequest $request);
+    public function CancelOrder(CancelOrderRequest $request);
 
     public function CustPaidOrder(OrderHIdRequest $request);
 

@@ -17,8 +17,10 @@ import axios, { AxiosError } from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { useLogin } from '@/context/LoginContext'
 import { Required } from '@/components/ui/Custom/required'
+import { useTranslation } from 'react-i18next'
 
 const AddAttraction = () => {
+    const { t } = useTranslation();
     //const attractionObj:AttractionObj = new AttractionObj();
     const [imageUrl, setImageUrl] = useState('');
     const navigate = useNavigate();
@@ -125,18 +127,18 @@ const AddAttraction = () => {
                 <div className="mx-auto max-w-xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)}>
-                            <h1 className="text-2xl font-bold mb-8 text-center">Add Attraction</h1>
+                            <h1 className="text-2xl font-bold mb-8 text-center">{t('Add Attraction')}</h1>
                             <FormField
                                 control={form.control}
                                 name="attraction_code"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Attraction Code"}</FormLabel>
+                                        <FormLabel>{t('Attraction Code')}</FormLabel>
                                         <Required/>
                                         <FormMessage />
                                         <FormControl>
                                             <Input
-                                                placeholder={"Attraction Code"}
+                                                placeholder={t('Attraction Code')}
                                                 {...field}
                                                 onChange={field.onChange}
                                                 maxLength={7} //Add Felix
@@ -150,7 +152,7 @@ const AddAttraction = () => {
                                 name="picture"
                                 render={() => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Picture"}</FormLabel>
+                                        <FormLabel>{t('Picture')}</FormLabel>
                                         <FormMessage />
                                         <FormControl>
                                             <Input
@@ -175,7 +177,7 @@ const AddAttraction = () => {
                                     name="area_1"
                                     render={() => (
                                         <FormItem className="custom-field mt-4 mr-8 flex flex-col">
-                                            <FormLabel>{"Province"}<Required/></FormLabel>
+                                            <FormLabel>{t('Province')}<Required/></FormLabel>
                                             <FormMessage />
                                             <FormControl>
                                                 <ProvinceCombobox onSelectProvince={handleProvinceSelect}/>
@@ -188,7 +190,7 @@ const AddAttraction = () => {
                                     name="area_2"
                                     render={() => (
                                         <FormItem className="custom-field mt-4 flex flex-col">
-                                            <FormLabel>{"City"}<Required/></FormLabel>
+                                            <FormLabel>{t('City')}<Required/></FormLabel>
                                             <FormMessage />
                                             <FormControl>
                                                 <CityCombobox onSelectCity={handleCitySelect} selectedProvince={form.watch("area_1")}/>
@@ -204,7 +206,7 @@ const AddAttraction = () => {
                                     name="area_3"
                                     render={() => (
                                         <FormItem className="custom-field mt-4 mr-8 flex flex-col">
-                                            <FormLabel>{"District"}<Required/></FormLabel>
+                                            <FormLabel>{t('District')}<Required/></FormLabel>
                                             <FormMessage />
                                             <FormControl>
                                                 <KecamatanCombobox onSelectKecamatan={handleKecamatanSelect} selectedCity={form.watch("area_2")} selectedProvince={form.watch("area_1")}/>
@@ -217,7 +219,7 @@ const AddAttraction = () => {
                                     name="area_4"
                                     render={() => (
                                         <FormItem className="custom-field mt-4 flex flex-col">
-                                            <FormLabel>{"Subdistrict"}<Required/></FormLabel>
+                                            <FormLabel>{t('Subdistrict')}<Required/></FormLabel>
                                             <FormMessage />
                                             <FormControl>
                                                 <KelurahanCombobox onSelectKelurahan={handleKelurahanSelect} selectedKecamatan={form.watch("area_3")} selectedCity={form.watch("area_2")} selectedProvince={form.watch("area_1")}/>
@@ -232,11 +234,11 @@ const AddAttraction = () => {
                                 name="attraction_name"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Attraction Name"}<Required/></FormLabel>
+                                        <FormLabel>{t('Attraction Name')}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl>
                                             <Input
-                                                placeholder={"Attraction Name"}
+                                                placeholder={t('Attraction Name')}
                                                 {...field}
                                                 onChange={field.onChange}
                                             />
@@ -249,11 +251,11 @@ const AddAttraction = () => {
                                 name="description"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Description"}<Required/></FormLabel>
+                                        <FormLabel>{t('Description')}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl>
                                             <Textarea
-                                                placeholder={field.name}
+                                                placeholder={t('Description')}
                                                 {...field}
                                                 onChange={field.onChange}
                                             />
@@ -266,11 +268,11 @@ const AddAttraction = () => {
                                 name="address"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Address"}<Required/></FormLabel>
+                                        <FormLabel>{t('Street Address')}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl>
                                             <Input
-                                                placeholder={"Address"}
+                                                placeholder={t('Street Address')}
                                                 {...field}
                                                 onChange={field.onChange}
                                             />
@@ -283,7 +285,7 @@ const AddAttraction = () => {
                                 name="qty"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"QTY"}<Required/></FormLabel>
+                                        <FormLabel>{t('QTY')}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl>
                                             <Input
@@ -300,11 +302,11 @@ const AddAttraction = () => {
                                 name="promo_code"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Promo Code"}</FormLabel>
+                                        <FormLabel>{t('Promo Code')}</FormLabel>
                                         <FormMessage />
                                         <FormControl>
                                             <Input
-                                                placeholder={"Promo Code"}
+                                                placeholder={t('Promo Code')}
                                                 {...field}
                                                 onChange={field.onChange}
                                             />
@@ -317,7 +319,7 @@ const AddAttraction = () => {
                                 name="base_price"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Base Price"}<Required/></FormLabel>
+                                        <FormLabel>{t('Price')}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl>
                                             <Input
@@ -331,7 +333,7 @@ const AddAttraction = () => {
                             />
 
                             <div className="justify-center flex">
-                                <Button type="submit" className='mt-4'>Add Attraction Product
+                                <Button type="submit" className='mt-4'>{t('Add Attraction Product')}
                                 </Button>
                             </div>
                         </form>

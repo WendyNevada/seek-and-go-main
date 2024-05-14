@@ -4,7 +4,7 @@ namespace App\Http\Requests\V2;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class GetOrderDashboardRequest extends FormRequest
+class CancelOrderRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,8 @@ class GetOrderDashboardRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'agency_id' => ['required'],
-            'status' => ['nullable']
+            'order_h_id' => 'required',
+            'cancel_by' => 'required'
         ];
     }
 }
