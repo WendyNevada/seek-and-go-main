@@ -12,8 +12,10 @@ import { toast } from '@/components/ui/use-toast'
 import axios, { AxiosError } from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Required } from '@/components/ui/Custom/required'
+import { useTranslation } from 'react-i18next'
 
 const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
+    const { t } = useTranslation();
     const [imageUrl, setImageUrl] = useState<string|undefined>('');
     const navigate = useNavigate()
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
@@ -107,7 +109,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
             <div className="mx-auto max-w-2xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <h1 className="text-2xl font-bold mb-8 text-center">Edit Hotel</h1>
+                        <h1 className="text-2xl font-bold mb-8 text-center">{t('Edit Hotel')}</h1>
 
                         <div className="flex flex-row space-x-4">
                             <FormField
@@ -115,12 +117,12 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                                 name="hotel_code"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Hotel Code"}</FormLabel>
+                                        <FormLabel>{t('Hotel Code')}</FormLabel>
                                         <Required/>
                                         <FormMessage />
                                         <FormControl className='w-full'>
                                             <Input
-                                                placeholder={"Hotel Code"}
+                                                placeholder={t('Hotel Code')}
                                                 {...field}
                                                 onChange={field.onChange}
                                                 disabled
@@ -134,12 +136,12 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                                 name="hotel_name"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Hotel Name"}</FormLabel>
+                                        <FormLabel>{t('Hotel Name')}</FormLabel>
                                         <Required/>
                                         <FormMessage />
                                         <FormControl className='w-full'>
                                             <Input
-                                                placeholder={"Hotel Name"}
+                                                placeholder={t('Hotel Name')}
                                                 {...field}
                                                 onChange={field.onChange}
                                             />
@@ -153,7 +155,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                             name="picture"
                             render={() => (
                                 <FormItem className="custom-field">
-                                    <FormLabel>{"Picture"}</FormLabel>
+                                    <FormLabel>{t('Picture')}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
@@ -177,12 +179,12 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                             name="description"
                             render={({ field }) => (
                                 <FormItem className="custom-field">
-                                    <FormLabel>{"Description"}</FormLabel>
+                                    <FormLabel>{t('Description')}</FormLabel>
                                     <Required/>
                                     <FormMessage />
                                     <FormControl>
                                         <Textarea
-                                            placeholder={field.name}
+                                            placeholder={t('Description')}
                                             {...field}
                                             onChange={field.onChange}
                                         />
@@ -196,12 +198,12 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                                 name="address"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Address"}</FormLabel>
+                                        <FormLabel>{t('Street Address')}</FormLabel>
                                         <Required/>
                                         <FormMessage />
                                         <FormControl className='w-full'>
                                             <Input
-                                                placeholder={"Input Address"}
+                                                placeholder={t('Street Address')}
                                                 {...field}
                                                 onChange={field.onChange}
                                             />
@@ -214,7 +216,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                                 name="qty"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"QTY"}</FormLabel>
+                                        <FormLabel>{t('QTY')}</FormLabel>
                                         <Required/>
                                         <FormMessage />
                                         <FormControl className='w-full'>
@@ -233,11 +235,11 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                                 name="promo_code"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Promo Code"}</FormLabel>
+                                        <FormLabel>{t('Promo Code')}</FormLabel>
                                         <FormMessage />
                                         <FormControl className='w-full'>
                                             <Input
-                                                placeholder={"Promo Code"}
+                                                placeholder={t('Promo Code')}
                                                 {...field}
                                                 onChange={field.onChange}
                                             />
@@ -251,7 +253,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                             name="base_price"
                             render={({ field }) => (
                                 <FormItem className="custom-field">
-                                    <FormLabel>{"Base Price (perhari)"}</FormLabel>
+                                    <FormLabel>{t('Price (perhari)')}</FormLabel>
                                     <Required/>
                                     <FormMessage />
                                     <FormControl>
@@ -266,7 +268,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                         />
 
                         <div className="justify-center flex">
-                            <Button type="submit" className='mt-4'>Edit Hotel Product
+                            <Button type="submit" className='mt-4'>{t('Edit Hotel Product')}
                             </Button>
                         </div>
                     </form>

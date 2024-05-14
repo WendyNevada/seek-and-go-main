@@ -14,8 +14,10 @@ import axios, { AxiosError } from 'axios';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Required } from '@/components/ui/Custom/required';
+import { useTranslation } from 'react-i18next';
 
 const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
+    const { t } = useTranslation();
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
     const [imageUrl, setImageUrl] = useState('');
     const navigate = useNavigate()
@@ -145,7 +147,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
             <div className="x-auto max-w-2xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
                 <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)}>
-                                <h1 className="text-2xl font-bold mb-8 text-center">Edit Vehicle</h1>
+                                <h1 className="text-2xl font-bold mb-8 text-center">{t('Edit Vehicle')}</h1>
 
                                 <div className="flex flex-row space-x-4">
                                     <FormField
@@ -153,12 +155,12 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                         name="vehicle_code"
                                         render={({ field }) => (
                                             <FormItem className="custom-field">
-                                                <FormLabel>{"Vehicle Code"}</FormLabel>
+                                                <FormLabel>{t('Vehicle Code')}</FormLabel>
                                                 <Required/>
                                                 <FormMessage />
                                                 <FormControl className='w-full'>
                                                     <Input
-                                                        placeholder={"Vehicle Code"}
+                                                        placeholder={t('Vehicle Code')}
                                                         {...field}
                                                         onChange={field.onChange}
                                                         disabled
@@ -172,12 +174,12 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                         name="vehicle_name"
                                         render={({ field }) => (
                                             <FormItem className="custom-field">
-                                                <FormLabel>{"Vehicle Name"}</FormLabel>
+                                                <FormLabel>{t('Vehicle Name')}</FormLabel>
                                                 <Required/>
                                                 <FormMessage />
                                                 <FormControl>
                                                     <Input
-                                                        placeholder={"Vehilce Name"}
+                                                        placeholder={t('Vehicle Name')}
                                                         {...field}
                                                         onChange={field.onChange}
                                                     />
@@ -190,7 +192,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                     name="vehicle_year"
                                     render={() => (
                                         <FormItem className="custom-field">
-                                            <FormLabel>{"Vehicle Year"}</FormLabel>
+                                            <FormLabel>{t('Vehicle Year')}</FormLabel>
                                             <Required/>
                                             <FormMessage />
                                             <FormControl>
@@ -221,7 +223,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                     name="picture"
                                     render={() => (
                                         <FormItem className="custom-field">
-                                            <FormLabel>{"Picture"}</FormLabel>
+                                            <FormLabel>{t('Picture')}</FormLabel>
                                             <FormMessage />
                                             <FormControl>
                                                 <Input
@@ -247,7 +249,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                         name="vehicle_type"
                                         render={() => (
                                             <FormItem className="custom-field mr-10">
-                                                <FormLabel>{"Vehicle Type"}</FormLabel>
+                                                <FormLabel>{t('Vehicle Type')}</FormLabel>
                                                 <Required/>
                                                 <FormMessage />
                                                 <FormControl>
@@ -269,7 +271,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                         name="vehicle_seat"
                                         render={() => (
                                             <FormItem className="custom-field ml-3">
-                                                <FormLabel>{"Vehicle Seat"}</FormLabel>
+                                                <FormLabel>{t('Vehicle Seat')}</FormLabel>
                                                 <Required/>
                                                 <FormMessage />
                                                 <FormControl>
@@ -295,12 +297,12 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                         name="vehicle_brand"
                                         render={({ field }) => (
                                             <FormItem className="custom-field">
-                                                <FormLabel>{"Vehicle Brand"}</FormLabel>
+                                                <FormLabel>{t('Vehicle Brand')}</FormLabel>
                                                 <Required/>
                                                 <FormMessage />
                                                 <FormControl>
                                                     <Input
-                                                        placeholder={"Input Vehicle Brand"}
+                                                        placeholder={t('Input Vehicle Brand')}
                                                         {...field}
                                                         onChange={field.onChange}
                                                     />
@@ -313,12 +315,12 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                         name="vehicle_series"
                                         render={({ field }) => (
                                             <FormItem className="custom-field">
-                                                <FormLabel>{"Vehicle Series"}</FormLabel>
+                                                <FormLabel>{t('Vehicle Series')}</FormLabel>
                                                 <Required/>
                                                 <FormMessage />
                                                 <FormControl>
                                                     <Input
-                                                        placeholder={"Input Vehicle Series"}
+                                                        placeholder={t('Input Vehicle Series')}
                                                         {...field}
                                                         onChange={field.onChange}
                                                     />
@@ -331,12 +333,12 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                         name="vehicle_model"
                                         render={({ field }) => (
                                             <FormItem className="custom-field">
-                                                <FormLabel>{"Vehicle Model"}</FormLabel>
+                                                <FormLabel>{t('Vehicle Model')}</FormLabel>
                                                 <Required/>
                                                 <FormMessage />
                                                 <FormControl>
                                                     <Input
-                                                        placeholder={"Input Vehicle Model"}
+                                                        placeholder={t('Input Vehicle Model')}
                                                         {...field}
                                                         onChange={field.onChange}
                                                     />
@@ -351,7 +353,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                     name="with_driver"
                                     render={({ field }) => (
                                         <FormItem className="custom-field mt-2">
-                                            <FormLabel className='mr-4 align-middle'>{"With Driver?"}</FormLabel>
+                                            <FormLabel className='mr-4 align-middle'>{t('With Driver?')}</FormLabel>
                                             <FormMessage />
                                             <FormControl>
                                                 <Switch
@@ -370,12 +372,12 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                         name="address"
                                         render={({ field }) => (
                                             <FormItem className="custom-field">
-                                                <FormLabel>{"Address"}</FormLabel>
+                                                <FormLabel>{t('Street Address')}</FormLabel>
                                                 <Required/>
                                                 <FormMessage />
                                                 <FormControl className='w-full'>
                                                     <Input
-                                                        placeholder={"Input Address"}
+                                                        placeholder={t('Street Address')}
                                                         {...field}
                                                         onChange={field.onChange}
                                                     />
@@ -388,13 +390,13 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                         name="qty"
                                         render={({ field }) => (
                                             <FormItem className="custom-field">
-                                                <FormLabel>{"QTY"}</FormLabel>
+                                                <FormLabel>{t('QTY')}</FormLabel>
                                                 <Required/>
                                                 <FormMessage />
                                                 <FormControl className='w-full'>
                                                     <Input
                                                         type='number'
-                                                        placeholder={"Input Qty"}
+                                                        placeholder={t('QTY')}
                                                         {...field}
                                                         onChange={field.onChange}
                                                     />
@@ -407,11 +409,11 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                         name="promo_code"
                                         render={({ field }) => (
                                             <FormItem className="custom-field">
-                                                <FormLabel>{"Promo Code"}</FormLabel>
+                                                <FormLabel>{t('Promo Code')}</FormLabel>
                                                 <FormMessage />
                                                 <FormControl className='w-full'>
                                                     <Input
-                                                        placeholder={"Promo Code"}
+                                                        placeholder={t('Promo Code')}
                                                         {...field}
                                                         onChange={field.onChange}
                                                     />
@@ -426,7 +428,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                     name="base_price"
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
-                                            <FormLabel>{"Base Price (perhari)"}</FormLabel>
+                                            <FormLabel>{t('Price (perhari)')}</FormLabel>
                                             <Required/>
                                             <FormMessage />
                                             <FormControl>
@@ -445,12 +447,12 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                     name="description"
                                     render={({ field }) => (
                                         <FormItem className="custom-field">
-                                            <FormLabel>{"Description"}</FormLabel>
+                                            <FormLabel>{t('Description')}</FormLabel>
                                             <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Textarea
-                                                    placeholder={field.name}
+                                                    placeholder={t('Description')}
                                                     {...field}
                                                     onChange={field.onChange}
                                                 />
@@ -460,7 +462,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                 />
 
                                 <div className="justify-center flex">
-                                    <Button type="submit" className='mt-4'>Edit Vehicle Product
+                                    <Button type="submit" className='mt-4'>{t('Edit Vehicle Product')}
                                     </Button>
                                 </div>
                             </form>

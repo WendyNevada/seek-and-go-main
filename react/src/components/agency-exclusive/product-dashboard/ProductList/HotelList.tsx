@@ -9,8 +9,10 @@ import { AlertDialogProduct } from '../ProductComponent/DeleteProductAlert';
 import EditIcon from '@mui/icons-material/Edit';
 import { urlConstant } from '@/urlConstant';
 import rating from '@/components/ui/Custom/rating';
+import { useTranslation } from 'react-i18next';
 
 const HotelList = () => {
+    const { t } = useTranslation();
     const [hotel, setHotel] = useState<DaumHotel[]>([]);
     const navigate = useNavigate();
 
@@ -57,7 +59,7 @@ const HotelList = () => {
                                     {rating(hotel.rating)}
                                     {hotel.rating ? hotel.rating : 0 }
                                 </div>
-                                <p>Base Price: Rp.{hotel.base_price}</p>
+                                <p>{t('Price')}: Rp.{hotel.base_price}</p>
                             </CardContent>
                             <CardFooter>
                                 <Button variant='primary' onClick={() => onEdithotel(hotel.ref_hotel_id)}>{<EditIcon />}</Button>

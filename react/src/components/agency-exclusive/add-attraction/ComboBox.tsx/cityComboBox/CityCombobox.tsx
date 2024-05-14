@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/popover"
 import { useCityQuery } from "./CityCombobox-hook"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { useTranslation } from "react-i18next"
 
     interface CityComboboxProps {
         onSelectCity: (city: string) => void;
@@ -30,6 +31,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
         label: string;
     }
 export function CityCombobox({onSelectCity, selectedProvince} : CityComboboxProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState("")
   const {cities, loading}= useCityQuery({ selectedProvince });
@@ -45,13 +47,13 @@ export function CityCombobox({onSelectCity, selectedProvince} : CityComboboxProp
         >
           {value
             ? cities.find((cities:City) => cities.value === value)?.label
-            : "Select City..."}
+            : t('Select City...')}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search City..." />
+          <CommandInput placeholder= {t('Search City...')} />
           {/* {loading ? <CommandEmpty>Loading...</CommandEmpty> : null} */}
           {!loading && cities.length === 0 && <CommandEmpty>No city found.</CommandEmpty>}
           {/* <CommandEmpty>No City found.</CommandEmpty> */}

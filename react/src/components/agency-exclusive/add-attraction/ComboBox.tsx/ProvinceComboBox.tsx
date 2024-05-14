@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/popover"
 import axiosClient from "@/axios.client"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { useTranslation } from "react-i18next"
 
 interface Province {
     value: string;
@@ -35,6 +36,7 @@ interface ProvinceComboboxProps {
   }
 
 export function ProvinceCombobox({onSelectProvince}: ProvinceComboboxProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState("")
   const [provinces, setProvinces] = React.useState<Province[]>([]);
@@ -68,13 +70,13 @@ export function ProvinceCombobox({onSelectProvince}: ProvinceComboboxProps) {
         >
           {value
             ? provinces.find((provinces) => provinces.value === value)?.label
-            : "Select Province..."}
+            : t('Select Province...')}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search Province..." />
+          <CommandInput placeholder={t('Search Province...')} />
           <CommandEmpty>No framework found.</CommandEmpty>
           <ScrollArea className="h-48 overflow-auto">
           <CommandGroup>

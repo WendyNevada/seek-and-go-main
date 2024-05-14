@@ -8,8 +8,10 @@ import { AlertDialogProduct } from '../ProductComponent/DeleteProductAlert';
 import EditIcon from '@mui/icons-material/Edit';
 import { useNavigate } from 'react-router-dom';
 import rating from '@/components/ui/Custom/rating';
+import { useTranslation } from 'react-i18next';
 
 const AttractionList = () => {
+    const { t } = useTranslation();
     const [attractions, setAttractions] = useState<DaumAttraction[]>([]);
     const navigate = useNavigate();
     //const [selectedAttraction, setSelectedAttraction] = useState<GetAttractionModel | null>(null);
@@ -66,7 +68,7 @@ const AttractionList = () => {
                                     {rating(attraction.rating)}
                                     {attraction.rating ? attraction.rating : 0 }
                                 </div>
-                                <p>Base Price: Rp.{attraction.base_price}</p>
+                                <p>{t('Price')}: Rp.{attraction.base_price}</p>
                             </CardContent>
                             <CardFooter>
                                 <Button variant='primary' onClick={() => onEditAttraction(attraction.ref_attraction_id)}>{<EditIcon />}</Button>
