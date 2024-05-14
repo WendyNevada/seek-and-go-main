@@ -431,38 +431,28 @@ class RefAttractionService implements RefAttractionInterface
         {
             $attraction = $this->getRefAttractionById($request->ref_attraction_id);
 
-            if($attraction != null)
+            DB::beginTransaction();
+
+            $this->updateAgencyAffiliateAttraction($request->ref_attraction_id, $request->base_price, $request->promo_code);
+
+            $this->updateRefAttraction($request->ref_attraction_id, $request->attraction_name, $request->description, $request->address, $request->qty);
+
+            if($request->picture_url == null)
             {
-                DB::beginTransaction();
-
-                $this->updateAgencyAffiliateAttraction($request->ref_attraction_id, $request->base_price, $request->promo_code);
-
-                $this->updateRefAttraction($request->ref_attraction_id, $request->attraction_name, $request->description, $request->address, $request->qty);
-
-                if($request->picture_url == null)
+                if($request->hasFile('picture'))
                 {
-                    if($request->hasFile('picture'))
-                    {
-                        $this->updateRefPictureAttraction($request->file('picture'), $request->attraction_code, $request->ref_attraction_id);
-                    }
+                    $this->updateRefPictureAttraction($request->file('picture'), $request->attraction_code, $request->ref_attraction_id);
                 }
-
-                DB::commit();
-
-                return response()->json([
-                    'status' => "ok",
-                    'message' => "Attraction edited successfully",
-                    'ref_attraction_id' => $request->ref_attraction_id
-                ], 200);
             }
-            else
-            {
-                return response()->json([
-                    'status' => "error",
-                    'message' => "Data is not found",
-                    'ref_attraction_id' => "-"
-                ], 400);
-            }
+
+            DB::commit();
+
+            return response()->json([
+                'status' => "ok",
+                'message' => "Attraction edited successfully",
+                'ref_attraction_id' => $request->ref_attraction_id
+            ], 200);
+            
         }
         catch (\Exception $e)
         {

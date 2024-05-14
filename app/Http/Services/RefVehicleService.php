@@ -392,51 +392,40 @@ class RefVehicleService implements RefVehicleInterface
         {
             $vehicle = $this->getRefVehicleById($request->ref_vehicle_id);
             
-            if($vehicle != null)
+            DB::beginTransaction();
+
+            $this->updatePriceAgencyAffiliateVehicle($request->ref_vehicle_id, $request->base_price, $request->promo_code);
+
+            $this->updateRefVehicle(
+                $request->ref_vehicle_id,
+                $request->vehicle_type,
+                $request->vehicle_brand,
+                $request->vehicle_series,
+                $request->vehicle_model,
+                $request->vehicle_seat,
+                $request->vehicle_year,
+                $request->vehicle_name,
+                $request->description,
+                $request->with_driver,
+                $request->address,
+                $request->qty
+            );
+
+            if($request->picture_url == null)
             {
-                DB::beginTransaction();
-
-                $this->updatePriceAgencyAffiliateVehicle($request->ref_vehicle_id, $request->base_price, $request->promo_code);
-
-                $this->updateRefVehicle(
-                    $request->ref_vehicle_id,
-                    $request->vehicle_type,
-                    $request->vehicle_brand,
-                    $request->vehicle_series,
-                    $request->vehicle_model,
-                    $request->vehicle_seat,
-                    $request->vehicle_year,
-                    $request->vehicle_name,
-                    $request->description,
-                    $request->with_driver,
-                    $request->address,
-                    $request->qty
-                );
-
-                if($request->picture_url == null)
+                if($request->hasFile('picture'))
                 {
-                    if($request->hasFile('picture'))
-                    {
-                        $this->updateRefPictureVehicle($request->file('picture'), $request->vehicle_code, $request->ref_vehicle_id);
-                    }
+                    $this->updateRefPictureVehicle($request->file('picture'), $request->vehicle_code, $request->ref_vehicle_id);
                 }
-
-                DB::commit();
-
-                return response()->json([
-                    'status' => "ok",
-                    'message' => "Vehicle edited successfully",
-                    'ref_vehicle_id' => $request->ref_vehicle_id
-                ], 200);
             }
-            else
-            {
-                return response()->json([
-                    'status' => "error",
-                    'message' => "Data not found",
-                    'ref_vehicle_id' => $request->ref_vehicle_id
-                ], 400);
-            }
+
+            DB::commit();
+
+            return response()->json([
+                'status' => "ok",
+                'message' => "Vehicle edited successfully",
+                'ref_vehicle_id' => $request->ref_vehicle_id
+            ], 200);
         }
         catch (\Exception $e)
         {

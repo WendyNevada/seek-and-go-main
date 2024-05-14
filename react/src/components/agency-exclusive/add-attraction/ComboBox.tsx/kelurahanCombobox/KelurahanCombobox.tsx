@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/popover"
 import { useKelurahanQuery } from "./KelurahanCombobox-hook"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { useTranslation } from "react-i18next"
 
 interface KelurahanComboboxProps {
     onSelectKelurahan: (kelurahan: string) => void;
@@ -34,6 +35,7 @@ interface Kelurahan {
 }
 
 export function KelurahanCombobox({onSelectKelurahan, selectedKecamatan, selectedCity, selectedProvince} : KelurahanComboboxProps) {
+  const {t} = useTranslation();
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState("")
   const {kelurahan,  loading} = useKelurahanQuery({selectedKecamatan, selectedCity, selectedProvince});
@@ -49,13 +51,13 @@ export function KelurahanCombobox({onSelectKelurahan, selectedKecamatan, selecte
         >
           {value
             ? kelurahan.find((kelurahan:Kelurahan) => kelurahan.value === value)?.label
-            : "Select kelurahan..."}
+            : t('Select Kelurahan...')}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search kelurahan..." />
+          <CommandInput placeholder={t('Search Kelurahan...')} />
           {!loading && kelurahan.length === 0 && <CommandEmpty>No sub district found.</CommandEmpty>}
           {/* <CommandEmpty>No framework found.</CommandEmpty> */}
           <ScrollArea className="h-48 overflow-auto">

@@ -17,8 +17,10 @@ import { toast } from '@/components/ui/use-toast'
 import axios, { AxiosError } from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Required } from '@/components/ui/Custom/required'
+import { useTranslation } from 'react-i18next'
 
 const AddHotel = () => {
+    const { t } = useTranslation();
     const [imageUrl, setImageUrl] = useState<string|undefined>('');
     const { user } = useLogin();
     const navigate = useNavigate();
@@ -110,7 +112,7 @@ const AddHotel = () => {
             <div className="mx-auto max-w-2xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <h1 className="text-2xl font-bold mb-8 text-center">Add Hotel</h1>
+                        <h1 className="text-2xl font-bold mb-8 text-center">{t('Add Hotel')}</h1>
 
                         <div className="flex flex-row space-x-4">
                             <FormField
@@ -118,12 +120,12 @@ const AddHotel = () => {
                                 name="hotel_code"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Hotel Code"}</FormLabel>
+                                        <FormLabel>{t('Hotel Code')}</FormLabel>
                                         <Required/>
                                         <FormMessage />
                                         <FormControl className='w-full'>
                                             <Input
-                                                placeholder={"Hotel Code"}
+                                                placeholder={t('Hotel Code')}
                                                 {...field}
                                                 onChange={field.onChange}
                                                 maxLength={7} //Add Felix
@@ -137,12 +139,12 @@ const AddHotel = () => {
                                 name="hotel_name"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Hotel Name"}</FormLabel>
+                                        <FormLabel>{t('Hotel Name')}</FormLabel>
                                         <Required/>
                                         <FormMessage />
                                         <FormControl className='w-full'>
                                             <Input
-                                                placeholder={"Hotel Name"}
+                                                placeholder={t('Hotel Name')}
                                                 {...field}
                                                 onChange={field.onChange}
                                             />
@@ -156,7 +158,7 @@ const AddHotel = () => {
                             name="picture"
                             render={() => (
                                 <FormItem className="custom-field">
-                                    <FormLabel>{"Picture"}</FormLabel>
+                                    <FormLabel>{t('Picture')}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
@@ -182,7 +184,7 @@ const AddHotel = () => {
                                     name="area_1"
                                     render={() => (
                                         <FormItem className="custom-field mt-4 mr-8 flex flex-col">
-                                            <FormLabel>{"Province"} <Required/></FormLabel>
+                                            <FormLabel>{t('Province')} <Required/></FormLabel>
                                             <FormMessage />
                                             <FormControl>
                                                 <ProvinceCombobox onSelectProvince={handleProvinceSelect}/>
@@ -195,7 +197,7 @@ const AddHotel = () => {
                                     name="area_2"
                                     render={() => (
                                         <FormItem className="custom-field mt-4 flex flex-col">
-                                            <FormLabel>{"City"}<Required/></FormLabel>
+                                            <FormLabel>{t('City')}<Required/></FormLabel>
                                             <FormMessage />
                                             <FormControl>
                                                 <CityCombobox onSelectCity={handleCitySelect} selectedProvince={form.watch("area_1")}/>
@@ -211,7 +213,7 @@ const AddHotel = () => {
                                 name="area_3"
                                 render={() => (
                                     <FormItem className="custom-field mt-4 mr-8 flex flex-col">
-                                        <FormLabel>{"District"}<Required/></FormLabel>
+                                        <FormLabel>{t('District')}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl>
                                             <KecamatanCombobox onSelectKecamatan={handleKecamatanSelect} selectedCity={form.watch("area_2")} selectedProvince={form.watch("area_1")}/>
@@ -224,7 +226,7 @@ const AddHotel = () => {
                                 name="area_4"
                                 render={() => (
                                     <FormItem className="custom-field mt-4 flex flex-col">
-                                        <FormLabel>{"Subdistrict"}<Required/></FormLabel>
+                                        <FormLabel>{t('Subdistrict')}<Required/></FormLabel>
                                         <FormMessage />
                                         <FormControl>
                                             <KelurahanCombobox onSelectKelurahan={handleKelurahanSelect} selectedKecamatan={form.watch("area_3")} selectedCity={form.watch("area_2")} selectedProvince={form.watch("area_1")}/>
@@ -239,12 +241,12 @@ const AddHotel = () => {
                             name="description"
                             render={({ field }) => (
                                 <FormItem className="custom-field">
-                                    <FormLabel>{"Description"}</FormLabel>
+                                    <FormLabel>{t('Description')}</FormLabel>
                                     <Required/>
                                     <FormMessage />
                                     <FormControl>
                                         <Textarea
-                                            placeholder={field.name}
+                                            placeholder={t('Description')}
                                             {...field}
                                             onChange={field.onChange}
                                         />
@@ -259,12 +261,12 @@ const AddHotel = () => {
                                 name="address"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Address"}</FormLabel>
+                                        <FormLabel>{t('Street Address')}</FormLabel>
                                         <Required/>
                                         <FormMessage />
                                         <FormControl className='w-full'>
                                             <Input
-                                                placeholder={"Input Address"}
+                                                placeholder={t('Street Address')}
                                                 {...field}
                                                 onChange={field.onChange}
                                             />
@@ -277,7 +279,7 @@ const AddHotel = () => {
                                 name="qty"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"QTY"}</FormLabel>
+                                        <FormLabel>{t('QTY')}</FormLabel>
                                         <Required/>
                                         <FormMessage />
                                         <FormControl className='w-full'>
@@ -296,11 +298,11 @@ const AddHotel = () => {
                                 name="promo_code"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{"Promo Code"}</FormLabel>
+                                        <FormLabel>{t('Promo Code')}</FormLabel>
                                         <FormMessage />
                                         <FormControl className='w-full'>
                                             <Input
-                                                placeholder={"Promo Code"}
+                                                placeholder={t('Promo Code')}
                                                 {...field}
                                                 onChange={field.onChange}
                                             />
@@ -314,7 +316,7 @@ const AddHotel = () => {
                             name="base_price"
                             render={({ field }) => (
                                 <FormItem className="custom-field">
-                                    <FormLabel>{"Base Price (perhari)"}</FormLabel>
+                                    <FormLabel>{t('Price (perhari)')}</FormLabel>
                                     <Required/>
                                     <FormMessage />
                                     <FormControl>
@@ -329,7 +331,7 @@ const AddHotel = () => {
                         />
 
                         <div className="justify-center flex">
-                            <Button type="submit" className='mt-6'>Add Hotel Product
+                            <Button type="submit" className='mt-6'>{t('Add Hotel Product')}
                             </Button>
                         </div>
                     </form>
