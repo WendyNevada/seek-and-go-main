@@ -74,6 +74,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
         formData.append('description', values.description);
         formData.append('address', values.address);
         formData.append('qty', values.qty.toString());
+        formData.append('base_price', values.base_price.toString());
         formData.append('promo_code', values.promo_code !== null && values.promo_code !== undefined ? String(values.promo_code) : 'null');
 
         if (values.picture[0]) {
