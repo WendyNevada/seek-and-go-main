@@ -14,21 +14,27 @@ use App\Models\RefHotel;
 use App\Models\Constanta;
 use App\Models\RefVehicle;
 use App\Mail\CustPaidEmail;
+use App\Mail\PaidOrderEmail;
 use App\Models\RefAttraction;
+use App\Mail\RejectOrderEmail;
+use App\Mail\RetryPaymentEmail;
 use App\Models\PackageHistoryD;
 use App\Models\PackageHistoryH;
 use App\Mail\OrderApprovedEmail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\CancelOrderByAgencyEmail;
 use App\Http\Requests\V2\CustIdRequest;
 use App\Http\Interfaces\OrderHInterface;
 use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Requests\V2\OrderHIdRequest;
+use App\Http\Requests\V2\CancelOrderRequest;
 use App\Http\Requests\V2\CreateOrderRequest;
 use App\Http\Requests\V2\GetOrderByIdRequest;
 use App\Http\Requests\V2\GetCustomerOrderRequest;
 use App\Http\Requests\V2\GetOrderDashboardRequest;
+use App\Mail\CancelOrderByCustomerEmail;
 
 class OrderHService implements OrderHInterface
 {
@@ -164,7 +170,7 @@ class OrderHService implements OrderHInterface
 
     private function generateTrxNo(): string
     {
-        $trxNo = Constanta::$orderConst . date("YmdHis") . rand(100, 999);
+        $trxNo = Constanta::$trxConst . date("YmdHis") . rand(100, 999);
 
         return $trxNo;
     }
@@ -379,6 +385,31 @@ class OrderHService implements OrderHInterface
     private function sendEmailCustPaidOrder($mailTo, $orderNo, $custName)
     {
         Mail::to($mailTo)->send(new CustPaidEmail($orderNo, $custName));
+    }
+
+    private function sendEmailRejectOrder($mailTo, $orderNo, $agencyName)
+    {
+        Mail::to($mailTo)->send(new RejectOrderEmail($orderNo, $agencyName));
+    }
+
+    private function sendEmailPaidOrder($mailTo, $orderNo, $agencyName)
+    {
+        Mail::to($mailTo)->send(new PaidOrderEmail($orderNo, $agencyName));
+    }
+
+    private function sendEmailRetryPaymentOrder($mailTo, $orderNo, $custName)
+    {
+        Mail::to($mailTo)->send(new RetryPaymentEmail($orderNo, $custName));
+    }
+
+    private function sendEmailCancelOrderByAgency($mailTo, $orderNo, $agencyName)
+    {
+        Mail::to($mailTo)->send(new CancelOrderByAgencyEmail($orderNo, $agencyName));
+    }
+
+    private function sendEmailCancelOrderByCustomer($mailTo, $orderNo, $custName)
+    {
+        Mail::to($mailTo)->send(new CancelOrderByCustomerEmail($orderNo, $custName));
     }
 
     private function getAgencyByAgencyId($agency_id)
@@ -604,7 +635,7 @@ class OrderHService implements OrderHInterface
 
             $agencyName = $this->getAgencyByAgencyId($orderH->agency_id)->agency_name;
 
-            $this->sendEmailApvOrder($email, $orderH->order_no, $agencyName);
+            $this->sendEmailApvOrder($email, $orderH->order_no, $agencyName); //Send email to customer
 
             DB::commit();
 
@@ -633,6 +664,12 @@ class OrderHService implements OrderHInterface
             
             $orderH = $this->updateOrderStatus($request->order_h_id, Constanta::$orderStatusRejected);
 
+            $email = $this->getEmailByForeignId($orderH->customer_id, Constanta::$roleCustomer);
+
+            $agencyName = $this->getAgencyByAgencyId($orderH->agency_id)->agency_name;
+
+            $this->sendEmailRejectOrder($email, $orderH->order_no, $agencyName); //Send email to customer
+
             DB::commit();
 
             return response()->json([
@@ -653,13 +690,30 @@ class OrderHService implements OrderHInterface
         }
     }
 
-    public function CancelOrder(OrderHIdRequest $request)
+    public function CancelOrder(CancelOrderRequest $request)
     {
         try
         {
             DB::beginTransaction();
 
             $orderH = $this->updateOrderStatus($request->order_h_id, Constanta::$orderStatusCanceled);
+
+            if($request->cancel_by == Constanta::$roleAgency)
+            {
+                $email = $this->getEmailByForeignId($orderH->customer_id, Constanta::$roleCustomer);
+
+                $agencyName = $this->getAgencyByAgencyId($orderH->agency_id)->agency_name;
+
+                $this->sendEmailCancelOrderByAgency($email, $orderH->order_no, $agencyName); //Send email to customer
+            }
+            else
+            {
+                $email = $this->getEmailByForeignId($orderH->agency_id, Constanta::$roleAgency);
+
+                $customerName = $this->getCustomerByCustomerId($orderH->customer_id)->customer_name;
+
+                $this->sendEmailCancelOrderByCustomer($email, $orderH->order_no, $customerName); //Send email to agency
+            }
 
             DB::commit();
 
@@ -693,7 +747,7 @@ class OrderHService implements OrderHInterface
 
             $customerName = $this->getCustomerByCustomerId($orderH->customer_id)->customer_name;
 
-            $this->sendEmailCustPaidOrder($email, $orderH->order_no, $customerName);
+            $this->sendEmailCustPaidOrder($email, $orderH->order_no, $customerName); //Send email to agency
 
             DB::commit();
 
@@ -726,6 +780,12 @@ class OrderHService implements OrderHInterface
             $orderH = $this->updateOrderStatus($request->order_h_id, Constanta::$orderStatusPaid);
 
             $trx = $this->updatePaymentStatusTrx($request->order_h_id, true);
+
+            $email = $this->getEmailByForeignId($orderH->customer_id, Constanta::$roleCustomer);
+
+            $agencyName = $this->getAgencyByAgencyId($orderH->agency_id)->agency_name;
+
+            $this->sendEmailPaidOrder($email, $orderH->order_no, $agencyName); //Send email to customer
 
             DB::commit();
 
@@ -787,11 +847,17 @@ class OrderHService implements OrderHInterface
 
             $orderH = $this->updateOrderStatus($request->order_h_id, Constanta::$orderStatusRetryPay);
 
+            $email = $this->getEmailByForeignId($orderH->agency_id, Constanta::$roleAgency);
+
+            $customerName = $this->getCustomerByCustomerId($orderH->customer_id)->customer_name;
+
+            $this->sendEmailRetryPaymentOrder($email, $orderH->order_no, $customerName); //Send email to agency
+
             DB::commit();
 
             return response()->json([
                 'status' => 'ok',
-                'message' => 'Order set to retry payment',
+                'message' => 'Order has been requested to retry payment',
                 'order_no' => $orderH->order_no
             ], 200);
         }

@@ -176,7 +176,7 @@ table, td { color: #000000; } #u_body a { color: #0000ee; text-decoration: under
       <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:30px 10px 5px;font-family:'Raleway',sans-serif;" align="left">
         
   <!--[if mso]><table width="100%"><tr><td><![endif]-->
-    <h1 style="margin: 0px; color: #f35900; line-height: 140%; text-align: center; word-wrap: break-word; font-family: 'Playfair Display',serif; font-size: 26px; font-weight: 400;"><span><strong>Customer Has Paid Their Order</strong></span></h1>
+    <h1 style="margin: 0px; color: #f35900; line-height: 140%; text-align: center; word-wrap: break-word; font-family: 'Playfair Display',serif; font-size: 26px; font-weight: 400;"><span><strong>Your Order Has Been Cancelled By The Customer</strong></span></h1>
   <!--[if mso]></td></tr></table><![endif]-->
 
       </td>
@@ -191,7 +191,7 @@ table, td { color: #000000; } #u_body a { color: #0000ee; text-decoration: under
         
   <div style="font-size: 14px; line-height: 140%; text-align: center; word-wrap: break-word;">
     <div>
-<div>The order with order number {{ $orderNo }} has been paid by the customer {{ $custName }}.</div>
+<div>The order with order number {{ $orderNo }} has been cancelled by customer {{ $customerName }}.</div>
 </div>
   </div>
 
