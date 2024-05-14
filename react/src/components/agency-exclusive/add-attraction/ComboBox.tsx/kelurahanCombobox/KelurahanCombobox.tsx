@@ -49,9 +49,11 @@ export function KelurahanCombobox({onSelectKelurahan, selectedKecamatan, selecte
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {value
-            ? kelurahan.find((kelurahan:Kelurahan) => kelurahan.value === value)?.label
-            : t('Select Kelurahan...')}
+            <span className="truncate">
+                {value
+                ? kelurahan.find((kelurahan:Kelurahan) => kelurahan.value === value)?.label
+                : t('Select Kelurahan...')}
+            </span>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>

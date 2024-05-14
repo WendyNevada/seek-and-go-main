@@ -48,9 +48,11 @@ export function KecamatanCombobox({onSelectKecamatan, selectedCity, selectedProv
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {value
-            ? kecamatan.find((kecamatan:Kecamatan) => kecamatan.value === value)?.label
-            : t('Select Kecamatan...')}
+            <span className="truncate">
+                {value
+                ? kecamatan.find((kecamatan:Kecamatan) => kecamatan.value === value)?.label
+                : t('Select Kecamatan...')}
+            </span>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
