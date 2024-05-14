@@ -12,8 +12,11 @@ import { Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from '@
 import Login from '@mui/icons-material/Login';
 import { useLogin } from '@/context/LoginContext'
 import LogoutIcon from '@mui/icons-material/Logout';
-import { Button } from '../ui/button'
 import { useTranslation } from 'react-i18next'
+import "flag-icons/css/flag-icons.min.css";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu'
+import { Avatar, AvatarFallback } from '../ui/avatar'
+import LanguageIcon from '@mui/icons-material/Language';
 // import { Link } from 'react-router-dom'
 
 const Navbar = () => {
@@ -91,7 +94,7 @@ const Navbar = () => {
                 </Drawer>
             </div>
 
-            <div className='w-full hidden flex lg:flex lg:items-center lg:w-auto'>
+            <div className='w-full hidden flex lg:flex lg:items-center lg:w-auto mr-6'>
                 <a href='\' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Home</a>
                 <a href='\About' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>About</a>
                 <a href='\Detail' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Details</a>
@@ -103,8 +106,31 @@ const Navbar = () => {
                 <a href='\Login' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1'>Login</a>
                 <button className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Bookings Now</button>
                 <button onClick={() => logout()} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Logout</button>
-                <button onClick={() => changeLanguage('en')} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1' >English</button>
-                <button onClick={() => changeLanguage('id')} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1'>Indonesia</button>
+                {/* <button onClick={() => changeLanguage('en')} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1' >English</button>
+                <button onClick={() => changeLanguage('id')} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1'>Indonesia</button> */}
+
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Avatar className="h-9 w-9 hover:cursor-pointer">
+                        <AvatarFallback><LanguageIcon className='text-blue-600'/></AvatarFallback>
+                        <span className="sr-only">Toggle language menu</span>
+                        </Avatar>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-24">
+                        <DropdownMenuItem>
+                            <div className="flex items-center space-x-1" onClick={() => changeLanguage('en')}>
+                                <span className="fi fi-us rounded-full"></span>
+                                <span>English</span>
+                            </div>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                            <div className="flex items-center space-x-1" onClick={() => changeLanguage('id')}>
+                                <span className="fi fi-id rounded-full"></span>
+                                <span>Indonesia</span>
+                            </div>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
 
 

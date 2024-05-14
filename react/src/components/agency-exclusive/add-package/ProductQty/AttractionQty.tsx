@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 
 //  icon
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import { formatPrice } from '@/utils/priceFormating';
 
 
 interface AttractionQtyProps {
@@ -110,7 +111,7 @@ const AttractionQty = ( {attractionQty, onDetailsChange, onAttractionQtyChange }
                                                     </TableRow>
                                                     <TableRow>
                                                         <TableCell className="font-medium">Base Price :</TableCell>
-                                                        <TableCell className="font-medium">{newAttractions[index]?.base_price}</TableCell>
+                                                        <TableCell className="font-medium">{formatPrice(newAttractions[index]?.base_price)}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
                                                         <TableCell className="font-medium">Address :</TableCell>
