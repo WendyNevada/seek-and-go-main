@@ -127,8 +127,10 @@ class RefHotelService implements RefHotelInterface
         );
     }
 
-    private function updateRefHotel($hotel, $hotel_name, $description, $address, $qty): void
+    private function updateRefHotel($ref_hotel_id, $hotel_name, $description, $address, $qty): void
     {
+        $hotel = RefHotel::where('ref_hotel_id', $ref_hotel_id)->first();
+
         $hotel->update([
             'hotel_name' => $hotel_name,
             'description' => $description,
