@@ -268,8 +268,14 @@ class RefVehicleService implements RefVehicleInterface
     {
         $vehicle = RefVehicle::
         join('agency_affiliates', 'ref_vehicles.ref_vehicle_id', '=', 'agency_affiliates.ref_vehicle_id')->
+        join('ref_zipcodes', 'ref_vehicles.ref_zipcode_id', '=', 'ref_zipcodes.ref_zipcode_id')->
         leftjoin('ref_pictures', 'ref_vehicles.ref_vehicle_id', '=', 'ref_pictures.ref_vehicle_id')->
-        select('ref_vehicles.*', 'agency_affiliates.base_price', 'ref_pictures.image_url')->
+        select(
+            'ref_vehicles.*', 
+            'agency_affiliates.base_price', 
+            'ref_pictures.image_url',
+            DB::raw("CONCAT(ref_zipcodes.area_1, ', ', ref_zipcodes.area_2, ', ', ref_zipcodes.area_3, ', ', ref_zipcodes.area_4) as address_zipcode")
+            )->
         where('ref_vehicles.is_active', true)->
         where('agency_affiliates.agency_id', $agency_id)->
         get();
@@ -295,7 +301,7 @@ class RefVehicleService implements RefVehicleInterface
 
     private function checkDataEmpty($data)
     {
-        if(empty($data))
+        if(count($data) <= 0)
         {
             return true;
         }
@@ -589,6 +595,28 @@ class RefVehicleService implements RefVehicleInterface
     public function GetActiveVehicleByAgencyId(AgencyIdRequest $request)
     {
         $vehicle = $this->getActiveVehiclesByAgencyId($request->agency_id);
+
+        if($this->checkDataEmpty($vehicle) == true)
+        {
+            return response()->json(
+                [
+                    'status' => "error",
+                    'message' => "Data not found",
+                    'data'=> []
+                ]
+                ,400
+            );
+        }
+        else
+        {
+            return response()->json(
+                [
+                    'status' => "ok",
+                    'message' => "Success",
+                    'data'=> $vehicle
+                ]
+            );
+        }
 
         return response()->json($vehicle);
     }
