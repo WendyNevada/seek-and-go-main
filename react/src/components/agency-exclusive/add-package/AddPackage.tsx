@@ -9,8 +9,10 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import VehicleQty from './ProductQty/VehicleQty'
 import HotelQty from './ProductQty/HotelQty'
+import { useTranslation } from 'react-i18next'
 
 const AddPackage = () => {
+    const { t } = useTranslation();
     const [attractionQty, setAttractionQty] = useState<number>(0);
     const [vehicleQty, setVehicleQty] = useState<number>(0);
     const [hotelQty, setHotelQty] = useState<number>(0);
@@ -58,7 +60,7 @@ const AddPackage = () => {
             <div className="mx-auto max-w-6xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <h1 className="text-2xl mb-8">Add Package</h1>
+                        <h1 className="text-2xl mb-8">{t('Add Package')}</h1>
 
                         <div className="flex flex-row space-x-4">
                             <FormField
@@ -66,11 +68,11 @@ const AddPackage = () => {
                                 name="package_code"
                                 render={({ field }) => (
                                     <FormItem className="custom-field w-80">
-                                        <FormLabel>{"Package Code"}</FormLabel>
+                                        <FormLabel>{t('Package Code')}</FormLabel>
                                         <Required/>
                                         <FormControl className='w-full'>
                                             <Input
-                                                placeholder={"Input Package Code"}
+                                                placeholder={t('Input Package Code')}
                                                 {...field}
                                                 onChange={field.onChange}
                                                 maxLength={7}
@@ -84,11 +86,11 @@ const AddPackage = () => {
                                 name="package_name"
                                 render={({ field }) => (
                                     <FormItem className="custom-field w-80">
-                                        <FormLabel>{"Package Name"}</FormLabel>
+                                        <FormLabel>{t('Package Name')}</FormLabel>
                                         <Required/>
                                         <FormControl className='w-full'>
                                             <Input
-                                                placeholder={"Input Package Name"}
+                                                placeholder={t('Input Package Name')}
                                                 {...field}
                                                 onChange={field.onChange}
                                             />
@@ -104,11 +106,11 @@ const AddPackage = () => {
                                 name="package_price"
                                 render={({ field }) => (
                                     <FormItem className="custom-field w-80">
-                                        <FormLabel>{"Package Price"}</FormLabel>
+                                        <FormLabel>{t('Package Price')}</FormLabel>
                                         <Required/>
                                         <FormControl className='w-full'>
                                             <Input
-                                                placeholder={"Input Package Price"}
+                                                placeholder={t('Input Package Price')}
                                                 {...field}
                                                 onChange={field.onChange}
                                             />
@@ -121,12 +123,12 @@ const AddPackage = () => {
                                 name="qty"
                                 render={({ field }) => (
                                     <FormItem className="custom-field w-80">
-                                        <FormLabel>{"QTY"}</FormLabel>
+                                        <FormLabel>{t('QTY')}</FormLabel>
                                         <Required/>
                                         <FormControl className='w-full'>
                                             <Input
                                                 type='number'
-                                                placeholder={"Input QTY"}
+                                                placeholder={t('Input QTY')}
                                                 {...field}
                                                 onChange={field.onChange}
                                             />
@@ -139,12 +141,12 @@ const AddPackage = () => {
                                 name="total_days"
                                 render={({ field }) => (
                                     <FormItem className="custom-field w-80">
-                                        <FormLabel>{"Total Days"}</FormLabel>
+                                        <FormLabel>{t('Total Days')}</FormLabel>
                                         <Required/>
                                         <FormControl className='w-full'>
                                             <Input
                                                 type='number'
-                                                placeholder={"Input Total Days"}
+                                                placeholder={t('Input Total Days')}
                                                 {...field}
                                                 onChange={field.onChange}
                                             />
@@ -159,11 +161,11 @@ const AddPackage = () => {
                             name="description"
                             render={({ field }) => (
                                 <FormItem className="custom-field md:w-[41rem]">
-                                    <FormLabel>{"Description"}</FormLabel>
+                                    <FormLabel>{t('Description')}</FormLabel>
                                     <Required/>
                                     <FormControl>
                                         <Textarea
-                                            placeholder={"Input Description"}
+                                            placeholder={t('Description')}
                                             {...field}
                                             onChange={field.onChange}
                                         />
@@ -172,12 +174,12 @@ const AddPackage = () => {
                             )}
                         />
 
-                        <h1 className="text-xl mb-4 mt-6">Detail Package</h1>
+                        <h1 className="text-xl mb-4 mt-6">{t('Detail Package')}</h1>
 
                         <div className="flex flex-row space-x-4">
                             <div className="grid w-32 max-w-sm items-center text-center my-2">
                                 {/* <Input className='w-24' type="number" placeholder="Attraction qty" value={attractionQty} onChange={handleAttractionQtyChange}/> */}
-                                <Button variant={"outline"} className='w-32' onClick={() => setAttractionQty(attractionQty + 1)}>+ Add Attraction</Button>
+                                <Button variant={"outline"} className='w-38' onClick={() => setAttractionQty(attractionQty + 1)}>+ {t('Add Attraction')}</Button>
                             </div>
                         </div>
                         <AttractionQty attractionQty={attractionQty} onDetailsChange={handleAttractionDetailsChange} onAttractionQtyChange={setAttractionQty}/>
@@ -185,7 +187,7 @@ const AddPackage = () => {
                         <div className="flex flex-row space-x-4">
                             <div className="grid w-32 max-w-sm items-center text-center my-2">
                                 {/* <Input className='w-24' type="number" placeholder="Attraction qty" value={attractionQty} onChange={handleAttractionQtyChange}/> */}
-                                <Button variant={"outline"} className='w-32' onClick={() => setVehicleQty(vehicleQty + 1)}>+ Add Vehicle</Button>
+                                <Button variant={"outline"} className='w-38' onClick={() => setVehicleQty(vehicleQty + 1)}>+ {t('Add Vehicle')}</Button>
                             </div>
                         </div>
                         <VehicleQty vehicleQty={vehicleQty} onDetailsChange={handleVehicleDetailsChange} onVehicleQtyChange={setVehicleQty}/>
@@ -193,13 +195,13 @@ const AddPackage = () => {
                         <div className="flex flex-row space-x-4">
                             <div className="grid w-32 max-w-sm items-center text-center my-2">
                                 {/* <Input className='w-24' type="number" placeholder="Attraction qty" value={attractionQty} onChange={handleAttractionQtyChange}/> */}
-                                <Button variant={"outline"} className='w-32' onClick={() => setHotelQty(hotelQty + 1)}>+ Add Hotel</Button>
+                                <Button variant={"outline"} className='w-38' onClick={() => setHotelQty(hotelQty + 1)}>+ {t('Add Hotel')}</Button>
                             </div>
                         </div>
                         <HotelQty hotelQty={hotelQty} onDetailsChange={handleHotelDetailsChange} onHotelQtyChange={setHotelQty}/>
 
                         <div className="justify-center flex">
-                            <Button type="submit" className='mt-4'>Add Package
+                            <Button type="submit" className='mt-4'>{t('Add Package')}
                             </Button>
                         </div>
                     </form>

@@ -33,7 +33,7 @@ const ProductList = () => {
                 <Button onClick={onRoute} className='rounded-full mr-2 mb-2'>{t('Add Attraction')}</Button>
                 <Button onClick={onRouteAddVehicle} className='rounded-full mr-2 mb-2'>{t('Add Vehicle')}</Button>
                 <Button onClick={onRouteAddHotel} className='rounded-full mr-2 mb-2'>{t('Add Hotel')}</Button>
-                <Button onClick={onRouteAddPackage} className='rounded-full mr-2 mb-2'>{t('Add Packages')}</Button>
+                <Button onClick={onRouteAddPackage} className='rounded-full mr-2 mb-2'>{t('Add Package')}</Button>
             </div>
             <h1 className='text-3xl font-bold'>{t('List Attraction')}</h1>
             <AttractionList/>
