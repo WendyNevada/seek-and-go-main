@@ -62,7 +62,7 @@ const AgencyAccordion = () => {
             <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "RJT") : null} title="Rejected Orders"/>}
 
             {(selectedValue === 'CAN' || selectedValue === 'ALL') &&
-            <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "CAN") : null} title="Cancel Orders"/>}
+            <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "CAN") : null} title="Canceled Orders"/>}
 
             {(selectedValue === 'PAY' || selectedValue === 'ALL') &&
             <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "PAY") : null} title="Paid Orders"/>}

@@ -172,6 +172,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('FinishOrder', 'OrderHController@FinishOrder');
 
+    Route::post('SendEmailOrderApprove', 'OrderHController@SendEmailOrderApprove');
+
     Route::post('GetCustPaidOrder', 'OrderHController@GetCustPaidOrder');
 
     Route::post('GetStatsForOrder', 'OrderHController@GetStatsForOrder');

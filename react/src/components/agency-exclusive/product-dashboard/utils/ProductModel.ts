@@ -18,6 +18,8 @@ export interface GetAttractionModel {
     updated_at: string
     image_url: string
     base_price: number
+    agency_name: string
+    address_zipcode: string
   }
 
 export interface GetVehicleModel {
@@ -47,6 +49,8 @@ export interface GetVehicleModel {
     updated_at: string
     image_url: string
     base_price: number
+    agency_name: string
+    address_zipcode: string
   }
 
 export interface GetHotelModel {
@@ -69,4 +73,6 @@ export interface DaumHotel {
     updated_at: string
     image_url: string
     base_price: number
+    agency_name: string
+    address_zipcode: string
 }
