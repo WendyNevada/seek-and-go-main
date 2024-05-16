@@ -31,7 +31,7 @@ const DisplayHotel = () => {
 
     const selectItem = (id : number) => {
         console.log('selected id : ',id);
-        navigate(`/Customer/HotelOrderDetail/${id}`);
+        navigate(`/Customer/HotelDetail/${id}`);
         //navigateTo(`/vehicle/${id}`);
         //navigatedTo(`/Customer/ProductDetail`);
     }

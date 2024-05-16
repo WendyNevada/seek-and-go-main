@@ -1,22 +1,20 @@
-import ProductHotelDetail from '@/components/customer-exclusive/product-detail/ProductHotelDetail';
+import HotelOrderDetail from '@/components/customer-exclusive/order/HotelOrderDetail';
 import Footer from '@/components/navbar/Footer';
 import Navbar from '@/components/navbar/Navbar';
 import React from 'react'
 import { useParams } from 'react-router-dom';
 
-const HotelDetailPage = () => {
+const HotelOrderDetailPage = () => {
     const {ref_hotel_id} = useParams();
-
     return (
-        <div className="">
+        <div>
             <Navbar/>
                 <div className="flex mt-[7rem] lg:mt-[6rem]  items-center sm:justify-start xl:justify-center">
-                    <ProductHotelDetail ref_hotel_id={Number(ref_hotel_id) || 0}/>
+                    <HotelOrderDetail ref_hotel_id={Number(ref_hotel_id) || 0}/>
                 </div>
             <Footer/>
         </div>
-
     )
 }
 
-export default HotelDetailPage
+export default HotelOrderDetailPage

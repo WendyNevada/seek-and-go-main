@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useNavigate } from "react-router-dom";
 
 interface CredentialModalProps {
     isOpen: boolean;
@@ -17,42 +18,28 @@ interface CredentialModalProps {
   }
 
 const CredentialModal = ({ isOpen, onClose }:CredentialModalProps) => {
+    const navigate = useNavigate();
+    const goToLoginPage = () => {
+        navigate('/Login');
+    }
+
+    const goToRegisterPage = () => {
+        navigate('/Register');
+    }
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogTrigger asChild>
-            <Button variant="outline">Edit Profile</Button>
-        </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-center">Please Login First</DialogTitle>
+            {/* <DialogDescription>
                 Make changes to your profile here. Click save when you're done.
-            </DialogDescription>
+            </DialogDescription> */}
             </DialogHeader>
-            <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
-                Name
-                </Label>
-                <Input
-                id="name"
-                defaultValue="Pedro Duarte"
-                className="col-span-3"
-                />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="username" className="text-right">
-                Username
-                </Label>
-                <Input
-                id="username"
-                defaultValue="@peduarte"
-                className="col-span-3"
-                />
-            </div>
-            </div>
+                <Button onClick={goToLoginPage} variant="primary">Login</Button>
+                <h4 className="text-center">dont have an account ?</h4>
+                <Button onClick={goToRegisterPage} variant="primary">Register</Button>
             <DialogFooter>
-            <Button type="submit">Save changes</Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>

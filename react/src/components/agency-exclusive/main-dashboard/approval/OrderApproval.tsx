@@ -112,7 +112,7 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                             <TableHead>To</TableHead>
                             <TableHead>Qty</TableHead>
                             <TableHead className="text-right">Base Price</TableHead>
-                            <TableHead className="text-right">Sub Price</TableHead>
+                            <TableHead className="text-right">Sub Total</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

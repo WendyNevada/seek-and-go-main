@@ -30,7 +30,7 @@ const DisplayAttraction = () => {
 
     const selectItem = (id : number) => {
         console.log('selected id : ',id);
-        navigate(`/Customer/AttractionOrderDetail/${id}`);
+        navigate(`/Customer/AttractionDetail/${id}`);
     }
 
     return (
