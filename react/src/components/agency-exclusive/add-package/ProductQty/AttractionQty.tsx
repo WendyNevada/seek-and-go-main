@@ -57,7 +57,7 @@ const AttractionQty = ( {attractionQty, onDetailsChange, onAttractionQtyChange }
                     attraction_name: selectedAttraction.attraction_name,
                     image_url: selectedAttraction.image_url,
                     base_price: selectedAttraction.base_price,
-                    address: selectedAttraction.address,
+                    address_zipcode: selectedAttraction.address_zipcode,
                     description: selectedAttraction.description
                 };
                 return updatedAttractions;
@@ -117,7 +117,7 @@ const AttractionQty = ( {attractionQty, onDetailsChange, onAttractionQtyChange }
                                                     </TableRow>
                                                     <TableRow>
                                                         <TableCell className="font-medium">{t('Address')} :</TableCell>
-                                                        <TableCell className="font-medium">{newAttractions[index]?.address}</TableCell>
+                                                        <TableCell className="font-medium">{newAttractions[index]?.address_zipcode}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
                                                         <TableCell className="font-medium">{t('Description')} :</TableCell>

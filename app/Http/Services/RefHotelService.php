@@ -218,7 +218,14 @@ class RefHotelService implements RefHotelInterface
     {
         $hotel = RefHotel::
             join('agency_affiliates', 'ref_hotels.ref_hotel_id', '=', 'agency_affiliates.ref_hotel_id')->
-            select('ref_hotels.*', 'agency_affiliates.base_price')->
+            join('agencies', 'agency_affiliates.agency_id', '=', 'agencies.agency_id')->
+            join('ref_zipcodes', 'ref_hotels.ref_zipcode_id', '=', 'ref_zipcodes.ref_zipcode_id')->
+            select(
+                'ref_hotels.*', 
+                'agency_affiliates.base_price', 
+                'agencies.agency_name',
+                DB::raw("CONCAT(ref_zipcodes.area_1, ', ', ref_zipcodes.area_2, ', ', ref_zipcodes.area_3, ', ', ref_zipcodes.area_4) as address_zipcode")
+                )->
             where('is_active', '1')->
             where('qty', '>', '0')->
             orderBy('rating', 'desc')->
@@ -244,6 +251,7 @@ class RefHotelService implements RefHotelInterface
 
             $value->image_url = $image_url;
             $value->base_price = $base_price;
+            $value->address_zipcode = ucwords(strtolower($value->address_zipcode));
         }
 
         return $hotel;
@@ -263,6 +271,11 @@ class RefHotelService implements RefHotelInterface
             ->where('ref_hotels.is_active', true)
             ->where('agency_affiliates.agency_id', $agency_id)
             ->get();
+
+        $hotels->transform(function($hotels) {
+            $hotels->address_zipcode = ucwords(strtolower($hotels->address_zipcode));
+            return $hotels;
+        });
 
         return $hotels;
     }
@@ -306,6 +319,11 @@ class RefHotelService implements RefHotelInterface
             return false;
         }
     }
+
+    private function strTitleFormat($string)
+    {
+        return ucwords(strtolower($string));
+    }
     #endregion
 
     #region Public Function
@@ -319,6 +337,8 @@ class RefHotelService implements RefHotelInterface
 
         $address = $this->getRefZipcodeById($hotel->ref_zipcode_id);
 
+        $addressString = $this->strTitleFormat($address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4);
+
         if($this->checkDataNull($hotel) == false)
         {
             if($this->checkDataNull($hotelPicture) == false)
@@ -330,7 +350,7 @@ class RefHotelService implements RefHotelInterface
                     'picture_url' => $hotelPicture->image_url,
                     'base_price' => $agencyAffiliate->base_price,
                     'agency_id' => $agencyAffiliate->agency_id,
-                    'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
+                    'address_zipcode' => $addressString
                 ], 200);
             }
             else
@@ -466,56 +486,46 @@ class RefHotelService implements RefHotelInterface
         {
             $hotel = RefHotel::where('ref_hotel_id', $request->ref_hotel_id)->first();
 
-            if($hotel != null)
+            $orderHs = $this->checkOrderForHotel($request->ref_hotel_id);
+
+            if($orderHs == true)
             {
-                $orderHs = $this->checkOrderForHotel($request->ref_hotel_id);
-
-                if($orderHs == true)
-                {
-                    return response()->json(
-                        [
-                            'status' => "error",
-                            'message' => "Hotel is in active order",
-                            'ref_hotel_id' => $request->ref_hotel_id
-                        ],
-                        400
-                    );
-                }
-
-                $packageHs = $this->checkPackageForHotel($request->ref_hotel_id);
-
-                if($packageHs == true)
-                {
-                    return response()->json(
-                        [
-                            'status' => "error",
-                            'message' => "Hotel is in active package",
-                            'ref_hotel_id' => $request->ref_hotel_id
-                        ],
-                        400
-                    );
-                }
-
-                DB::beginTransaction();
-
-                $this->updateIsActiveHotel($request->ref_hotel_id, false);
-
-                DB::commit();
-
-                return response()->json([
-                    'status' => "ok",
-                    'message' => "Deactivate success",
-                    'ref_hotel_id' => $request->ref_hotel_id
-                ], 200);
+                return response()->json(
+                    [
+                        'status' => "error",
+                        'message' => "Hotel is in active order",
+                        'ref_hotel_id' => $request->ref_hotel_id
+                    ],
+                    400
+                );
             }
-            else
+
+            $packageHs = $this->checkPackageForHotel($request->ref_hotel_id);
+
+            if($packageHs == true)
             {
-                return response()->json([
-                    'status' => "error",
-                    'message' => "Data not found",
-                    'ref_hotel_id' => $request->ref_hotel_id
-                ], 400);
+                return response()->json(
+                    [
+                        'status' => "error",
+                        'message' => "Hotel is in active package",
+                        'ref_hotel_id' => $request->ref_hotel_id
+                    ],
+                    400
+                );
             }
+
+            DB::beginTransaction();
+
+            $this->updateIsActiveHotel($request->ref_hotel_id, false);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => "ok",
+                'message' => "Deactivate success",
+                'ref_hotel_id' => $request->ref_hotel_id
+            ], 200);
+            
         }
         catch (\Exception $e)
         {

@@ -41,6 +41,8 @@ interface OrderHInterface
 
     public function FinishOrder(OrderHIdRequest $request);
 
+    public function SendEmailOrderApprove(OrderHIdRequest $request);
+
     public function GetCustPaidOrder(GetOrderDashboardRequest $request);
 
     public function GetStatsForOrder(AgencyIdRequest $request);

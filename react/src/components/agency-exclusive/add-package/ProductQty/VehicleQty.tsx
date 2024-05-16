@@ -55,7 +55,7 @@ const VehicleQty = ({ vehicleQty, onDetailsChange, onVehicleQtyChange }: Vehicle
                     vehicle_code: selectedVehicle.vehicle_code,
                     image_url: selectedVehicle.image_url,
                     base_price: selectedVehicle.base_price,
-                    address: selectedVehicle.address,
+                    address_zipcode: selectedVehicle.address_zipcode,
                     description: selectedVehicle.description
                 };
                 return updatedVehicles;
@@ -115,7 +115,7 @@ const VehicleQty = ({ vehicleQty, onDetailsChange, onVehicleQtyChange }: Vehicle
                                                     </TableRow>
                                                     <TableRow>
                                                         <TableCell className="font-medium">{t('Address')} :</TableCell>
-                                                        <TableCell className="font-medium">{newVehicles[index]?.address}</TableCell>
+                                                        <TableCell className="font-medium">{newVehicles[index]?.address_zipcode}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
                                                         <TableCell className="font-medium">{t('Description')} :</TableCell>

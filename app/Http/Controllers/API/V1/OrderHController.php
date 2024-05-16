@@ -99,6 +99,12 @@ class OrderHController extends Controller
         return $response;
     }
 
+    public function SendEmailOrderApprove(OrderHService $orderHService, OrderHIdRequest $request)
+    {
+        $response = $orderHService->SendEmailOrderApprove($request);
+        return $response;
+    }
+
     public function GetCustPaidOrder(OrderHService $orderHService, GetOrderDashboardRequest $request)
     {
         $response = $orderHService->GetCustPaidOrder($request);

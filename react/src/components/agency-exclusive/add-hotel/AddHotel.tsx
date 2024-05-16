@@ -159,6 +159,7 @@ const AddHotel = () => {
                             render={() => (
                                 <FormItem className="custom-field">
                                     <FormLabel>{t('Picture')}</FormLabel>
+                                    <Required/>
                                     <FormMessage />
                                     <FormControl>
                                         <Input

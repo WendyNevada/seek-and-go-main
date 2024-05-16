@@ -232,8 +232,15 @@ class RefVehicleService implements RefVehicleInterface
     private function getActiveVehicleDataSortedWithLimit($limit)
     {
         $vehicle = RefVehicle::
-            join('agency_affiliates', 'ref_vehicles.ref_vehicle_id', '=', 'agency_affiliates.ref_hotel_id')->
-            select('ref_vehicles.*', 'agency_affiliates.base_price')->
+            join('agency_affiliates', 'ref_vehicles.ref_vehicle_id', '=', 'agency_affiliates.ref_vehicle_id')->
+            join('agencies', 'agency_affiliates.agency_id', '=', 'agencies.agency_id')->
+            join('ref_zipcodes', 'ref_vehicles.ref_zipcode_id', '=', 'ref_zipcodes.ref_zipcode_id')->
+            select(
+                'ref_vehicles.*', 
+                'agency_affiliates.base_price', 
+                'agencies.agency_name',
+                DB::raw("CONCAT(ref_zipcodes.area_1, ', ', ref_zipcodes.area_2, ', ', ref_zipcodes.area_3, ', ', ref_zipcodes.area_4) as address_zipcode")
+                )->
             where('is_active', '1')->
             where('qty', '>', '0')->
             orderBy('rating', 'desc')->
@@ -259,6 +266,7 @@ class RefVehicleService implements RefVehicleInterface
 
             $value->image_url = $image_url;
             $value->base_price = $base_price;
+            $value->address_zipcode = ucwords(strtolower($value->address_zipcode));
         }
 
         return $vehicle;
@@ -279,6 +287,11 @@ class RefVehicleService implements RefVehicleInterface
         where('ref_vehicles.is_active', true)->
         where('agency_affiliates.agency_id', $agency_id)->
         get();
+
+        $vehicle->transform(function($vehicle) {
+            $vehicle->address_zipcode = ucwords(strtolower($vehicle->address_zipcode));
+            return $vehicle;
+        });
 
         return $vehicle;
     }
@@ -321,6 +334,11 @@ class RefVehicleService implements RefVehicleInterface
         {
             return false;
         }
+    }
+
+    private function strTitleFormat($string)
+    {
+        return ucwords(strtolower($string));
     }
     #endregion
 
@@ -450,57 +468,46 @@ class RefVehicleService implements RefVehicleInterface
         try
         {
             $vehicle = $this->getRefVehicleById($request->ref_vehicle_id);
+            
+            $orderHs = $this->checkOrderForVehicle($request->ref_vehicle_id);
 
-            if($vehicle != null)
+            if($orderHs == true)
             {
-                $orderHs = $this->checkOrderForVehicle($request->ref_vehicle_id);
-
-                if($orderHs == true)
-                {
-                    return response()->json(
-                        [
-                            'status' => "error",
-                            'message' => "Vehicle is in active order",
-                            'ref_vehicle_id' => $request->ref_vehicle_id
-                        ],
-                        400
-                    );
-                }
-
-                $packageHs = $this->checkPackageForVehicle($request->ref_vehicle_id);
-
-                if($packageHs == true)
-                {
-                    return response()->json(
-                        [
-                            'status' => "error",
-                            'message' => "Vehicle is in active package",
-                            'ref_vehicle_id' => $request->ref_vehicle_id
-                        ],
-                        400
-                    );
-                }
-
-                DB::beginTransaction();
-
-                $this->updateIsActiveVehicle($request->ref_vehicle_id, false);
-
-                DB::commit();
-
-                return response()->json([
-                    'status' => "ok",
-                    'message' => "Deactivate success",
-                    'ref_vehicle_id' => $request->ref_vehicle_id
-                ], 200);
+                return response()->json(
+                    [
+                        'status' => "error",
+                        'message' => "Vehicle is in active order",
+                        'ref_vehicle_id' => $request->ref_vehicle_id
+                    ],
+                    400
+                );
             }
-            else
+
+            $packageHs = $this->checkPackageForVehicle($request->ref_vehicle_id);
+
+            if($packageHs == true)
             {
-                return response()->json([
-                    'status' => "error",
-                    'message' => "Data not found",
-                    'ref_vehicle_id' => $request->ref_vehicle_id
-                ], 400);
-            }    
+                return response()->json(
+                    [
+                        'status' => "error",
+                        'message' => "Vehicle is in active package",
+                        'ref_vehicle_id' => $request->ref_vehicle_id
+                    ],
+                    400
+                );
+            }
+
+            DB::beginTransaction();
+
+            $this->updateIsActiveVehicle($request->ref_vehicle_id, false);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => "ok",
+                'message' => "Deactivate success",
+                'ref_vehicle_id' => $request->ref_vehicle_id
+            ], 200);
         }
         catch (\Exception $e)
         {
@@ -522,7 +529,9 @@ class RefVehicleService implements RefVehicleInterface
 
         $agencyAffiliate = $this->getAgencyAffiliateByVehicleId($request->ref_vehicle_id);
 
-        $address = $this->getRefZipcodeById($vehicle->ref_zipcode_id);;
+        $address = $this->getRefZipcodeById($vehicle->ref_zipcode_id);
+
+        $addressString = $this->strTitleFormat($address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4);
 
         if($this->checkDataNull($vehicle) == false)
         {
@@ -535,7 +544,7 @@ class RefVehicleService implements RefVehicleInterface
                     'picture_url' => $vehiclePicture->image_url,
                     'base_price' => $agencyAffiliate->base_price,
                     'agency_id' => $agencyAffiliate->agency_id,
-                    'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
+                    'address_zipcode' => $addressString
                 ], 200);
             }
             else

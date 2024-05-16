@@ -55,7 +55,7 @@ const HotelQty = ({hotelQty, onDetailsChange, onHotelQtyChange} : HotelQtyProps)
                     hotel_name: selectedHotel.hotel_name,
                     image_url: selectedHotel.image_url,
                     base_price: selectedHotel.base_price,
-                    address: selectedHotel.address,
+                    address_zipcode: selectedHotel.address_zipcode,
                     description: selectedHotel.description
                 };
                 return updatedHotels;
@@ -115,7 +115,7 @@ const HotelQty = ({hotelQty, onDetailsChange, onHotelQtyChange} : HotelQtyProps)
                                                     </TableRow>
                                                     <TableRow>
                                                         <TableCell className="font-medium">{t('Address')} :</TableCell>
-                                                        <TableCell className="font-medium">{newHotels[index]?.address}</TableCell>
+                                                        <TableCell className="font-medium">{newHotels[index]?.address_zipcode}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
                                                         <TableCell className="font-medium">{t('Description')} :</TableCell>
