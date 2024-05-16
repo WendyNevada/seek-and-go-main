@@ -5,8 +5,10 @@ import {Table,TableBody,TableCaption,TableCell,TableHead,TableHeader,TableRow} f
 import { useNavigate } from 'react-router-dom';
 import NoteAltIcon from '@mui/icons-material/NoteAlt';
 import { formatPrice } from '@/utils/priceFormating';
+import { useTranslation } from 'react-i18next';
 
 const AcordionByStatus = ( { orders, title }: { orders: OrderH[] | null ; title: string}) => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
     const onViewApprovalDetail = (id: number) => {
@@ -31,20 +33,20 @@ const AcordionByStatus = ( { orders, title }: { orders: OrderH[] | null ; title:
                         <AccordionContent>
                                     {/* TABLE */}
                                     <Table>
-                                        <TableCaption>A list of your recent Activities.</TableCaption>
+                                        <TableCaption></TableCaption>
                                         <TableHeader>
                                             <TableRow>
-                                                <TableHead className="w-[100px]">Order No</TableHead>
-                                                <TableHead>Order Date</TableHead>
-                                                <TableHead>Order Status</TableHead>
-                                                <TableHead className="text-right">Total Price</TableHead>
+                                                <TableHead className="w-[100px]">{t('Order No')}</TableHead>
+                                                <TableHead>{t('Order Date')}</TableHead>
+                                                <TableHead>{t('Order Status')}</TableHead>
+                                                <TableHead className="text-right">{t('Total Price')}</TableHead>
                                                 <TableHead className="text-right">Detail</TableHead>
                                             </TableRow>
                                         </TableHeader>
                                         {orders.length === 0 ? (
                                             <TableBody>
                                                 <TableRow>
-                                                    <TableCell colSpan={parseInt("5")} className="text-center">No data</TableCell>
+                                                    <TableCell colSpan={parseInt("5")} className="text-center">{t('No data')}</TableCell>
                                                 </TableRow>
                                             </TableBody>
                                         ) : (
