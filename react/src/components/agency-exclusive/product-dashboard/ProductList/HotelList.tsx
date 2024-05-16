@@ -23,10 +23,10 @@ const HotelList = () => {
         // Fetch data from the API
         const fetchAttractions = async () => {
             try {
-                const response = await axiosClient.post<DaumHotel[]>('/v1/GetActiveHotelByAgencyId', {
+                const response = await axiosClient.post('/v1/GetActiveHotelByAgencyId', {
                     agency_id: user?.agency_id
                 }); // Replace 'your-api-url' with the actual API endpoint
-                setHotel(response.data); // Assuming the response data is an array of attractions
+                setHotel(response.data.data); // Assuming the response data is an array of attractions
             } catch (error) {
                 console.error('Error fetching attractions:', error);
             }
