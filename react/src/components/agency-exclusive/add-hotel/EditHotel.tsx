@@ -157,6 +157,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                             render={() => (
                                 <FormItem className="custom-field">
                                     <FormLabel>{t('Picture')}</FormLabel>
+                                    <Required/>
                                     <FormMessage />
                                     <FormControl>
                                         <Input

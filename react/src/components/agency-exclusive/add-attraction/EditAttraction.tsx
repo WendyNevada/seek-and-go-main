@@ -150,6 +150,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                     render={() => (
                                         <FormItem className="custom-field">
                                             <FormLabel>{t('Picture')}</FormLabel>
+                                            <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Input

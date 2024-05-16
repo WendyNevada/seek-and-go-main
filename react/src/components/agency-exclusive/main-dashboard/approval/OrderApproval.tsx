@@ -9,8 +9,10 @@ import { Button } from "@/components/ui/button"
 import { toast } from '@/components/ui/use-toast';
 import axios, { AxiosError } from 'axios';
 import { TableFooter } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
+    const { t } = useTranslation();
     const [order, setOrder] = useState<OrderD>({} as OrderD);
     const [hotel, setHotel] = useState<HotelH>();
     const [vehicle, setVehicle] = useState<VehicleH>();
@@ -79,16 +81,34 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
         }
     }
 
+    const onSendEmailOrder = async (order_h_id : number) => {
+    }
+
+    const onRejectOrder = async (order_h_id : number) => {
+    }
+
+    const onCancelOrder = async (order_h_id : number) => {
+    }
+
+    const onAcceptPaymentOrder = async (order_h_id : number) => {
+    }
+
+    const onRetryPaymentOrder  = async (order_h_id : number) => {
+    }
+
+    const onFinishOrder = async (order_h_id : number) => {
+    }
+
     return (
         <div className='shadow-lg sm:rounded-3xl'>
             {/* Header */}
             <div className='p-5 text-xl flex flex-row'>
                 <div className="">
-                    Order No
+                    {t('Order No')}
                     <br />
-                    Order Status
+                    {t('Order Status')}
                     <br />
-                    Total Price
+                    {t('Total Price')}
                 </div>
                 <div className="ml-4">
                     : {order.order_no}
@@ -100,19 +120,19 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
             </div>
 
             <div className="p-5 text-xl flex flex-col">
-                DETAIL
+                Detail
                 <br />
                 <div className="">
                 <Table>
-                    <TableCaption>A list of your recent invoices.</TableCaption>
+                    <TableCaption></TableCaption>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Product</TableHead>
-                            <TableHead className="w-36">From</TableHead>
-                            <TableHead>To</TableHead>
-                            <TableHead>Qty</TableHead>
-                            <TableHead className="text-right">Base Price</TableHead>
-                            <TableHead className="text-right">Sub Total</TableHead>
+                            <TableHead>{t('Product')}</TableHead>
+                            <TableHead className="w-36">{t('From')}</TableHead>
+                            <TableHead>{t('To')}</TableHead>
+                            <TableHead>{t('Amount')}</TableHead>
+                            <TableHead className="text-center">{t('Price')}</TableHead>
+                            <TableHead className="text-right">{t('Sub Total')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -130,11 +150,15 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                             </TableCell>
                             <TableCell className="text-right">{formatPrice(order.total_price)}</TableCell>
                         </TableRow>
+                        <TableRow>
+                            <TableCell>
+                            </TableCell>
+                        </TableRow>
                     </TableBody>
                     <TableFooter>
                         <TableRow className='bg-slate-500 hover:bg-slate-500 text-white'>
-                            <TableCell colSpan={5}>Total Price</TableCell>
-                            <TableCell className="text-right">{formatPrice(order.total_price)}</TableCell>
+                            <TableCell colSpan={5} className='font-bold'>{t('Total Price')}</TableCell>
+                            <TableCell className="text-right font-bold">{formatPrice(order.total_price)}</TableCell>
                         </TableRow>
                     </TableFooter>
                     </Table>
@@ -142,7 +166,41 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
             </div>
 
             <div className="flex justify-end m-4 p-4">
-                <Button className=' bg-blue-500 p-2 hover:bg-blue-700 px-4' onClick={() => onApproveOrder(order.order_h_id)}>Approve</Button>
+                {order.order_status === 'NEW' && (
+                    <div className="space-x-4">
+                        <Button className='bg-red-500 p-2 hover:bg-red-700 px-4 w-24' onClick={() => onRejectOrder(order.order_h_id)}>Reject</Button>
+                        <Button className='bg-blue-500 p-2 hover:bg-blue-700 px-4 w-24' onClick={() => onApproveOrder(order.order_h_id)}>Approve</Button>
+                    </div>
+                )}
+
+                {order.order_status === 'APV' && (
+                    <div className="space-x-4">
+                        <Button className='bg-orange-500 p-2 hover:bg-orange-700 px-4 w-28' onClick={() => onSendEmailOrder(order.order_h_id)}>Send Email</Button>
+                        <Button className='bg-red-500 p-2 hover:bg-red-700 px-4 w-28' onClick={() => onCancelOrder(order.order_h_id)}>Cancel</Button>
+                    </div>
+                )}
+
+                {order.order_status === 'PAY' && (
+                    <div className="space-x-4">
+                        <Button className='bg-green-500 p-2 hover:bg-green-700 px-4 w-24' onClick={() => onFinishOrder(order.order_h_id)}>Finish</Button>
+                    </div>
+                )}
+
+                {order.order_status === 'CPY' && (
+                    <div className="space-x-4">
+                        <Button className='bg-green-500 p-2 hover:bg-green-700 px-4 w-28' onClick={() => onAcceptPaymentOrder(order.order_h_id)}>Accept Payment</Button>
+                        <Button className='bg-blue-500 p-2 hover:bg-blue-700 px-4 w-28' onClick={() => onRetryPaymentOrder(order.order_h_id)}>Retry Payment</Button>
+                        <Button className='bg-red-500 p-2 hover:bg-red-700 px-4 w-28' onClick={() => onCancelOrder(order.order_h_id)}>Cancel</Button>
+                    </div>
+                )}
+
+                {order.order_status === 'RTP' && (
+                    <div className="space-x-4">
+                        <Button className='bg-green-500 p-2 hover:bg-green-700 px-4 w-28' onClick={() => onAcceptPaymentOrder(order.order_h_id)}>Accept Payment</Button>
+                        <Button className='bg-red-500 p-2 hover:bg-red-700 px-4 w-28' onClick={() => onCancelOrder(order.order_h_id)}>Cancel</Button>
+                    </div>
+                )}
+
             </div>
         </div>
     )

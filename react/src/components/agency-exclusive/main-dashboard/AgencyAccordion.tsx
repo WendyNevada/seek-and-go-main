@@ -46,8 +46,8 @@ const AgencyAccordion = () => {
                     <SelectItem value="APV">Approved</SelectItem>
                     <SelectItem value="RJT">Rejected</SelectItem>
                     <SelectItem value="CAN">Cancel Order</SelectItem>
-                    <SelectItem value="PAY">Payment</SelectItem>
-                    <SelectItem value="CPY">Cancel Payment</SelectItem>
+                    <SelectItem value="PAY">Paid Order</SelectItem>
+                    <SelectItem value="CPY">Customer Paid Orders</SelectItem>
                     <SelectItem value="RTP">Retry Payment</SelectItem>
                 </SelectContent>
             </Select>
@@ -59,16 +59,16 @@ const AgencyAccordion = () => {
             <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "APV") : null} title="Approved Orders"/>}
 
             {(selectedValue === 'RJT' || selectedValue === 'ALL') &&
-            <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "APV") : null} title="Rejected Orders"/>}
+            <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "RJT") : null} title="Rejected Orders"/>}
 
             {(selectedValue === 'CAN' || selectedValue === 'ALL') &&
-            <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "CAN") : null} title="Cancel Orders"/>}
+            <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "CAN") : null} title="Canceled Orders"/>}
 
             {(selectedValue === 'PAY' || selectedValue === 'ALL') &&
-            <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "PAY") : null} title="Payment"/>}
+            <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "PAY") : null} title="Paid Orders"/>}
 
             {(selectedValue === 'CPY' || selectedValue === 'ALL') &&
-            <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "CPY") : null} title="Cancel Payment"/>}
+            <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "CPY") : null} title="Customer Paid Orders"/>}
 
             {(selectedValue === 'RTP' || selectedValue === 'ALL') &&
             <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "RTP") : null} title="Retry Payment"/>}

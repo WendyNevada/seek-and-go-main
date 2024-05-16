@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\CancelOrderByAgencyEmail;
 use App\Http\Requests\V2\CustIdRequest;
 use App\Http\Interfaces\OrderHInterface;
+use App\Mail\CancelOrderByCustomerEmail;
 use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Requests\V2\OrderHIdRequest;
 use App\Http\Requests\V2\CancelOrderRequest;
@@ -34,7 +35,7 @@ use App\Http\Requests\V2\CreateOrderRequest;
 use App\Http\Requests\V2\GetOrderByIdRequest;
 use App\Http\Requests\V2\GetCustomerOrderRequest;
 use App\Http\Requests\V2\GetOrderDashboardRequest;
-use App\Mail\CancelOrderByCustomerEmail;
+use App\Mail\SendEmailNotificationOrderApproveEmail;
 
 class OrderHService implements OrderHInterface
 {
@@ -410,6 +411,11 @@ class OrderHService implements OrderHInterface
     private function sendEmailCancelOrderByCustomer($mailTo, $orderNo, $custName)
     {
         Mail::to($mailTo)->send(new CancelOrderByCustomerEmail($orderNo, $custName));
+    }
+
+    private function sendEmailNotificationOrderApprove($mailTo, $orderNo, $agencyName)
+    {
+        Mail::to($mailTo)->send(new SendEmailNotificationOrderApproveEmail($orderNo, $agencyName));
     }
 
     private function getAgencyByAgencyId($agency_id)
@@ -871,6 +877,24 @@ class OrderHService implements OrderHInterface
                 'order_no' => $orderH->order_no
             ], 500);
         }
+    }
+
+    public function SendEmailOrderApprove(OrderHIdRequest $request)
+    {
+        $orderH = $this->updateOrderStatus($request->order_h_id, Constanta::$orderStatusApproved);
+
+        $email = $this->getEmailByForeignId($orderH->customer_id, Constanta::$roleCustomer);
+
+        $agencyName = $this->getAgencyByAgencyId($orderH->agency_id)->agency_name;
+
+        $this->sendEmailNotificationOrderApprove($email, $orderH->order_no, $agencyName); //Send email to customer
+
+        return response()->json(
+            [
+                'status' => 'ok',
+                'message' => 'Email notification sent to customer'
+            ]
+        );
     }
 
     public function GetCustPaidOrder(GetOrderDashboardRequest $request)
