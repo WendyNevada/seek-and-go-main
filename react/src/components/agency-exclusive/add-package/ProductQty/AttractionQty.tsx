@@ -30,10 +30,10 @@ const AttractionQty = ( {attractionQty, onDetailsChange, onAttractionQtyChange }
     useEffect(() => {
         const fetchAttraction = async () => {
             try {
-                const response = await axiosClient.post<DaumAttraction[]>('/v1/GetActiveAttractionByAgencyId', {
+                const response = await axiosClient.post('/v1/GetActiveAttractionByAgencyId', {
                     agency_id: user?.agency_id
                 }); // Replace 'your-api-url' with the actual API endpoint
-                setAttraction(response.data);
+                setAttraction(response.data.data);
             } catch (error) {
                 console.error('Error fetching attractions:', error);
             }

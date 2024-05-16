@@ -29,10 +29,10 @@ const HotelQty = ({hotelQty, onDetailsChange, onHotelQtyChange} : HotelQtyProps)
     useEffect(() => {
         const fetchAttraction = async () => {
             try {
-                const response = await axiosClient.post<DaumHotel[]>('/v1/GetActiveHotelByAgencyId', {
+                const response = await axiosClient.post('/v1/GetActiveHotelByAgencyId', {
                     agency_id: user?.agency_id
                 });
-                setHotel(response.data);
+                setHotel(response.data.data);
             } catch (error) {
                 console.error('Error fetching vehicles:', error);
             }

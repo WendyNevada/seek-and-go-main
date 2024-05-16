@@ -24,10 +24,10 @@ const AttractionList = () => {
         const fetchAttractions = async () => {
             console.log('uwu ', user?.agency_id)
             try {
-                const response = await axiosClient.post<DaumAttraction[]>('/v1/GetActiveAttractionByAgencyId', {
+                const response = await axiosClient.post('/v1/GetActiveAttractionByAgencyId', {
                     agency_id: user?.agency_id
                 }); // Replace 'your-api-url' with the actual API endpoint
-                setAttractions(response.data); // Assuming the response data is an array of attractions
+                setAttractions(response.data.data); // Assuming the response data is an array of attractions
             } catch (error) {
                 console.error('Error fetching attractions:', error);
             }
