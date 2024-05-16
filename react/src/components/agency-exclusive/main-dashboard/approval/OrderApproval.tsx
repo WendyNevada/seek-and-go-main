@@ -9,8 +9,10 @@ import { Button } from "@/components/ui/button"
 import { toast } from '@/components/ui/use-toast';
 import axios, { AxiosError } from 'axios';
 import { TableFooter } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
+    const { t } = useTranslation();
     const [order, setOrder] = useState<OrderD>({} as OrderD);
     const [hotel, setHotel] = useState<HotelH>();
     const [vehicle, setVehicle] = useState<VehicleH>();
@@ -84,11 +86,11 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
             {/* Header */}
             <div className='p-5 text-xl flex flex-row'>
                 <div className="">
-                    Order No
+                    {t('Order No')}
                     <br />
-                    Order Status
+                    {t('Order Status')}
                     <br />
-                    Total Price
+                    {t('Total Price')}
                 </div>
                 <div className="ml-4">
                     : {order.order_no}
@@ -100,19 +102,19 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
             </div>
 
             <div className="p-5 text-xl flex flex-col">
-                DETAIL
+                Detail
                 <br />
                 <div className="">
                 <Table>
-                    <TableCaption>A list of your recent invoices.</TableCaption>
+                    <TableCaption></TableCaption>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Product</TableHead>
-                            <TableHead className="w-36">From</TableHead>
-                            <TableHead>To</TableHead>
-                            <TableHead>Qty</TableHead>
-                            <TableHead className="text-right">Base Price</TableHead>
-                            <TableHead className="text-right">Sub Price</TableHead>
+                            <TableHead>{t('Product')}</TableHead>
+                            <TableHead className="w-36">{t('From')}</TableHead>
+                            <TableHead>{t('To')}</TableHead>
+                            <TableHead>{t('Amount')}</TableHead>
+                            <TableHead className="text-center">{t('Price')}</TableHead>
+                            <TableHead className="text-right">{t('Sub Total')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -130,11 +132,15 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                             </TableCell>
                             <TableCell className="text-right">{formatPrice(order.total_price)}</TableCell>
                         </TableRow>
+                        <TableRow>
+                            <TableCell>
+                            </TableCell>
+                        </TableRow>
                     </TableBody>
                     <TableFooter>
                         <TableRow className='bg-slate-500 hover:bg-slate-500 text-white'>
-                            <TableCell colSpan={5}>Total Price</TableCell>
-                            <TableCell className="text-right">{formatPrice(order.total_price)}</TableCell>
+                            <TableCell colSpan={5} className='font-bold'>{t('Total Price')}</TableCell>
+                            <TableCell className="text-right font-bold">{formatPrice(order.total_price)}</TableCell>
                         </TableRow>
                     </TableFooter>
                     </Table>
