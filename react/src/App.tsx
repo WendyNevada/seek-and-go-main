@@ -18,6 +18,8 @@ import HotelDetailPage from './views/Customer-page/HotelDetailPage';
 import AttractionDetailPage from './views/Customer-page/AttractionDetailPage';
 import AgencyAddPackage from './views/Agency-page/AgencyAddPackage';
 import '@/context/language/i18n';
+import { toast } from './components/ui/use-toast';
+import VehicleOrderDetailPage from './views/Customer-page/Order-page/VehicleOrderDetailPage';
 
 function App() {
   return (
@@ -33,9 +35,9 @@ function App() {
 
             {/* Protected Routes for Customer section */}
             <Route path="/Customer/*" element={<CustomerRoutes />} />
-            <Route path="/Customer/VehicleOrderDetail/:ref_vehicle_id" element={<VehicleDetailPage/>} />
-            <Route path="/Customer/HotelOrderDetail/:ref_hotel_id" element={<HotelDetailPage/>} />
-            <Route path="/Customer/AttractionOrderDetail/:ref_attraction_id" element={<AttractionDetailPage/>} />
+            <Route path="/Customer/VehicleDetail/:ref_vehicle_id" element={<VehicleDetailPage/>} />
+            <Route path="/Customer/HotelDetail/:ref_hotel_id" element={<HotelDetailPage/>} />
+            <Route path="/Customer/AttractionDetail/:ref_attraction_id" element={<AttractionDetailPage/>} />
 
           {/* <Route path="/TEST" element={ <ComboboxDemo/>}/> */}
         </Routes>
@@ -78,20 +80,20 @@ function AgencyRoutes() {
 
 
 function CustomerRoutes() {
-    //const hasCustomerRole = useUserRole('Customer');
+    const hasCustomerRole = useUserRole('Customer');
 
     // If user doesn't have the required role, redirect to login
-    // if (!hasCustomerRole) {
-    //     toast({
-    //         variant: "destructive",
-    //         description: "please Login first"
-    //     });
-    //     return <Navigate to="/Login" />;
-    // }
+    if (!hasCustomerRole) {
+        toast({
+            variant: "destructive",
+            description: "please Login first"
+        });
+        return <Navigate to="/Login" />;
+    }
 
   return (
     <Routes>
-        {/* <Route path="VehicleOrderDetail/:ref_vehicle_id" element={<VehicleDetailPage/>} /> */}
+        <Route path="VehicleOrderDetail/:ref_vehicle_id" element={<VehicleOrderDetailPage/>} />
 
     </Routes>
   );

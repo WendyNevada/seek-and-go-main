@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 const DisplayVehicle = () => {
     // const { navigatedTo } = LoginProvider();
     const { t } = useTranslation();
-    
+
     const navigate = useNavigate();
     const [vehicle, setVehicle] = useState<GetVehicleModel>();
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
@@ -32,7 +32,7 @@ const DisplayVehicle = () => {
 
     const selectItem = (id : number) => {
         console.log('selected id : ',id);
-        navigate(`/Customer/VehicleOrderDetail/${id}`);
+        navigate(`/Customer/VehicleDetail/${id}`);
         //navigateTo(`/vehicle/${id}`);
         //navigatedTo(`/Customer/ProductDetail`);
     }

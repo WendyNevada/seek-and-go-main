@@ -10,7 +10,7 @@ import RoomIcon from '@mui/icons-material/Room';
 // public utils
 import { formatPrice } from '@/utils/priceFormating';
 
-const OrderAttractionDetail = ({ref_attraction_id} : {ref_attraction_id: number}) => {
+const ProductAttractionDetail = ({ref_attraction_id} : {ref_attraction_id: number}) => {
     const [attraction, setAttraction] = useState<AttractionRoot>();
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
     const [image, setImage] = useState('');
@@ -74,4 +74,4 @@ const OrderAttractionDetail = ({ref_attraction_id} : {ref_attraction_id: number}
   )
 }
 
-export default OrderAttractionDetail
+export default ProductAttractionDetail

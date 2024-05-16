@@ -81,7 +81,7 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
         }
     }
 
-    const onSendEmailOrder = async (order_h_id : number) => {    
+    const onSendEmailOrder = async (order_h_id : number) => {
     }
 
     const onRejectOrder = async (order_h_id : number) => {

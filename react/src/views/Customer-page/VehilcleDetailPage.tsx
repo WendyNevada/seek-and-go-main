@@ -1,4 +1,4 @@
-import OrderVehicleDetail from '@/components/customer-exclusive/product-detail/ProductVehicleDetail'
+import ProductVehicleDetail from '@/components/customer-exclusive/product-detail/ProductVehicleDetail'
 import Footer from '@/components/navbar/Footer'
 import Navbar from '@/components/navbar/Navbar'
 import React from 'react'
@@ -11,7 +11,7 @@ const VehicleDetailPage = () => {
     <div>
         <Navbar/>
             <div className="flex mt-[7rem] lg:mt-[6rem]  items-center sm:justify-start xl:justify-center">
-                <OrderVehicleDetail ref_vehicle_id={Number(ref_vehicle_id) || 0}/>
+                <ProductVehicleDetail ref_vehicle_id={Number(ref_vehicle_id) || 0}/>
             </div>
         <Footer/>
     </div>
