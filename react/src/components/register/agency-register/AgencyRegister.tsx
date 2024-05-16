@@ -1,21 +1,15 @@
-import { agencySchema } from "../utils/schema";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { hitAddApi } from "@/context/HitApi";
-import { toast } from "@/components/ui/use-toast";
-
+import { agencySchema } from '../utils/schema';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import axiosClient from '@/axios.client';
+import { useNavigate } from 'react-router-dom';
+import { toast } from '@/components/ui/use-toast';
+import axios, { AxiosError } from 'axios';
+A
 const AgencyRegisterComponent = () => {
     const navigate = useNavigate();
 
@@ -27,13 +21,11 @@ const AgencyRegisterComponent = () => {
             email: "",
             password: "",
             phone: "",
-            npwp: "",
-            location: "",
-            role: "Agency",
+            npwp:"",
+            location:"",
+            role:"Agency"
         },
     });
-
-    //CreateAccountAgency
 
     const onSubmit = async (values: z.infer<typeof agencySchema>) => {
         console.log(values);
@@ -137,6 +129,24 @@ const AgencyRegisterComponent = () => {
                                     <FormControl>
                                         <Input
                                             type="password"
+                                            placeholder={field.name}
+                                            {...field}
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="confirmPassword"
+                            render={({ field }) => (
+                                <FormItem className="custom-field mt-4">
+                                    <FormLabel>{"Confirm Password"}</FormLabel>
+                                    <FormMessage />
+                                    <FormControl>
+                                        <Input
+                                            type='password'
                                             placeholder={field.name}
                                             {...field}
                                             onChange={field.onChange}
