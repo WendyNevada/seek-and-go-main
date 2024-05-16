@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 //  icon
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { formatPrice } from '@/utils/priceFormating';
+import { useTranslation } from 'react-i18next';
 
 interface VehicleQtyProps {
     vehicleQty: number;
@@ -17,6 +18,7 @@ interface VehicleQtyProps {
 }
 
 const VehicleQty = ({ vehicleQty, onDetailsChange, onVehicleQtyChange }: VehicleQtyProps) => {
+    const { t } = useTranslation();
     const { user } = useLogin();
     const [vehicle, setVehicle] = useState<DaumVehicle[]>([]);
     const [details, setDetails] = useState<{ ref_vehicle_id?: string | null }[]>(Array.from({ length: vehicleQty }, () => ({ ref_vehicle_id: null })));
@@ -76,7 +78,7 @@ const VehicleQty = ({ vehicleQty, onDetailsChange, onVehicleQtyChange }: Vehicle
                     <div className="flex flex-row">
                         <Select onValueChange={(newValue) => handleDetailChange(index, newValue)}>
                             <SelectTrigger>
-                                <SelectValue placeholder="Select Vehicle" />
+                                <SelectValue placeholder={t('Select Vehicle')} />
                             </SelectTrigger>
                             <SelectContent>
                                 {vehicle.map((vehicleItem) => (
@@ -104,19 +106,19 @@ const VehicleQty = ({ vehicleQty, onDetailsChange, onVehicleQtyChange }: Vehicle
                                             <Table>
                                                 <TableBody>
                                                     <TableRow>
-                                                        <TableCell className="font-medium">Product Name :</TableCell>
+                                                        <TableCell className="font-medium">{t('Product Name')} :</TableCell>
                                                         <TableCell className="font-medium">{newVehicles[index]?.vehicle_code}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
-                                                        <TableCell className="font-medium">Base Price :</TableCell>
+                                                        <TableCell className="font-medium">{t('Price')} :</TableCell>
                                                         <TableCell className="font-medium">{formatPrice(newVehicles[index]?.base_price)}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
-                                                        <TableCell className="font-medium">Address :</TableCell>
+                                                        <TableCell className="font-medium">{t('Address')} :</TableCell>
                                                         <TableCell className="font-medium">{newVehicles[index]?.address}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
-                                                        <TableCell className="font-medium">Description :</TableCell>
+                                                        <TableCell className="font-medium">{t('Description')} :</TableCell>
                                                         <TableCell className="font-medium">{newVehicles[index]?.description}</TableCell>
                                                     </TableRow>
                                                 </TableBody>
@@ -126,7 +128,7 @@ const VehicleQty = ({ vehicleQty, onDetailsChange, onVehicleQtyChange }: Vehicle
                                 </div>
                             </div>
                         ) : (
-                            <p className='text-center text-sm'>No vehicle selected</p>
+                            <p className='text-center text-sm'>{t('No vehicle selected')}</p>
                         )}
                     </div>
                 </div>

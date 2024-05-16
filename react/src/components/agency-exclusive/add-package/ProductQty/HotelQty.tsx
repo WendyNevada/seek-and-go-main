@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 //  icon
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { formatPrice } from '@/utils/priceFormating';
+import { useTranslation } from 'react-i18next';
 
 interface HotelQtyProps {
     hotelQty: number;
@@ -17,6 +18,7 @@ interface HotelQtyProps {
 }
 
 const HotelQty = ({hotelQty, onDetailsChange, onHotelQtyChange} : HotelQtyProps) => {
+    const { t } = useTranslation();
     const { user } = useLogin();
     const [hotel, setHotel] = useState<DaumHotel[]>([]);
     const [details, setDetails] = useState<{ ref_hotel_id?: string | null }[]>(Array.from({ length: hotelQty }, () => ({ ref_hotel_id: null })));
@@ -76,7 +78,7 @@ const HotelQty = ({hotelQty, onDetailsChange, onHotelQtyChange} : HotelQtyProps)
                     <div className="flex flex-row">
                         <Select onValueChange={(newValue) => handleDetailChange(index, newValue)}>
                             <SelectTrigger>
-                                <SelectValue placeholder="Select Hotel" />
+                                <SelectValue placeholder={t('Select Hotel')} />
                             </SelectTrigger>
                             <SelectContent>
                                 {hotel.map((hotelItem) => (
@@ -104,19 +106,19 @@ const HotelQty = ({hotelQty, onDetailsChange, onHotelQtyChange} : HotelQtyProps)
                                             <Table>
                                                 <TableBody>
                                                     <TableRow>
-                                                        <TableCell className="font-medium">Product Name :</TableCell>
+                                                        <TableCell className="font-medium">{t('Product Name')} :</TableCell>
                                                         <TableCell className="font-medium">{newHotels[index]?.hotel_name}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
-                                                        <TableCell className="font-medium">Base Price :</TableCell>
+                                                        <TableCell className="font-medium">{t('Price')} :</TableCell>
                                                         <TableCell className="font-medium">{formatPrice(newHotels[index]?.base_price)}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
-                                                        <TableCell className="font-medium">Address :</TableCell>
+                                                        <TableCell className="font-medium">{t('Address')} :</TableCell>
                                                         <TableCell className="font-medium">{newHotels[index]?.address}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
-                                                        <TableCell className="font-medium">Description :</TableCell>
+                                                        <TableCell className="font-medium">{t('Description')} :</TableCell>
                                                         <TableCell className="font-medium">{newHotels[index]?.description}</TableCell>
                                                     </TableRow>
                                                 </TableBody>
@@ -126,7 +128,7 @@ const HotelQty = ({hotelQty, onDetailsChange, onHotelQtyChange} : HotelQtyProps)
                                 </div>
                             </div>
                         ) : (
-                            <p className='text-center text-sm'>No hotel selected</p> // Fallback message or content
+                            <p className='text-center text-sm'>{t('No hotel selected')}</p> // Fallback message or content
                         )}
                     </div>
 

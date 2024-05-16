@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 //  icon
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { formatPrice } from '@/utils/priceFormating';
+import { useTranslation } from 'react-i18next';
 
 
 interface AttractionQtyProps {
@@ -18,6 +19,7 @@ interface AttractionQtyProps {
 }
 
 const AttractionQty = ( {attractionQty, onDetailsChange, onAttractionQtyChange } : AttractionQtyProps ) => {
+    const { t } = useTranslation();
     const { user } = useLogin();
     const [attraction, setAttraction] = useState<DaumAttraction[]>([]);
     const [details, setDetails] = useState<{ ref_attraction_id?: string | null }[]>([]);
@@ -78,7 +80,7 @@ const AttractionQty = ( {attractionQty, onDetailsChange, onAttractionQtyChange }
                     <div className="flex flex-row">
                         <Select onValueChange={(newValue) => handleDetailChange(index, newValue)}>
                             <SelectTrigger>
-                                <SelectValue placeholder="Select Attraction" />
+                                <SelectValue placeholder={t('Select Attraction')} />
                             </SelectTrigger>
                             <SelectContent>
                                 {attraction.map((attractionItem) => (
@@ -106,19 +108,19 @@ const AttractionQty = ( {attractionQty, onDetailsChange, onAttractionQtyChange }
                                             <Table>
                                                 <TableBody>
                                                     <TableRow>
-                                                        <TableCell className="font-medium">Product Name :</TableCell>
+                                                        <TableCell className="font-medium">{t('Product Name')} :</TableCell>
                                                         <TableCell className="font-medium">{newAttractions[index]?.attraction_name}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
-                                                        <TableCell className="font-medium">Base Price :</TableCell>
+                                                        <TableCell className="font-medium">{t('Price')} :</TableCell>
                                                         <TableCell className="font-medium">{formatPrice(newAttractions[index]?.base_price)}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
-                                                        <TableCell className="font-medium">Address :</TableCell>
+                                                        <TableCell className="font-medium">{t('Address')} :</TableCell>
                                                         <TableCell className="font-medium">{newAttractions[index]?.address}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
-                                                        <TableCell className="font-medium">Description :</TableCell>
+                                                        <TableCell className="font-medium">{t('Description')} :</TableCell>
                                                         <TableCell className="font-medium">{newAttractions[index]?.description}</TableCell>
                                                     </TableRow>
                                                 </TableBody>
@@ -128,7 +130,7 @@ const AttractionQty = ( {attractionQty, onDetailsChange, onAttractionQtyChange }
                                 </div>
                             </div>
                         ) : (
-                            <p className='text-center text-sm'>No attraction selected</p> // Fallback message or content
+                            <p className='text-center text-sm'>{t('No attraction selected')}</p> // Fallback message or content
                         )}
                     </div>
 
