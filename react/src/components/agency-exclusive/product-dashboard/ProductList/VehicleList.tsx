@@ -20,10 +20,10 @@ const VehicleList = () => {
     useEffect(() => {
         const fetchVehicle = async () => {
             try {
-                const response = await axiosClient.post<DaumVehicle[]>('/v1/GetActiveVehicleByAgencyId', {
+                const response = await axiosClient.post('/v1/GetActiveVehicleByAgencyId', {
                     agency_id: user?.agency_id
                 }); // Replace 'your-api-url' with the actual API endpoint
-                setVehicle(response.data); // Assuming the response data is an array of vehicles
+                setVehicle(response.data.data); // Assuming the response data is an array of vehicles
             } catch (error) {
                 console.error('Error fetching vehicles:', error);
             }

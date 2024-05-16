@@ -29,10 +29,10 @@ const VehicleQty = ({ vehicleQty, onDetailsChange, onVehicleQtyChange }: Vehicle
     useEffect(() => {
         const fetchAttraction = async () => {
             try {
-                const response = await axiosClient.post<DaumVehicle[]>('/v1/GetActiveVehicleByAgencyId', {
+                const response = await axiosClient.post('/v1/GetActiveVehicleByAgencyId', {
                     agency_id: user?.agency_id
                 });
-                setVehicle(response.data);
+                setVehicle(response.data.data);
             } catch (error) {
                 console.error('Error fetching vehicles:', error);
             }
