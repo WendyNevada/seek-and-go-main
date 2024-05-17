@@ -49,6 +49,7 @@ const AgencyAccordion = () => {
                     <SelectItem value="PAY">Paid Order</SelectItem>
                     <SelectItem value="CPY">Customer Paid Orders</SelectItem>
                     <SelectItem value="RTP">Retry Payment</SelectItem>
+                    <SelectItem value="FIN">Finished Order</SelectItem>
                 </SelectContent>
             </Select>
 
@@ -72,6 +73,9 @@ const AgencyAccordion = () => {
 
             {(selectedValue === 'RTP' || selectedValue === 'ALL') &&
             <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "RTP") : null} title="Retry Payment"/>}
+
+            {(selectedValue === 'FIN' || selectedValue === 'ALL') &&
+            <AcordionByStatus orders={orders.length > 0 ? orders.filter(orders => orders.order_status === "FIN") : null} title="Finished Order"/>}
         </div>
   )
 }

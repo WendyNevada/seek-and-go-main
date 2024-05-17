@@ -496,8 +496,6 @@ class RefAttractionService implements RefAttractionInterface
     {
         try
         {
-            $attraction = $this->getRefAttractionById($request->ref_attraction_id);
-
             $checkOrders = $this->checkOrderForAttraction($request->ref_attraction_id);
 
             if($checkOrders == true)
