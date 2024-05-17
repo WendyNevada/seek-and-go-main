@@ -89,7 +89,10 @@ class OrderHService implements OrderHInterface
 
     private function getOrderHByIdWithOrderD($order_h_id)
     {
-        $order = OrderH::where('order_h_id', $order_h_id)->with('orderDs')->first();
+        $order = OrderH::where('order_h_id', $order_h_id)->
+        join('customers', 'order_h_s.customer_id', '=', 'customers.customer_id')->
+        select('order_h_s.*', 'customers.customer_name')->
+        with('orderDs')->first();
 
         return $order;
     }
@@ -512,7 +515,7 @@ class OrderHService implements OrderHInterface
     public function GetOrderById(GetOrderByIdRequest $request)
     {
         $order = $this->getOrderHByIdWithOrderD($request->order_h_id);
-        
+
         return response()->json($order);
     }
 

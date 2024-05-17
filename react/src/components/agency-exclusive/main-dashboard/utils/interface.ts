@@ -20,6 +20,7 @@ export interface OrderD {
     order_status: string;
     created_at: string;
     updated_at: string;
+    customer_name: string;
     order_ds: [{
         order_d_id: number;
         order_h_id: number;

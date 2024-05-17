@@ -51,7 +51,7 @@ const AttractionList = () => {
                         <Card className='w-64 shadow-lg mt-10 mr-16'>
                         <img src={enviUrl + attraction.image_url} alt={attraction.attraction_name} className="h-36 w-full shadow-lg" />
                             <CardHeader>
-                                <CardTitle>{attraction.attraction_name}</CardTitle>
+                                <CardTitle className='w-[200px] truncate'>{attraction.attraction_name}</CardTitle>
                                 <CardDescription>{attraction.description}</CardDescription>
                                 {/* {showFullDescription ? (
                                     <CardDescription>{attraction.description}</CardDescription>

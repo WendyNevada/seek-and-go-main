@@ -467,8 +467,6 @@ class RefVehicleService implements RefVehicleInterface
     {
         try
         {
-            $vehicle = $this->getRefVehicleById($request->ref_vehicle_id);
-            
             $orderHs = $this->checkOrderForVehicle($request->ref_vehicle_id);
 
             if($orderHs == true)
