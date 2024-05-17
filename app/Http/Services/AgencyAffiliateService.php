@@ -2,10 +2,12 @@
 
 namespace App\Http\Services;
 
+use App\Models\Agency;
 use App\Models\RefHotel;
 use App\Models\RefVehicle;
 use App\Models\RefAttraction;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\V2\AgencyIdRequest;
 use App\Http\Interfaces\AgencyAffiliateInterface;
 use App\Http\Requests\V2\SearchBarCustomerRequest;
 
@@ -154,6 +156,28 @@ class AgencyAffiliateService implements AgencyAffiliateInterface
             return false;
         }
     }
+
+    private function checkDataNull($data)
+    {
+        if($data == null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private function getAgencyDataById($agency_id)
+    {
+        return Agency::where('agency_id', $agency_id)
+        ->with(['agencyPayments' => function($q) {
+            $q->leftJoin('ref_pictures', 'ref_pictures.agency_payment_id', '=', 'agency_payments.agency_payment_id');
+            $q->select('agency_payments.*', 'ref_pictures.image_url');
+            }])
+        ->first();
+    }
     #endregion
 
     #region Public Function
@@ -262,6 +286,28 @@ class AgencyAffiliateService implements AgencyAffiliateInterface
                 'status' => "ok",
                 'message' => "Success",
                 'data' => $vehicle
+            ]);
+        }
+    }
+
+    public function GetAgencyByAgencyId(AgencyIdRequest $request)
+    {
+        $agency = $this->getAgencyDataById($request->agency_id);
+
+        if($this->checkDataNull($agency))
+        {
+            return response()->json([
+                'status' => "error",
+                'message' => "Data not found",
+                'data' => []
+            ]);
+        }
+        else
+        {
+            return response()->json([
+                'status' => "ok",
+                'message' => "Success",
+                'data' => $agency
             ]);
         }
     }
