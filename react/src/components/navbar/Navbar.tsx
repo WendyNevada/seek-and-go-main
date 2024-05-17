@@ -25,6 +25,8 @@ const Navbar = () => {
     i18n.changeLanguage(language);
     };
 
+    const { user } = useLogin();
+
     const { logout } = useLogin();
     const [openMenu, setOpenMenu] = useState(false)
     const menuOptions = [
@@ -100,12 +102,18 @@ const Navbar = () => {
                 <a href='' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>
                     <BsCart2 className='navbar-cart-icon'/>
                 </a>
-                <a href='\Register' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Register</a>
-                <a href='\Login' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1'>Login</a>
+                {
+                    user ? (<div></div>) : 
+                    (
+                        <div>
+                            <a href='\Register' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Register</a>
+                            <a href='\Login' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1'>Login</a>
+                        </div>
+                    )
+                }
                 <button className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Bookings Now</button>
                 <button onClick={() => logout()} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Logout</button>
-                {/* <button onClick={() => changeLanguage('en')} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1' >English</button>
-                <button onClick={() => changeLanguage('id')} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1'>Indonesia</button> */}
+                
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
