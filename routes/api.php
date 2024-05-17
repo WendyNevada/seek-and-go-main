@@ -46,7 +46,9 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::get('email/resend', 'AccountController@resend')->name('verification.resend');
 
-    #endregion
+    Route::post('ForgotPasswordRequest', 'AccountController@ForgotPasswordRequest');
+    
+    Route::post('ResetPassword', 'AccountController@ResetPassword');
 
     #region Attraction
 

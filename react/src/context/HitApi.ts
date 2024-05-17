@@ -11,7 +11,7 @@ export const hitAddApi = async (apiEndpoint: string, values: any) => {
         if (response.data.status == "ok") {
             toast({
                 variant: "success",
-                description: "Action Success.",
+                description: response.data.message
             });
             //return response.data;
             return response.status;

@@ -8,14 +8,17 @@ use App\Models\Customer;
 use App\Models\Constanta;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\V2\LoginRequest;
 use Illuminate\Auth\Events\Registered;
 use App\Http\Interfaces\AccountInterface;
 use App\Http\Requests\V1\StoreAccountRequest;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use App\Http\Requests\V2\ForgotPasswordRequest;
 use App\Http\Requests\V2\StoreAccountAgencyRequest;
 use App\Http\Requests\V2\UpdateAgencyAccountRequest;
 use App\Http\Requests\V2\UpdateCustomerAccountRequest;
+use App\Mail\ForgotPasswordEmail;
 
 class AccountService implements AccountInterface
 {
@@ -155,6 +158,30 @@ class AccountService implements AccountInterface
         {
             return true;
         }
+    }
+
+    private function sendForgotPasswordEmail($mailTo, $accountId, $url, $path)
+    {
+        Mail::to($mailTo)->send(new ForgotPasswordEmail($accountId, $url, $path));
+    }
+
+    private function checkConfirmedPassword($pass, $confPass): bool
+    {
+        if($pass == $confPass)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private function saveResetPassword($accountId, $password)
+    {
+        $account = Account::find($accountId);
+        $account->password = $password;
+        $account->save();
     }
     #endregion
 
@@ -398,6 +425,48 @@ class AccountService implements AccountInterface
         }
     }
 
+    public function ForgotPasswordRequest(ForgotPasswordRequest $request)
+    {
+        $account = $this->getAccountByEmail($request->email);
+
+        if($account == null)
+        {
+            return response()->json([
+                'status' => "error",
+                'message' => "Account not found"
+            ], 400);
+        }
+        else
+        {
+            $this->sendForgotPasswordEmail($account->email, $account->account_id, Constanta::$enviLocal, Constanta::$forgetPassword);
+
+            return response()->json([
+                'status' => "ok",
+                'message' => "Forgot password verification has been sent to your email"
+            ], 200);
+        }
+    }
+
+    public function ResetPassword(ForgotPasswordRequest $request)
+    {
+        if(!$this->checkConfirmedPassword($request->password, $request->confirm_password))
+        {
+            return response()->json([
+                'status' => "error",
+                'message' => "Password does not match"
+            ], 400);
+        }
+
+        $this->saveResetPassword($request->account_id, $request->password);
+
+        return response()->json([
+            'status' => "ok",
+            'message' => "Password successfully changed"
+        ], 200);
+
+    }
+
+    
     #endregion
 
 }
