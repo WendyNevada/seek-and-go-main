@@ -224,6 +224,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                     render={() => (
                                         <FormItem className="custom-field">
                                             <FormLabel>{t('Picture')}</FormLabel>
+                                            <Required/>
                                             <FormMessage />
                                             <FormControl>
                                                 <Input

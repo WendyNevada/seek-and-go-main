@@ -8,7 +8,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import RoomIcon from '@mui/icons-material/Room';
 import { formatPrice } from '@/utils/priceFormating';
 
-const OrderHotelDetail = ({ref_hotel_id} : {ref_hotel_id: number}) => {
+const ProductHotelDetail = ({ref_hotel_id} : {ref_hotel_id: number}) => {
     const [hotel, setHotel] = useState<HotelRoot>();
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
     const [image, setImage] = useState('');
@@ -73,4 +73,4 @@ const OrderHotelDetail = ({ref_hotel_id} : {ref_hotel_id: number}) => {
     )
 }
 
-export default OrderHotelDetail
+export default ProductHotelDetail

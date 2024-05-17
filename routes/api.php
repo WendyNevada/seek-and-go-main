@@ -172,6 +172,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('FinishOrder', 'OrderHController@FinishOrder');
 
+    Route::post('SendEmailOrderApprove', 'OrderHController@SendEmailOrderApprove');
+
     Route::post('GetCustPaidOrder', 'OrderHController@GetCustPaidOrder');
 
     Route::post('GetStatsForOrder', 'OrderHController@GetStatsForOrder');
@@ -206,6 +208,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::post('SearchHotelCustomer', 'AgencyAffiliateController@SearchHotelCustomer');
 
     Route::post('SearchVehicleCustomer', 'AgencyAffiliateController@SearchVehicleCustomer');
+
+    Route::post('GetAgencyByAgencyId', 'AgencyAffiliateController@GetAgencyByAgencyId');
     #endregion
 
     #region AgencyPayment

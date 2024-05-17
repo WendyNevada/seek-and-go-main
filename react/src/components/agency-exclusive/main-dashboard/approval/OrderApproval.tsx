@@ -81,6 +81,24 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
         }
     }
 
+    const onSendEmailOrder = async (order_h_id : number) => {
+    }
+
+    const onRejectOrder = async (order_h_id : number) => {
+    }
+
+    const onCancelOrder = async (order_h_id : number) => {
+    }
+
+    const onAcceptPaymentOrder = async (order_h_id : number) => {
+    }
+
+    const onRetryPaymentOrder  = async (order_h_id : number) => {
+    }
+
+    const onFinishOrder = async (order_h_id : number) => {
+    }
+
     return (
         <div className='shadow-lg sm:rounded-3xl'>
             {/* Header */}
@@ -148,7 +166,41 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
             </div>
 
             <div className="flex justify-end m-4 p-4">
-                <Button className=' bg-blue-500 p-2 hover:bg-blue-700 px-4' onClick={() => onApproveOrder(order.order_h_id)}>Approve</Button>
+                {order.order_status === 'NEW' && (
+                    <div className="space-x-4">
+                        <Button className='bg-red-500 p-2 hover:bg-red-700 px-4 w-24' onClick={() => onRejectOrder(order.order_h_id)}>Reject</Button>
+                        <Button className='bg-blue-500 p-2 hover:bg-blue-700 px-4 w-24' onClick={() => onApproveOrder(order.order_h_id)}>Approve</Button>
+                    </div>
+                )}
+
+                {order.order_status === 'APV' && (
+                    <div className="space-x-4">
+                        <Button className='bg-orange-500 p-2 hover:bg-orange-700 px-4 w-28' onClick={() => onSendEmailOrder(order.order_h_id)}>Send Email</Button>
+                        <Button className='bg-red-500 p-2 hover:bg-red-700 px-4 w-28' onClick={() => onCancelOrder(order.order_h_id)}>Cancel</Button>
+                    </div>
+                )}
+
+                {order.order_status === 'PAY' && (
+                    <div className="space-x-4">
+                        <Button className='bg-green-500 p-2 hover:bg-green-700 px-4 w-24' onClick={() => onFinishOrder(order.order_h_id)}>Finish</Button>
+                    </div>
+                )}
+
+                {order.order_status === 'CPY' && (
+                    <div className="space-x-4">
+                        <Button className='bg-green-500 p-2 hover:bg-green-700 px-4 w-28' onClick={() => onAcceptPaymentOrder(order.order_h_id)}>Accept Payment</Button>
+                        <Button className='bg-blue-500 p-2 hover:bg-blue-700 px-4 w-28' onClick={() => onRetryPaymentOrder(order.order_h_id)}>Retry Payment</Button>
+                        <Button className='bg-red-500 p-2 hover:bg-red-700 px-4 w-28' onClick={() => onCancelOrder(order.order_h_id)}>Cancel</Button>
+                    </div>
+                )}
+
+                {order.order_status === 'RTP' && (
+                    <div className="space-x-4">
+                        <Button className='bg-green-500 p-2 hover:bg-green-700 px-4 w-28' onClick={() => onAcceptPaymentOrder(order.order_h_id)}>Accept Payment</Button>
+                        <Button className='bg-red-500 p-2 hover:bg-red-700 px-4 w-28' onClick={() => onCancelOrder(order.order_h_id)}>Cancel</Button>
+                    </div>
+                )}
+
             </div>
         </div>
     )

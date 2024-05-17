@@ -31,7 +31,7 @@ const DisplayHotel = () => {
 
     const selectItem = (id : number) => {
         console.log('selected id : ',id);
-        navigate(`/Customer/HotelOrderDetail/${id}`);
+        navigate(`/Customer/HotelDetail/${id}`);
         //navigateTo(`/vehicle/${id}`);
         //navigatedTo(`/Customer/ProductDetail`);
     }
@@ -52,9 +52,10 @@ const DisplayHotel = () => {
                                             <CardDescription>{item.description}</CardDescription>
                                         </CardHeader>
                                         <CardContent className='flex-1'>
-                                            <p>{item.address}</p>
+                                            <p className="w-[200px] truncate">{item.address_zipcode}</p>
+                                            <p className='font-bold'>{formatPrice(item.base_price ?? 0)}</p>
+                                            <p>{item.agency_name}</p>
                                             {rating(item.rating)}
-                                            <p>{t('Price')}: {formatPrice(item.base_price ?? 0)}</p>
                                         </CardContent>
                                         <CardFooter className="justify-center">
                                             ====

@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 const DisplayVehicle = () => {
     // const { navigatedTo } = LoginProvider();
     const { t } = useTranslation();
-    
+
     const navigate = useNavigate();
     const [vehicle, setVehicle] = useState<GetVehicleModel>();
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
@@ -32,7 +32,7 @@ const DisplayVehicle = () => {
 
     const selectItem = (id : number) => {
         console.log('selected id : ',id);
-        navigate(`/Customer/VehicleOrderDetail/${id}`);
+        navigate(`/Customer/VehicleDetail/${id}`);
         //navigateTo(`/vehicle/${id}`);
         //navigatedTo(`/Customer/ProductDetail`);
     }
@@ -51,11 +51,13 @@ const DisplayVehicle = () => {
                                     <CardHeader>
                                         <CardTitle>{item.vehicle_name}</CardTitle>
                                         <CardDescription>{item.description}</CardDescription>
+
                                     </CardHeader>
                                     <CardContent className='flex-1'>
-                                        <p>{item.address}</p>
+                                        <p className="w-[200px] truncate">{item.address_zipcode}</p>
+                                        <p className="font-bold">{formatPrice(item.base_price ?? 0)}</p>
+                                        <p>{item.agency_name}</p>
                                         {rating(item.rating)}
-                                        <p>{t('Price')}: {formatPrice(item.base_price ?? 0)}</p>
                                     </CardContent>
                                     <CardFooter className="justify-center">
                                         ====

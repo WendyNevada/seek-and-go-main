@@ -83,7 +83,7 @@ class Agency extends Model
 
     public function agencyPayments()
     {
-        return $this->hasMany(AgencyPayment::class);
+        return $this->hasMany(AgencyPayment::class, 'agency_id', 'agency_id');
     }
     #endregion
 }

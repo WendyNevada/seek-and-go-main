@@ -6,11 +6,17 @@ import RoomIcon from '@mui/icons-material/Room';
 import DescriptionIcon from '@mui/icons-material/Description';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import { formatPrice } from '@/utils/priceFormating';
+import { useLogin } from '@/context/LoginContext';
+import CredentialModal from '../modal/CredentialModal';
+import { useNavigate } from 'react-router-dom';
 
-const OrderVehicleDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
+const ProductVehicleDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
     const [vehicle, setVehicle] = useState<VehicleRoot>();
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
     const [image, setImage] = useState('');
+    const { user } = useLogin();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -24,6 +30,16 @@ const OrderVehicleDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
         }
         fetchData();
     },[])
+
+    const checkCredential = (custId: number) => {
+        if (!custId || custId === 0) {
+            console.log('cust id :',custId)
+            setIsModalOpen(true);
+        }
+        else {
+            navigate('/Customer/VehicleOrderDetail/' + custId);
+        }
+    }
 
     return (
         <div>
@@ -69,12 +85,13 @@ const OrderVehicleDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
                     <div className='flex flex-col px-2'>
                         <h1>HARGA :</h1>
                         <label htmlFor="" className='font-bold text-2xl'>{formatPrice(vehicle?.base_price ?? 0)}</label>
-                        <button className='bg-gradient-to-r from-green-300 to-blue-500 hover:from-pink-500 hover:to-yellow-500 text-white font-bold py-2 px-4 rounded mt-4'>Order</button>
+                        <button className='bg-gradient-to-r from-green-300 to-blue-500 hover:from-pink-500 hover:to-yellow-500 text-white font-bold py-2 px-4 rounded mt-4' onClick={() => checkCredential(user?.customer_id ?? 0)}>Order</button>
                     </div>
                 </div>
             </div>
+            <CredentialModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         </div>
     )
 }
 
-export default OrderVehicleDetail
+export default ProductVehicleDetail

@@ -221,7 +221,14 @@ class RefAttractionService implements RefAttractionInterface
     {
         $attraction = RefAttraction::
             join('agency_affiliates', 'ref_attractions.ref_attraction_id', '=', 'agency_affiliates.ref_attraction_id')->
-            select('ref_attractions.*', 'agency_affiliates.base_price')->
+            join('agencies', 'agency_affiliates.agency_id', '=', 'agencies.agency_id')->
+            join('ref_zipcodes', 'ref_attractions.ref_zipcode_id', '=', 'ref_zipcodes.ref_zipcode_id')->
+            select(
+                'ref_attractions.*', 
+                'agency_affiliates.base_price', 
+                'agencies.agency_name',
+                DB::raw("CONCAT(ref_zipcodes.area_1, ', ', ref_zipcodes.area_2, ', ', ref_zipcodes.area_3, ', ', ref_zipcodes.area_4) as address_zipcode")
+                )->
             where('is_active', '1')->
             where('qty', '>', '0')->
             orderBy('rating', 'desc')->
@@ -247,6 +254,7 @@ class RefAttractionService implements RefAttractionInterface
 
             $value->image_url = $image_url;
             $value->base_price = $base_price;
+            $value->address_zipcode = ucwords(strtolower($value->address_zipcode));
         }
 
         return $attraction;
@@ -267,6 +275,11 @@ class RefAttractionService implements RefAttractionInterface
         where('ref_attractions.is_active', true)->
         where('agency_affiliates.agency_id', $agency_id)->
         get();
+
+        $attraction->transform(function($attraction) {
+            $attraction->address_zipcode = ucwords(strtolower($attraction->address_zipcode));
+            return $attraction;
+        });
 
         return $attraction;
     }
@@ -310,6 +323,11 @@ class RefAttractionService implements RefAttractionInterface
             return false;
         }
     }
+
+    private function strTitleFormat($string)
+    {
+        return ucwords(strtolower($string));
+    }
     #endregion
 
     #region Public Function
@@ -330,6 +348,8 @@ class RefAttractionService implements RefAttractionInterface
 
         $address = $this->getRefZipcodeById($attraction->ref_zipcode_id);
 
+        $addressString = $this->strTitleFormat($address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4);
+
         if($this->checkDataNull($attraction) == false)
         {
             if($this->checkDataNull($attractionPicture) == false)
@@ -341,7 +361,7 @@ class RefAttractionService implements RefAttractionInterface
                     'picture_url' => $attractionPicture->image_url,
                     'base_price' => $agencyAffiliate->base_price,
                     'agency_id' => $agencyAffiliate->agency_id,
-                    'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
+                    'address_zipcode' => $addressString
                 ], 200);
             }
             else
@@ -478,56 +498,45 @@ class RefAttractionService implements RefAttractionInterface
         {
             $attraction = $this->getRefAttractionById($request->ref_attraction_id);
 
-            if($attraction != null)
+            $checkOrders = $this->checkOrderForAttraction($request->ref_attraction_id);
+
+            if($checkOrders == true)
             {
-                $checkOrders = $this->checkOrderForAttraction($request->ref_attraction_id);
-
-                if($checkOrders == true)
-                {
-                    return response()->json(
-                        [
-                            'status' => "error",
-                            'message' => "Attraction is in active order",
-                            'ref_attraction_id' => $request->ref_attraction_id
-                        ],
-                        400
-                    );
-                }
-
-                $checkPackages = $this->checkPackageForAttraction($request->ref_attraction_id);
-
-                if($checkPackages == true)
-                {
-                    return response()->json(
-                        [
-                            'status' => "error",
-                            'message' => "Attraction is in active package",
-                            'ref_attraction_id' => $request->ref_attraction_id
-                        ],
-                        400
-                    );
-                }
-
-                DB::beginTransaction();
-
-                $this->updateIsActiveAttraction($request->ref_attraction_id, false);
-
-                DB::commit();
-
-                return response()->json([
-                    'status' => "ok",
-                    'message' => "Deactivate success",
-                    'ref_attraction_id' => $request->ref_attraction_id
-                ], 200);
+                return response()->json(
+                    [
+                        'status' => "error",
+                        'message' => "Attraction is in active order",
+                        'ref_attraction_id' => $request->ref_attraction_id
+                    ],
+                    400
+                );
             }
-            else
+
+            $checkPackages = $this->checkPackageForAttraction($request->ref_attraction_id);
+
+            if($checkPackages == true)
             {
-                return response()->json([
-                    'status' => "error",
-                    'message' => "Data not found",
-                    'ref_attraction_id' => $request->ref_attraction_id
-                ], 400);
+                return response()->json(
+                    [
+                        'status' => "error",
+                        'message' => "Attraction is in active package",
+                        'ref_attraction_id' => $request->ref_attraction_id
+                    ],
+                    400
+                );
             }
+
+            DB::beginTransaction();
+
+            $this->updateIsActiveAttraction($request->ref_attraction_id, false);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => "ok",
+                'message' => "Deactivate success",
+                'ref_attraction_id' => $request->ref_attraction_id
+            ], 200);
         }
         catch (\Exception $e)
         {
