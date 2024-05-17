@@ -20,6 +20,7 @@ import AgencyAddPackage from './views/Agency-page/AgencyAddPackage';
 import '@/context/language/i18n';
 import { toast } from './components/ui/use-toast';
 import VehicleOrderDetailPage from './views/Customer-page/Order-page/VehicleOrderDetailPage';
+import ForgotPasswordPage from './views/Forgot-Password-Page/ForgotPasswordPage';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/Register" element={<LoginRegisterPage />} />
           <Route path="/Login" element={<LoginPage />} />
+          <Route path="/ForgetPassword/:account_id" element={<ForgotPasswordPage />}></Route>
 
             {/* Protected Routes for Agency section */}
             <Route path="/Agency/*" element={<AgencyRoutes />} />

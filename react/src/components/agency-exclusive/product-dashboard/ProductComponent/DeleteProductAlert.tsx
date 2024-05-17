@@ -12,6 +12,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { toast } from '@/components/ui/use-toast';
+import axios from 'axios';
+import { useLogin } from "@/context/LoginContext";
+import { urlConstant } from "@/urlConstant";
+import { useTranslation } from "react-i18next";
 
 interface DeleteProductAlertProps {
     apiPath: string;
@@ -20,35 +25,52 @@ interface DeleteProductAlertProps {
 }
 
 export function AlertDialogProduct({ apiPath, attractionId, param }: DeleteProductAlertProps) {
-    //DeactivateAttractionById
-    const handleDelete = () => {
-        axiosClient.post(apiPath, {[param]: attractionId})
-        .then(() => {
-            window.location.reload();
-        });
+    const { navigateTo } = useLogin(urlConstant.AgencyProduct);
+    const { t } = useTranslation();
+
+    const handleDelete = async () => {
+        try {
+            const response = await axiosClient.post(apiPath, { [param]: attractionId });
+            toast({
+                variant: response.data.status === "ok" ? "success" : "destructive",
+                description: response.data.message
+            });
+            if (response.data.status === "ok") {
+                navigateTo(urlConstant.AgencyProduct);
+                setTimeout(() => {
+                    window.location.reload();
+                }, 100);
+            }
+        } catch (error) {
+            const errorMessage = axios.isAxiosError(error) && error.response
+                ? error.response.data.message
+                : "An unexpected error occurred";
+            toast({
+                variant: "destructive",
+                description: errorMessage
+            });
+        }
     }
 
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
                 <Button variant="destructive" className="ml-2">
-                    {<DeleteOutlineIcon />}
+                    <DeleteOutlineIcon />
                 </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        Are you absolutely sure?
+                        {t('Are you sure?')}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        This action cannot be undone. This will permanently
-                        delete your account and remove your data from our
-                        servers.
+                        {t('This action cannot be undone. Are you sure you want to delete this product?')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDelete}>Continue</AlertDialogAction>
+                    <AlertDialogCancel>{t('Cancel')}</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDelete}>{t('Continue')}</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

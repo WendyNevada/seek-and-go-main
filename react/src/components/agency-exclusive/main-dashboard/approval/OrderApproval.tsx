@@ -10,6 +10,9 @@ import { toast } from '@/components/ui/use-toast';
 import axios, { AxiosError } from 'axios';
 import { TableFooter } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { useLogin } from '@/context/LoginContext';
+import { useNavigate } from 'react-router-dom';
+import { urlConstant } from '@/urlConstant';
 
 const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
     const { t } = useTranslation();
@@ -17,6 +20,8 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
     const [hotel, setHotel] = useState<HotelH>();
     const [vehicle, setVehicle] = useState<VehicleH>();
     const [attraction, setAttraction] = useState<AttractionH>();
+    const { user } = useLogin();
+    const navigate  = useNavigate();
 
 
     useEffect(() => {
@@ -61,16 +66,21 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
     };
 
     const onApproveOrder = async (order_h_id : number) => {
-        try {
+        try 
+        {
             const response = await axiosClient.post('v1/ApproveOrder', { order_h_id: order_h_id });
 
-            if(response.data.Status == "ok") {
+            if(response.data.status == "ok") 
+            {
                 toast({
                     variant: "success",
-                    description: "Item added."
+                    description: response.data.message
                 });
+
+                navigate(urlConstant.AgencyHomePage);
             }
-        } catch (response) {
+        } 
+        catch (response) {
             const axiosError = response as AxiosError; // Cast the error to AxiosError
             if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
                 toast({
@@ -82,21 +92,159 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
     }
 
     const onSendEmailOrder = async (order_h_id : number) => {
+        try 
+        {
+            const response = await axiosClient.post('v1/SendEmailOrderApprove', { order_h_id: order_h_id });
+
+            if(response.data.status == "ok") 
+            {
+                toast({
+                    variant: "success",
+                    description: response.data.message
+                });
+
+                navigate(urlConstant.AgencyHomePage);
+            }
+        } 
+        catch (response) {
+            const axiosError = response as AxiosError; // Cast the error to AxiosError
+            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
+                toast({
+                    variant: "destructive",
+                    description: (axiosError.response?.data as { message: string })?.message,
+                });
+            }
+        }
     }
 
     const onRejectOrder = async (order_h_id : number) => {
+        try 
+        {
+            const response = await axiosClient.post('v1/RejectOrder', { order_h_id: order_h_id });
+
+            if(response.data.status == "ok") 
+            {
+                toast({
+                    variant: "success",
+                    description: response.data.message
+                });
+
+                navigate(urlConstant.AgencyHomePage);
+            }
+        } 
+        catch (response) {
+            const axiosError = response as AxiosError; // Cast the error to AxiosError
+            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
+                toast({
+                    variant: "destructive",
+                    description: (axiosError.response?.data as { message: string })?.message,
+                });
+            }
+        }
     }
 
-    const onCancelOrder = async (order_h_id : number) => {
+    const onCancelOrder = async (order_h_id : number, cancel_by : string) => {
+        try 
+        {
+            const response = await axiosClient.post('v1/CancelOrder', { order_h_id: order_h_id, cancel_by: cancel_by });
+
+            if(response.data.status == "ok") 
+            {
+                toast({
+                    variant: "success",
+                    description: response.data.message
+                });
+
+                navigate(urlConstant.AgencyHomePage);
+            }
+        } 
+        catch (response) {
+            const axiosError = response as AxiosError; // Cast the error to AxiosError
+            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
+                toast({
+                    variant: "destructive",
+                    description: (axiosError.response?.data as { message: string })?.message,
+                });
+            }
+        }
     }
 
     const onAcceptPaymentOrder = async (order_h_id : number) => {
+        try 
+        {
+            const response = await axiosClient.post('v1/PaidOrder', { order_h_id: order_h_id });
+
+            if(response.data.status == "ok") 
+            {
+                toast({
+                    variant: "success",
+                    description: response.data.message
+                });
+
+                navigate(urlConstant.AgencyHomePage);
+            }
+        } 
+        catch (response) {
+            const axiosError = response as AxiosError; // Cast the error to AxiosError
+            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
+                toast({
+                    variant: "destructive",
+                    description: (axiosError.response?.data as { message: string })?.message,
+                });
+            }
+        }
     }
 
     const onRetryPaymentOrder  = async (order_h_id : number) => {
+        try 
+        {
+            const response = await axiosClient.post('v1/RetryPaymentOrder', { order_h_id: order_h_id });
+
+            if(response.data.status == "ok") 
+            {
+                toast({
+                    variant: "success",
+                    description: response.data.message
+                });
+
+                navigate(urlConstant.AgencyHomePage);
+            }
+        } 
+        catch (response) {
+            const axiosError = response as AxiosError; // Cast the error to AxiosError
+            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
+                toast({
+                    variant: "destructive",
+                    description: (axiosError.response?.data as { message: string })?.message,
+                });
+            }
+        }
     }
 
     const onFinishOrder = async (order_h_id : number) => {
+        try 
+        {
+            const response = await axiosClient.post('v1/FinishOrder', { order_h_id: order_h_id });
+
+            if(response.data.status == "ok") 
+            {
+                toast({
+                    variant: "success",
+                    description: response.data.message
+                });
+
+                navigate(urlConstant.AgencyHomePage);
+            }
+        } 
+        catch (response) {
+            const axiosError = response as AxiosError; // Cast the error to AxiosError
+            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
+                toast({
+                    variant: "destructive",
+                    description: (axiosError.response?.data as { message: string })?.message,
+                });
+            }
+        }
     }
 
     return (
@@ -109,6 +257,8 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                     {t('Order Status')}
                     <br />
                     {t('Total Price')}
+                    <br />
+                    {t('Customer Name')}
                 </div>
                 <div className="ml-4">
                     : {order.order_no}
@@ -116,11 +266,13 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                     : {order.order_status}
                     <br />
                     : {formatPrice(order.total_price)}
+                    <br />
+                    : {order.customer_name}
                 </div>
             </div>
 
             <div className="p-5 text-xl flex flex-col">
-                Detail
+                <hr className='border-2'/>
                 <br />
                 <div className="">
                 <Table>
@@ -176,13 +328,13 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                 {order.order_status === 'APV' && (
                     <div className="space-x-4">
                         <Button className='bg-orange-500 p-2 hover:bg-orange-700 px-4 w-28' onClick={() => onSendEmailOrder(order.order_h_id)}>Send Email</Button>
-                        <Button className='bg-red-500 p-2 hover:bg-red-700 px-4 w-28' onClick={() => onCancelOrder(order.order_h_id)}>Cancel</Button>
+                        <Button className='bg-red-500 p-2 hover:bg-red-700 px-4 w-28' onClick={() => onCancelOrder(order.order_h_id, (user?.role || ''))}>Cancel Order</Button>
                     </div>
                 )}
 
                 {order.order_status === 'PAY' && (
                     <div className="space-x-4">
-                        <Button className='bg-green-500 p-2 hover:bg-green-700 px-4 w-24' onClick={() => onFinishOrder(order.order_h_id)}>Finish</Button>
+                        <Button className='bg-green-500 p-2 hover:bg-green-700 px-4 w-24' onClick={() => onFinishOrder(order.order_h_id)}>Finish Order</Button>
                     </div>
                 )}
 
@@ -190,14 +342,14 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                     <div className="space-x-4">
                         <Button className='bg-green-500 p-2 hover:bg-green-700 px-4 w-28' onClick={() => onAcceptPaymentOrder(order.order_h_id)}>Accept Payment</Button>
                         <Button className='bg-blue-500 p-2 hover:bg-blue-700 px-4 w-28' onClick={() => onRetryPaymentOrder(order.order_h_id)}>Retry Payment</Button>
-                        <Button className='bg-red-500 p-2 hover:bg-red-700 px-4 w-28' onClick={() => onCancelOrder(order.order_h_id)}>Cancel</Button>
+                        <Button className='bg-red-500 p-2 hover:bg-red-700 px-4 w-28' onClick={() => onCancelOrder(order.order_h_id, (user?.role || ''))}>Cancel Order</Button>
                     </div>
                 )}
 
                 {order.order_status === 'RTP' && (
                     <div className="space-x-4">
                         <Button className='bg-green-500 p-2 hover:bg-green-700 px-4 w-28' onClick={() => onAcceptPaymentOrder(order.order_h_id)}>Accept Payment</Button>
-                        <Button className='bg-red-500 p-2 hover:bg-red-700 px-4 w-28' onClick={() => onCancelOrder(order.order_h_id)}>Cancel</Button>
+                        <Button className='bg-red-500 p-2 hover:bg-red-700 px-4 w-28' onClick={() => onCancelOrder(order.order_h_id, (user?.role || ''))}>Cancel Order</Button>
                     </div>
                 )}
 

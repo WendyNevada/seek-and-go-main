@@ -30,12 +30,17 @@ interface LoginContextType {
 const LoginContext = createContext<LoginContextType | undefined>(undefined);
 
 // Custom hook to use the context
-export const useLogin = () => {
+export const useLogin = (path?:string) => {
     const context = useContext(LoginContext);
 
     if (!context) {
         throw new Error('useLogin must be used within a LoginProvider');
     }
+
+    if (path) {
+      context.navigateTo(path);
+    }
+
     return context;
 };
 
@@ -48,10 +53,11 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
-      handleNavigation(JSON.parse(storedUser));
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+        handleNavigation(parsedUser);
     }
-  }, []);
+}, []);
 
   // Function to handle user login
   const login = async (credentials: LoginCredentials) => {
@@ -83,11 +89,15 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }
   };
 
-  const handleNavigation = (userData: User) => {
-    if (userData.role === "Agency") {
-      navigate('/Agency');
-    } else {
-      navigate('/');
+  const handleNavigation = (userData?: User | null, path?: string) => {
+    if (path) {
+        navigate(path);
+    } 
+    else if (userData?.role === "Agency") {
+        navigate('/Agency');
+    } 
+    else {
+        navigate('/');
     }
   };
 
@@ -115,7 +125,7 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     login,
     logout,
     error,
-    navigateTo: navigate,
+    navigateTo: (path: string) => handleNavigation(user, path)
   };
 
   // Provide the context value to its children

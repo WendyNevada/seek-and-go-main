@@ -484,8 +484,6 @@ class RefHotelService implements RefHotelInterface
     {
         try
         {
-            $hotel = RefHotel::where('ref_hotel_id', $request->ref_hotel_id)->first();
-
             $orderHs = $this->checkOrderForHotel($request->ref_hotel_id);
 
             if($orderHs == true)

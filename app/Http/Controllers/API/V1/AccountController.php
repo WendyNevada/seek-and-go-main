@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\V2\CheckEmailRequest;
 use App\Http\Requests\V1\StoreAccountRequest;
 use App\Http\Resources\V1\CheckEmailResource;
+use App\Http\Requests\V2\ForgotPasswordRequest;
 use App\Http\Requests\V2\StoreAccountAgencyRequest;
 use App\Http\Requests\V2\UpdateAgencyAccountRequest;
 use App\Http\Requests\V2\UpdateCustomerAccountRequest;
@@ -109,6 +110,18 @@ class AccountController extends Controller
         $account->sendEmailVerificationNotification();
 
         return response()->json(["msg" => "Email verification link sent to your email address."]);
+    }
+
+    public function ForgotPasswordRequest(AccountService $accountService, ForgotPasswordRequest $request)
+    {
+        $response = $accountService->ForgotPasswordRequest($request);
+        return $response;
+    }
+
+    public function ResetPassword(AccountService $accountService, ForgotPasswordRequest $request)
+    {
+        $response = $accountService->ResetPassword($request);
+        return $response;
     }
 
 }
