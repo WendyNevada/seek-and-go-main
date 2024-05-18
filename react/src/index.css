@@ -69,7 +69,15 @@ button:focus-visible {
 
 /* CSS for skripsi */
 
-* {
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* @import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities'; */
+
+/* * {
   margin: 0;
   padding: 0;
   box-sizing: 0;
@@ -78,11 +86,5 @@ button:focus-visible {
 body {
     max-width: 100%;
     overflow-x: hidden;
-}
+} */
 
-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 90px;
-}
