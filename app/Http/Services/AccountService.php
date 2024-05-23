@@ -217,29 +217,33 @@ class AccountService implements AccountInterface
                         'agency_id' => "-"
                     ], 400);
                 }
-                else if($this->checkEmailVerified($account->email_verified_at))
-                {
-                    return response()->json([
-                        'status' => "error",
-                        'message' => "Email is not verified",
-                        'account_id' => "-",
-                        'role' => "-",
-                        'customer_id' => "-",
-                        'agency_id' => "-"
-                    ], 400);
-                }
                 else
                 {
-                    $data = $this->checkRoleAndReturnData($account);
+                    if($this->checkEmailVerified($account->email_verified_at))
+                    {
+                        return response()->json([
+                            'status' => "error",
+                            'message' => "Email is not verified",
+                            'account_id' => "-",
+                            'role' => "-",
+                            'customer_id' => "-",
+                            'agency_id' => "-"
+                        ], 400);
+                    }
+                    else
+                    {
+                        $data = $this->checkRoleAndReturnData($account);
+                        
+                        return response()->json([
+                            'status' => "ok",
+                            'message' => "Success",
+                            'account_id' => $account->account_id,
+                            'role' => $account->role,
+                            'customer_id' => $data['customer_id'],
+                            'agency_id' => $data['agency_id']
+                        ], 200);
                     
-                    return response()->json([
-                        'status' => "ok",
-                        'message' => "Success",
-                        'account_id' => $account->account_id,
-                        'role' => $account->role,
-                        'customer_id' => $data['customer_id'],
-                        'agency_id' => $data['agency_id']
-                    ], 200);
+                    }
                 }
             }
         }

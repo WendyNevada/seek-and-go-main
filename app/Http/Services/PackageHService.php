@@ -342,6 +342,43 @@ class PackageHService implements PackageHInterface
     {
         Mail::to($mailTo)->send(new CustomPackageRequestEmail($customerName));
     }
+
+    private function checkValidDateOnPackageRequest($detail)
+    {
+        if(isset($detail['start_dt']) && isset($detail['end_dt']) && $detail['start_dt'] != null && $detail['end_dt'] != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private function checkPackageInOrder($package_h_id): bool
+    {
+        $orderHs = OrderH::with('orderDs')
+                ->whereHas('orderDs', function ($query) use ($package_h_id) {
+                    $query->where('package_h_id', $package_h_id);
+                })
+                ->whereIn('order_status', [
+                    Constanta::$orderStatusNew,
+                    Constanta::$orderStatusApproved,
+                    Constanta::$orderStatusPaid,
+                    Constanta::$orderStatusCustPaid,
+                    Constanta::$orderStatusRetryPay
+                ])
+                ->get();
+
+        if(count($orderHs) > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     #endregion
 
     #region Public Function
@@ -362,7 +399,7 @@ class PackageHService implements PackageHInterface
                     $strStartDate = null;
                     $strEndDate = null;
 
-                    if($detail['start_dt'] != null && $detail['end_dt'] != null || $detail['start_dt'] != "" && $detail['end_dt'] != "")
+                    if($this->checkValidDateOnPackageRequest($detail))
                     {
                         $strStartDate = $this->reformatDate($detail['start_dt']);
                         $strEndDate = $this->reformatDate($detail['end_dt']);
@@ -416,7 +453,7 @@ class PackageHService implements PackageHInterface
                 $strStartDate = null;
                 $strEndDate = null;
 
-                if($detail['start_dt'] != null && $detail['end_dt'] != null || $detail['start_dt'] != "" && $detail['end_dt'] != "")
+                if($this->checkValidDateOnPackageRequest($detail))
                 {
                     $strStartDate = $this->reformatDate($detail['start_dt']);
                     $strEndDate = $this->reformatDate($detail['end_dt']);
@@ -454,6 +491,14 @@ class PackageHService implements PackageHInterface
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Package not found'
+                ], 400);
+            }
+
+            if($this->checkPackageInOrder($request->package_h_id) == true)
+            {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Package is in active order'
                 ], 400);
             }
 
