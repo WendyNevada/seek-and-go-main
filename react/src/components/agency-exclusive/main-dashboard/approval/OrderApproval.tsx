@@ -1,5 +1,5 @@
 import axiosClient from '@/axios.client';
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { OrderD } from '../utils/interface';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { HotelH } from '../utils/interfaceHotel';
@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { useLogin } from '@/context/LoginContext';
 import { useNavigate } from 'react-router-dom';
 import { urlConstant } from '@/urlConstant';
+import HashLoader from 'react-spinners/HashLoader';
 
 const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
     const { t } = useTranslation();
@@ -22,7 +23,7 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
     const [attraction, setAttraction] = useState<AttractionH>();
     const { user } = useLogin();
     const navigate  = useNavigate();
-
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -47,6 +48,8 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                 }
             } catch (error) {
                 console.log(error)
+            } finally {
+                setLoading(false);
             }
         }
         fetchData();
@@ -66,11 +69,11 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
     };
 
     const onApproveOrder = async (order_h_id : number) => {
-        try 
+        try
         {
             const response = await axiosClient.post('v1/ApproveOrder', { order_h_id: order_h_id });
 
-            if(response.data.status == "ok") 
+            if(response.data.status == "ok")
             {
                 toast({
                     variant: "success",
@@ -79,7 +82,7 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
 
                 navigate(urlConstant.AgencyHomePage);
             }
-        } 
+        }
         catch (response) {
             const axiosError = response as AxiosError; // Cast the error to AxiosError
             if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
@@ -92,11 +95,11 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
     }
 
     const onSendEmailOrder = async (order_h_id : number) => {
-        try 
+        try
         {
             const response = await axiosClient.post('v1/SendEmailOrderApprove', { order_h_id: order_h_id });
 
-            if(response.data.status == "ok") 
+            if(response.data.status == "ok")
             {
                 toast({
                     variant: "success",
@@ -105,7 +108,7 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
 
                 navigate(urlConstant.AgencyHomePage);
             }
-        } 
+        }
         catch (response) {
             const axiosError = response as AxiosError; // Cast the error to AxiosError
             if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
@@ -118,11 +121,11 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
     }
 
     const onRejectOrder = async (order_h_id : number) => {
-        try 
+        try
         {
             const response = await axiosClient.post('v1/RejectOrder', { order_h_id: order_h_id });
 
-            if(response.data.status == "ok") 
+            if(response.data.status == "ok")
             {
                 toast({
                     variant: "success",
@@ -131,7 +134,7 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
 
                 navigate(urlConstant.AgencyHomePage);
             }
-        } 
+        }
         catch (response) {
             const axiosError = response as AxiosError; // Cast the error to AxiosError
             if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
@@ -144,11 +147,11 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
     }
 
     const onCancelOrder = async (order_h_id : number, cancel_by : string) => {
-        try 
+        try
         {
             const response = await axiosClient.post('v1/CancelOrder', { order_h_id: order_h_id, cancel_by: cancel_by });
 
-            if(response.data.status == "ok") 
+            if(response.data.status == "ok")
             {
                 toast({
                     variant: "success",
@@ -157,7 +160,7 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
 
                 navigate(urlConstant.AgencyHomePage);
             }
-        } 
+        }
         catch (response) {
             const axiosError = response as AxiosError; // Cast the error to AxiosError
             if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
@@ -170,11 +173,11 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
     }
 
     const onAcceptPaymentOrder = async (order_h_id : number) => {
-        try 
+        try
         {
             const response = await axiosClient.post('v1/PaidOrder', { order_h_id: order_h_id });
 
-            if(response.data.status == "ok") 
+            if(response.data.status == "ok")
             {
                 toast({
                     variant: "success",
@@ -183,7 +186,7 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
 
                 navigate(urlConstant.AgencyHomePage);
             }
-        } 
+        }
         catch (response) {
             const axiosError = response as AxiosError; // Cast the error to AxiosError
             if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
@@ -196,11 +199,11 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
     }
 
     const onRetryPaymentOrder  = async (order_h_id : number) => {
-        try 
+        try
         {
             const response = await axiosClient.post('v1/RetryPaymentOrder', { order_h_id: order_h_id });
 
-            if(response.data.status == "ok") 
+            if(response.data.status == "ok")
             {
                 toast({
                     variant: "success",
@@ -209,7 +212,7 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
 
                 navigate(urlConstant.AgencyHomePage);
             }
-        } 
+        }
         catch (response) {
             const axiosError = response as AxiosError; // Cast the error to AxiosError
             if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
@@ -222,11 +225,11 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
     }
 
     const onFinishOrder = async (order_h_id : number) => {
-        try 
+        try
         {
             const response = await axiosClient.post('v1/FinishOrder', { order_h_id: order_h_id });
 
-            if(response.data.status == "ok") 
+            if(response.data.status == "ok")
             {
                 toast({
                     variant: "success",
@@ -235,7 +238,7 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
 
                 navigate(urlConstant.AgencyHomePage);
             }
-        } 
+        }
         catch (response) {
             const axiosError = response as AxiosError; // Cast the error to AxiosError
             if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
@@ -248,7 +251,14 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
     }
 
     return (
-        <div className='shadow-lg sm:rounded-3xl'>
+        <>
+            {loading ? (
+            <div className="flex justify-center items-center min-h-screen">
+                <HashLoader size={50} color={"#123abc"} loading={loading} />
+            </div>
+        ) : (
+            <>
+                <div className='shadow-lg sm:rounded-3xl'>
             {/* Header */}
             <div className='p-5 text-xl flex flex-row'>
                 <div className="">
@@ -355,6 +365,10 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
 
             </div>
         </div>
+            </>
+        )}
+        </>
+
     )
 }
 

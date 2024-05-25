@@ -1,5 +1,6 @@
 // Vehicle
 export interface VehicleRoot {
+    agency_id: number
     vehicle: Vehicle
     picture_url: string
     base_price: number
@@ -73,5 +74,27 @@ export interface AttractionRoot {
     qty: number
     created_at: string
     updated_at: string
+  }
+
+  export interface AgencyData {
+    agency_id: number
+    account_id: number
+    agency_name: string
+    npwp: string
+    location: string
+    created_at: string
+    updated_at: string
+    agency_payments: AgencyPayment[]
+  }
+
+  export interface AgencyPayment {
+    agency_payment_id: number
+    agency_id: number
+    payment_type: string
+    bank_name: string
+    account_no?: string
+    created_at: string
+    updated_at: string
+    image_url?: string
   }
 
