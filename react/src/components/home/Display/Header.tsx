@@ -1,7 +1,6 @@
 import { assetForWeb } from "@/assets/assetStatic";
 import { TypewriterEffect } from "@/components/ui/AceTernity/typewriter-effect";
 import SearchComponent from "@/components/ui/Custom/search";
-import React from "react";
 import { useTranslation } from 'react-i18next';
 
 const Header = () => {

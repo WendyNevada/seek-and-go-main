@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import { addHotelSchema, handleImageUpload } from './utils/schema'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'

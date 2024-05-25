@@ -9,6 +9,7 @@ import { formatPrice } from '@/utils/priceFormating';
 import { useLogin } from '@/context/LoginContext';
 import CredentialModal from '../modal/CredentialModal';
 import { useNavigate } from 'react-router-dom';
+import { HashLoader } from 'react-spinners';
 
 const ProductVehicleDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
     const [vehicle, setVehicle] = useState<VehicleRoot>();
@@ -16,6 +17,7 @@ const ProductVehicleDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
     const [image, setImage] = useState('');
     const { user } = useLogin();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -26,6 +28,8 @@ const ProductVehicleDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
                 setImage(enviUrl + response.data.picture_url);
             } catch (error) {
                 console.error(error);
+            } finally {
+                setLoading(false);
             }
         }
         fetchData();
@@ -33,16 +37,21 @@ const ProductVehicleDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
 
     const checkCredential = (custId: number) => {
         if (!custId || custId === 0) {
-            console.log('cust id :',custId)
             setIsModalOpen(true);
         }
         else {
-            navigate('/Customer/VehicleOrderDetail/' + custId);
+            navigate('/Customer/VehicleOrderDetail/' + ref_vehicle_id);
         }
     }
 
     return (
         <div>
+            {loading ? (
+            <div className="flex justify-center items-center min-h-screen">
+                <HashLoader size={50} color={"#123abc"} loading={loading} />
+            </div>
+        ) : (
+            <>
             <div className="flex flex-col sm:w-[10rem] md:w-[40rem] lg:w-[80rem]">
                 {/* OrderDetail {ref_vehicle_id}
                 <br></br>
@@ -90,6 +99,8 @@ const ProductVehicleDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
                 </div>
             </div>
             <CredentialModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+            </>
+        )}
         </div>
     )
 }

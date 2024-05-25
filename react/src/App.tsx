@@ -21,6 +21,7 @@ import '@/context/language/i18n';
 import { toast } from './components/ui/use-toast';
 import VehicleOrderDetailPage from './views/Customer-page/Order-page/VehicleOrderDetailPage';
 import ForgotPasswordPage from './views/Forgot-Password-Page/ForgotPasswordPage';
+import PaymentPage from './views/Customer-page/Order-page/Payment/PaymentPage';
 
 function App() {
   return (
@@ -96,7 +97,7 @@ function CustomerRoutes() {
   return (
     <Routes>
         <Route path="VehicleOrderDetail/:ref_vehicle_id" element={<VehicleOrderDetailPage/>} />
-
+        <Route path="PaymentDetail/:order_h_id" element={<PaymentPage/>} />
     </Routes>
   );
 }

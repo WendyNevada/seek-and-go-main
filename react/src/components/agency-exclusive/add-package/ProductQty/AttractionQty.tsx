@@ -1,5 +1,5 @@
 import { useLogin } from '@/context/LoginContext';
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { DaumAttraction } from '../../product-dashboard/utils/ProductModel';
 import axiosClient from '@/axios.client';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
