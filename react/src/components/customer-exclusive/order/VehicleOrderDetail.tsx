@@ -5,7 +5,6 @@ import { formatPrice } from '@/utils/priceFormating';
 import PriceBox from './component/PriceBox';
 import { useLogin } from '@/context/LoginContext';
 import { urlConstant } from '@/urlConstant';
-import { DatePicker } from './component/DatePicker';
 import AddDayQty from './component/AddDayQty';
 import rating from '@/components/ui/Custom/rating';
 import { HashLoader } from 'react-spinners';
@@ -13,6 +12,7 @@ import geocodeAddress, { Coordinates } from '@/components/ui/Custom/maps/geocode
 import MapComponent from '@/components/ui/Custom/maps/MapComponent';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { Calendar } from '@/components/ui/calendar';
 
 const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
     useLogin(urlConstant.VehicleOrderDetail + '/' + ref_vehicle_id);
@@ -24,6 +24,8 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
     const [position, setPosition] = useState<Coordinates | null>(null);
     const [addr, setAddr] = useState<string>('');
     const navigate = useNavigate();
+    const [startDate, setStartDate] = useState<Date | null>(null);
+    const [endDate, setEndDate] = useState<Date | null>(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -54,6 +56,30 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
             setQty(qty + num);
         }
     }
+
+    const handleStartDateSelect = (date : Date | undefined) => {
+        if (date) {
+            setStartDate(date);
+            if (endDate && endDate < date) {
+                setEndDate(date);
+            }
+        }
+    };
+
+    const handleEndDateSelect = (date : Date | undefined) => {
+        if (date && startDate && date >= startDate) {
+            setEndDate(date);
+        }
+    };
+
+    const disablePastDates = (date : Date) => {
+        if (!startDate) return false; // Allow selection if no start date is selected
+        return date < startDate;
+    };
+
+    const modifiers = {
+        disabled: disablePastDates, // Disable dates before the selected start date
+    };
 
     const onConfirm = () => {
         navigate('/Customer/PaymentDetail/' + ref_vehicle_id);
@@ -88,9 +114,19 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
                     <div className="shadow-lg border-1 rounded-xl p-6 m-4 bg-slate-100 space-y-2">
                         <p>Tentukan Tanggal</p>
                         <div className="flex flex-row space-x-4 items-center">
-                            <DatePicker/>
+                            <Calendar
+                                mode="single"
+                                selected={startDate ? startDate : new Date()}
+                                onSelect={handleStartDateSelect}
+                                initialFocus
+                            />
                             <p>to</p>
-                            <DatePicker/>
+                            <Calendar
+                                mode="single"
+                                selected={endDate ? endDate : new Date()}
+                                onSelect={handleEndDateSelect}
+                                modifiers={modifiers} // Set the minDate to the selected start date
+                            />
                         </div>
                         <p>Jumlah Hari</p>
                         <AddDayQty qty={qty} setQtyDay={setQtyDay}/>

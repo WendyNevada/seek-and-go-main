@@ -13,11 +13,12 @@ import { useTranslation } from 'react-i18next';
 
 interface VehicleQtyProps {
     vehicleQty: number;
+    initialDetails?: { ref_vehicle_id?: string | null | undefined }[];
     onDetailsChange: (details: { ref_vehicle_id?: string | null }[]) => void; // Function to handle details change
     onVehicleQtyChange: (vehicleQty: number) => void;
 }
 
-const VehicleQty = ({ vehicleQty, onDetailsChange, onVehicleQtyChange }: VehicleQtyProps) => {
+const VehicleQty = ({ vehicleQty, initialDetails, onDetailsChange, onVehicleQtyChange }: VehicleQtyProps) => {
     const { t } = useTranslation();
     const { user } = useLogin();
     const [vehicle, setVehicle] = useState<DaumVehicle[]>([]);
@@ -33,12 +34,27 @@ const VehicleQty = ({ vehicleQty, onDetailsChange, onVehicleQtyChange }: Vehicle
                     agency_id: user?.agency_id
                 });
                 setVehicle(response.data.data);
+                console.log('initialDetails : ', initialDetails)
             } catch (error) {
                 console.error('Error fetching vehicles:', error);
             }
         };
         fetchAttraction();
     }, []);
+
+    useEffect(() => {
+        if (initialDetails && initialDetails.length > 0) {
+            const initialVehicles = initialDetails.map((detail) => {
+                const selectedVehicle = vehicle.find((vehicleItem) => {
+                    const detailId = detail.ref_vehicle_id;
+                    return detailId !== null && detailId !== undefined && vehicleItem.ref_vehicle_id === parseInt(detailId);
+                });
+                return selectedVehicle || ({} as DaumVehicle);
+            });
+            setDetails(initialDetails);
+            setNewVehicles(initialVehicles);
+        }
+    }, [vehicle, initialDetails]);
 
     const handleDetailChange = (index: number, value: string) => {
         const newDetails = [...details];
@@ -73,6 +89,7 @@ const VehicleQty = ({ vehicleQty, onDetailsChange, onVehicleQtyChange }: Vehicle
 
     return (
         <div>
+            {/* <p className='text-sm'>prev vehicle : {vehicle.map((vehicleItem) => vehicleItem.vehicle_name)}</p> */}
             {Array.from({ length: vehicleQty }).map((_, index) => (
                 <div key={index} className="flex flex-col gap-4 my-2">
                     <div className="flex flex-row">
