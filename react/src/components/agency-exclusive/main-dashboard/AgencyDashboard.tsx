@@ -1,7 +1,7 @@
 import axiosClient from '@/axios.client';
 import DoughnutChart from '@/components/ui/Chart/dougnutChart'
 import { useLogin } from '@/context/LoginContext';
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface OrderStatus {
     order_status: string;

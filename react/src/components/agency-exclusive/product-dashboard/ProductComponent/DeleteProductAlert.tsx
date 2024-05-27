@@ -20,17 +20,17 @@ import { useTranslation } from "react-i18next";
 
 interface DeleteProductAlertProps {
     apiPath: string;
-    attractionId: number;
+    Id: number;
     param: string;
 }
 
-export function AlertDialogProduct({ apiPath, attractionId, param }: DeleteProductAlertProps) {
+export function AlertDialogProduct({ apiPath, Id, param }: DeleteProductAlertProps) {
     const { navigateTo } = useLogin(urlConstant.AgencyProduct);
     const { t } = useTranslation();
 
     const handleDelete = async () => {
         try {
-            const response = await axiosClient.post(apiPath, { [param]: attractionId });
+            const response = await axiosClient.post(apiPath, { [param]: Id });
             toast({
                 variant: response.data.status === "ok" ? "success" : "destructive",
                 description: response.data.message

@@ -1,5 +1,5 @@
 import { useLogin } from '@/context/LoginContext';
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { DaumAttraction } from '../../product-dashboard/utils/ProductModel';
 import axiosClient from '@/axios.client';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -14,11 +14,12 @@ import { useTranslation } from 'react-i18next';
 
 interface AttractionQtyProps {
     attractionQty: number;
+    initialDetails?: { ref_attraction_id?: string | null }[];
     onDetailsChange: (details: { ref_attraction_id?: string | null }[]) => void; // Function to handle details change
     onAttractionQtyChange: (attractionQty: number) => void;
 }
 
-const AttractionQty = ( {attractionQty, onDetailsChange, onAttractionQtyChange } : AttractionQtyProps ) => {
+const AttractionQty = ( {attractionQty, initialDetails, onDetailsChange, onAttractionQtyChange } : AttractionQtyProps ) => {
     const { t } = useTranslation();
     const { user } = useLogin();
     const [attraction, setAttraction] = useState<DaumAttraction[]>([]);
@@ -34,6 +35,7 @@ const AttractionQty = ( {attractionQty, onDetailsChange, onAttractionQtyChange }
                     agency_id: user?.agency_id
                 }); // Replace 'your-api-url' with the actual API endpoint
                 setAttraction(response.data.data);
+                console.log('attractionQty : ',attractionQty);
             } catch (error) {
                 console.error('Error fetching attractions:', error);
             }
@@ -41,6 +43,19 @@ const AttractionQty = ( {attractionQty, onDetailsChange, onAttractionQtyChange }
         fetchAttraction();
     },[]);
 
+    useEffect(() => {
+        if (initialDetails && initialDetails.length > 0) {
+            const initialAttractions = initialDetails.map((detail) => {
+                const selectedAttraction = attraction.find((attractionItem) => {
+                    const detailId = detail.ref_attraction_id;
+                    return detailId !== null && detailId !== undefined && attractionItem.ref_attraction_id === parseInt(detailId);
+                });
+                return selectedAttraction || ({} as DaumAttraction);
+            });
+            setDetails(initialDetails);
+            setNewAttractions(initialAttractions);
+        }
+    }, [attraction, initialDetails]);
 
     const handleDetailChange = (index: number, value: string) => {
         const newDetails = [...details];
@@ -75,6 +90,7 @@ const AttractionQty = ( {attractionQty, onDetailsChange, onAttractionQtyChange }
 
     return (
         <div>
+            {/* <p className='text-sm'>prev attraction : {attraction.map((attractionItem) => attractionItem.attraction_name)}</p> */}
             {Array.from({ length: attractionQty }).map((_, index) => (
                 <div key={index} className="flex flex-col gap-4 my-2">
                     <div className="flex flex-row">

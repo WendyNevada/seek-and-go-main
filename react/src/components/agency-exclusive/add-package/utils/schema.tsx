@@ -5,7 +5,7 @@ export interface addPackage {
     description: string;
     package_price: number;
     qty: number;
-    total_days: string;
+    total_days: number;
     details: {
         ref_hotel_id?: string | null;
         ref_attraction_id?: string | null;

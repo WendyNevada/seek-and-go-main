@@ -1,30 +1,33 @@
-import { useForm } from 'react-hook-form'
-import { addPackage } from './utils/schema'
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form'
-import { Required } from '@/components/ui/Custom/required'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import AttractionQty from './ProductQty/AttractionQty'
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import VehicleQty from './ProductQty/VehicleQty'
-import HotelQty from './ProductQty/HotelQty'
-import { useTranslation } from 'react-i18next'
-import { useLogin } from '@/context/LoginContext'
-import { hitAddApi } from '@/context/HitApi'
-import { urlConstant } from '@/urlConstant'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import AttractionQty from './ProductQty/AttractionQty';
+import VehicleQty from './ProductQty/VehicleQty';
+import HotelQty from './ProductQty/HotelQty';
+import { Required } from '@/components/ui/Custom/required';
+import { useLogin } from '@/context/LoginContext';
+import { urlConstant } from '@/urlConstant';
+import { addPackage } from './utils/schema';
+import axiosClient from '@/axios.client';
+import { hitAddApi } from '@/context/HitApi';
 
-const AddPackage = () => {
+const EditPackage = ({package_h_id} : {package_h_id: number}) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const { user } = useLogin();
+
     const [attractionQty, setAttractionQty] = useState<number>(0);
     const [vehicleQty, setVehicleQty] = useState<number>(0);
     const [hotelQty, setHotelQty] = useState<number>(0);
     const [attractionDetails, setAttractionDetails] = useState<addPackage['details']>([]);
     const [vehicleDetails, setVehicleDetails] = useState<addPackage['details']>([]);
     const [hotelDetails, setHotelDetails] = useState<addPackage['details']>([]);
-    const { user } = useLogin();
+    const [packageData, setPackageData] = useState<addPackage | null>(null);
 
     const form = useForm<addPackage>({
         defaultValues: {
@@ -37,22 +40,54 @@ const AddPackage = () => {
             total_days: 0,
             details: []
         }
-    })
+    });
+
+    useEffect(() => {
+        const fetchPackage = async () => {
+            try {
+                const response = await axiosClient.post(`/v1/GetPackageDataById`, { package_h_id: package_h_id });
+                if(response.data){
+                    const resPackageData = response.data;
+                    setPackageData(resPackageData);
+
+                    form.reset({
+                        ...resPackageData,
+                        details: undefined // Prevent resetting details directly here
+                    });
+
+                    // Set quantities based on details length
+                    const attractionDetails = resPackageData.package_ds.filter((detail: addPackage['details'][0]) => detail.ref_attraction_id);
+                    const vehicleDetails = resPackageData.package_ds.filter((detail: addPackage['details'][0]) => detail.ref_vehicle_id);
+                    const hotelDetails = resPackageData.package_ds.filter((detail: addPackage['details'][0]) => detail.ref_hotel_id);
+
+                    setAttractionQty(attractionDetails.length);
+                    setVehicleQty(vehicleDetails.length);
+                    setHotelQty(hotelDetails.length);
+
+                    setAttractionDetails(attractionDetails);
+                    setVehicleDetails(vehicleDetails);
+                    setHotelDetails(hotelDetails);
+                }
+            } catch (error) {
+                console.error('Error fetching package data:', error);
+            }
+        };
+
+        fetchPackage();
+        console.log('packageData : ',packageData)
+    }, []);
 
     const handleAttractionDetailsChange = (newDetails: addPackage['details']) => {
         setAttractionDetails(newDetails);
-        console.log('attraction details : ', newDetails);
     };
 
     const handleVehicleDetailsChange = (newDetails: addPackage['details']) => {
         setVehicleDetails(newDetails);
-        console.log('vehicle details : ', newDetails);
     };
 
     const handleHotelDetailsChange = (newDetails: addPackage['details']) => {
         setHotelDetails(newDetails);
-        console.log('hotel details : ', newDetails);
-    }
+    };
 
     const onSubmit = async (values: addPackage) => {
         const mergedDetails = [...attractionDetails, ...vehicleDetails, ...hotelDetails].map(detail => ({
@@ -62,22 +97,25 @@ const AddPackage = () => {
             start_date: detail.start_dt || null,
             end_date: detail.end_dt || null
         }));
-        const payload = { ...values, details: mergedDetails };
-        console.log('merged details : ',mergedDetails);
-        console.log('merged values : ',payload);
-        const response = await hitAddApi("/v1/CreatePackageAgency",payload);
-        if(response === 200)
-        {
-            navigate(urlConstant.AgencyHomePage);
-        }
-    }
 
-    return (
-        <div className="min-h-50 w-50 p-0 sm:p-12">
+        const payload = { ...values, details: mergedDetails };
+
+        try {
+            const response = await hitAddApi(`/v1/EditPackageAgency`, payload);
+            if (response === 200) {
+                navigate(urlConstant.AgencyHomePage);
+            }
+        } catch (error) {
+            console.error('Error updating package:', error);
+        }
+    };
+
+  return (
+    <div className="min-h-50 w-50 p-0 sm:p-12">
             <div className="mx-auto max-w-6xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <h1 className="text-2xl mb-8">{t('Add Package')}</h1>
+                        <h1 className="text-2xl mb-8">{t('Edit Package')}</h1>
 
                         <div className="flex flex-row space-x-4">
                             <FormField
@@ -86,7 +124,7 @@ const AddPackage = () => {
                                 render={({ field }) => (
                                     <FormItem className="custom-field w-80">
                                         <FormLabel>{t('Package Code')}</FormLabel>
-                                        <Required/>
+                                        <Required />
                                         <FormControl className='w-full'>
                                             <Input
                                                 placeholder={t('Input Package Code')}
@@ -104,7 +142,7 @@ const AddPackage = () => {
                                 render={({ field }) => (
                                     <FormItem className="custom-field w-80">
                                         <FormLabel>{t('Package Name')}</FormLabel>
-                                        <Required/>
+                                        <Required />
                                         <FormControl className='w-full'>
                                             <Input
                                                 placeholder={t('Input Package Name')}
@@ -124,7 +162,7 @@ const AddPackage = () => {
                                 render={({ field }) => (
                                     <FormItem className="custom-field w-80">
                                         <FormLabel>{t('Package Price')}</FormLabel>
-                                        <Required/>
+                                        <Required />
                                         <FormControl className='w-full'>
                                             <Input
                                                 placeholder={t('Input Package Price')}
@@ -141,7 +179,7 @@ const AddPackage = () => {
                                 render={({ field }) => (
                                     <FormItem className="custom-field w-80">
                                         <FormLabel>{t('QTY')}</FormLabel>
-                                        <Required/>
+                                        <Required />
                                         <FormControl className='w-full'>
                                             <Input
                                                 type='number'
@@ -159,7 +197,7 @@ const AddPackage = () => {
                                 render={({ field }) => (
                                     <FormItem className="custom-field w-80">
                                         <FormLabel>{t('Total Days')}</FormLabel>
-                                        <Required/>
+                                        <Required />
                                         <FormControl className='w-full'>
                                             <Input
                                                 type='number'
@@ -179,7 +217,7 @@ const AddPackage = () => {
                             render={({ field }) => (
                                 <FormItem className="custom-field md:w-[41rem]">
                                     <FormLabel>{t('Description')}</FormLabel>
-                                    <Required/>
+                                    <Required />
                                     <FormControl>
                                         <Textarea
                                             placeholder={t('Description')}
@@ -195,37 +233,34 @@ const AddPackage = () => {
 
                         <div className="flex flex-row space-x-4">
                             <div className="grid w-32 max-w-sm items-center text-center my-2">
-                                {/* <Input className='w-24' type="number" placeholder="Attraction qty" value={attractionQty} onChange={handleAttractionQtyChange}/> */}
                                 <Button type='button' variant={"outline"} className='w-38' onClick={() => setAttractionQty(attractionQty + 1)}>+ {t('Add Attraction')}</Button>
                             </div>
                         </div>
-                        <AttractionQty attractionQty={attractionQty} onDetailsChange={handleAttractionDetailsChange} onAttractionQtyChange={setAttractionQty}/>
+                        <AttractionQty attractionQty={attractionQty} initialDetails={attractionDetails} onDetailsChange={handleAttractionDetailsChange} onAttractionQtyChange={setAttractionQty} />
 
                         <div className="flex flex-row space-x-4">
                             <div className="grid w-32 max-w-sm items-center text-center my-2">
-                                {/* <Input className='w-24' type="number" placeholder="Attraction qty" value={attractionQty} onChange={handleAttractionQtyChange}/> */}
                                 <Button type='button' variant={"outline"} className='w-38' onClick={() => setVehicleQty(vehicleQty + 1)}>+ {t('Add Vehicle')}</Button>
                             </div>
                         </div>
-                        <VehicleQty vehicleQty={vehicleQty} onDetailsChange={handleVehicleDetailsChange} onVehicleQtyChange={setVehicleQty}/>
+                        <VehicleQty vehicleQty={vehicleQty} initialDetails={vehicleDetails} onDetailsChange={handleVehicleDetailsChange} onVehicleQtyChange={setVehicleQty} />
 
                         <div className="flex flex-row space-x-4">
                             <div className="grid w-32 max-w-sm items-center text-center my-2">
-                                {/* <Input className='w-24' type="number" placeholder="Attraction qty" value={attractionQty} onChange={handleAttractionQtyChange}/> */}
                                 <Button type='button' variant={"outline"} className='w-38' onClick={() => setHotelQty(hotelQty + 1)}>+ {t('Add Hotel')}</Button>
                             </div>
                         </div>
-                        <HotelQty hotelQty={hotelQty} onDetailsChange={handleHotelDetailsChange} onHotelQtyChange={setHotelQty}/>
+                        <HotelQty hotelQty={hotelQty} initialDetails={hotelDetails} onDetailsChange={handleHotelDetailsChange} onHotelQtyChange={setHotelQty} />
 
                         <div className="justify-center flex">
-                            <Button type="submit" className='mt-4'>{t('Add Package')}
+                            <Button type="submit" className='mt-4'>{t('Update Package')}
                             </Button>
                         </div>
                     </form>
                 </Form>
             </div>
         </div>
-    )
+  )
 }
 
-export default AddPackage
+export default EditPackage

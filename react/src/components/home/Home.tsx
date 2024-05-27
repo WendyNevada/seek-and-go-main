@@ -1,4 +1,3 @@
-import React from "react";
 import Header from "./Display/Header";
 import DisplayVehicle from "./Display/DisplayVehicle";
 import DisplayAttraction from "./Display/DisplayAttraction";

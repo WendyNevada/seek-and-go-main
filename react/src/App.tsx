@@ -1,3 +1,5 @@
+import '@/context/language/i18n';
+import { toast } from './components/ui/use-toast';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginRegisterPage from './views/Login-register-page/RegisterPage';
 import LoginPage from './views/Login-register-page/LoginPage';
@@ -16,11 +18,12 @@ import VehicleDetailPage from './views/Customer-page/VehilcleDetailPage';
 import AgencyOrderApprovalPage from './views/Agency-page/AgencyOrderApprovalPage';
 import HotelDetailPage from './views/Customer-page/HotelDetailPage';
 import AttractionDetailPage from './views/Customer-page/AttractionDetailPage';
-import AgencyAddPackage from './views/Agency-page/AgencyAddPackage';
-import '@/context/language/i18n';
-import { toast } from './components/ui/use-toast';
+import AgencyAddPackagePage from './views/Agency-page/AgencyAddPackage';
 import VehicleOrderDetailPage from './views/Customer-page/Order-page/VehicleOrderDetailPage';
+import HotelOrderDetailPage from './views/Customer-page/Order-page/HotelOrderDetailPage';
 import ForgotPasswordPage from './views/Forgot-Password-Page/ForgotPasswordPage';
+import PaymentPage from './views/Customer-page/Order-page/Payment/PaymentPage';
+import AgencyEditPackagePage from './views/Agency-page/AgencyEditPackagePage';
 
 function App() {
   return (
@@ -68,8 +71,8 @@ function AgencyRoutes() {
         <Route path="EditVehicle/:ref_vehicle_id" element={<AgencyEditVehiclePage />}></Route>
         <Route path="AddHotel" element={<AgencyAddHotelPage />}></Route>
         <Route path="EditHotel/:ref_hotel_id" element={<AgencyEditHotelPage />}></Route>
-        <Route path="AddPackage" element={<AgencyAddPackage/>}></Route>
-
+        <Route path="AddPackage" element={<AgencyAddPackagePage/>}></Route>
+        <Route path="EditPackage/:package_h_id" element={<AgencyEditPackagePage/>}></Route>
 
         {/* order detail page */}
         <Route path="OrderDetail/:order_h_id" element={<AgencyOrderApprovalPage/>} />
@@ -96,7 +99,8 @@ function CustomerRoutes() {
   return (
     <Routes>
         <Route path="VehicleOrderDetail/:ref_vehicle_id" element={<VehicleOrderDetailPage/>} />
-
+        <Route path="HoteleOrderDetail/:ref_hotel_id" element={<HotelOrderDetailPage/>} />
+        <Route path="PaymentDetail/:order_h_id" element={<PaymentPage/>} />
     </Routes>
   );
 }

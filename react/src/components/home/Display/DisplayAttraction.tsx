@@ -2,7 +2,7 @@ import axiosClient from '@/axios.client';
 import { GetAttractionModel } from '@/components/agency-exclusive/product-dashboard/utils/ProductModel'
 import rating from '@/components/ui/Custom/rating';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {Carousel,CarouselContent,CarouselItem,CarouselNext,CarouselPrevious} from "@/components/ui/carousel"
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
