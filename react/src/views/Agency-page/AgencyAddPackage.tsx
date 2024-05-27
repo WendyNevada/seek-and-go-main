@@ -1,8 +1,7 @@
 import AddPackage from '@/components/agency-exclusive/add-package/AddPackage'
 import AgencyNavbar from '@/components/navbar/AgencyNavbar'
-import React from 'react'
 
-const AgencyAddPackage = () => {
+const AgencyAddPackagePage = () => {
   return (
     <div>
         <AgencyNavbar/>
@@ -13,4 +12,4 @@ const AgencyAddPackage = () => {
   )
 }
 
-export default AgencyAddPackage
+export default AgencyAddPackagePage

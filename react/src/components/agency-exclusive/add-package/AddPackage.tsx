@@ -55,7 +55,13 @@ const AddPackage = () => {
     }
 
     const onSubmit = async (values: addPackage) => {
-        const mergedDetails = [...attractionDetails, ...vehicleDetails, ...hotelDetails];
+        const mergedDetails = [...attractionDetails, ...vehicleDetails, ...hotelDetails].map(detail => ({
+            ref_attraction_id: detail.ref_attraction_id || null,
+            ref_vehicle_id: detail.ref_vehicle_id || null,
+            ref_hotel_id: detail.ref_hotel_id || null,
+            start_date: detail.start_dt || null,
+            end_date: detail.end_dt || null
+        }));
         const payload = { ...values, details: mergedDetails };
         console.log('merged details : ',mergedDetails);
         console.log('merged values : ',payload);

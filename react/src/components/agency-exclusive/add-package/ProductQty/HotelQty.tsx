@@ -13,11 +13,12 @@ import { useTranslation } from 'react-i18next';
 
 interface HotelQtyProps {
     hotelQty: number;
+    initialDetails?: { ref_hotel_id?: string | null | undefined }[];
     onDetailsChange: (details: { ref_hotel_id?: string | null }[]) => void; // Function to handle details change
     onHotelQtyChange: (hotelQty: number) => void;
 }
 
-const HotelQty = ({hotelQty, onDetailsChange, onHotelQtyChange} : HotelQtyProps) => {
+const HotelQty = ({hotelQty, initialDetails, onDetailsChange, onHotelQtyChange} : HotelQtyProps) => {
     const { t } = useTranslation();
     const { user } = useLogin();
     const [hotel, setHotel] = useState<DaumHotel[]>([]);
@@ -39,6 +40,20 @@ const HotelQty = ({hotelQty, onDetailsChange, onHotelQtyChange} : HotelQtyProps)
         };
         fetchAttraction();
     }, []);
+
+    useEffect(() => {
+        if (initialDetails && initialDetails.length > 0) {
+            const initialHotels = initialDetails.map((detail) => {
+                const selectedVehicle = hotel.find((hotelItem) => {
+                    const detailId = detail.ref_hotel_id;
+                    return detailId !== null && detailId !== undefined && hotelItem.ref_hotel_id === parseInt(detailId);
+                });
+                return selectedVehicle || ({} as DaumHotel);
+            });
+            setDetails(initialDetails);
+            setNewHotels(initialHotels);
+        }
+    }, [hotel, initialDetails]);
 
     const handleDetailChange = (index: number, value: string) => {
         const newDetails = [...details];

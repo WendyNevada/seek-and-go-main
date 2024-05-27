@@ -7,6 +7,7 @@ export const urlConstant = {
     AddHotel : "/Agency/AddHotel",
     EditHotel : "/Agency/EditHotel",
     AddPackage : "/Agency/AddPackage",
+    EditPackage : "/Agency/EditPackage",
 
     // Customer Routes
     VehicleOrderDetail: "/Customer/VehicleOrderDetail",
