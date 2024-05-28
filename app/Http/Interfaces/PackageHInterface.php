@@ -25,6 +25,8 @@ interface PackageHInterface
 
     public function ApproveCustomPackage(ApproveCustomPackageRequest $request);
 
+    public function RejectCustomPackage(PackageHIdRequest $request);
+
     public function GetActivePackageHByAgencyId(AgencyIdRequest $request);
 
     public function GetPackageDataById(PackageHIdRequest $request);

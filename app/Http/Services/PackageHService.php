@@ -634,6 +634,34 @@ class PackageHService implements PackageHInterface
         }
     }
 
+    public function RejectCustomPackage(PackageHIdRequest $request)
+    {
+        try
+        {
+            DB::beginTransaction();
+
+            $packageH = $this->getPackageHById($request->package_h_id);
+
+            $this->updatePackageH($request->package_h_id, Constanta::$orderStatusRejected, 0);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Custom package rejected'
+            ], 200);
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function GetActivePackageHByAgencyId(AgencyIdRequest $request)
     {
         $packageH = $this->getPackageByAgencyId($request->agency_id);
