@@ -699,7 +699,41 @@ class OrderHService implements OrderHInterface
         }
     }
 
-    public function CancelOrder(CancelOrderRequest $request)
+    public function CancelOrderAgency(CancelOrderRequest $request)
+    {
+        try
+        {
+            DB::beginTransaction();
+
+            $orderH = $this->updateOrderStatus($request->order_h_id, Constanta::$orderStatusCanceled);
+            
+            $email = $this->getEmailByForeignId($orderH->customer_id, Constanta::$roleCustomer);
+
+            $agencyName = $this->getAgencyByAgencyId($orderH->agency_id)->agency_name;
+
+            $this->sendEmailCancelOrderByAgency($email, $orderH->order_no, $agencyName); //Send email to customer
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Order canceled',
+                'order_no' => $orderH->order_no
+            ], 200);
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'order_no' => $orderH->order_no
+            ], 500);
+        }
+    }
+
+    public function CancelOrderCustomer(CancelOrderRequest $request)
     {
         try
         {
@@ -707,22 +741,11 @@ class OrderHService implements OrderHInterface
 
             $orderH = $this->updateOrderStatus($request->order_h_id, Constanta::$orderStatusCanceled);
 
-            if($request->cancel_by == Constanta::$roleAgency)
-            {
-                $email = $this->getEmailByForeignId($orderH->customer_id, Constanta::$roleCustomer);
+            $email = $this->getEmailByForeignId($orderH->agency_id, Constanta::$roleAgency);
 
-                $agencyName = $this->getAgencyByAgencyId($orderH->agency_id)->agency_name;
+            $customerName = $this->getCustomerByCustomerId($orderH->customer_id)->customer_name;
 
-                $this->sendEmailCancelOrderByAgency($email, $orderH->order_no, $agencyName); //Send email to customer
-            }
-            else
-            {
-                $email = $this->getEmailByForeignId($orderH->agency_id, Constanta::$roleAgency);
-
-                $customerName = $this->getCustomerByCustomerId($orderH->customer_id)->customer_name;
-
-                $this->sendEmailCancelOrderByCustomer($email, $orderH->order_no, $customerName); //Send email to agency
-            }
+            $this->sendEmailCancelOrderByCustomer($email, $orderH->order_no, $customerName); //Send email to agency
 
             DB::commit();
 

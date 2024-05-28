@@ -69,9 +69,15 @@ class OrderHController extends Controller
         return $response;
     }
 
-    public function CancelOrder(OrderHService $orderHService, CancelOrderRequest $request)
+    public function CancelOrderAgency(OrderHService $orderHService, CancelOrderRequest $request)
     {
-        $response = $orderHService->CancelOrder($request);
+        $response = $orderHService->CancelOrderAgency($request);
+        return $response;
+    }
+
+    public function CancelOrderCustomer(OrderHService $orderHService, CancelOrderRequest $request)
+    {
+        $response = $orderHService->CancelOrderCustomer($request);
         return $response;
     }
 
