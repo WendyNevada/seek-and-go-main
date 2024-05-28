@@ -31,7 +31,9 @@ interface OrderHInterface
 
     public function RejectOrder(OrderHIdRequest $request);
 
-    public function CancelOrder(CancelOrderRequest $request);
+    public function CancelOrderAgency(CancelOrderRequest $request);
+    
+    public function CancelOrderCustomer(CancelOrderRequest $request);
 
     public function CustPaidOrder(OrderHIdRequest $request);
 

@@ -149,7 +149,7 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
     const onCancelOrder = async (order_h_id : number, cancel_by : string) => {
         try
         {
-            const response = await axiosClient.post('v1/CancelOrder', { order_h_id: order_h_id, cancel_by: cancel_by });
+            const response = await axiosClient.post('v1/CancelOrderAgency', { order_h_id: order_h_id, cancel_by: cancel_by });
 
             if(response.data.status == "ok")
             {
