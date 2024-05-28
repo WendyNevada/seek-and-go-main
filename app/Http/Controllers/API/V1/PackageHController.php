@@ -55,6 +55,12 @@ class PackageHController extends Controller
         return $response;
     }
 
+    public function RejectCustomPackage(PackageHService $packageHService, PackageHIdRequest $request)
+    {
+        $response = $packageHService->RejectCustomPackage($request);
+        return $response;
+    }
+
     public function GetActivePackageHByAgencyId(PackageHService $packageHService, AgencyIdRequest $request)
     {
         $response = $packageHService->GetActivePackageHByAgencyId($request);
