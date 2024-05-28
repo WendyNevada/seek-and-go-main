@@ -122,6 +122,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('ApproveCustomPackage', 'PackageHController@ApproveCustomPackage');
 
+    Route::post('RejectCustomPackage', 'PackageHController@RejectCustomPackage');
+
     Route::post('GetActivePackageHByAgencyId', 'PackageHController@GetActivePackageHByAgencyId');
 
     Route::post('GetPackageDataById', 'PackageHController@GetPackageDataById');

@@ -32,8 +32,8 @@ class EditPackageAgencyRequest extends FormRequest
             'details.*.ref_hotel_id' => ['nullable'],
             'details.*.ref_attraction_id' => ['nullable'],
             'details.*.ref_vehicle_id' => ['nullable'],
-            'details.*.start_dt' => ['required','string'],
-            'details.*.end_dt' => ['required', 'string']
+            'details.*.start_dt' => ['nullable','string'],
+            'details.*.end_dt' => ['nullable', 'string']
         ];
     }
 }
