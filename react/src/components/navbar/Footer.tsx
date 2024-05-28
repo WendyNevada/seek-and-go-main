@@ -1,5 +1,3 @@
-import React from 'react'
-
 const Footer = () => {
   return (
     <div className='mt-3 p-10 text-center text-white bg-gray-800'>

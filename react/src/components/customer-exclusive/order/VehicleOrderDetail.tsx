@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { AgencyData, VehicleRoot } from '../interface/interface';
 import axiosClient from '@/axios.client';
 import { formatPrice } from '@/utils/priceFormating';
@@ -24,32 +24,36 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
     const [position, setPosition] = useState<Coordinates | null>(null);
     const [addr, setAddr] = useState<string>('');
     const navigate = useNavigate();
-    const [startDate, setStartDate] = useState<Date | null>(null);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const [startDate, setStartDate] = useState<Date | null>(today);
     const [endDate, setEndDate] = useState<Date | null>(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axiosClient.post('v1/GetVehicleById', { ref_vehicle_id: ref_vehicle_id });
-                setVehicle(response.data);
-                const parts = response.data.address_zipcode.split(',');
-                const wordAfterSecondComma = parts.length >= 3 ? parts[2].trim() : null;
+    const fetchData = useCallback(async () => {
+        try {
+            const response = await axiosClient.post('v1/GetVehicleById', { ref_vehicle_id });
+            setVehicle(response.data);
+            const parts = response.data.address_zipcode.split(',');
+            const wordAfterSecondComma = parts.length >= 3 ? parts[2].trim() : null;
 
-                if(response.data !== null){
-                    const response2 = await axiosClient.post('v1/GetAgencyByAgencyId', { agency_id: response.data.agency_id });
-                    setAgency(response2.data.data);
-                    setAddr(wordAfterSecondComma);
-                    const coords = await geocodeAddress(wordAfterSecondComma);
-                    setPosition(coords);
-                }
-            } catch (error) {
-                console.error(error);
-            }finally {
-                setLoading(false);
+            if (response.data !== null) {
+                const response2 = await axiosClient.post('v1/GetAgencyByAgencyId', { agency_id: response.data.agency_id });
+                setAgency(response2.data.data);
+                setAddr(wordAfterSecondComma);
+                const coords = await geocodeAddress(wordAfterSecondComma);
+                setPosition(coords);
             }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
         }
+    }, [ref_vehicle_id]);
+
+    useEffect(() => {
         fetchData();
-    },[ref_vehicle_id])
+    }, [fetchData]);
 
     const setQtyDay = (num: number) => {
         if (qty + num >= 0) {
@@ -73,12 +77,13 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
     };
 
     const disablePastDates = (date : Date) => {
-        if (!startDate) return false; // Allow selection if no start date is selected
-        return date < startDate;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return date < today;
     };
 
     const modifiers = {
-        disabled: disablePastDates, // Disable dates before the selected start date
+        disabled: disablePastDates,
     };
 
     const onConfirm = () => {
@@ -118,6 +123,7 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
                                 mode="single"
                                 selected={startDate ? startDate : new Date()}
                                 onSelect={handleStartDateSelect}
+                                modifiers={modifiers}
                                 initialFocus
                             />
                             <p>to</p>

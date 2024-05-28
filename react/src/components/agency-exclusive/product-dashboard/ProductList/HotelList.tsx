@@ -56,7 +56,7 @@ const HotelList = () => {
         <div className='mt-2 justify-between'>
             {loading ? (
                 <div className='flex flex-wrap'>
-                    {Array(4).fill(0).map((_, index) => (
+                    {Array(3).fill(0).map((_, index) => (
                         <div key={index} className='flex-1'>
                             {renderSkeleton()}
                         </div>
