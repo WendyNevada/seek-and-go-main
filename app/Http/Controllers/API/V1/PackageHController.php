@@ -10,6 +10,7 @@ use App\Http\Requests\V2\EditPackageAgencyRequest;
 use App\Http\Requests\V2\CreatePackageAgencyRequest;
 use App\Http\Requests\V2\ApproveCustomPackageRequest;
 use App\Http\Requests\V2\CreateCustomPackageCustomerRequest;
+use App\Models\PackageH;
 
 class PackageHController extends Controller
 {
@@ -88,6 +89,12 @@ class PackageHController extends Controller
     public function GetListVehicleForAgencyPackage(PackageHService $packageHService, AgencyIdRequest $request)
     {
         $response = $packageHService->GetListVehicleForAgencyPackage($request);
+        return $response;
+    }
+
+    public function GetAgencyPackagesHomepage(PackageHService $packageHService)
+    {
+        $response = $packageHService->GetAgencyPackagesHomepage();
         return $response;
     }
 }

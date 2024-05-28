@@ -38,4 +38,6 @@ interface PackageHInterface
     public function GetListVehicleForAgencyPackage(AgencyIdRequest $request);
 
     public function EditPackageAgency(EditPackageAgencyRequest $request);
+
+    public function GetAgencyPackagesHomepage();
 }

@@ -134,6 +134,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('GetListVehicleForAgencyPackage', 'PackageHController@GetListVehicleForAgencyPackage');
 
+    Route::post('GetAgencyPackagesHomepage', 'PackageHController@GetAgencyPackagesHomepage');
+
     #endregion
 
     #region Zipcode
