@@ -379,6 +379,37 @@ class PackageHService implements PackageHInterface
             return false;
         }
     }
+
+    private function checkDataEmpty($data)
+    {
+        if(count($data) <= 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private function getActivePackageDataSortedWithLimit($limit)
+    {
+        $package = PackageH::
+            join('agencies', 'package_h_s.agency_id', '=', 'agencies.agency_id')->
+            select(
+                'package_h_s.*', 
+                'agencies.agency_name',
+                )->
+            where('is_active', '1')->
+            where('is_custom', '0')->
+            where('qty', '>', '0')->
+            orderBy('updated_at', 'desc')->
+            orderby('package_h_s.package_price', 'asc')->
+            orderBy('qty', 'desc')->
+            limit($limit)->get();
+
+        return $package;
+    }
     #endregion
 
     #region Public Function
@@ -634,6 +665,34 @@ class PackageHService implements PackageHInterface
         }
     }
 
+    public function RejectCustomPackage(PackageHIdRequest $request)
+    {
+        try
+        {
+            DB::beginTransaction();
+
+            $packageH = $this->getPackageHById($request->package_h_id);
+
+            $this->updatePackageH($request->package_h_id, Constanta::$orderStatusRejected, 0);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Custom package rejected'
+            ], 200);
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function GetActivePackageHByAgencyId(AgencyIdRequest $request)
     {
         $packageH = $this->getPackageByAgencyId($request->agency_id);
@@ -682,6 +741,33 @@ class PackageHService implements PackageHInterface
         $vehicle = $this->getListVehicleByAgencyId($request->agency_id);
 
         return response()->json($vehicle);
+    }
+
+    public function GetAgencyPackagesHomepage()
+    {
+        $packages = $this->getActivePackageDataSortedWithLimit(Constanta::$homepageDataCount);
+
+        if($this->checkDataEmpty($packages) == true)
+        {
+            return response()->json(
+                [
+                    'status' => "error",
+                    'message' => "Data not found",
+                    'data'=> []
+                ]
+                ,400
+            );
+        }
+        else
+        {
+            return response()->json(
+                [
+                    'status' => "ok",
+                    'message' => "Success",
+                    'data'=> $packages
+                ]
+            , 200);
+        }
     }
     #endregion
 }
