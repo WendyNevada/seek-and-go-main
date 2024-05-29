@@ -8,12 +8,12 @@ import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded'
 import { Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 import Login from '@mui/icons-material/Login';
 import { useLogin } from '@/context/LoginContext'
-import LogoutIcon from '@mui/icons-material/Logout';
 import { useTranslation } from 'react-i18next'
 import "flag-icons/css/flag-icons.min.css";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import LanguageIcon from '@mui/icons-material/Language';
+import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
 
 const Navbar = () => {
@@ -95,6 +95,10 @@ const Navbar = () => {
 
             <div className='w-full hidden flex lg:flex lg:items-center lg:w-auto mr-6'>
                 <a href='\' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Home</a>
+                <a href='\' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Package</a>
+                <a href='\' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Vehicle</a>
+                <a href='\' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Hotel</a>
+                <a href='\' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Attraction</a>
                 {/* <a href='\About' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>About</a>
                 <a href='\Detail' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Details</a>
                 <a href='' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Contact</a>
@@ -110,8 +114,8 @@ const Navbar = () => {
                         </div>
                     )
                 }
-                <button className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Bookings Now</button>
-                <button onClick={() => logout()} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Logout</button>
+                <button className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>My Orders</button>
+                {/* <button onClick={() => logout()} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Logout</button> */}
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -136,7 +140,17 @@ const Navbar = () => {
                     </DropdownMenuContent>
                 </DropdownMenu>
 
-                <p className='text-teal-200 mx-5'><PersonIcon/> Hello, {user?.role}{user?.account_id}</p>
+                { user ?
+                (<DropdownMenu>
+                    <DropdownMenuTrigger className='text-teal-200 mx-5 hover:text-white'><PersonIcon/>{user?.role}{user?.account_id}</DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem><PersonIcon/>Profile</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => logout()}><LogoutIcon/>Logout</DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+                ) : (<div></div>)}
             </div>
 
 

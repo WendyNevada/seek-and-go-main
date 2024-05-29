@@ -13,6 +13,7 @@ import MapComponent from '@/components/ui/Custom/maps/MapComponent';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Calendar } from '@/components/ui/calendar';
+import { RangeDatePicker } from './component/RangeDatePicker';
 
 const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
     useLogin(urlConstant.VehicleOrderDetail + '/' + ref_vehicle_id);
@@ -119,7 +120,7 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
                     <div className="shadow-lg border-1 rounded-xl p-6 m-4 bg-slate-100 space-y-2">
                         <p>Tentukan Tanggal</p>
                         <div className="flex flex-row space-x-4 items-center">
-                            <Calendar
+                            {/* <Calendar
                                 mode="single"
                                 selected={startDate ? startDate : new Date()}
                                 onSelect={handleStartDateSelect}
@@ -132,7 +133,8 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
                                 selected={endDate ? endDate : new Date()}
                                 onSelect={handleEndDateSelect}
                                 modifiers={modifiers} // Set the minDate to the selected start date
-                            />
+                            /> */}
+                            <RangeDatePicker/>
                         </div>
                         <p>Jumlah Hari</p>
                         <AddDayQty qty={qty} setQtyDay={setQtyDay}/>
