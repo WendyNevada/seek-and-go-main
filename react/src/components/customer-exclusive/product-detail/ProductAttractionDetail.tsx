@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AttractionRoot } from '../interface/interface';
 import axiosClient from '@/axios.client';
 import rating from '@/components/ui/Custom/rating';

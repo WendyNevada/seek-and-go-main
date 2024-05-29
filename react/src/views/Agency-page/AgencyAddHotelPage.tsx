@@ -1,6 +1,5 @@
 import AddHotel from '@/components/agency-exclusive/add-hotel/AddHotel'
 import AgencyNavbar from '@/components/navbar/AgencyNavbar'
-import React from 'react'
 
 const AgencyAddHotelPage = () => {
   return (

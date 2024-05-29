@@ -5,7 +5,7 @@
  */
 import { Input } from "@/components/ui/input"
 
-export default function SearchComponent({ className }) {
+export default function SearchComponent({ className }: { className?: string }) {
   return (
     <div className={`flex items-center p-2 bg-white dark:bg-gray-800 rounded-lg shadow ${className}`}>
       <Input
@@ -23,7 +23,7 @@ export default function SearchComponent({ className }) {
 //     // add other expected properties here
 //   }
 
-function SearchIcon(props) {
+function SearchIcon(props: any) {
   return (
     <svg
       {...props}

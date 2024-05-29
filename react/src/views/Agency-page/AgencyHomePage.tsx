@@ -1,7 +1,6 @@
 import AgencyAccordion from '@/components/agency-exclusive/main-dashboard/AgencyAccordion'
 import AgencyDashboard from '@/components/agency-exclusive/main-dashboard/AgencyDashboard'
 import AgencyNavbar from '@/components/navbar/AgencyNavbar'
-import React from 'react'
 
 const AgencyHomePage = () => {
   return (
