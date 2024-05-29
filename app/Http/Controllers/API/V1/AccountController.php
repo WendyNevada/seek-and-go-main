@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Services\AccountService;
 use App\Http\Requests\V2\LoginRequest;
 use Illuminate\Support\Facades\Redirect;
+use App\Http\Requests\V2\AccountIdRequest;
 use App\Http\Requests\V2\CheckEmailRequest;
 use App\Http\Requests\V1\StoreAccountRequest;
 use App\Http\Resources\V1\CheckEmailResource;
@@ -121,6 +122,12 @@ class AccountController extends Controller
     public function ResetPassword(AccountService $accountService, ForgotPasswordRequest $request)
     {
         $response = $accountService->ResetPassword($request);
+        return $response;
+    }
+
+    public function GetAccountInfoById(AccountService $accountService, AccountIdRequest $request)
+    {
+        $response = $accountService->GetAccountInfoById($request);
         return $response;
     }
 

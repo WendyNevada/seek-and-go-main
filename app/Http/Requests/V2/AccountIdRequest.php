@@ -22,7 +22,7 @@ class AccountIdRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'account_id' => 'required|exists:accounts,account_id'
+            'account_id' => 'required'
         ];
     }
 }
