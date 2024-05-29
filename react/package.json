@@ -1,5 +1,6 @@
 {
   "name": "react",
+  "homepage": "http://seekandgo.my.id/",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -29,6 +30,7 @@
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-toast": "^1.1.5",
     "@radix-ui/react-tooltip": "^1.0.7",
+    "@types/react-leaflet": "^3.0.0",
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.6.8",
     "chart.js": "^4.4.2",

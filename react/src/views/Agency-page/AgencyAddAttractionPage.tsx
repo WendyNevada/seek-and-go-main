@@ -1,6 +1,5 @@
 import AddAttraction from '@/components/agency-exclusive/add-attraction/AddAttraction'
 import AgencyNavbar from '@/components/navbar/AgencyNavbar'
-import React from 'react'
 
 const AgencyAddAttractionPage = () => {
   return (
