@@ -13,6 +13,7 @@ use App\Http\Requests\V2\LoginRequest;
 use Illuminate\Auth\Events\Registered;
 use App\Http\Interfaces\AccountInterface;
 use App\Http\Requests\V1\StoreAccountRequest;
+use App\Http\Requests\V2\AccountIdRequest;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use App\Http\Requests\V2\ForgotPasswordRequest;
 use App\Http\Requests\V2\StoreAccountAgencyRequest;
@@ -31,9 +32,18 @@ class AccountService implements AccountInterface
         return $account;
     }
 
-    private function getAccountById($account_id)
+    private function getAccountDataById($account_id)
     {
         $account = Account::where('account_id', $account_id)->first();
+
+        if($account->role == Constanta::$roleCustomer)
+        {
+            $account->customers;
+        }
+        else
+        {
+            $account->agencies;
+        }
 
         return $account;
     }
@@ -183,9 +193,43 @@ class AccountService implements AccountInterface
         $account->password = $password;
         $account->save();
     }
+
+    private function checkDataNull($data)
+    {
+        if($data == null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     #endregion
 
     #region Public Method
+
+    public function GetAccountInfoById(AccountIdRequest $request)
+    {
+        $account = $this->getAccountDataById($request->account_id);
+        
+        if($this->checkDataNull($account) == true)
+        {
+            return response()->json([
+                'status' => "error",
+                'message' => "Account not found",
+                'account' => "-"
+            ], 400);
+        }
+        else
+        {
+            return response()->json([
+                'status' => "ok",
+                'message' => "success",
+                'account' => $account
+            ], 200);
+        }
+    }
 
     public function Login(LoginRequest $request)
     {
