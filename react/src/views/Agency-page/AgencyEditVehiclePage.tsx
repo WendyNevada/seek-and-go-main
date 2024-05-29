@@ -1,6 +1,5 @@
 import EditVehicle from '@/components/agency-exclusive/add-vehicle/EditVehicle'
 import AgencyNavbar from '@/components/navbar/AgencyNavbar'
-import React from 'react'
 import { useParams } from 'react-router-dom'
 
 const AgencyEditVehiclePage = () => {

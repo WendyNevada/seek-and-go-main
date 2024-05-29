@@ -20,7 +20,8 @@ class PackageH extends Model
         'promo_code',
         'package_price',
         'is_active',
-        'qty'
+        'qty',
+        'total_days'
     ];
 
     protected $primaryKey = 'package_h_id';

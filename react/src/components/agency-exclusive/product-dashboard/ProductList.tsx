@@ -5,6 +5,7 @@ import { urlConstant } from '@/urlConstant';
 import VehicleList from './ProductList/VehicleList';
 import HotelList from './ProductList/HotelList';
 import { useTranslation } from 'react-i18next';
+import PackageList from './ProductList/PackageList';
 
 const ProductList = () => {
     const { t } = useTranslation();
@@ -35,7 +36,9 @@ const ProductList = () => {
                 <Button onClick={onRouteAddHotel} className='rounded-full mr-2 mb-2'>{t('Add Hotel')}</Button>
                 <Button onClick={onRouteAddPackage} className='rounded-full mr-2 mb-2'>{t('Add Package')}</Button>
             </div>
-            <h1 className='text-3xl font-bold'>{t('List Attraction')}</h1>
+            <h1 className='text-3xl font-bold mt-8'>{t('List Package')}</h1>
+            <PackageList/>
+            <h1 className='text-3xl font-bold mt-8'>{t('List Attraction')}</h1>
             <AttractionList/>
             <h1 className='text-3xl font-bold mt-8'>{t('List Vehicle')}</h1>
             <VehicleList/>

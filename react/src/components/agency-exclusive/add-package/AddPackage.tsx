@@ -10,25 +10,31 @@ import { Button } from '@/components/ui/button'
 import VehicleQty from './ProductQty/VehicleQty'
 import HotelQty from './ProductQty/HotelQty'
 import { useTranslation } from 'react-i18next'
+import { useLogin } from '@/context/LoginContext'
+import { hitAddApi } from '@/context/HitApi'
+import { urlConstant } from '@/urlConstant'
+import { useNavigate } from 'react-router-dom'
 
 const AddPackage = () => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const [attractionQty, setAttractionQty] = useState<number>(0);
     const [vehicleQty, setVehicleQty] = useState<number>(0);
     const [hotelQty, setHotelQty] = useState<number>(0);
     const [attractionDetails, setAttractionDetails] = useState<addPackage['details']>([]);
     const [vehicleDetails, setVehicleDetails] = useState<addPackage['details']>([]);
     const [hotelDetails, setHotelDetails] = useState<addPackage['details']>([]);
+    const { user } = useLogin();
 
     const form = useForm<addPackage>({
         defaultValues: {
             package_code: "",
-            agency_id: "",
+            agency_id: String(user?.agency_id),
             package_name: "",
             description: "",
             package_price: 0,
             qty: 0,
-            total_days: "",
+            total_days: 0,
             details: []
         }
     })
@@ -49,10 +55,21 @@ const AddPackage = () => {
     }
 
     const onSubmit = async (values: addPackage) => {
-        const mergedDetails = [...attractionDetails, ...vehicleDetails, ...hotelDetails];
+        const mergedDetails = [...attractionDetails, ...vehicleDetails, ...hotelDetails].map(detail => ({
+            ref_attraction_id: detail.ref_attraction_id || null,
+            ref_vehicle_id: detail.ref_vehicle_id || null,
+            ref_hotel_id: detail.ref_hotel_id || null,
+            start_date: detail.start_dt || null,
+            end_date: detail.end_dt || null
+        }));
         const payload = { ...values, details: mergedDetails };
         console.log('merged details : ',mergedDetails);
         console.log('merged values : ',payload);
+        const response = await hitAddApi("/v1/CreatePackageAgency",payload);
+        if(response === 200)
+        {
+            navigate(urlConstant.AgencyHomePage);
+        }
     }
 
     return (
@@ -179,7 +196,7 @@ const AddPackage = () => {
                         <div className="flex flex-row space-x-4">
                             <div className="grid w-32 max-w-sm items-center text-center my-2">
                                 {/* <Input className='w-24' type="number" placeholder="Attraction qty" value={attractionQty} onChange={handleAttractionQtyChange}/> */}
-                                <Button variant={"outline"} className='w-38' onClick={() => setAttractionQty(attractionQty + 1)}>+ {t('Add Attraction')}</Button>
+                                <Button type='button' variant={"outline"} className='w-38' onClick={() => setAttractionQty(attractionQty + 1)}>+ {t('Add Attraction')}</Button>
                             </div>
                         </div>
                         <AttractionQty attractionQty={attractionQty} onDetailsChange={handleAttractionDetailsChange} onAttractionQtyChange={setAttractionQty}/>
@@ -187,7 +204,7 @@ const AddPackage = () => {
                         <div className="flex flex-row space-x-4">
                             <div className="grid w-32 max-w-sm items-center text-center my-2">
                                 {/* <Input className='w-24' type="number" placeholder="Attraction qty" value={attractionQty} onChange={handleAttractionQtyChange}/> */}
-                                <Button variant={"outline"} className='w-38' onClick={() => setVehicleQty(vehicleQty + 1)}>+ {t('Add Vehicle')}</Button>
+                                <Button type='button' variant={"outline"} className='w-38' onClick={() => setVehicleQty(vehicleQty + 1)}>+ {t('Add Vehicle')}</Button>
                             </div>
                         </div>
                         <VehicleQty vehicleQty={vehicleQty} onDetailsChange={handleVehicleDetailsChange} onVehicleQtyChange={setVehicleQty}/>
@@ -195,7 +212,7 @@ const AddPackage = () => {
                         <div className="flex flex-row space-x-4">
                             <div className="grid w-32 max-w-sm items-center text-center my-2">
                                 {/* <Input className='w-24' type="number" placeholder="Attraction qty" value={attractionQty} onChange={handleAttractionQtyChange}/> */}
-                                <Button variant={"outline"} className='w-38' onClick={() => setHotelQty(hotelQty + 1)}>+ {t('Add Hotel')}</Button>
+                                <Button type='button' variant={"outline"} className='w-38' onClick={() => setHotelQty(hotelQty + 1)}>+ {t('Add Hotel')}</Button>
                             </div>
                         </div>
                         <HotelQty hotelQty={hotelQty} onDetailsChange={handleHotelDetailsChange} onHotelQtyChange={setHotelQty}/>

@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import React, { useState, ChangeEvent } from 'react'
+import { useState, ChangeEvent } from 'react'
 import { z } from 'zod'
 import { addAttractionSchema } from './utils/schema'
 import { useForm } from 'react-hook-form'

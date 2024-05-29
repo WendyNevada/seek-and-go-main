@@ -1,12 +1,7 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import React from 'react'
 import { forgotPassword } from './utils/schema'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form'
 import { Required } from '../ui/Custom/required'
 import { Input } from '../ui/input'
-import axiosClient from '@/axios.client'
-import { toast } from '../ui/use-toast'
-import axios, { AxiosError } from 'axios'
 import { Button } from '../ui/button'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -29,7 +24,7 @@ const ForgotPasswordForm = ({account_id} : {account_id: number}) => {
         const merged_values = {...values, account_id};
         const response = await hitAddApi("/v1/ResetPassword",merged_values);
         if(response === 200)
-        {  
+        {
             navigate('/Login');
         }
 }

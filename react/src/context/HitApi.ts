@@ -19,7 +19,7 @@ export const hitAddApi = async (apiEndpoint: string, values: any) => {
         else if(response.data.message){
             toast({
                 variant: "destructive",
-                description: response.statusText,
+                description: response.data.message,
             });
         }
     }catch(response){

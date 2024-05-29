@@ -342,6 +342,74 @@ class PackageHService implements PackageHInterface
     {
         Mail::to($mailTo)->send(new CustomPackageRequestEmail($customerName));
     }
+
+    private function checkValidDateOnPackageRequest($detail)
+    {
+        if(isset($detail['start_dt']) && isset($detail['end_dt']) && $detail['start_dt'] != null && $detail['end_dt'] != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private function checkPackageInOrder($package_h_id): bool
+    {
+        $orderHs = OrderH::with('orderDs')
+                ->whereHas('orderDs', function ($query) use ($package_h_id) {
+                    $query->where('package_h_id', $package_h_id);
+                })
+                ->whereIn('order_status', [
+                    Constanta::$orderStatusNew,
+                    Constanta::$orderStatusApproved,
+                    Constanta::$orderStatusPaid,
+                    Constanta::$orderStatusCustPaid,
+                    Constanta::$orderStatusRetryPay
+                ])
+                ->get();
+
+        if(count($orderHs) > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private function checkDataEmpty($data)
+    {
+        if(count($data) <= 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private function getActivePackageDataSortedWithLimit($limit)
+    {
+        $package = PackageH::
+            join('agencies', 'package_h_s.agency_id', '=', 'agencies.agency_id')->
+            select(
+                'package_h_s.*', 
+                'agencies.agency_name',
+                )->
+            where('is_active', '1')->
+            where('is_custom', '0')->
+            where('qty', '>', '0')->
+            orderBy('updated_at', 'desc')->
+            orderby('package_h_s.package_price', 'asc')->
+            orderBy('qty', 'desc')->
+            limit($limit)->get();
+
+        return $package;
+    }
     #endregion
 
     #region Public Function
@@ -362,7 +430,7 @@ class PackageHService implements PackageHInterface
                     $strStartDate = null;
                     $strEndDate = null;
 
-                    if($detail['start_dt'] != null && $detail['end_dt'] != null || $detail['start_dt'] != "" && $detail['end_dt'] != "")
+                    if($this->checkValidDateOnPackageRequest($detail))
                     {
                         $strStartDate = $this->reformatDate($detail['start_dt']);
                         $strEndDate = $this->reformatDate($detail['end_dt']);
@@ -416,7 +484,7 @@ class PackageHService implements PackageHInterface
                 $strStartDate = null;
                 $strEndDate = null;
 
-                if($detail['start_dt'] != null && $detail['end_dt'] != null || $detail['start_dt'] != "" && $detail['end_dt'] != "")
+                if($this->checkValidDateOnPackageRequest($detail))
                 {
                     $strStartDate = $this->reformatDate($detail['start_dt']);
                     $strEndDate = $this->reformatDate($detail['end_dt']);
@@ -454,6 +522,14 @@ class PackageHService implements PackageHInterface
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Package not found'
+                ], 400);
+            }
+
+            if($this->checkPackageInOrder($request->package_h_id) == true)
+            {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Package is in active order'
                 ], 400);
             }
 
@@ -589,6 +665,34 @@ class PackageHService implements PackageHInterface
         }
     }
 
+    public function RejectCustomPackage(PackageHIdRequest $request)
+    {
+        try
+        {
+            DB::beginTransaction();
+
+            $packageH = $this->getPackageHById($request->package_h_id);
+
+            $this->updatePackageH($request->package_h_id, Constanta::$orderStatusRejected, 0);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Custom package rejected'
+            ], 200);
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function GetActivePackageHByAgencyId(AgencyIdRequest $request)
     {
         $packageH = $this->getPackageByAgencyId($request->agency_id);
@@ -637,6 +741,33 @@ class PackageHService implements PackageHInterface
         $vehicle = $this->getListVehicleByAgencyId($request->agency_id);
 
         return response()->json($vehicle);
+    }
+
+    public function GetAgencyPackagesHomepage()
+    {
+        $packages = $this->getActivePackageDataSortedWithLimit(Constanta::$homepageDataCount);
+
+        if($this->checkDataEmpty($packages) == true)
+        {
+            return response()->json(
+                [
+                    'status' => "error",
+                    'message' => "Data not found",
+                    'data'=> []
+                ]
+                ,400
+            );
+        }
+        else
+        {
+            return response()->json(
+                [
+                    'status' => "ok",
+                    'message' => "Success",
+                    'data'=> $packages
+                ]
+            , 200);
+        }
     }
     #endregion
 }
