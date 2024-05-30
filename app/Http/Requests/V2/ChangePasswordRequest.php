@@ -4,7 +4,7 @@ namespace App\Http\Requests\V2;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateCustomerAccountRequest extends FormRequest
+class ChangePasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +23,9 @@ class UpdateCustomerAccountRequest extends FormRequest
     {
         return [
             'account_id' => ['required'],
-            'account_name' => ['string', 'nullable'],
-            'phone' => ['string', 'nullable']
+            'old_password' => ['required', 'string'],
+            'password' => ['required', 'string'],
+            'confirm_password' => ['required', 'string']
         ];
     }
 }

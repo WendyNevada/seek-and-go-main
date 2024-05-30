@@ -24,7 +24,6 @@ class UpdateAgencyAccountRequest extends FormRequest
         return [
             'account_id' => ['required'],
             'account_name' => ['string', 'nullable'],
-            'password' => ['string', 'nullable'],
             'phone' => ['string', 'nullable'],
             'agency_name' => ['string', 'nullable'],
             'npwp' => ['string', 'nullable'],
