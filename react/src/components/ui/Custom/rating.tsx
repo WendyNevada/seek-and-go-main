@@ -1,4 +1,3 @@
-import React from "react";
 import StarOutlinedIcon from "@mui/icons-material/StarOutlined";
 import StarHalfOutlinedIcon from "@mui/icons-material/StarHalfOutlined";
 import StarBorderIcon from "@mui/icons-material/StarBorder";

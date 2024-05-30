@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 // import './Register.css'
-import { TextField } from '@mui/material';
 import CustomerRegisterComponent from './customer-register/CustomerRegister';
 import AgencyRegisterComponent from './agency-register/AgencyRegister';
 import { Button } from '../ui/button';

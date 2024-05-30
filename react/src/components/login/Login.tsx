@@ -1,4 +1,3 @@
-import React from 'react'
 import UserLogin from './user-login/UserLogin'
 
 const Login = () => {

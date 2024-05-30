@@ -1,6 +1,5 @@
 import OrderApproval from '@/components/agency-exclusive/main-dashboard/approval/OrderApproval';
 import AgencyNavbar from '@/components/navbar/AgencyNavbar';
-import React from 'react'
 import { useParams } from 'react-router-dom';
 
 const AgencyOrderApprovalPage = () => {

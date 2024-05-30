@@ -1,7 +1,6 @@
 import ProductVehicleDetail from '@/components/customer-exclusive/product-detail/ProductVehicleDetail'
 import Footer from '@/components/navbar/Footer'
 import Navbar from '@/components/navbar/Navbar'
-import React from 'react'
 import { useParams } from 'react-router-dom'
 
 const VehicleDetailPage = () => {

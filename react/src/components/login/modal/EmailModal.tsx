@@ -2,18 +2,14 @@ import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  DialogTitle
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { hitAddApi } from "@/context/HitApi";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 
 interface CredentialModalProps {
   isOpen: boolean;
@@ -25,7 +21,6 @@ interface email {
 }
 
 const EmailModal = ({ isOpen, onClose }:CredentialModalProps) => {
-  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const form = useForm<email>({

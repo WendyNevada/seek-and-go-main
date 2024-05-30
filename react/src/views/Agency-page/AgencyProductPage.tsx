@@ -1,7 +1,6 @@
 
 import ProductList from '@/components/agency-exclusive/product-dashboard/ProductList'
 import AgencyNavbar from '@/components/navbar/AgencyNavbar'
-import React from 'react'
 
 const AgencyProductPage = () => {
   return (

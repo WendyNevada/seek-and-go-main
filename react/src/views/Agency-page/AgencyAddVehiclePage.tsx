@@ -1,6 +1,5 @@
 import AddVehicle from '@/components/agency-exclusive/add-vehicle/AddVehicle'
 import AgencyNavbar from '@/components/navbar/AgencyNavbar'
-import React from 'react'
 
 const AgencyAddVehiclePage = () => {
   return (
