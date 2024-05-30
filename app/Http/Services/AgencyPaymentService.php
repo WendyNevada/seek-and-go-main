@@ -116,13 +116,41 @@ class AgencyPaymentService implements AgencyPaymentInterface
         $refPicture = RefPicture::where('agency_payment_id', $agency_payment_id)->first();
         $refPicture->delete();
     }
+
+    private function checkDataEmpty($data)
+    {
+        if(count($data) <= 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     #endregion
 
     #region Public Function
     public function GetAllAgencyPaymentByAgencyId(AgencyIdRequest $request)
     {
         $agencyPayment = $this->getDataAgencyPaymentByAgencyId($request->agency_id);
-        return $agencyPayment;
+
+        if($this->checkDataEmpty($agencyPayment))
+        {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'data not found',
+                'data' => null
+            ], 400);
+        }
+        else
+        {
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'success',
+                'data' => $agencyPayment
+            ], 200);
+        }
     }
 
     public function InsertAgencyPayment(StoreAgencyPaymentRequest $request)
