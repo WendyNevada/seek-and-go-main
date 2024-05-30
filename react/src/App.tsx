@@ -83,7 +83,7 @@ function AgencyRoutes() {
         <Route path="Approval/:order_h_id" element={<AgencyOrderApprovalPage/>} />
 
         {/* Edit Profile */}
-        <Route path="EditProfile/:agency_id" element={<EditAgencyProfilePage/>} />
+        <Route path="EditProfileAgency/:account_id" element={<EditAgencyProfilePage/>} />
     </Routes>
   );
 }
@@ -108,7 +108,7 @@ function CustomerRoutes() {
         <Route path="PaymentDetail/:order_h_id" element={<PaymentPage/>} />
 
         {/* Edit Profile */}
-        <Route path="EditProfile/:customer_id" element={<EditCustomerProfilePage/>} />
+        <Route path="EditProfileCustomer/:account_id" element={<EditCustomerProfilePage/>} />
     </Routes>
   );
 }
