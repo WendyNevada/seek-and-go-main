@@ -59,25 +59,27 @@ class AgencyPaymentService implements AgencyPaymentInterface
         $refPicture->save();
     }
 
-    private function createAgencyPaymentBank($agency_id, $payment_type, $bank_name, $account_no)
+    private function createAgencyPaymentBank($agency_id, $payment_type, $bank_name, $account_no, $account_name)
     {
         $agencyPayment = AgencyPayment::create([
             'agency_id' => $agency_id,
             'payment_type' => $payment_type,
             'bank_name' => $bank_name,
-            'account_no' => $account_no
+            'account_no' => $account_no,
+            'account_name' => $account_name
         ]);
 
         return $agencyPayment;
     }
 
-    private function createAgencyPaymentQris($agency_id, $payment_type, $bank_name)
+    private function createAgencyPaymentQris($agency_id, $payment_type, $bank_name, $account_name)
     {
         $agencyPayment = AgencyPayment::create([
             'agency_id' => $agency_id,
             'payment_type' => $payment_type,
             'bank_name' => $bank_name,
-            'account_no' => null
+            'account_no' => null,
+            'account_name' => $account_name
         ]);
 
         return $agencyPayment;
@@ -95,10 +97,11 @@ class AgencyPaymentService implements AgencyPaymentInterface
         $refPicture->save();
     }
 
-    private function editAgencyPaymentAccountNo($agency_payment_id, $account_no)
+    private function editAgencyPaymentAccountNo($agency_payment_id, $account_no, $account_name)
     {
         $agencyPayment = AgencyPayment::where('agency_payment_id', $agency_payment_id)->first();
         $agencyPayment->account_no = $account_no;
+        $agencyPayment->account_name = $account_name;
         $agencyPayment->save();
     }
 
@@ -136,7 +139,7 @@ class AgencyPaymentService implements AgencyPaymentInterface
             }
             else if($request->payment_type == Constanta::$paymentTypeBank)
             {
-                $agencyPayment = $this->createAgencyPaymentBank($request->agency_id, $request->payment_type, $request->bank_name, $request->account_no);
+                $agencyPayment = $this->createAgencyPaymentBank($request->agency_id, $request->payment_type, $request->bank_name, $request->account_no, $request->account_name);
             }
 
             DB::commit();
@@ -169,7 +172,7 @@ class AgencyPaymentService implements AgencyPaymentInterface
             }
             else
             {
-                $this->editAgencyPaymentAccountNo($request->agency_payment_id, $request->account_no);
+                $this->editAgencyPaymentAccountNo($request->agency_payment_id, $request->account_no, $request->account_name);
             }
 
             DB::commit();
