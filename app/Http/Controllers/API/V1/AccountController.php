@@ -13,6 +13,7 @@ use App\Http\Requests\V2\AccountIdRequest;
 use App\Http\Requests\V2\CheckEmailRequest;
 use App\Http\Requests\V1\StoreAccountRequest;
 use App\Http\Resources\V1\CheckEmailResource;
+use App\Http\Requests\V2\ChangePasswordRequest;
 use App\Http\Requests\V2\ForgotPasswordRequest;
 use App\Http\Requests\V2\StoreAccountAgencyRequest;
 use App\Http\Requests\V2\UpdateAgencyAccountRequest;
@@ -128,6 +129,12 @@ class AccountController extends Controller
     public function GetAccountInfoById(AccountService $accountService, AccountIdRequest $request)
     {
         $response = $accountService->GetAccountInfoById($request);
+        return $response;
+    }
+
+    public function ChangePassword(AccountService $accountService, ChangePasswordRequest $request)
+    {
+        $response = $accountService->ChangePassword($request);
         return $response;
     }
 
