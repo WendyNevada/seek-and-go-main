@@ -52,6 +52,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('GetAccountInfoById', 'AccountController@GetAccountInfoById');
 
+    Route::post('ChangePassword', 'AccountController@ChangePassword');
+
     #endregion
 
     #region Attraction
