@@ -598,13 +598,9 @@ class OrderHService implements OrderHInterface
 
                     $totPrice += $this->getPackagePrice($packageId->package_h_id);
                 }
-
-                $this->updateOrderTotalPrice($orderH->order_h_id, $totPrice);
             }
-            else
-            {
-                $this->updateOrderTotalPrice($orderH->order_h_id, $totPrice);
-            }
+            
+            $this->updateOrderTotalPrice($orderH->order_h_id, $totPrice);
 
             DB::commit();
 

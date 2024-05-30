@@ -26,7 +26,8 @@ class StoreAgencyPaymentRequest extends FormRequest
             'payment_type' => 'required',
             'bank_name' => 'required',
             'account_no' => 'nullable',
-            'picture' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif', 'max:10000']
+            'picture' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif', 'max:10000'],
+            'account_name' => 'required'
         ];
     }
 }
