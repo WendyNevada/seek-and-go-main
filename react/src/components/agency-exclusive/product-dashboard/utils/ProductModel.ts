@@ -76,3 +76,20 @@ export interface DaumHotel {
     agency_name: string
     address_zipcode: string
 }
+
+export interface Package {
+    package_h_id: number;
+    package_code: string;
+    agency_id: number;
+    customer_id: number | null;
+    package_name: string;
+    description: string;
+    is_custom: number;
+    custom_status: string | null;
+    package_price: number;
+    is_active: number;
+    qty: number;
+    total_days: number;
+    created_at: string;
+    updated_at: string;
+}

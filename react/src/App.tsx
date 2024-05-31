@@ -24,6 +24,8 @@ import HotelOrderDetailPage from './views/Customer-page/Order-page/HotelOrderDet
 import ForgotPasswordPage from './views/Forgot-Password-Page/ForgotPasswordPage';
 import PaymentPage from './views/Customer-page/Order-page/Payment/PaymentPage';
 import AgencyEditPackagePage from './views/Agency-page/AgencyEditPackagePage';
+import EditAgencyProfilePage from './views/Profile-Page/EditAgencyProfilePage';
+import EditCustomerProfilePage from './views/Profile-Page/EditCustomerProfilePage';
 
 function App() {
   return (
@@ -79,6 +81,9 @@ function AgencyRoutes() {
 
         {/* order approval page */}
         <Route path="Approval/:order_h_id" element={<AgencyOrderApprovalPage/>} />
+
+        {/* Edit Profile */}
+        <Route path="EditProfileAgency/:account_id" element={<EditAgencyProfilePage/>} />
     </Routes>
   );
 }
@@ -101,6 +106,9 @@ function CustomerRoutes() {
         <Route path="VehicleOrderDetail/:ref_vehicle_id" element={<VehicleOrderDetailPage/>} />
         <Route path="HoteleOrderDetail/:ref_hotel_id" element={<HotelOrderDetailPage/>} />
         <Route path="PaymentDetail/:order_h_id" element={<PaymentPage/>} />
+
+        {/* Edit Profile */}
+        <Route path="EditProfileCustomer/:account_id" element={<EditCustomerProfilePage/>} />
     </Routes>
   );
 }

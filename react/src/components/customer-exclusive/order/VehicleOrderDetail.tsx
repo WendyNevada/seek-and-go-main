@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { AgencyData, VehicleRoot } from '../interface/interface';
 import axiosClient from '@/axios.client';
 import { formatPrice } from '@/utils/priceFormating';
@@ -13,6 +13,7 @@ import MapComponent from '@/components/ui/Custom/maps/MapComponent';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Calendar } from '@/components/ui/calendar';
+import { RangeDatePicker } from './component/RangeDatePicker';
 
 const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
     useLogin(urlConstant.VehicleOrderDetail + '/' + ref_vehicle_id);
@@ -24,32 +25,36 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
     const [position, setPosition] = useState<Coordinates | null>(null);
     const [addr, setAddr] = useState<string>('');
     const navigate = useNavigate();
-    const [startDate, setStartDate] = useState<Date | null>(null);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const [startDate, setStartDate] = useState<Date | null>(today);
     const [endDate, setEndDate] = useState<Date | null>(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axiosClient.post('v1/GetVehicleById', { ref_vehicle_id: ref_vehicle_id });
-                setVehicle(response.data);
-                const parts = response.data.address_zipcode.split(',');
-                const wordAfterSecondComma = parts.length >= 3 ? parts[2].trim() : null;
+    const fetchData = useCallback(async () => {
+        try {
+            const response = await axiosClient.post('v1/GetVehicleById', { ref_vehicle_id });
+            setVehicle(response.data);
+            const parts = response.data.address_zipcode.split(',');
+            const wordAfterSecondComma = parts.length >= 3 ? parts[2].trim() : null;
 
-                if(response.data !== null){
-                    const response2 = await axiosClient.post('v1/GetAgencyByAgencyId', { agency_id: response.data.agency_id });
-                    setAgency(response2.data.data);
-                    setAddr(wordAfterSecondComma);
-                    const coords = await geocodeAddress(wordAfterSecondComma);
-                    setPosition(coords);
-                }
-            } catch (error) {
-                console.error(error);
-            }finally {
-                setLoading(false);
+            if (response.data !== null) {
+                const response2 = await axiosClient.post('v1/GetAgencyByAgencyId', { agency_id: response.data.agency_id });
+                setAgency(response2.data.data);
+                setAddr(wordAfterSecondComma);
+                const coords = await geocodeAddress(wordAfterSecondComma);
+                setPosition(coords);
             }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
         }
+    }, [ref_vehicle_id]);
+
+    useEffect(() => {
         fetchData();
-    },[ref_vehicle_id])
+    }, [fetchData]);
 
     const setQtyDay = (num: number) => {
         if (qty + num >= 0) {
@@ -73,12 +78,13 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
     };
 
     const disablePastDates = (date : Date) => {
-        if (!startDate) return false; // Allow selection if no start date is selected
-        return date < startDate;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return date < today;
     };
 
     const modifiers = {
-        disabled: disablePastDates, // Disable dates before the selected start date
+        disabled: disablePastDates,
     };
 
     const onConfirm = () => {
@@ -114,10 +120,11 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
                     <div className="shadow-lg border-1 rounded-xl p-6 m-4 bg-slate-100 space-y-2">
                         <p>Tentukan Tanggal</p>
                         <div className="flex flex-row space-x-4 items-center">
-                            <Calendar
+                            {/* <Calendar
                                 mode="single"
                                 selected={startDate ? startDate : new Date()}
                                 onSelect={handleStartDateSelect}
+                                modifiers={modifiers}
                                 initialFocus
                             />
                             <p>to</p>
@@ -126,7 +133,8 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
                                 selected={endDate ? endDate : new Date()}
                                 onSelect={handleEndDateSelect}
                                 modifiers={modifiers} // Set the minDate to the selected start date
-                            />
+                            /> */}
+                            <RangeDatePicker/>
                         </div>
                         <p>Jumlah Hari</p>
                         <AddDayQty qty={qty} setQtyDay={setQtyDay}/>
