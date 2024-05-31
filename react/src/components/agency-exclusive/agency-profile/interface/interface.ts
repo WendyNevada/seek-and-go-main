@@ -20,8 +20,6 @@ export interface Agencies {
     updated_at: string
 }
 
-export type Payment = PayAccount[]
-
 export interface PayAccount {
   agency_payment_id: number
   agency_id: number

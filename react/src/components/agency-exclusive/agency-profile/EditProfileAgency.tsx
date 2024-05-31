@@ -1,15 +1,16 @@
 import axiosClient from '@/axios.client';
 import { useEffect, useState } from 'react'
-import { Account, Payment } from './interface/interface';
+import { Account, PayAccount } from './interface/interface';
 import { useTranslation } from 'react-i18next';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import EditAgencyProfileForm from './sub-component/EditAgencyProfileForm';
 import EditAgencyPaymentAccount from './sub-component/EditAgencyPaymentAccount';
 import { useLogin } from '@/context/LoginContext';
+import EditAgencyPassword from './sub-component/EditAgencyPassword';
 
 const EditProfileAgency = ({account_id} : {account_id:number}) => {
     const [ agency, setAgency ] = useState<Account>();
-    const [ payment, setPayment ] = useState<Payment>([]);
+    const [ payment, setPayment ] = useState<PayAccount[]>([]);
     const { t } = useTranslation();
     const { user } = useLogin();
 
@@ -35,7 +36,7 @@ const EditProfileAgency = ({account_id} : {account_id:number}) => {
             try {
                 const response = await axiosClient.post('v1/GetAllAgencyPaymentByAgencyId', { agency_id : user?.agency_id });
                 console.log(response.data);
-                setPayment(response.data);
+                setPayment(response.data.data);
                 console.log('payment res : ', response)
             }
             catch (error) {
@@ -62,7 +63,7 @@ const EditProfileAgency = ({account_id} : {account_id:number}) => {
                     )}
                 </TabsContent>
                 <TabsContent value="account"><EditAgencyPaymentAccount payment={payment}/></TabsContent>
-                <TabsContent value="password">Change your password here.</TabsContent>
+                <TabsContent value="password"><EditAgencyPassword/></TabsContent>
             </Tabs>
         </div>
     )
