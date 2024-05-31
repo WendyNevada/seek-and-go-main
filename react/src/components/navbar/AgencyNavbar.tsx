@@ -120,7 +120,7 @@ const Navbar = () => {
                 </DropdownMenu>
 
                 <DropdownMenu>
-                    <DropdownMenuTrigger className='text-teal-200 mx-5 hover:text-white'><PersonIcon/>{user?.role}{user?.account_id}</DropdownMenuTrigger>
+                    <DropdownMenuTrigger className='text-teal-200 mx-5 hover:text-white'><PersonIcon/>{user?.account_name}</DropdownMenuTrigger>
                     <DropdownMenuContent>
                         <DropdownMenuLabel>My Account</DropdownMenuLabel>
                         <DropdownMenuSeparator />

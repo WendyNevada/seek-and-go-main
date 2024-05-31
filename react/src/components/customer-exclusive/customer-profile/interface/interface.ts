@@ -7,28 +7,17 @@ export interface Account {
     email_verified_at: string
     created_at: string
     updated_at: string
-    agencies: Agencies
+    customers: Customers
 }
 
-export interface Agencies {
-    agency_id: number
+export interface Customers {
+    customer_id: number
     account_id: number
-    agency_name: string
-    npwp: string
-    location: string
+    customer_name: string
+    gender: string
+    birth_date: string
     created_at: string
     updated_at: string
-}
-
-export interface PayAccount {
-  agency_payment_id: number
-  agency_id: number
-  payment_type: string
-  bank_name: string
-  account_no: string
-  created_at: string
-  updated_at: string
-  image_url: string
 }
 
 export interface ChangePassword {

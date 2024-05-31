@@ -1,14 +1,13 @@
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { ChangePassword } from "../interface/interface";
-import { useTranslation } from "react-i18next";
-import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { hitAddApi } from "@/context/HitApi";
-import { useLogin } from "@/context/LoginContext";
+import { useLogin } from '@/context/LoginContext';
+import { useTranslation } from 'react-i18next';
+import { ChangePassword } from '../interface/interface';
+import { hitAddApi } from '@/context/HitApi';
+import { useForm } from 'react-hook-form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
-const EditAgencyPassword = () => {
-
+const EditCustomerPassword = () => {
   const { t } = useTranslation();
   const { user } = useLogin();
 
@@ -99,4 +98,4 @@ const EditAgencyPassword = () => {
   )
 }
 
-export default EditAgencyPassword
+export default EditCustomerPassword

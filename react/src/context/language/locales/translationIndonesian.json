@@ -104,7 +104,11 @@
     "Continue": "Lanjutkan",
     "Input email here": "Masukkan surel disini",
     "Send": "Kirim",
-    "a": "a",
-    "a": "a",
-    "a": "a"
+    "Confirm": "Konfirmasi",
+    "Old Password": "Password Lama",
+    "Edit Profile": "Ubah Profil",
+    "Customer Data": "Data Pelanggan",
+    "Location": "Lokasi",
+    "Agency Data": "Data Agensi",
+    "Payment Account": "Akun Pembayaran"
 }

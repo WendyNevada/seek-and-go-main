@@ -51,9 +51,9 @@ const EditProfileAgency = ({account_id} : {account_id:number}) => {
             <h1 className="text-2xl mb-8">{t('Edit Profile')}</h1>
             <Tabs defaultValue="agency_data">
                 <TabsList>
-                    <TabsTrigger value="agency_data">Agency Data</TabsTrigger>
-                    <TabsTrigger value="account">Account</TabsTrigger>
-                    <TabsTrigger value="password">Password</TabsTrigger>
+                    <TabsTrigger value="agency_data">{t('Agency Data')}</TabsTrigger>
+                    <TabsTrigger value="account">{t('Payment Account')}</TabsTrigger>
+                    <TabsTrigger value="password">{t('Password')}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="agency_data">
                     {agency ? (

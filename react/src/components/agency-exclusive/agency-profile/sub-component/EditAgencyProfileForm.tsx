@@ -5,9 +5,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
+import { hitAddApi } from '@/context/HitApi';
+import { useLogin } from '@/context/LoginContext';
 
 const EditAgencyProfileForm = ({agency} : {agency : Account}) => {
     const { t } = useTranslation();
+    const { user } = useLogin();
 
     const form = useForm<Account>({
         defaultValues:{
@@ -29,7 +32,19 @@ const EditAgencyProfileForm = ({agency} : {agency : Account}) => {
     }, [])
 
     const onSubmit = async (values: Account) => {
-        console.log(values);
+        const merged_values = {
+            agency_name: values.agencies.agency_name, 
+            npwp: values.agencies.npwp, 
+            location: values.agencies.location, 
+            account_name: values.account_name,
+            phone: values.phone,
+            account_id: user?.account_id
+        };
+        const response = await hitAddApi("/v1/UpdateAgencyAccount", merged_values);
+        if(response === 200)
+        {
+            window.location.reload();
+        }
     }
     return (
         <div>
@@ -59,11 +74,11 @@ const EditAgencyProfileForm = ({agency} : {agency : Account}) => {
                                 name="phone"
                                 render={({ field }) => (
                                     <FormItem className="custom-field">
-                                        <FormLabel>{t('Phone')}</FormLabel>
+                                        <FormLabel>{t('Phone Number')}</FormLabel>
                                         <FormMessage />
                                         <FormControl className='w-full'>
                                             <Input
-                                                placeholder={t('Phone')}
+                                                placeholder={t('Phone Number')}
                                                 {...field}
                                                 onChange={field.onChange}
                                             />
@@ -126,9 +141,8 @@ const EditAgencyProfileForm = ({agency} : {agency : Account}) => {
                             )}
                         />
                         <div className="justify-center flex space-x-2">
-                            <Button type="submit" className='mt-4 bg-blue-500'>{t('Save')}
+                            <Button type="submit" className='mt-4 bg-green-500'>{t('Confirm')}
                             </Button>
-                            <Button type="button" variant='destructive' className='mt-4'>{t('Cancel')}</Button>
                         </div>
                     </div>
                 </form>
