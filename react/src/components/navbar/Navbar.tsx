@@ -15,10 +15,12 @@ import { Avatar, AvatarFallback } from '../ui/avatar'
 import LanguageIcon from '@mui/icons-material/Language';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
+import { useNavigate } from 'react-router-dom'
 
 const Navbar = () => {
 
     const { i18n } = useTranslation();
+    const navigate = useNavigate();
 
     const changeLanguage = (language: string) => {
     i18n.changeLanguage(language);
@@ -64,6 +66,10 @@ const Navbar = () => {
             }
         }
     ]
+
+    const navigateEditProfile = () => {
+        navigate(`/Customer/EditProfileCustomer/${user?.account_id}`);
+    }
 
     return (
         <nav className='flex-no-wrap fixed top-0 flex w-full items-center justify-between bg-blue-800 lg:flex-wrap lg:py-4 p-6 z-50'>
@@ -142,11 +148,11 @@ const Navbar = () => {
 
                 { user ?
                 (<DropdownMenu>
-                    <DropdownMenuTrigger className='text-teal-200 mx-5 hover:text-white'><PersonIcon/>{user?.role}{user?.account_id}</DropdownMenuTrigger>
+                    <DropdownMenuTrigger className='text-teal-200 mx-5 hover:text-white'><PersonIcon/>{user?.account_name}</DropdownMenuTrigger>
                     <DropdownMenuContent>
                         <DropdownMenuLabel>My Account</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem><PersonIcon/>Profile</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigateEditProfile()}><PersonIcon/>Profile</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => logout()}><LogoutIcon/>Logout</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

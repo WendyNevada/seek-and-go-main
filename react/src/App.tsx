@@ -94,10 +94,10 @@ function CustomerRoutes() {
 
     // If user doesn't have the required role, redirect to login
     if (!hasCustomerRole) {
-        toast({
-            variant: "destructive",
-            description: "please Login first"
-        });
+        // toast({
+        //     variant: "destructive",
+        //     description: "please Login first"
+        // });
         return <Navigate to="/Login" />;
     }
 

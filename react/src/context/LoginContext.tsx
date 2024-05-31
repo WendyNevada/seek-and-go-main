@@ -9,6 +9,7 @@ interface User {
   customer_id: number;
   agency_id: number;
   role: string;
+  account_name: string;
 }
 
 // Define the shape of login credentials
@@ -70,6 +71,7 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         customer_id: response.data.customer_id,
         agency_id: response.data.agency_id,
         role: response.data.role,
+        account_name: response.data.account_name
       };
 
       // Store user data in localStorage

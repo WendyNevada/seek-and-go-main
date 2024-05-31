@@ -251,7 +251,8 @@ class AccountService implements AccountInterface
                     'account_id' => "-",
                     'role' => "-",
                     'customer_id' => "-",
-                    'agency_id' => "-"
+                    'agency_id' => "-",
+                    'account_name' => "-"
                 ], 400);
             }
             else
@@ -264,7 +265,8 @@ class AccountService implements AccountInterface
                         'account_id' => "-",
                         'role' => "-",
                         'customer_id' => "-",
-                        'agency_id' => "-"
+                        'agency_id' => "-",
+                        'account_name' => "-"
                     ], 400);
                 }
                 else
@@ -277,7 +279,8 @@ class AccountService implements AccountInterface
                             'account_id' => "-",
                             'role' => "-",
                             'customer_id' => "-",
-                            'agency_id' => "-"
+                            'agency_id' => "-",
+                            'account_name' => "-"
                         ], 400);
                     }
                     else
@@ -290,7 +293,8 @@ class AccountService implements AccountInterface
                             'account_id' => $account->account_id,
                             'role' => $account->role,
                             'customer_id' => $data['customer_id'],
-                            'agency_id' => $data['agency_id']
+                            'agency_id' => $data['agency_id'],
+                            'account_name' => $account->account_name
                         ], 200);
                     
                     }
@@ -306,7 +310,8 @@ class AccountService implements AccountInterface
                 'message' => $message,
                 'account_id' => "-",
                 'customer_id' => "-",
-                'agency_id' => "-"
+                'agency_id' => "-",
+                'account_name' => "-"
             ], 500);
         }
     }
@@ -421,13 +426,13 @@ class AccountService implements AccountInterface
         {
             DB::beginTransaction();
             
-            $account = $this->updateAccount($request->account_id, $request->account_name, $request->email, $request->role, $request->phone);
+            $account = $this->updateAccount($request->account_id, $request->account_name, $request->phone);
 
             DB::commit();
 
             return response()->json([
                 'status' => "ok",
-                'message' => "success",
+                'message' => "Account updated successfully",
                 'account_id' => $account->account_id
             ], 200);
             
@@ -452,7 +457,7 @@ class AccountService implements AccountInterface
         {   
             DB::beginTransaction();
 
-            $account = $this->updateAccount($request->account_id, $request->account_name, $request->email, $request->role, $request->phone);
+            $account = $this->updateAccount($request->account_id, $request->account_name, $request->phone);
 
             $agency = $this->updateAgency($account->account_id, $request->agency_name, $request->npwp, $request->location);
 
@@ -460,7 +465,7 @@ class AccountService implements AccountInterface
 
             return response()->json([
                 'status' => "ok",
-                'message' => "success",
+                'message' => "Account updated successfully",
                 'account_id' => $account->account_id
             ], 200);
             

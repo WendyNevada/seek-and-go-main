@@ -104,7 +104,11 @@
     "Continue": "Continue",
     "Input email here": "Input email here",
     "Send": "Send",
-    "a": "a",
-    "a": "a",
-    "a": "a"
+    "Confirm": "Confirm",
+    "Old Password": "Old Password",
+    "Edit Profile": "Edit Profile",
+    "Customer Data": "Customer Data",
+    "Location": "Location",
+    "Agency Data": "Agency Data",
+    "Payment Account": "Payment Account"
 }
