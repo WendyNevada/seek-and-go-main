@@ -1,5 +1,4 @@
 import '@/context/language/i18n';
-import { toast } from './components/ui/use-toast';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginRegisterPage from './views/Login-register-page/RegisterPage';
 import LoginPage from './views/Login-register-page/LoginPage';
@@ -26,6 +25,7 @@ import PaymentPage from './views/Customer-page/Order-page/Payment/PaymentPage';
 import AgencyEditPackagePage from './views/Agency-page/AgencyEditPackagePage';
 import EditAgencyProfilePage from './views/Profile-Page/EditAgencyProfilePage';
 import EditCustomerProfilePage from './views/Profile-Page/EditCustomerProfilePage';
+import AttractionOrderDetailPage from './views/Customer-page/Order-page/AttractionOrderDetailPage';
 
 function App() {
   return (
@@ -104,7 +104,8 @@ function CustomerRoutes() {
   return (
     <Routes>
         <Route path="VehicleOrderDetail/:ref_vehicle_id" element={<VehicleOrderDetailPage/>} />
-        <Route path="HoteleOrderDetail/:ref_hotel_id" element={<HotelOrderDetailPage/>} />
+        <Route path="HotelOrderDetail/:ref_hotel_id" element={<HotelOrderDetailPage/>} />
+        <Route path="AttractionOrderDetail/:ref_attraction_id" element={<AttractionOrderDetailPage/>} />
         <Route path="PaymentDetail/:order_h_id" element={<PaymentPage/>} />
 
         {/* Edit Profile */}
