@@ -4,7 +4,7 @@ export interface VehicleRoot {
     vehicle: Vehicle
     picture_url: string
     base_price: number
-    address: string
+    address_zipcode: string
   }
 
   export interface Vehicle {
@@ -34,7 +34,7 @@ export interface HotelRoot {
     picture_url: string
     base_price: number
     agency_id: number
-    address: string
+    address_zipcode: string
   }
 
   export interface Hotel {
@@ -59,7 +59,7 @@ export interface AttractionRoot {
     picture_url: string
     base_price: number
     agency_id: number
-    address: string
+    address_zipcode: string
   }
 
   export interface Attraction {

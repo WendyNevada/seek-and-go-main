@@ -11,4 +11,6 @@ export const urlConstant = {
 
     // Customer Routes
     VehicleOrderDetail: "/Customer/VehicleOrderDetail",
+    HotelOrderDetail: "/Customer/HotelOrderDetail",
+    AttractionOrderDetail: "/Customer/AttractionOrderDetail"
   } as const;

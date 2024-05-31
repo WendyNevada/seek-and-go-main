@@ -1,4 +1,5 @@
 import { formatPrice } from '@/utils/priceFormating';
+import { useTranslation } from 'react-i18next';
 
 interface PriceBoxProps {
     price: number;
@@ -7,15 +8,17 @@ interface PriceBoxProps {
 }
 
 const PriceBox = ({price, qty, totalPrice} : PriceBoxProps) => {
+    const { t } = useTranslation();
+
     return (
         <div>
             <div className="flex flex-row justify-between">
-                <p>Per Day</p>
-                <p>{price} x {qty}</p>
+                <p>{t('Per Day')}</p>
+                <p className='font-bold'>{price} x {qty}</p>
             </div>
             <div className="flex flex-row justify-between">
-                <p>Total</p>
-                <p className='tetx'>{formatPrice(totalPrice)}</p>
+                <p>{t('Total')}</p>
+                <p className='tetx font-bold'>{formatPrice(totalPrice)}</p>
             </div>
         </div>
     )
