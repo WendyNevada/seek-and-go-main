@@ -224,6 +224,10 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::post('SearchVehicleCustomer', 'AgencyAffiliateController@SearchVehicleCustomer');
 
     Route::post('GetAgencyByAgencyId', 'AgencyAffiliateController@GetAgencyByAgencyId');
+
+    Route::post('GetAllAgencyForAgencyPage', 'AgencyAffiliateController@GetAllAgencyForAgencyPage');
+
+    Route::post('GetAllAgencySearchBar', 'AgencyAffiliateController@GetAllAgencySearchBar');
     #endregion
 
     #region AgencyPayment
