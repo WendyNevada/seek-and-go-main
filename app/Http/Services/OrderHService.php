@@ -74,20 +74,29 @@ class OrderHService implements OrderHInterface
             $order = OrderH::where([
                 ['customer_id', $customer_id],
                 ['order_status', $order_status]
-            ])->with('orderDs')->orderBy('order_dt', 'asc')->limit($limit)->get();
+            ])->
+            join('agencies', 'order_h_s.agency_id', '=', 'agencies.agency_id')->
+            select('order_h_s.*', 'agencies.agency_name')->
+            with('orderDs')->orderBy('order_dt', 'asc')->limit($limit)->get();
         }
         else if($order_status == 'ALL')
         {
             $order = OrderH::where([
                 ['customer_id', $customer_id]
-            ])->with('orderDs')->orderBy('order_dt', 'asc')->get();
+            ])->
+            join('agencies', 'order_h_s.agency_id', '=', 'agencies.agency_id')->
+            select('order_h_s.*', 'agencies.agency_name')->
+            with('orderDs')->orderBy('order_dt', 'asc')->get();
         }
         else
         {
             $order = OrderH::where([
                 ['customer_id', $customer_id],
                 ['order_status', $order_status]
-            ])->with('orderDs')->orderBy('order_dt', 'asc')->get();
+            ])->
+            join('agencies', 'order_h_s.agency_id', '=', 'agencies.agency_id')->
+            select('order_h_s.*', 'agencies.agency_name')->
+            with('orderDs')->orderBy('order_dt', 'asc')->get();
         }
 
         return $order;
@@ -344,14 +353,17 @@ class OrderHService implements OrderHInterface
         else if($product_type == Constanta::$hotel)
         {
             $product = RefHotel::where('ref_hotel_id', $product['ref_hotel_id'])->first();
+            $qtyOrder = 1;
         }
         else if($product_type == Constanta::$vehicle)
         {
             $product = RefVehicle::where('ref_vehicle_id', $product['ref_vehicle_id'])->first();
+            $qtyOrder = 1;
         }
         else if($product_type == Constanta::$package)
         {
             $product = PackageH::where('package_h_id', $product['package_h_id'])->first();
+            $qtyOrder = 1;
         }
 
         $product->update([
@@ -560,12 +572,6 @@ class OrderHService implements OrderHInterface
 
                 $price = $detail['price'];
 
-                if(($detail['ref_hotel_id'] != null && $detail['package_h_id'] == null) || ($detail['ref_vehicle_id'] != null && $detail['package_h_id'] == null))
-                {
-                    $totDays = $this->getTotalDays($strEndDate, $strStartDate);
-                    $price = $this->getTotalPrice($detail['price'], $totDays);
-                }
-
                 $orderD = $this->createOrderD(
                     $orderH->order_h_id,
                     $detail['package_h_id'],
@@ -580,6 +586,8 @@ class OrderHService implements OrderHInterface
 
                 if(($detail['ref_hotel_id'] != null && $detail['package_h_id'] == null) || ($detail['ref_vehicle_id'] != null && $detail['package_h_id'] == null))
                 {   
+                    $totDays = $this->getTotalDays($strEndDate, $strStartDate);
+                    $price = $this->getTotalPrice($detail['price'], $totDays);
                     $totPrice += $price;
                 }
 
