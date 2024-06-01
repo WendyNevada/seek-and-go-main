@@ -76,6 +76,12 @@ class OrderHService implements OrderHInterface
                 ['order_status', $order_status]
             ])->with('orderDs')->orderBy('order_dt', 'asc')->limit($limit)->get();
         }
+        else if($order_status == 'ALL')
+        {
+            $order = OrderH::where([
+                ['customer_id', $customer_id]
+            ])->with('orderDs')->orderBy('order_dt', 'asc')->get();
+        }
         else
         {
             $order = OrderH::where([
@@ -329,7 +335,7 @@ class OrderHService implements OrderHInterface
         }
     }
 
-    private function reduceProductQty($product, $product_type)
+    private function reduceProductQty($product, $product_type, $qtyOrder)
     {
         if($product_type == Constanta::$attraction)
         {
@@ -349,7 +355,7 @@ class OrderHService implements OrderHInterface
         }
 
         $product->update([
-            'qty' => $product->qty - 1
+            'qty' => $product->qty - $qtyOrder
         ]);
     }
 
@@ -554,7 +560,7 @@ class OrderHService implements OrderHInterface
 
                 $price = $detail['price'];
 
-                if($detail['package_h_id'] == null)
+                if(($detail['ref_hotel_id'] != null && $detail['package_h_id'] == null) || ($detail['ref_vehicle_id'] != null && $detail['package_h_id'] == null))
                 {
                     $totDays = $this->getTotalDays($strEndDate, $strStartDate);
                     $price = $this->getTotalPrice($detail['price'], $totDays);
@@ -572,12 +578,17 @@ class OrderHService implements OrderHInterface
                     $detail['qty']
                 );
 
-                if($detail['package_h_id'] == null)
+                if(($detail['ref_hotel_id'] != null && $detail['package_h_id'] == null) || ($detail['ref_vehicle_id'] != null && $detail['package_h_id'] == null))
                 {   
                     $totPrice += $price;
                 }
 
-                $this->reduceProductQty($detail, $detail['product_type']);
+                if($detail['ref_attraction_id'] != null && $detail['package_h_id'] == null)
+                {
+                    $totPrice = $price * $detail['qty'];
+                }
+
+                $this->reduceProductQty($detail, $detail['product_type'], $detail['qty']);
             }
 
             $packageIds = $this->getPackageInsideOrder($orderH->order_h_id);
@@ -605,7 +616,7 @@ class OrderHService implements OrderHInterface
             DB::commit();
 
             return response()->json([
-                'status' => 'success',
+                'status' => 'ok',
                 'message' => 'Order created successfully',
                 'order_h_id' => $orderH->order_h_id,
                 'order_no' => $orderH->order_no
