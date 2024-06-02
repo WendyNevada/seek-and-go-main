@@ -47,7 +47,11 @@ export const useLogin = (path?:string) => {
 
 // Provider component
 export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+        // Fetch user data from local storage when component mounts
+        const storedUser = localStorage.getItem('user');
+        return storedUser ? JSON.parse(storedUser) : null;
+    });
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -58,7 +62,7 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         setUser(parsedUser);
         handleNavigation(parsedUser);
     }
-}, []);
+    }, []);
 
   // Function to handle user login
   const login = async (credentials: LoginCredentials) => {
