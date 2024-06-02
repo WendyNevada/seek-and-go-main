@@ -93,8 +93,28 @@ export interface AttractionRoot {
     payment_type: string
     bank_name: string
     account_no?: string
+    account_name: string
     created_at: string
     updated_at: string
     image_url?: string
+  }
+
+  export interface OrderData {
+    agency_id : number
+    customer_id : number
+    order_dt : string
+    details : OrderDetail[]
+  }
+
+  export interface OrderDetail {
+    package_h_id? : number | null
+    ref_hotel_id? : number | null
+    ref_attraction_id? : number | null
+    ref_vehicle_id? : number | null
+    start_dt : string
+    end_dt : string
+    price : number
+    qty : number
+    product_type: string
   }
 

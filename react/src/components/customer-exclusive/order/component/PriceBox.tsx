@@ -13,7 +13,7 @@ const PriceBox = ({price, qty, totalPrice} : PriceBoxProps) => {
     return (
         <div>
             <div className="flex flex-row justify-between">
-                <p>{t('Per Day')}</p>
+                <p>{t('Sub Total')}</p>
                 <p className='font-bold'>{price} x {qty}</p>
             </div>
             <div className="flex flex-row justify-between">

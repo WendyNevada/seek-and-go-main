@@ -1,26 +1,53 @@
-"use client"
+import * as React from "react";
+import { addDays, differenceInDays, format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { DateRange } from "react-day-picker";
 
-import * as React from "react"
-import { addDays, format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
-import { DateRange } from "react-day-picker"
-
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/popover";
+
+interface RangeDatePickerProps extends React.HTMLAttributes<HTMLDivElement> {
+  onDateChange: (date: DateRange | undefined) => void;
+  onQtyChange: (newQty: number) => void;
+  startDt?: string;
+  endDt?: string;
+}
 
 export function RangeDatePicker({
   className,
-}: React.HTMLAttributes<HTMLDivElement>) {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(),
-    to: addDays(new Date(), 10),
-  })
+  onDateChange,
+  onQtyChange,
+  startDt,
+  endDt
+}: RangeDatePickerProps) {
+  const [date, setDate] = React.useState<DateRange | undefined>(() => {
+    if (startDt && endDt) {
+      return {
+        from: new Date(startDt),
+        to: new Date(endDt),
+      };
+    }
+    return undefined;
+  });
+
+  React.useEffect(() => {
+    onDateChange(date);
+    // Calculate quantity of days
+    const startDate = date?.from ? new Date(date.from) : null;
+    const endDate = date?.to ? new Date(date.to) : null;
+    const days = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0;
+    onQtyChange(days);
+  }, [date, onDateChange, onQtyChange]);
+
+  React.useEffect(() => {
+    onDateChange(date);
+  }, [date, onDateChange]);
 
   return (
     <div className={cn("grid gap-2", className)}>
@@ -61,5 +88,5 @@ export function RangeDatePicker({
         </PopoverContent>
       </Popover>
     </div>
-  )
+  );
 }
