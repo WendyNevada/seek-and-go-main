@@ -14,6 +14,10 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { RangeDatePicker } from './component/RangeDatePicker';
 import { useTranslation } from 'react-i18next';
+import { DateRange } from 'react-day-picker';
+import { addDays } from 'date-fns';
+import { toast } from '@/components/ui/use-toast';
+import { Required } from '@/components/ui/Custom/required';
 
 const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
     useLogin(urlConstant.VehicleOrderDetail + '/' + ref_vehicle_id);
@@ -26,6 +30,9 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
     const [addr, setAddr] = useState<string>('');
     const navigate = useNavigate();
     const { t } = useTranslation();
+    const [ startDt, setStartDt ] = useState('');
+    const [ endDt, setEndDt ] = useState('');
+    const { user } = useLogin();
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -57,39 +64,69 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
         fetchData();
     }, [fetchData]);
 
-    const setQtyDay = (num: number) => {
-        if (qty + num >= 0) {
-            setQty(qty + num);
-        }
-    }
+    // const setQtyDay = (num: number) => {
+    //     if (qty + num >= 0) {
+    //         setQty(qty + num);
+    //     }
+    // }
 
-    const handleStartDateSelect = (date : Date | undefined) => {
+    const handleDateChange = (date: DateRange | undefined) => {
         if (date) {
-            setStartDate(date);
-            if (endDate && endDate < date) {
-                setEndDate(date);
-            }
+            setStartDt(date.from ? date.from.toISOString().split('T')[0] : '');
+            setEndDt(date.to ? date.to.toISOString().split('T')[0] : '');
+        } else {
+            setStartDt('');
+            setEndDt('');
         }
     };
 
-    const handleEndDateSelect = (date : Date | undefined) => {
-        if (date && startDate && date >= startDate) {
-            setEndDate(date);
+    const handleQtyChange = (newQty: number) => {
+        setQty((newQty - 1) <= 0 ? 0 : (newQty - 1));
+        if (startDt && endDt) {
+            const newEndDate = addDays(new Date(startDt), newQty - 1);
+            setEndDt(newEndDate.toISOString().split('T')[0]);
         }
     };
 
-    const disablePastDates = (date : Date) => {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        return date < today;
-    };
+    const onConfirm = async() => {
+        const merged_values = {
+            agency_id: agency?.agency_id, 
+            customer_id: user?.customer_id, 
+            order_dt: new Date().toISOString().split('T')[0],
+            details: [{
+                package_h_id: null,
+                ref_hotel_id: null,
+                ref_attraction_id: null,
+                ref_vehicle_id: ref_vehicle_id,
+                start_dt: startDt,
+                end_dt: endDt,
+                price: vehicle?.base_price || 0,
+                qty: qty,
+                product_type: 'vehicle'
+            }]
+        };
 
-    const modifiers = {
-        disabled: disablePastDates,
-    };
+        const response = await axiosClient.post("/v1/CreateOrder", merged_values, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        if(response.status === 200)
+        {
+            toast({
+                variant: "success",
+                description: response.data.message
+            });
 
-    const onConfirm = () => {
-        navigate('/Customer/PaymentDetail/' + ref_vehicle_id);
+            navigate('/');
+        }
+        else
+        {
+            toast({
+                variant: "destructive",
+                description: response.data.message
+            });
+        }
     }
 
     return (
@@ -114,12 +151,16 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
                             <p>{t('Description')} : {vehicle?.vehicle.description}</p>
                             <p>{t('Vehicle Seat')} : {vehicle?.vehicle.vehicle_seat}</p>
                             <p>{t('Rating')} : {rating(vehicle?.vehicle.rating ?? 0)} ({vehicle?.vehicle.rating ?? 0})</p>
+                            <p>{t('QTY')} : {vehicle?.vehicle.qty}</p>
                             {/* <p>Price : {formatPrice(vehicle?.base_price || 0)}</p> */}
 
                         </div>
                     </div>
                     <div className="shadow-lg border-1 rounded-xl p-6 m-4 bg-slate-100 space-y-2">
-                        <p>{t('Pick The Dates')}</p>
+                        <p>
+                            {t('Pick The Dates')} {t('(these are the pickup and return dates)')}
+                            <span className="text-red-500 ml-2">*</span>
+                        </p>
                         <div className="flex flex-row space-x-4 items-center">
                             {/* <Calendar
                                 mode="single"
@@ -135,22 +176,23 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
                                 onSelect={handleEndDateSelect}
                                 modifiers={modifiers} // Set the minDate to the selected start date
                             /> */}
-                            <RangeDatePicker/>
+                            <RangeDatePicker onDateChange={handleDateChange} onQtyChange={handleQtyChange} startDt={startDt} endDt={endDt} />
                         </div>
-                        <p>{t('Total Days')}</p>
-                        <AddDayQty qty={qty} setQtyDay={setQtyDay}/>
+                        <p>{t('Total Day(s)')}</p>
+                        {/* <AddDayQty qty={qty} setQtyDay={setQtyDay}/> */}
+                        <h1>{qty}</h1>
                     </div>
-                    <div className="shadow-lg border-1 rounded-xl p-6 m-4 bg-slate-100 space-y-2">
+                    {/* <div className="shadow-lg border-1 rounded-xl p-6 m-4 bg-slate-100 space-y-2">
                         <p>{addr}</p>
                         {position ? <MapComponent position={position} /> : <p>Loading map...</p>}
-                    </div>
+                    </div> */}
                     <div className="shadow-lg border-1 rounded-xl p-6 m-4 bg-slate-100 space-y-2">
                         <p>{t('Price')} :</p>
                         <p className='font-semibold text-blue-400'>{formatPrice((vehicle?.base_price || 0)*qty)}</p>
                     </div>
-                    <div className="m-4 my-10 space-y-2">
+                    {/* <div className="m-4 my-10 space-y-2">
                         <Button className="w-40 bg-blue-500 hover:bg-blue-300" onClick={onConfirm}>{t('Confirm')}</Button>
-                    </div>
+                    </div> */}
                 </div>
 
 
@@ -163,6 +205,8 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
                     </div>
                     <div className="shadow-lg border-slate-100 border-2 p-6 w-72 my-5">
                         <PriceBox price={vehicle?.base_price || 0} qty={qty} totalPrice={(vehicle?.base_price || 0)*qty}/>
+                        <br />
+                        <Button className="w-full bg-blue-500 hover:bg-blue-300" onClick={onConfirm} disabled={!startDt || !endDt}>{t('Confirm')}</Button>
                     </div>
                 </div>
             </div>

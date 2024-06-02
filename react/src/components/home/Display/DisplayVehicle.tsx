@@ -49,13 +49,13 @@ const DisplayVehicle = () => {
                                 <Card className='w-64 shadow-lg mt-8 hover:shadow-2xl cursor-pointer overflow-hidden' onClick={() => selectItem(item.ref_vehicle_id)}>
                                     <img src={enviUrl + item.image_url} alt={item.vehicle_name} className="h-36 w-full shadow-lg hover:scale-110" />
                                     <CardHeader>
-                                        <CardTitle>{item.vehicle_name}</CardTitle>
+                                        <CardTitle className='truncate'>{item.vehicle_name}</CardTitle>
                                         <CardDescription>{item.description}</CardDescription>
 
                                     </CardHeader>
                                     <CardContent className='flex-1'>
                                         <p className="w-[200px] truncate">{item.address_zipcode}</p>
-                                        <p className="font-bold">{formatPrice(item.base_price ?? 0)}</p>
+                                        <p className="font-bold">{formatPrice(item.base_price ?? 0)}{t(' / Day')}</p>
                                         <p>{item.agency_name}</p>
                                         {rating(item.rating)}
                                     </CardContent>

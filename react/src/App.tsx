@@ -107,7 +107,7 @@ function CustomerRoutes() {
         <Route path="VehicleOrderDetail/:ref_vehicle_id" element={<VehicleOrderDetailPage/>} />
         <Route path="HotelOrderDetail/:ref_hotel_id" element={<HotelOrderDetailPage/>} />
         <Route path="AttractionOrderDetail/:ref_attraction_id" element={<AttractionOrderDetailPage/>} />
-        <Route path="PaymentDetail/:order_h_id" element={<PaymentPage/>} />
+        <Route path="PaymentDetail/:order_h_id/:agency_payment_id" element={<PaymentPage/>} />
 
         {/* Customer Orders */}
         <Route path="MyOrder/:customer_id" element={<MyOrderPage/>}></Route>
