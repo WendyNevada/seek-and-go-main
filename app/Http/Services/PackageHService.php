@@ -719,6 +719,23 @@ class PackageHService implements PackageHInterface
     {
         $package = $this->getPackageHWithDById($request->package_h_id);
 
+        if($this->checkDataEmpty($package))
+        {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data not found',
+                'data' => []
+            ]);
+        }
+        else
+        {
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'success',
+                'data' => $package
+            ]);
+        }
+
         return response()->json($package);
     }
 

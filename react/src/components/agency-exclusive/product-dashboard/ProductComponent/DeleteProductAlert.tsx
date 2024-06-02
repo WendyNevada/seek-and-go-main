@@ -25,7 +25,6 @@ interface DeleteProductAlertProps {
 }
 
 export function AlertDialogProduct({ apiPath, Id, param }: DeleteProductAlertProps) {
-    // const { navigateTo } = useLogin(urlConstant.AgencyProduct);
     const { t } = useTranslation();
 
     const handleDelete = async () => {
