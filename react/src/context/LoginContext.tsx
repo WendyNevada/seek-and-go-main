@@ -80,6 +80,13 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       setUser(userData);
       setError(null);
       handleNavigation(userData);
+
+      if(response.data.role == 'Customer'){
+        navigate('/');
+      }
+      else{
+        navigate('/Agency');
+      }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error : any) {
       // Handle errors
@@ -94,13 +101,10 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const handleNavigation = (userData?: User | null, path?: string) => {
     if (path) {
         navigate(path);
-    } 
-    else if (userData?.role === "Agency") {
-        navigate('/Agency');
-    } 
-    else {
-        navigate('/');
     }
+    // else if (userData?.role === "Agency") {
+    //     navigate('/Agency');
+    // }
   };
 
   const logout = () => {
@@ -108,7 +112,7 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     localStorage.removeItem('user');
     // Clear the user data
     setUser(null);
-    navigate('/Login');
+    navigate('/');
   };
 
 //   const navigatedTo = (path: string) => {

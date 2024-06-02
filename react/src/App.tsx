@@ -26,16 +26,21 @@ import AgencyEditPackagePage from './views/Agency-page/AgencyEditPackagePage';
 import EditAgencyProfilePage from './views/Profile-Page/EditAgencyProfilePage';
 import EditCustomerProfilePage from './views/Profile-Page/EditCustomerProfilePage';
 import AttractionOrderDetailPage from './views/Customer-page/Order-page/AttractionOrderDetailPage';
+import SearchAgencyPage from './views/Home-Page/SearchAgencyPage';
+import MyOrderPage from './views/Customer-page/My-Order-page/MyOrderPage';
+import MyOrderDetailPage from './views/Customer-page/My-Order-page/MyOrderDetailPage';
 
 function App() {
   return (
     <Router>
       <LoginProvider>
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/Register" element={<LoginRegisterPage />} />
-          <Route path="/Login" element={<LoginPage />} />
-          <Route path="/ForgetPassword/:account_id" element={<ForgotPasswordPage />}></Route>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/AgencySearch" element={<SearchAgencyPage/>}/>
+
+            <Route path="/Register" element={<LoginRegisterPage />} />
+            <Route path="/Login" element={<LoginPage />} />
+            <Route path="/ForgetPassword/:account_id" element={<ForgotPasswordPage />}></Route>
 
             {/* Protected Routes for Agency section */}
             <Route path="/Agency/*" element={<AgencyRoutes />} />
@@ -55,12 +60,12 @@ function App() {
 
 // Nested component to handle Agency routes
 function AgencyRoutes() {
-    const hasAgencyRole = useUserRole('Agency');
+    //const hasAgencyRole = useUserRole('Agency');
 
     // If user doesn't have the required role, redirect to login
-    if (!hasAgencyRole) {
-        return <Navigate to="/Login" />;
-    }
+    // if (!hasAgencyRole) {
+    //     return <Navigate to="/Login" />;
+    // }
 
   return (
     <Routes>
@@ -90,16 +95,12 @@ function AgencyRoutes() {
 
 
 function CustomerRoutes() {
-    const hasCustomerRole = useUserRole('Customer');
+    //const hasCustomerRole = useUserRole('Customer');
 
     // If user doesn't have the required role, redirect to login
-    if (!hasCustomerRole) {
-        // toast({
-        //     variant: "destructive",
-        //     description: "please Login first"
-        // });
-        return <Navigate to="/Login" />;
-    }
+    // if (!hasCustomerRole) {
+    //     return <Navigate to="/Login" />;
+    // }
 
   return (
     <Routes>
@@ -107,6 +108,10 @@ function CustomerRoutes() {
         <Route path="HotelOrderDetail/:ref_hotel_id" element={<HotelOrderDetailPage/>} />
         <Route path="AttractionOrderDetail/:ref_attraction_id" element={<AttractionOrderDetailPage/>} />
         <Route path="PaymentDetail/:order_h_id" element={<PaymentPage/>} />
+
+        {/* Customer Orders */}
+        <Route path="MyOrder/:customer_id" element={<MyOrderPage/>}></Route>
+        <Route path="MyOrderDetail/:order_h_id" element={<MyOrderDetailPage/>}></Route>
 
         {/* Edit Profile */}
         <Route path="EditProfileCustomer/:account_id" element={<EditCustomerProfilePage/>} />
