@@ -68,6 +68,6 @@ class Constanta extends Model
 
     #region Payment
     public static $paymentTypeBank = "Bank Transfer";
-    public static $paymentTypeQris = "Qris";
+    public static $paymentTypeQris = "QRIS";
     #endregion
 }

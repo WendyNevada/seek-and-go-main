@@ -1,17 +1,26 @@
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PayAccount } from '../interface/interface';
 import { Button } from '@/components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table"
+import { throttle } from 'lodash';
 
 //icon
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import NoteAltIcon from '@mui/icons-material/NoteAlt';
+import AddPaymentModal from './modal/AddPaymentModal';
+import { DeletePaymentAlert } from './modal/DeletePaymentAlert';
+import EditPaymentModal from './modal/EditPaymentModal';
+import AddQRISModal from './modal/AddQRISModal';
 
 const EditAgencyPaymentAccount = ({ payment }: { payment: PayAccount[] }) => {
     const { t } = useTranslation();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isQRISModalOpen, setIsQRISModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [selectedPayment, setSelectedPayment] = useState<PayAccount>();
     const [paymentRows, setPaymentRows] = useState<PayAccount[]>([]);
+    // const lastCallTime = useRef<number | null>(null);
+    const enviUrl = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
         if (payment && payment.length > 0) {
@@ -19,120 +28,77 @@ const EditAgencyPaymentAccount = ({ payment }: { payment: PayAccount[] }) => {
         }
     }, [payment]);
 
-    const form = useForm<PayAccount>();
-
     const addPaymentRow = () => {
-        setPaymentRows([
-            ...paymentRows,
-            {
-                agency_payment_id: 0,
-                agency_id: 0,
-                payment_type: '',
-                bank_name: '',
-                account_no: '',
-                created_at: '',
-                updated_at: '',
-                image_url: ''
-            }
-        ]);
+        setIsModalOpen(true);
     };
 
-    const handleRemoveRow = (index: number) => {
-        const updatedRows = [...paymentRows];
-        updatedRows.splice(index, 1);
-        setPaymentRows(updatedRows);
+    const addQRISPaymentRow = useCallback(throttle(() => {
+        setIsQRISModalOpen(true);
+    }, 1000), []);
+
+    const editPaymentRow = (payment: PayAccount) => {
+        setSelectedPayment(payment);
+        setIsEditModalOpen(true);
     };
 
-    const onSubmit = async () => {
-        // Combine account_no, bank_name, and payment_type into one object
-        const combinedData = paymentRows.map((row) => ({
-            account_no: row.account_no,
-            bank_name: row.bank_name,
-            payment_type: row.payment_type
-        }));
-
-        // Handle form submission here, send combinedData to API
-        console.log('Combined data: ', combinedData);
+    const handleEditPayment = (updatedPayment: PayAccount) => {
+        setPaymentRows((prevPayments) =>
+            prevPayments.map((p) => (p.agency_payment_id === updatedPayment.agency_payment_id ? updatedPayment : p))
+        );
     };
+
     return (
         <div>
-            <div className="bg-white border-0 shadow-lg sm:rounded-3xl p-12 space-y-2">
-
+            <div className="bg-white border-0 shadow-lg sm:rounded-3xl p-12 space-y-2 flex flex-col items-end">
                 <div className="space-x-4">
-                    <Button onClick={addPaymentRow} className="btn btn-primary mt-4">
+                    <Button onClick={addPaymentRow} variant={'primary'} className="mt-4">
                         {t('Add Payment')}
                     </Button>
-                    <Button type="submit" className="btn btn-primary mt-4">
-                        {t('Submit')}
+                    <Button onClick={addQRISPaymentRow} variant={'primary'} className="mt-4">
+                        {t('Add QRIS')}
                     </Button>
                 </div>
 
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)}>
-                    {paymentRows.map((row, index) => (
-                        <div key={index} className="flex flex-row space-x-4 mt-1">
-                            <FormField
-                                control={form.control}
-                                // @ts-expect-error - Template literal is used to dynamically generate the name prop
-                                name={`payment_type[${index}].payment_type`}
-                                render={({ field }) => (
-                                    <FormItem className="custom-field">
-                                        <FormLabel>{t('Payment Type')}</FormLabel>
-                                        <FormControl className="w-full">
-                                            <Input
-                                                placeholder={t('Payment Type')}
-                                                defaultValue={row.payment_type}
-                                                {...field}
-                                                //onChange={(e) => handleInputChange(e, 'payment_type', index)}
-                                            />
-                                        </FormControl>
-                                    </FormItem>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                        <TableHead>Bank</TableHead>
+                        <TableHead>Account No</TableHead>
+                        <TableHead>Account Name</TableHead>
+                        <TableHead>Payment Type</TableHead>
+                        <TableHead className="text-center">Picture</TableHead>
+                        <TableHead className="text-right">Edit</TableHead>
+                        <TableHead className="text-center">Delete</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {paymentRows.map((payment) => (
+                        <TableRow key={payment.agency_payment_id}>
+                            <TableCell className="font-medium">{payment.bank_name}</TableCell>
+                            <TableCell>{payment.account_no}</TableCell>
+                            <TableCell>{payment.account_name}</TableCell>
+                            <TableCell>{payment.payment_type}</TableCell>
+                            <TableCell className="text-center">
+                                {(payment.image_url == '-') ? (
+                                    <div>-</div>
+                                ) : (
+                                    <a href={enviUrl + payment.image_url} target="_blank" rel="noopener noreferrer">
+                                        Open Picture
+                                    </a>
                                 )}
-                            />
-                            <FormField
-                                control={form.control}
-                                // @ts-expect-error - Template literal is used to dynamically generate the name prop
-                                name={`account_no[${index}].account_no`}
-                                render={({ field }) => (
-                                    <FormItem className="custom-field">
-                                        <FormLabel>{t('Account No')}</FormLabel>
-                                        <FormControl className="w-full">
-                                            <Input
-                                                placeholder={t('Account No')}
-                                                defaultValue={row.account_no}
-                                                {...field}
-                                                //onChange={(e) => handleInputChange(e, 'account_no', index)}
-                                            />
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                // @ts-expect-error - Template literal is used to dynamically generate the name prop
-                                name={`bank_name[${index}].bank_name`}
-                                render={({ field }) => (
-                                    <FormItem className="custom-field">
-                                        <FormLabel>{t('Bank Name')}</FormLabel>
-                                        <FormControl className="w-full">
-                                            <Input
-                                                placeholder={t('Bank Name')}
-                                                defaultValue={row.bank_name}
-                                                {...field}
-                                                //onChange={(e) => handleInputChange(e, 'bank_name', index)}
-                                            />
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
-                            <Button className='ml-2 mt-8' variant={'destructive'} onClick={() => handleRemoveRow(index)}>
-                                {<HighlightOffIcon />}
-                            </Button>
-                        </div>
-                    ))}
-                    </form>
-                </Form>
+                            </TableCell>
+                            <TableCell className="text-right"><NoteAltIcon className='cursor-pointer hover:text-indigo-600' onClick={() => editPaymentRow(payment)}/></TableCell>
+                            <TableCell className="text-center"><DeletePaymentAlert apiPath='/v1/RemoveAgencyPayment' Id={payment.agency_payment_id} param='agency_payment_id'/></TableCell>
+                        </TableRow>
+                        ))}
+                    </TableBody>
+                    </Table>
             </div>
+            <AddPaymentModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}/>
+            <AddQRISModal isOpen={isQRISModalOpen} onClose={() => setIsQRISModalOpen(false)}/>
+            {selectedPayment && (
+                <EditPaymentModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} payment={selectedPayment} onSave={handleEditPayment}/>
+            )}
         </div>
     );
 };

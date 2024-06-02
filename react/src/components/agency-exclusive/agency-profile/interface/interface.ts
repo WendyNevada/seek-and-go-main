@@ -26,9 +26,11 @@ export interface PayAccount {
   payment_type: string
   bank_name: string
   account_no: string
+  account_name: string
   created_at: string
   updated_at: string
   image_url: string
+  picture: File
 }
 
 export interface ChangePassword {

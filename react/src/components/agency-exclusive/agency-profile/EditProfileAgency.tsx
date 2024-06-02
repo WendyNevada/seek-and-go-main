@@ -27,12 +27,7 @@ const EditProfileAgency = ({account_id} : {account_id:number}) => {
             }
         }
 
-        fetchData();
-        console.log('agencies const : ', agency)
-    }, [])
-
-    useEffect(() => {
-        const fetchData = async () => {
+        const fetchData2 = async () => {
             try {
                 const response = await axiosClient.post('v1/GetAllAgencyPaymentByAgencyId', { agency_id : user?.agency_id });
                 console.log(response.data);
@@ -43,8 +38,11 @@ const EditProfileAgency = ({account_id} : {account_id:number}) => {
                 console.error('Error fetching data:', error);
             }
         }
+
         fetchData();
-    },[])
+        fetchData2();
+        console.log('agencies const : ', agency)
+    }, [])
 
     return (
         <div className='w-[64rem] p-12 '>

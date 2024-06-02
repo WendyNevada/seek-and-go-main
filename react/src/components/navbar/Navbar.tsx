@@ -71,6 +71,10 @@ const Navbar = () => {
         navigate(`/Customer/EditProfileCustomer/${user?.account_id}`);
     }
 
+    const navigateMyOrder = () => {
+        navigate(`/Customer/MyOrder/${user?.customer_id}`);
+    }
+
     return (
         <nav className='flex-no-wrap fixed top-0 flex w-full items-center justify-between bg-blue-800 lg:flex-wrap lg:py-4 p-6 z-50'>
 
@@ -101,10 +105,7 @@ const Navbar = () => {
 
             <div className='w-full hidden flex lg:flex lg:items-center lg:w-auto mr-6'>
                 <a href='\' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Home</a>
-                <a href='\' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Package</a>
-                <a href='\' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Vehicle</a>
-                <a href='\' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Hotel</a>
-                <a href='\' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Attraction</a>
+                <a href='\AgencySearch' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Agency</a>
                 {/* <a href='\About' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>About</a>
                 <a href='\Detail' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Details</a>
                 <a href='' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Contact</a>
@@ -112,7 +113,10 @@ const Navbar = () => {
                     <BsCart2 className='navbar-cart-icon'/>
                 </a> */}
                 {
-                    user ? (<div></div>) :
+                    user ? (
+                    <div>
+                        <a onClick={navigateMyOrder} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5 hover:cursor-pointer'>My Orders</a>
+                    </div>) :
                     (
                         <div>
                             <a href='\Register' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Register</a>
@@ -120,7 +124,7 @@ const Navbar = () => {
                         </div>
                     )
                 }
-                <button className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>My Orders</button>
+
                 {/* <button onClick={() => logout()} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Logout</button> */}
 
                 <DropdownMenu>
