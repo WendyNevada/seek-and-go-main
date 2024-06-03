@@ -13,15 +13,15 @@ class RetryPaymentEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $orderNo, $customerName;
+    public $orderNo, $agencyName;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($orderNo, $customerName)
+    public function __construct($orderNo, $agencyName)
     {
         $this->orderNo = $orderNo;
-        $this->customerName = $customerName;
+        $this->agencyName = $agencyName;
     }
 
     /**
