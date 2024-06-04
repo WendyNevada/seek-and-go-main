@@ -19,6 +19,18 @@ import { AgencyPayment } from "../../interface/interface";
 import OrderGenericAlert from "./sub-components/OrderGenericAlert";
 import { Input } from "@/components/ui/input";
 
+interface OrderDataRow {
+    order_h_id : number,
+    hotel_name : string,
+    vehicle_name : string,
+    attraction_name : string,
+    start_dt : string,
+    end_dt : string,
+    qty : number,
+    price : number,
+    total_price : number
+}
+
 const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
   const { t } = useTranslation();
   const [order, setOrder] = useState<OrderD>({} as OrderD);
@@ -39,42 +51,66 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
   const [agencyPayment, setAgencyPayment] = useState<AgencyPayment[]>();
   const [imageUrl, setImageUrl] = useState<string|undefined>('');
   const [picture, setPicture] = useState<File | null>();
+  const [orderDataRows, setOrderDataRows] = useState<OrderDataRow[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await axiosClient.post('v1/GetOrderById', { order_h_id: order_h_id });
-        setOrder(response.data);
+        try {
+            const response = await axiosClient.post('v1/GetOrderById', { order_h_id: order_h_id });
+            setOrder(response.data);
+            const orderData: OrderD = response.data;
 
-        if (response.data.order_ds.length > 0) {
-          const orderD = response.data.order_ds[0];
-          if (orderD.ref_hotel_id != null) {
-            const responseHotel = await axiosClient.post('v1/GetHotelById', { ref_hotel_id: orderD.ref_hotel_id });
-            setHotel(responseHotel.data);
-            setPictUrl(responseHotel.data.picture_url)
-          }
-          else if (orderD.ref_vehicle_id != null) {
-            const responseVehicle = await axiosClient.post('v1/GetVehicleById', { ref_vehicle_id: orderD.ref_vehicle_id });
-            setVehicle(responseVehicle.data);
-            setPictUrl(responseVehicle.data.picture_url)
-          }
-          else if (orderD.ref_attraction_id != null) {
-            const responseAttraction = await axiosClient.post('v1/GetAttractionById', { ref_attraction_id: orderD.ref_attraction_id });
-            setAttraction(responseAttraction.data);
-            setPictUrl(responseAttraction.data.picture_url)
-          }
+            const fetchDetails = orderData.order_ds.map(async (orderD) => {
+                let hotel_name = '';
+                let vehicle_name = '';
+                let attraction_name = '';
+                let price = 0;
 
-          const responsePayment = await axiosClient.post('v1/GetAllAgencyPaymentByAgencyId', { agency_id: response.data.agency_id });
-          setAgencyPayment(responsePayment.data.data);
+                if (orderD.ref_hotel_id != null) {
+                    const responseHotel = await axiosClient.post('v1/GetHotelById', { ref_hotel_id: orderD.ref_hotel_id });
+                    hotel_name = responseHotel.data.hotel.hotel_name;
+                    price = responseHotel.data.base_price;
+                    setHotel(responseHotel.data);
+                    setPictUrl(responseHotel.data.picture_url)
+                } else if (orderD.ref_vehicle_id != null) {
+                    const responseVehicle = await axiosClient.post('v1/GetVehicleById', { ref_vehicle_id: orderD.ref_vehicle_id });
+                    vehicle_name = responseVehicle.data.vehicle.vehicle_name;
+                    price = responseVehicle.data.base_price;
+                    setVehicle(responseVehicle.data);
+                    setPictUrl(responseVehicle.data.picture_url)
+                } else if (orderD.ref_attraction_id != null) {
+                    const responseAttraction = await axiosClient.post('v1/GetAttractionById', { ref_attraction_id: orderD.ref_attraction_id });
+                    attraction_name = responseAttraction.data.attraction.attraction_name;
+                    price = responseAttraction.data.base_price;
+                    setAttraction(responseAttraction.data);
+                    setPictUrl(responseAttraction.data.picture_url)
+                }
+
+                const responsePayment = await axiosClient.post('v1/GetAllAgencyPaymentByAgencyId', { agency_id: response.data.agency_id });
+                setAgencyPayment(responsePayment.data.data);
+
+                return {
+                    order_h_id: orderData.order_h_id,
+                    hotel_name,
+                    vehicle_name,
+                    attraction_name,
+                    start_dt: orderD.start_dt,
+                    end_dt: orderD.end_dt,
+                    qty: orderD.qty,
+                    price,
+                    total_price: orderD.price || 0
+                };
+            });
+            const details = await Promise.all(fetchDetails);
+            setOrderDataRows(details);
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false);
         }
-      } catch (error) {
-        console.log(error)
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
-    console.log(pictUrl)
+        }
+        fetchData();
+        console.log(pictUrl)
   }, [order_h_id])
 
   const formatPrice = (price: number): string => {
@@ -167,23 +203,57 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
+                    {orderDataRows && orderDataRows.length > 0 ? (
+                        orderDataRows.map((dataRow, index) => (
+                            <TableRow key={index}>
+                                <TableCell>
+                                    {dataRow.hotel_name || dataRow.vehicle_name || dataRow.attraction_name || "N/A"}
+                                </TableCell>
+                                <TableCell>
+                                    {dataRow.start_dt?.split(" ")[0] || "N/A"}
+                                </TableCell>
+                                <TableCell>
+                                    {dataRow.end_dt?.split(" ")[0] || "N/A"}
+                                </TableCell>
+                                {
+                                    order.order_ds[0].package_h_id == null ? (
+                                        <>
+                                            <TableCell>
+                                                {dataRow.qty || "N/A"}
+                                            </TableCell>
+                                            <TableCell className="text-center">
+                                                {formatPrice(dataRow.price)}
+                                            </TableCell>
+                                            <TableCell className="text-right">
+                                                {formatPrice(dataRow.total_price)}
+                                            </TableCell>
+                                        </>
+                                    ):(
+                                        <>
+                                            <TableCell>
+                                                -
+                                            </TableCell>
+                                            <TableCell className="text-center">
+                                                -
+                                            </TableCell>
+                                            <TableCell className="text-right">
+                                                -
+                                            </TableCell>
+                                        </>
+                                    )
+                                }
+                            </TableRow>
+                        ))
+                    ) : (
+                        <TableRow>
+                            <TableCell colSpan={6} className="text-center">
+                                No order details available.
+                            </TableCell>
+                        </TableRow>
+                    )}
                     <TableRow>
-                      <TableCell>{hotel || vehicle || attraction ?
-                        (hotel ? hotel.hotel.hotel_name :
-                          (vehicle ? vehicle.vehicle.vehicle_name :
-                            (attraction ? attraction.attraction.attraction_name : "N/A"))) : "N/A"}
-                      </TableCell>
-                      <TableCell>{order.order_ds && order.order_ds.length > 0 ? order.order_ds[0].start_dt.split(" ")[0] : "N/A"}</TableCell>
-                      <TableCell>{order.order_ds && order.order_ds.length > 0 ? order.order_ds[0].end_dt.split(" ")[0] : "N/A"}</TableCell>
-                      <TableCell>{order.order_ds && order.order_ds.length > 0 ? order.order_ds[0].qty : "N/A"}</TableCell>
-                      <TableCell className="text-right">{hotel || vehicle || attraction ?
-                        (hotel ? formatPrice(order.order_ds[0].price || 0) : vehicle ? formatPrice(order.order_ds[0].price || 0) : attraction ? formatPrice(order.order_ds[0].price || 0) : 0) : "N/A"}
-                      </TableCell>
-                      <TableCell className="text-right">{formatPrice(order.total_price)}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>
-                      </TableCell>
+                        <TableCell>
+                        </TableCell>
                     </TableRow>
                   </TableBody>
                   <TableFooter>
@@ -247,7 +317,7 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
             )}
 
             <div className="flex justify-center m-2 p-2">
-                
+
 
                 {order.order_status === 'NEW' && (
                 <div className="flex justify-center items-center">
@@ -329,12 +399,12 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
                             )}
                         </div>
                     </div>
-                    
+
                 {selectedPaymentType === 'QRIS' && (
                 <>
-                    
+
                     <div className="mt-7">
-                    
+
                     {qrisImg && (
                         <div>
                             <img src={enviUrl + qrisImg} alt="Loading..." className="w-full h-full object-cover" />
@@ -376,7 +446,7 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
                     )}
                     </div>
                 )}
-                    
+
                     <div className="flex justify-center items-center mt-7">
                       <OrderGenericAlert apiPath='/v1/CustPaidOrder' id={order_h_id} selectedPaymentType={selectedPaymentType}
                         selectedBank={selectedBank} image={picture}></OrderGenericAlert>
@@ -461,12 +531,12 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
                             )}
                         </div>
                     </div>
-                    
+
                 {selectedPaymentType === 'QRIS' && (
                 <>
-                    
+
                     <div className="mt-7">
-                    
+
                     {qrisImg && (
                         <div>
                             <img src={enviUrl + qrisImg} alt="Loading..." className="w-full h-full object-cover" />
