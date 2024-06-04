@@ -35,6 +35,7 @@ export default function SearchComponent({ className, handleSearchChange }: Searc
     );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function SearchIcon(props: any) {
     return (
         <svg

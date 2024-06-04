@@ -76,11 +76,27 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
     };
 
     const onConfirm = async() => {
+        const merged_values = {
+            agency_id: agency?.agency_id,
+            customer_id: user?.customer_id,
+            order_dt: new Date().toISOString().split('T')[0],
+            details: [{
+                package_h_id: null,
+                ref_hotel_id: null,
+                ref_attraction_id: null,
+                ref_vehicle_id: ref_vehicle_id,
+                start_dt: startDt,
+                end_dt: endDt,
+                price: vehicle?.base_price || 0,
+                qty: qty,
+                product_type: 'vehicle'
+            }]
+        };
         if(unitPromoPrice != 0)
         {
             const merged_values = {
-                agency_id: agency?.agency_id, 
-                customer_id: user?.customer_id, 
+                agency_id: agency?.agency_id,
+                customer_id: user?.customer_id,
                 order_dt: new Date().toISOString().split('T')[0],
                 details: [{
                     package_h_id: null,
@@ -94,14 +110,14 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
                     product_type: 'vehicle'
                 }]
             };
-    
+
             try {
                 const response = await axiosClient.post("/v1/CreateOrder", merged_values, {
                     headers: {
                         "Content-Type": "application/json",
                     },
                 });
-    
+
                 if (response.status === 200) {
                     toast({
                         variant: "success",
@@ -120,7 +136,7 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
                             "Content-Type": "application/json",
                         },
                     });
-    
+
                     navigate('/Customer/MyOrderDetail/' + response.data.order_h_id);
                 } else {
                     toast({
@@ -138,8 +154,8 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
         else
         {
             const merged_values = {
-                agency_id: agency?.agency_id, 
-                customer_id: user?.customer_id, 
+                agency_id: agency?.agency_id,
+                customer_id: user?.customer_id,
                 order_dt: new Date().toISOString().split('T')[0],
                 details: [{
                     package_h_id: null,
@@ -204,7 +220,7 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
                 promo_code: promoCode,
                 qty: qty
             }
-    
+
             try {
                 setLoadingPromo(true);
 
@@ -213,13 +229,13 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
                         "Content-Type": "application/json",
                     },
                 });
-    
+
                 if (response.data.status === "ok") {
                     toast({
                         variant: "success",
                         description: response.data.message
                     });
-    
+
                     setNewPrice(response.data.new_price);
                     setPriceDeduced(response.data.price_deduced);
                     setIsClicked(true);
@@ -230,7 +246,7 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
                         variant: "destructive",
                         description: response.data.message
                     });
-    
+
                     setPriceDeduced(0);
                     setNewPrice(0);
                     setIsClicked(false);

@@ -25,12 +25,9 @@ const DisplayHotel = () => {
             }
         }
         fetchHotel();
-
-        console.log('hotel : ', hotel);
     },[])
 
     const selectItem = (id : number) => {
-        console.log('selected id : ',id);
         navigate(`/Customer/HotelDetail/${id}`);
         //navigateTo(`/vehicle/${id}`);
         //navigatedTo(`/Customer/ProductDetail`);

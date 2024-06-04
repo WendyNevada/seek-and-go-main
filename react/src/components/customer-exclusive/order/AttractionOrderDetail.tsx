@@ -67,11 +67,108 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
     };
 
     const onConfirm = async() => {
+        const merged_values = {
+            agency_id: agency?.agency_id,
+            customer_id: user?.customer_id,
+            order_dt: new Date().toISOString().split('T')[0],
+            details: [{
+                package_h_id: null,
+                ref_hotel_id: null,
+                ref_attraction_id: ref_attraction_id,
+                ref_vehicle_id: null,
+                start_dt: startDt?.toISOString().split('T')[0],
+                end_dt: startDt?.toISOString().split('T')[0], //attraction hanya pake 1 tanggal
+                price: attraction?.base_price || 0 * qty,
+                qty: qty,
+                product_type: 'attraction'
+            }]
+        };
+
+        try {
+            const response = await axiosClient.post("/v1/CreateOrder", merged_values, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (response.status === 200) {
+                toast({
+                    variant: "success",
+                    description: response.data.message
+                });
+
+                navigate('/Customer/MyOrderDetail/' + response.data.order_h_id);
+            } else {
+                toast({
+                    variant: "destructive",
+                    description: response.data.message
+                });
+            }
+        } catch (error: any) {
+            toast({
+                variant: "destructive",
+                description: error.message
+            });
+        }
+    };
+
+
+    useEffect(() => {
+        if(promoCode.length > 0 && isClicked) {
+            if(qty === 0)
+            {
+                setPriceDeduced(0);
+                setNewPrice(0);
+                setIsClicked(false);
+            }
+            else
+            {
+                const fetchData = async () => {
+                    const merged_values = {
+                        id: ref_attraction_id,
+                        customer_id: user?.customer_id,
+                        promo_code: promoCode,
+                        qty: qty
+                    }
+
+                    try {
+                        setLoadingPromo(true);
+
+                        const response = await axiosClient.post("/v1/GetPromoDeductionPriceAttraction", merged_values, {
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        });
+
+                        if (response.data.status === "ok") {
+                            toast({
+                                variant: "success",
+                                description: response.data.message
+                            });
+
+                            setNewPrice(response.data.new_price);
+                            setPriceDeduced(response.data.price_deduced);
+                            setLoadingPromo(false);
+                        } else {
+                            toast({
+                                variant: "destructive",
+                                description: response.data.message
+                            });
+                            setLoadingPromo(false);
+                        }
+                    } catch (error: any) {
+                        toast({
+                            variant: "destructive",
+                            description: error.message
+                        });
+                    }
+                }
+                fetchData();
         if(unitPromoPrice != 0)
         {
             const merged_values = {
-                agency_id: agency?.agency_id, 
-                customer_id: user?.customer_id, 
+                agency_id: agency?.agency_id,
+                customer_id: user?.customer_id,
                 order_dt: new Date().toISOString().split('T')[0],
                 details: [{
                     package_h_id: null,
@@ -85,14 +182,14 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
                     product_type: 'attraction'
                 }]
             };
-    
+
             try {
                 const response = await axiosClient.post("/v1/CreateOrder", merged_values, {
                     headers: {
                         "Content-Type": "application/json",
                     },
                 });
-    
+
                 if (response.status === 200) {
 
                     const merged_values_promo = {
@@ -112,7 +209,7 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
                         variant: "success",
                         description: response.data.message
                     });
-    
+
                     navigate('/Customer/MyOrderDetail/' + response.data.order_h_id);
                 } else {
                     toast({
@@ -130,8 +227,8 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
         else
         {
             const merged_values = {
-                agency_id: agency?.agency_id, 
-                customer_id: user?.customer_id, 
+                agency_id: agency?.agency_id,
+                customer_id: user?.customer_id,
                 order_dt: new Date().toISOString().split('T')[0],
                 details: [{
                     package_h_id: null,
@@ -174,7 +271,7 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
             }
         }
     };
-    
+
 
     //use effect untuk promo code
     useEffect(() => {
@@ -198,7 +295,7 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
                 promo_code: promoCode,
                 qty: qty
             }
-    
+
             try {
                 setLoadingPromo(true);
 
@@ -207,13 +304,13 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
                         "Content-Type": "application/json",
                     },
                 });
-    
+
                 if (response.data.status === "ok") {
                     toast({
                         variant: "success",
                         description: response.data.message
                     });
-    
+
                     setNewPrice(response.data.new_price);
                     setPriceDeduced(response.data.price_deduced);
                     setIsClicked(true);
@@ -224,7 +321,7 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
                         variant: "destructive",
                         description: response.data.message
                     });
-    
+
                     setPriceDeduced(0);
                     setNewPrice(0);
                     setIsClicked(false);
@@ -297,10 +394,51 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
                                     {t('Total Ticket(s)')}
                                     <span className="text-red-500 ml-2">*</span>
                                 </p>
-                                <AddDayQty qty={qty} setQtyDay={setQtyDay} 
-                                    // onQtyChange={handleQtyChange} 
+                                <AddDayQty qty={qty} setQtyDay={setQtyDay}
+                                    // onQtyChange={handleQtyChange}
                                 />
                             </div>
+
+                            {/* <div className="shadow-lg border-1 rounded-xl p-6 m-4 bg-slate-100 space-y-2">
+                                <p>{t('Payment Methods')}</p>
+                                <Select onValueChange={(value) => {
+                                    setSelectedPaymentType(value);
+                                    setSelectedBank(null);
+                                }}>
+                                    <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder={t('Payment Type')}>{selectedPaymentType ?? t('Payment Type')}</SelectValue>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Bank Transfer">{t('Bank Transfer')}</SelectItem>
+                                        <SelectItem value="QRIS">{t('QRIS')}</SelectItem>
+                                    </SelectContent>
+                                </Select>
+
+                                <p>{t('Select Bank')}</p>
+                                <Select
+                                    value={selectedBank ?? undefined}
+                                    onValueChange={(value) => {
+                                        setSelectedBank(value);
+                                        const selectedPayment = filteredAgencyPayments?.find(payment =>
+                                            `${payment.bank_name} - ${payment.account_name}` === value
+                                        );
+                                        setAgencyPaymentId(selectedPayment?.agency_payment_id ?? 0);
+                                    }}
+                                >
+                                    <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder={t('Select Bank')}>{selectedBank ?? t('Select Bank')}</SelectValue>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {filteredAgencyPayments?.map((agencyPaymentItem) => (
+                                            <SelectItem
+                                                key={agencyPaymentItem.agency_payment_id}
+                                                value={`${agencyPaymentItem.bank_name} - ${agencyPaymentItem.account_name}`}>
+                                                {agencyPaymentItem.bank_name} - {agencyPaymentItem.account_name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div> */}
 
                             <div className="shadow-lg border-1 rounded-xl p-6 m-4 bg-slate-100 space-y-2">
                                 <p>{t('Full Price')}</p>

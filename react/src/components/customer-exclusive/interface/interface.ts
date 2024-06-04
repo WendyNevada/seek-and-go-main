@@ -118,3 +118,34 @@ export interface AttractionRoot {
     product_type: string
   }
 
+export interface Package {
+    package_h_id: number
+    package_code: string
+    agency_id: number
+    customer_id: number
+    package_name: string
+    description: string
+    is_custom: number
+    custom_status: string
+    package_price: number
+    is_active: number
+    qty: number
+    total_days: number
+    created_at: string
+    updated_at: string
+    package_ds: PackageD[]
+}
+
+export interface PackageD {
+    package_d_id: number
+    package_h_id: number
+    ref_hotel_id?: number
+    ref_attraction_id?: number
+    ref_vehicle_id?: number
+    start_dt: string
+    end_dt: string
+    created_at: string
+    updated_at: string
+}
+
+

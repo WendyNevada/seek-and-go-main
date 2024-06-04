@@ -30,6 +30,12 @@ const DisplayPackage = () => {
         fetchPackage();
     }, []);
 
+    const selectItem = (id : number) => {
+        navigate(`/Customer/PackageDetail/${id}`);
+        //navigateTo(`/vehicle/${id}`);
+        //navigatedTo(`/Customer/ProductDetail`);
+    }
+
   return (
     <div className='mt-12 justify-between'>
         <h2 className='text-2xl font-semibold'>{t('Package List')}</h2>
@@ -39,9 +45,9 @@ const DisplayPackage = () => {
                         packages.map(item => (
                         <CarouselItem key={item.package_h_id} className="md:basis-1/2 lg:basis-1/4">
                             <div className='flex-1 mx-4'>
-                                <Card className='w-64 shadow-lg mt-8 hover:shadow-2xl cursor-pointer overflow-hidden'>
+                                <Card className='w-64 shadow-lg mt-8 hover:shadow-2xl cursor-pointer overflow-hidden' onClick={() => selectItem(item.package_h_id)}>
                                     <CardHeader>
-                                        <CardTitle>{item.package_name}</CardTitle>
+                                        <CardTitle className='truncate'>{item.package_name}</CardTitle>
                                         {/* <CardDescription>{item.description}</CardDescription> */}
                                     </CardHeader>
                                     <CardContent className='flex-1'>

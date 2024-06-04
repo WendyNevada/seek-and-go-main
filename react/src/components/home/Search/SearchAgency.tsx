@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import SearchComponent from "../../ui/Custom/search";
 import axiosClient from "@/axios.client";
 import PersonIcon from '@mui/icons-material/Person';
+import { useNavigate } from "react-router-dom";
 
 interface AgencyData {
     agency_id: number;
@@ -12,6 +13,8 @@ interface AgencyData {
 }
 
 const SearchAgency = () => {
+    const navigate = useNavigate();
+
     const [allData, setAllData] = useState<AgencyData[]>([]);
     const [filteredData, setFilteredData] = useState<AgencyData[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -61,7 +64,7 @@ const SearchAgency = () => {
     };
 
     const handleItemClick = (agency_id: number) => {
-        console.log('agency id : ', agency_id);
+        navigate('/AgencySearch/AgencyDetail/' + agency_id);
     };
 
     return (
@@ -73,7 +76,7 @@ const SearchAgency = () => {
             <ul className="flex flex-col mt-24 min-h-[32rem]">
                 {filteredData.length > 0 ? (
                     filteredData.map((item) => (
-                        <li key={item.agency_id} className="flex rounded overflow-hidden shadow-lg p-2 w-64 h-24 items-center align-middle hover:cursor-pointer" onClick={() => {handleItemClick(item.agency_id)}}>
+                        <li onClick={() => {handleItemClick(item.agency_id)}} key={item.agency_id} className="flex rounded overflow-hidden shadow-lg p-2 w-64 h-24 items-center align-middle hover:cursor-pointer">
                             <div className="flex items-center justify-center text-red-400">
                                 <PersonIcon className="w-24 h-24" />
                             </div>
