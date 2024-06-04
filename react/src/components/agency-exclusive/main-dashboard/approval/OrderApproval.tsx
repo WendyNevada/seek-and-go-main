@@ -2,9 +2,6 @@ import axiosClient from '@/axios.client';
 import { useEffect, useState } from 'react'
 import { OrderD } from '../utils/interface';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { HotelH } from '../utils/interfaceHotel';
-import { VehicleH } from '../utils/interfaceVehicle';
-import { AttractionH } from '../utils/interfaceAttraction';
 import { toast } from '@/components/ui/use-toast';
 import axios from 'axios';
 import { TableFooter } from '@mui/material';
@@ -18,36 +15,70 @@ import OrderAgencyFinishAlert from './sub-component/OrderAgencyFinishAlert';
 import OrderAgencyAcceptPaymentAlert from './sub-component/OrderAgencyAcceptPaymentAlert';
 import OrderAgencyRetryPaymentAlert from './sub-component/OrderAgencyRetryPaymentAlert';
 
+interface OrderDataRow {
+    order_h_id : number,
+    hotel_name : string,
+    vehicle_name : string,
+    attraction_name : string,
+    start_dt : string,
+    end_dt : string,
+    qty : number,
+    price : number,
+    total_price : number
+}
+
 const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
     const { t } = useTranslation();
     const [order, setOrder] = useState<OrderD>({} as OrderD);
-    const [hotel, setHotel] = useState<HotelH>();
-    const [vehicle, setVehicle] = useState<VehicleH>();
-    const [attraction, setAttraction] = useState<AttractionH>();
+    // const [hotel, setHotel] = useState<HotelH[]>();
+    // const [vehicle, setVehicle] = useState<VehicleH[]>();
+    // const [attraction, setAttraction] = useState<AttractionH[]>();
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
+    const [orderDataRows, setOrderDataRows] = useState<OrderDataRow[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axiosClient.post('v1/GetOrderById', { order_h_id: order_h_id });
-                setOrder(response.data);
+                const response = await axiosClient.post('v1/GetOrderById', { order_h_id });
+                const orderData: OrderD = response.data;
 
-                if(response.data.order_ds.length > 0) {
-                    const orderD = response.data.order_ds[0];
-                    if(orderD.ref_hotel_id != null){
+                const fetchDetails = orderData.order_ds.map(async (orderD) => {
+                    let hotel_name = '';
+                    let vehicle_name = '';
+                    let attraction_name = '';
+                    let price = 0;
+
+                    if (orderD.ref_hotel_id != null) {
                         const responseHotel = await axiosClient.post('v1/GetHotelById', { ref_hotel_id: orderD.ref_hotel_id });
-                        setHotel(responseHotel.data);
-                    }
-                    else if(orderD.ref_vehicle_id != null){
+                        hotel_name = responseHotel.data.hotel.hotel_name;
+                        price = responseHotel.data.base_price;
+                    } else if (orderD.ref_vehicle_id != null) {
                         const responseVehicle = await axiosClient.post('v1/GetVehicleById', { ref_vehicle_id: orderD.ref_vehicle_id });
-                        setVehicle(responseVehicle.data);
-                    }
-                    else if(orderD.ref_attraction_id != null){
+                        vehicle_name = responseVehicle.data.vehicle.vehicle_name;
+                        price = responseVehicle.data.base_price;
+                    } else if (orderD.ref_attraction_id != null) {
                         const responseAttraction = await axiosClient.post('v1/GetAttractionById', { ref_attraction_id: orderD.ref_attraction_id });
-                        setAttraction(responseAttraction.data);
+                        attraction_name = responseAttraction.data.attraction.attraction_name;
+                        price = responseAttraction.data.base_price;
                     }
-                }
+
+                    return {
+                        order_h_id: orderData.order_h_id,
+                        hotel_name,
+                        vehicle_name,
+                        attraction_name,
+                        start_dt: orderD.start_dt,
+                        end_dt: orderD.end_dt,
+                        qty: orderD.qty,
+                        price,
+                        total_price: orderD.price || 0
+                    };
+                });
+
+                const details = await Promise.all(fetchDetails);
+                setOrder(orderData);
+                setOrderDataRows(details);
             } catch (error) {
                 console.log(error)
             } finally {
@@ -74,7 +105,7 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
         setActionLoading(true);
         try {
             const response = await axiosClient.post(apiPath, {order_h_id : id});
-            
+
             if (response.data.status === "ok") {
                 toast({
                     variant: "success",
@@ -146,20 +177,54 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <TableRow>
-                            <TableCell>{hotel || vehicle || attraction ?
-                                (hotel ? hotel.hotel.hotel_name :
-                                    (vehicle ? vehicle.vehicle.vehicle_name :
-                                        (attraction ? attraction.attraction.attraction_name : "N/A"))) :"N/A"}
-                            </TableCell>
-                            <TableCell>{order.order_ds && order.order_ds.length > 0 ? order.order_ds[0].start_dt.split(" ")[0] : "N/A"}</TableCell>
-                            <TableCell>{order.order_ds && order.order_ds.length > 0 ? order.order_ds[0].end_dt.split(" ")[0] : "N/A"}</TableCell>
-                            <TableCell>{order.order_ds && order.order_ds.length > 0 ? order.order_ds[0].qty : "N/A"}</TableCell>
-                            <TableCell className="text-right">{hotel || vehicle || attraction ?
-                                (hotel ? formatPrice(hotel.base_price) : vehicle ? formatPrice(vehicle.base_price) : attraction ? formatPrice(attraction.base_price) : 0) : "N/A"}
-                            </TableCell>
-                            <TableCell className="text-right">{formatPrice(order.total_price)}</TableCell>
-                        </TableRow>
+                        {orderDataRows && orderDataRows.length > 0 ? (
+                            orderDataRows.map((dataRow, index) => (
+                                <TableRow key={index}>
+                                    <TableCell>
+                                        {dataRow.hotel_name || dataRow.vehicle_name || dataRow.attraction_name || "N/A"}
+                                    </TableCell>
+                                    <TableCell>
+                                        {dataRow.start_dt?.split(" ")[0] || "N/A"}
+                                    </TableCell>
+                                    <TableCell>
+                                        {dataRow.end_dt?.split(" ")[0] || "N/A"}
+                                    </TableCell>
+                                    {
+                                        order.order_ds[0].order_h_id == 0 ? (
+                                            <>
+                                                <TableCell>
+                                                    {dataRow.qty || "N/A"}
+                                                </TableCell>
+                                                <TableCell className="text-center">
+                                                    {formatPrice(dataRow.price)}
+                                                </TableCell>
+                                                <TableCell className="text-right">
+                                                    {formatPrice(dataRow.total_price)}
+                                                </TableCell>
+                                            </>
+                                        ):(
+                                            <>
+                                                <TableCell>
+                                                    -
+                                                </TableCell>
+                                                <TableCell className="text-center">
+                                                    -
+                                                </TableCell>
+                                                <TableCell className="text-right">
+                                                    -
+                                                </TableCell>
+                                            </>
+                                        )
+                                    }
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={6} className="text-center">
+                                    No order details available.
+                                </TableCell>
+                            </TableRow>
+                        )}
                         <TableRow>
                             <TableCell>
                             </TableCell>
@@ -174,7 +239,7 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                     </Table>
                 </div>
             </div>
-            
+
             {/* Buttons */}
             <div className="flex justify-end m-4 p-4">
 

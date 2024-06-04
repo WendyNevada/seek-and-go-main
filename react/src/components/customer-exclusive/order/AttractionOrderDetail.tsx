@@ -70,8 +70,8 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
         if(unitPromoPrice != 0)
         {
             const merged_values = {
-                agency_id: agency?.agency_id, 
-                customer_id: user?.customer_id, 
+                agency_id: agency?.agency_id,
+                customer_id: user?.customer_id,
                 order_dt: new Date().toISOString().split('T')[0],
                 details: [{
                     package_h_id: null,
@@ -85,14 +85,14 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
                     product_type: 'attraction'
                 }]
             };
-    
+
             try {
                 const response = await axiosClient.post("/v1/CreateOrder", merged_values, {
                     headers: {
                         "Content-Type": "application/json",
                     },
                 });
-    
+
                 if (response.status === 200) {
 
                     const merged_values_promo = {
@@ -112,7 +112,7 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
                         variant: "success",
                         description: response.data.message
                     });
-    
+
                     navigate('/Customer/MyOrderDetail/' + response.data.order_h_id);
                 } else {
                     toast({
@@ -130,8 +130,8 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
         else
         {
             const merged_values = {
-                agency_id: agency?.agency_id, 
-                customer_id: user?.customer_id, 
+                agency_id: agency?.agency_id,
+                customer_id: user?.customer_id,
                 order_dt: new Date().toISOString().split('T')[0],
                 details: [{
                     package_h_id: null,
@@ -174,7 +174,7 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
             }
         }
     };
-    
+
 
     //use effect untuk promo code
     useEffect(() => {
@@ -198,7 +198,7 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
                 promo_code: promoCode,
                 qty: qty
             }
-    
+
             try {
                 setLoadingPromo(true);
 
@@ -207,13 +207,13 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
                         "Content-Type": "application/json",
                     },
                 });
-    
+
                 if (response.data.status === "ok") {
                     toast({
                         variant: "success",
                         description: response.data.message
                     });
-    
+
                     setNewPrice(response.data.new_price);
                     setPriceDeduced(response.data.price_deduced);
                     setIsClicked(true);
@@ -224,7 +224,7 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
                         variant: "destructive",
                         description: response.data.message
                     });
-    
+
                     setPriceDeduced(0);
                     setNewPrice(0);
                     setIsClicked(false);
@@ -297,8 +297,8 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
                                     {t('Total Ticket(s)')}
                                     <span className="text-red-500 ml-2">*</span>
                                 </p>
-                                <AddDayQty qty={qty} setQtyDay={setQtyDay} 
-                                    // onQtyChange={handleQtyChange} 
+                                <AddDayQty qty={qty} setQtyDay={setQtyDay}
+                                    // onQtyChange={handleQtyChange}
                                 />
                             </div>
 

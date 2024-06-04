@@ -90,7 +90,7 @@ const ProductVehicleDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
                         <br />
                         <div className="mt-4">
                             <div className='font-bold'>
-                                {<DirectionsCarIcon/>} 
+                                {<DirectionsCarIcon/>}
                                 {t('Detail')}
                             </div>
                             <h1>{t('Vehicle Type')} : {vehicle?.vehicle.vehicle_type}</h1>
@@ -101,7 +101,7 @@ const ProductVehicleDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
                         <br />
                         <div className="mt-4">
                             <div className='font-bold'>
-                                {<RoomIcon/>} 
+                                {<RoomIcon/>}
                                 {t('Location')}
                             </div>
                             <h1>{t('Street Address')} : {vehicle?.vehicle.address}</h1>

@@ -28,6 +28,7 @@ const EditProfileAgency = ({account_id} : {account_id:number}) => {
         }
 
         const fetchData2 = async () => {
+            console.log('agency id : ',user?.agency_id)
             try {
                 const response = await axiosClient.post('v1/GetAllAgencyPaymentByAgencyId', { agency_id : user?.agency_id });
                 console.log(response.data);

@@ -5,8 +5,7 @@ import {
     DialogDescription,
     DialogFooter,
     DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+    DialogTitle
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,8 +26,8 @@ const EditPaymentModal = ({ isOpen, onClose, payment, onSave }: CredentialModalP
     const { navigateTo } = useLogin('/Agency/EditProfileAgency/' + user?.agency_id);
 
     const [editedPayment, setEditedPayment] = useState<PayAccount>();
-    const enviUrl = import.meta.env.VITE_API_BASE_URL;
-    const [imagePreview, setImagePreview] = useState<string | undefined>(undefined);
+    // const enviUrl = import.meta.env.VITE_API_BASE_URL;
+    // const [imagePreview, setImagePreview] = useState<string | undefined>(undefined);
 
     useEffect(() => {
         if (payment) {

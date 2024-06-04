@@ -71,11 +71,27 @@ const HotelOrderDetail = ({ref_hotel_id} : {ref_hotel_id: number}) => {
     };
 
     const onConfirm = async() => {
+        const merged_values = {
+            agency_id: agency?.agency_id,
+            customer_id: user?.customer_id,
+            order_dt: new Date().toISOString().split('T')[0],
+            details: [{
+                package_h_id: null,
+                ref_hotel_id: ref_hotel_id,
+                ref_attraction_id: null,
+                ref_vehicle_id: null,
+                start_dt: startDt,
+                end_dt: endDt,
+                price: hotel?.base_price || 0,
+                qty: qty,
+                product_type: 'hotel'
+            }]
+        };
         if(unitPromoPrice != 0)
         {
             const merged_values = {
-                agency_id: agency?.agency_id, 
-                customer_id: user?.customer_id, 
+                agency_id: agency?.agency_id,
+                customer_id: user?.customer_id,
                 order_dt: new Date().toISOString().split('T')[0],
                 details: [{
                     package_h_id: null,
@@ -89,14 +105,14 @@ const HotelOrderDetail = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                     product_type: 'hotel'
                 }]
             };
-    
+
             try {
                 const response = await axiosClient.post("/v1/CreateOrder", merged_values, {
                     headers: {
                         "Content-Type": "application/json",
                     },
                 });
-    
+
                 if (response.status === 200) {
 
                     const merged_values_promo = {
@@ -116,7 +132,7 @@ const HotelOrderDetail = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                         variant: "success",
                         description: response.data.message
                     });
-    
+
                     navigate('/Customer/MyOrderDetail/' + response.data.order_h_id);
                 } else {
                     toast({
@@ -134,8 +150,8 @@ const HotelOrderDetail = ({ref_hotel_id} : {ref_hotel_id: number}) => {
         else
         {
             const merged_values = {
-                agency_id: agency?.agency_id, 
-                customer_id: user?.customer_id, 
+                agency_id: agency?.agency_id,
+                customer_id: user?.customer_id,
                 order_dt: new Date().toISOString().split('T')[0],
                 details: [{
                     package_h_id: null,
@@ -201,7 +217,7 @@ const HotelOrderDetail = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                 promo_code: promoCode,
                 qty: qty
             }
-    
+
             try {
                 setLoadingPromo(true);
 
@@ -210,13 +226,13 @@ const HotelOrderDetail = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                         "Content-Type": "application/json",
                     },
                 });
-    
+
                 if (response.data.status === "ok") {
                     toast({
                         variant: "success",
                         description: response.data.message
                     });
-    
+
                     setNewPrice(response.data.new_price);
                     setPriceDeduced(response.data.price_deduced);
                     setIsClicked(true);
@@ -227,7 +243,7 @@ const HotelOrderDetail = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                         variant: "destructive",
                         description: response.data.message
                     });
-    
+
                     setPriceDeduced(0);
                     setNewPrice(0);
                     setIsClicked(false);
@@ -271,10 +287,10 @@ const HotelOrderDetail = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                             <span className="text-red-500 ml-2">*</span>
                         </p>
                         <div className="flex flex-row space-x-4 items-center">
-                            <RangeDatePicker 
-                                onDateChange={handleDateChange} 
-                                onQtyChange={handleQtyChange} 
-                                startDt={startDt} 
+                            <RangeDatePicker
+                                onDateChange={handleDateChange}
+                                onQtyChange={handleQtyChange}
+                                startDt={startDt}
                                 endDt={endDt}
                             />
                         </div>

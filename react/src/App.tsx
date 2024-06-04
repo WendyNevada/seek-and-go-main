@@ -29,6 +29,9 @@ import AttractionOrderDetailPage from './views/Customer-page/Order-page/Attracti
 import SearchAgencyPage from './views/Home-Page/SearchAgencyPage';
 import MyOrderPage from './views/Customer-page/My-Order-page/MyOrderPage';
 import MyOrderDetailPage from './views/Customer-page/My-Order-page/MyOrderDetailPage';
+import PackageDetailPage from './views/Customer-page/PackageDetailPage';
+import PackageOrderDetailPage from './views/Customer-page/Order-page/PackageOrderDetailPage';
+import AgencyDetailForCustomer from './views/Home-Page/AgencyDetailForCustomer';
 
 function App() {
   return (
@@ -37,6 +40,7 @@ function App() {
         <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/AgencySearch" element={<SearchAgencyPage/>}/>
+            <Route path="/AgencySearch/AgencyDetail/:agency_id" element={<AgencyDetailForCustomer/>}></Route>
 
             <Route path="/Register" element={<LoginRegisterPage />} />
             <Route path="/Login" element={<LoginPage />} />
@@ -50,6 +54,7 @@ function App() {
             <Route path="/Customer/VehicleDetail/:ref_vehicle_id" element={<VehicleDetailPage/>} />
             <Route path="/Customer/HotelDetail/:ref_hotel_id" element={<HotelDetailPage/>} />
             <Route path="/Customer/AttractionDetail/:ref_attraction_id" element={<AttractionDetailPage/>} />
+            <Route path="/Customer/PackageDetail/:package_h_id" element={<PackageDetailPage />} />
 
           {/* <Route path="/TEST" element={ <ComboboxDemo/>}/> */}
         </Routes>
@@ -60,12 +65,7 @@ function App() {
 
 // Nested component to handle Agency routes
 function AgencyRoutes() {
-    //const hasAgencyRole = useUserRole('Agency');
 
-    // If user doesn't have the required role, redirect to login
-    // if (!hasAgencyRole) {
-    //     return <Navigate to="/Login" />;
-    // }
 
   return (
     <Routes>
@@ -107,6 +107,8 @@ function CustomerRoutes() {
         <Route path="VehicleOrderDetail/:ref_vehicle_id" element={<VehicleOrderDetailPage/>} />
         <Route path="HotelOrderDetail/:ref_hotel_id" element={<HotelOrderDetailPage/>} />
         <Route path="AttractionOrderDetail/:ref_attraction_id" element={<AttractionOrderDetailPage/>} />
+        <Route path="PackageOrderDetail/:package_h_id" element={<PackageOrderDetailPage/>} />
+
         <Route path="PaymentDetail/:order_h_id/:agency_payment_id" element={<PaymentPage/>} />
 
         {/* Customer Orders */}
