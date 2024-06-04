@@ -19,7 +19,6 @@ import { addDays } from "date-fns";
 import { toast } from "@/components/ui/use-toast";
 
 const HotelOrderDetail = ({ref_hotel_id} : {ref_hotel_id: number}) => {
-    useLogin(urlConstant.HotelOrderDetail + '/' + ref_hotel_id);
     const [hotel, setHotel] = useState<HotelRoot>();
     const [agency, setAgency] = useState<AgencyData>();
     const [qty, setQty] = useState(0);
@@ -99,25 +98,30 @@ const HotelOrderDetail = ({ref_hotel_id} : {ref_hotel_id: number}) => {
             }]
         };
 
-        const response = await axiosClient.post("/v1/CreateOrder", merged_values, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-        if(response.status === 200)
-        {
-            toast({
-                variant: "success",
-                description: response.data.message
+        try {
+            const response = await axiosClient.post("/v1/CreateOrder", merged_values, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
             });
 
-            navigate('/');
-        }
-        else
-        {
+            if (response.status === 200) {
+                toast({
+                    variant: "success",
+                    description: response.data.message
+                });
+
+                navigate('/Customer/MyOrderDetail/' + response.data.order_h_id);
+            } else {
+                toast({
+                    variant: "destructive",
+                    description: response.data.message
+                });
+            }
+        } catch (error: any) {
             toast({
                 variant: "destructive",
-                description: response.data.message
+                description: error.message
             });
         }
     }

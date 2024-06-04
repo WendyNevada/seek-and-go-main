@@ -24,7 +24,8 @@ class PromoDeductionRequest extends FormRequest
         return [
             'id' => 'required',
             'customer_id' => 'required',
-            'promo_code' => 'required'
+            'promo_code' => 'required',
+            'qty' => 'nullable'
         ];
     }
 }
