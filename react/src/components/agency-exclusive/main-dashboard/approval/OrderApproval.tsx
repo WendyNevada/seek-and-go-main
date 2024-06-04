@@ -190,7 +190,7 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                                         {dataRow.end_dt?.split(" ")[0] || "N/A"}
                                     </TableCell>
                                     {
-                                        order.order_ds[0].order_h_id == 0 ? (
+                                        order.order_ds[0].package_h_id == null ? (
                                             <>
                                                 <TableCell>
                                                     {dataRow.qty || "N/A"}
