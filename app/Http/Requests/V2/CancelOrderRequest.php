@@ -23,7 +23,7 @@ class CancelOrderRequest extends FormRequest
     {
         return [
             'order_h_id' => 'required',
-            'cancel_by' => 'required'
+            'cancel_by' => 'nullable',
         ];
     }
 }

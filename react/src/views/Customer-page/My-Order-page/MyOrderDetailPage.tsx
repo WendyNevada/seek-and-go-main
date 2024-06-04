@@ -9,7 +9,7 @@ const MyOrderDetailPage = () => {
     return (
         <div>
             <Navbar/>
-                <div className="flex mt-[7rem] lg:mt-[6rem]  items-center sm:justify-start xl:justify-center">
+                <div className="min-w-28 mt-40 sm:mt-40 md:mt-40 max-w-screen-xl sm:mx-80">
                     <MyOrderDetail order_h_id={Number(order_h_id) || 0}/>
                 </div>
             <Footer/>

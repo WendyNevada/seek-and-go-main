@@ -212,6 +212,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::post('GetPromoDeductionPriceHotel', 'PromoController@GetPromoDeductionPriceHotel');
 
     Route::post('GetPromoDeductionPriceVehicle', 'PromoController@GetPromoDeductionPriceVehicle');
+
+    Route::post('AddPromoCounterHistory', 'PromoController@AddPromoCounterHistory');
     #endregion
 
     #region AgencyAffiliate

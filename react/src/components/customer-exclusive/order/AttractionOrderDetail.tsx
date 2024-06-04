@@ -20,9 +20,9 @@ import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import React from "react";
 import { toast } from "@/components/ui/use-toast";
+import { Input } from "@/components/ui/input";
 
 const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: number }) => {
-    useLogin(urlConstant.AttractionOrderDetail + '/' + ref_attraction_id);
     const [attraction, setAttraction] = useState<AttractionRoot>();
     const [agency, setAgency] = useState<AgencyData>();
     const [agencyPayment, setAgencyPayment] = useState<AgencyPayment[]>();
@@ -37,6 +37,13 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
     const [ startDt, setStartDt ] = React.useState<Date>();
     //const [ endDt, setEndDt ] = useState('');
     const [ agencyPaymentId, setAgencyPaymentId ] = useState(0);
+    const [ promoCode, setPromoCode ] = useState('');
+    const [ newPrice, setNewPrice ] = useState(0);
+    const [ priceDeduced, setPriceDeduced ] = useState<number>();
+    const [ isClicked, setIsClicked ] = useState(false);
+    const [ loadingPromo, setLoadingPromo ] = useState(false);
+    const [ promo_type, setPromoType ] = useState('');
+    const [ promo_value, setPromoValue ] = useState(0);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -71,16 +78,6 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
         }
     };
 
-    // const handleDateChange = (date: DateRange | undefined) => {
-    //     if (date) {
-    //         setStartDt(date.from ? date.from.toISOString().split('T')[0] : '');
-    //         setEndDt(date.to ? date.to.toISOString().split('T')[0] : '');
-    //     } else {
-    //         setStartDt('');
-    //         setEndDt('');
-    //     }
-    // };
-
     const onConfirm = async() => {
         const merged_values = {
             agency_id: agency?.agency_id, 
@@ -99,39 +96,138 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
             }]
         };
 
-        const response = await axiosClient.post("/v1/CreateOrder", merged_values, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-        if(response.status === 200)
-        {
-            toast({
-                variant: "success",
-                description: response.data.message
+        try {
+            const response = await axiosClient.post("/v1/CreateOrder", merged_values, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
             });
 
-            //navigate('/Customer/PaymentDetail/' + response.data.order_h_id + '/' + agencyPaymentId);
-            navigate('/');
-        }
-        else
-        {
+            if (response.status === 200) {
+                toast({
+                    variant: "success",
+                    description: response.data.message
+                });
+
+                navigate('/Customer/MyOrderDetail/' + response.data.order_h_id);
+            } else {
+                toast({
+                    variant: "destructive",
+                    description: response.data.message
+                });
+            }
+        } catch (error: any) {
             toast({
                 variant: "destructive",
-                description: response.data.message
+                description: error.message
             });
         }
     };
+    
 
-    //const filteredAgencyPayments = agencyPayment?.filter(payment => payment.payment_type === selectedPaymentType);
+    useEffect(() => {
+        if(promoCode.length > 0 && isClicked) {
+            if(qty === 0)
+            {
+                setPriceDeduced(0);
+                setNewPrice(0);
+                setIsClicked(false);
+            }
+            else
+            {
+                const fetchData = async () => {
+                    const merged_values = {
+                        id: ref_attraction_id,
+                        customer_id: user?.customer_id,
+                        promo_code: promoCode,
+                        qty: qty
+                    }
+            
+                    try {
+                        setLoadingPromo(true);
 
-    // const handleQtyChange = (newQty: number) => {
-    //     setQty(newQty);
-    //     if (startDt && endDt) {
-    //         const newEndDate = addDays(new Date(startDt), newQty - 1);
-    //         setEndDt(newEndDate.toISOString().split('T')[0]);
-    //     }
-    // };
+                        const response = await axiosClient.post("/v1/GetPromoDeductionPriceAttraction", merged_values, {
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        });
+            
+                        if (response.data.status === "ok") {
+                            toast({
+                                variant: "success",
+                                description: response.data.message
+                            });
+            
+                            setNewPrice(response.data.new_price);
+                            setPriceDeduced(response.data.price_deduced);
+                            setLoadingPromo(false);
+                        } else {
+                            toast({
+                                variant: "destructive",
+                                description: response.data.message
+                            });
+                            setLoadingPromo(false);
+                        }
+                    } catch (error: any) {
+                        toast({
+                            variant: "destructive",
+                            description: error.message
+                        });
+                    }
+                }
+                fetchData();
+            }
+        }
+    }, [qty]);
+
+    const onApplyPromo = async() => {
+        if(qty != 0)
+        {
+            const merged_values = {
+                id: ref_attraction_id,
+                customer_id: user?.customer_id,
+                promo_code: promoCode,
+                qty: qty
+            }
+    
+            try {
+                setLoadingPromo(true);
+
+                const response = await axiosClient.post("/v1/GetPromoDeductionPriceAttraction", merged_values, {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+    
+                if (response.data.status === "ok") {
+                    toast({
+                        variant: "success",
+                        description: response.data.message
+                    });
+    
+                    setNewPrice(response.data.new_price);
+                    setPriceDeduced(response.data.price_deduced);
+                    setIsClicked(true);
+                    setLoadingPromo(false);
+                } else {
+                    toast({
+                        variant: "destructive",
+                        description: response.data.message
+                    });
+    
+                    setPriceDeduced(0);
+                    setNewPrice(0);
+                    setIsClicked(false);
+                    setLoadingPromo(false);
+                }
+            } catch (error: any) {
+                toast({
+                    variant: "destructive",
+                    description: error.message
+                });
+            }
+        }
+    }
 
 
     return (
@@ -238,7 +334,7 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
                             </div> */}
 
                             <div className="shadow-lg border-1 rounded-xl p-6 m-4 bg-slate-100 space-y-2">
-                                <p>{t('Price')}</p>
+                                <p>{t('Full Price')}</p>
                                 <p className='font-semibold text-blue-400'>{formatPrice((attraction?.base_price || 0) * qty)}</p>
                             </div>
                             {/* <div className="m-4 my-10 space-y-2">
@@ -253,8 +349,19 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
                                 <p>{t('Agency Location')}</p>
                                 <p className='font-semibold'>{agency?.location}</p>
                             </div>
+
+                            <div className="shadow-lg border-slate-100 border-2 p-6 w-72 space-y-4">
+                                <p>{t('Got A Promo Code?')}</p>
+                                <div className="">
+                                    <Input placeholder={t('Enter Promo Code')} onChange={(e) => setPromoCode(e.target.value)}></Input>
+                                </div>
+                                <div className="flex justify-center items-center">
+                                    <Button className="bg-blue-500 hover:bg-blue-300" onClick={onApplyPromo}>{t('Apply')}</Button>
+                                </div>
+                            </div>
+
                             <div className="shadow-lg border-slate-100 border-2 p-6 w-72 my-5">
-                                <PriceBox price={attraction?.base_price || 0} qty={qty} totalPrice={(attraction?.base_price || 0) * qty}/>
+                                <PriceBox price={attraction?.base_price || 0} qty={qty} totalPrice={(attraction?.base_price || 0) * qty } priceDeduced={priceDeduced || undefined} newPrice={newPrice || undefined} loadingPromo={loadingPromo}/>
                                 <br />
                                 <Button className="w-full bg-blue-500 hover:bg-blue-300" onClick={onConfirm} disabled={!startDt || !qty}>{t('Confirm')}</Button>
 

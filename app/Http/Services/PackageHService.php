@@ -719,7 +719,7 @@ class PackageHService implements PackageHInterface
     {
         $package = $this->getPackageHWithDById($request->package_h_id);
 
-        if($this->checkDataEmpty($package))
+        if($package == null)
         {
             return response()->json([
                 'status' => 'error',
