@@ -194,6 +194,10 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('GetOrderDashboardByAgencyIdAndStatus', 'OrderHController@GetOrderDashboardByAgencyIdAndStatus');
 
+    Route::post('UploadOrderImage', 'OrderHController@UploadOrderImage');
+
+    Route::post('GetOrderImage', 'OrderHController@GetOrderImage');
+
     #endregion
 
     #region Trx

@@ -42,9 +42,11 @@ class PromoService implements PromoInterface
         return $promo;
     }
 
-    private function calculateNewPrice($base_price, $promo, $qty = null)
+    private function calculateNewPrice($base_price, $promo, $qty = null, &$unit_price)
     {
         $newPrice = 0;
+
+        $unit_price = $base_price;
 
         if($qty != null)
         {
@@ -54,10 +56,12 @@ class PromoService implements PromoInterface
         if($promo->is_amount == true)
         {
             $newPrice = $base_price - $promo->amount;
+            $unit_price = $unit_price - $promo->amount;
         }
         else
         {
             $newPrice = $base_price - ($base_price * $promo->percent / 100);
+            $unit_price = $unit_price - ($unit_price * $promo->percent / 100);
         }
 
         return $newPrice;
@@ -249,11 +253,14 @@ class PromoService implements PromoInterface
                         'new_price' => "-",
                         'price_deduced' => "-",
                         'promo_type' => "-",
-                        'promo_value' => "-"
+                        'promo_value' => "-",
+                        'price_reduced_per_unit' => "-"
                     ]);
                 }
 
-                $newPrice = $this->calculateNewPrice($attraction->base_price, $promo, $request->qty);
+                $unit_price = 0;
+
+                $newPrice = $this->calculateNewPrice($attraction->base_price, $promo, $request->qty, $unit_price);
 
                 $priceDeduced = $this->deducePrice($attraction->base_price, $newPrice, $request->qty);
 
@@ -265,7 +272,8 @@ class PromoService implements PromoInterface
                         'new_price' => $newPrice,
                         'price_deduced' => $priceDeduced,
                         'promo_type' => "percent",
-                        'promo_value' => $promo->percent
+                        'promo_value' => $promo->percent,
+                        'price_reduced_per_unit' => $unit_price
                     ]);
                 }
                 else
@@ -276,7 +284,8 @@ class PromoService implements PromoInterface
                         'new_price' => $newPrice,
                         'price_deduced' => $priceDeduced,
                         'promo_type' => "amount",
-                        'promo_value' => $promo->amount
+                        'promo_value' => $promo->amount,
+                        'price_reduced_per_unit' => $unit_price
                     ]);
                 }
             }
@@ -288,7 +297,8 @@ class PromoService implements PromoInterface
                     'new_price' => "-",
                     'price_deduced' => "-",
                     'promo_type' => "-",
-                    'promo_value' => "-"
+                    'promo_value' => "-",
+                    'price_reduced_per_unit' => "-"
                 ]);
             }
         }
@@ -300,7 +310,8 @@ class PromoService implements PromoInterface
                 'status' => "error",
                 'message' => $e->getMessage(),
                 'new_price' => "-",
-                'price_deduced' => "-"
+                'price_deduced' => "-",
+                'price_reduced_per_unit => "-"'
             ], 500);
         }
     }
@@ -323,13 +334,16 @@ class PromoService implements PromoInterface
                         'new_price' => "-",
                         'price_deduced' => "-",
                         'promo_type' => "-",
-                        'promo_value' => "-"
+                        'promo_value' => "-",
+                        'price_reduced_per_unit' => "-"
                     ]);
                 }
-                
-                $newPrice = $this->calculateNewPrice($hotel->base_price, $promo);
 
-                $priceDeduced = $this->deducePrice($hotel->base_price, $newPrice);
+                $unit_price = 0;
+                
+                $newPrice = $this->calculateNewPrice($hotel->base_price, $promo, $request->qty, $unit_price);
+
+                $priceDeduced = $this->deducePrice($hotel->base_price, $newPrice, $request->qty);
 
                 if($promo->is_amount == false)
                 {
@@ -339,7 +353,8 @@ class PromoService implements PromoInterface
                         'new_price' => $newPrice,
                         'price_deduced' => $priceDeduced,
                         'promo_type' => "percent",
-                        'promo_value' => $promo->percent
+                        'promo_value' => $promo->percent,
+                        'price_reduced_per_unit' => $unit_price
                     ]);
                 }
                 else
@@ -350,7 +365,8 @@ class PromoService implements PromoInterface
                         'new_price' => $newPrice,
                         'price_deduced' => $priceDeduced,
                         'promo_type' => "amount",
-                        'promo_value' => $promo->amount
+                        'promo_value' => $promo->amount,
+                        'price_reduced_per_unit' => $unit_price
                     ]);
                 }
             }
@@ -362,7 +378,8 @@ class PromoService implements PromoInterface
                     'new_price' => "-",
                     'price_deduced' => "-",
                     'promo_type' => "-",
-                    'promo_value' => "-"
+                    'promo_value' => "-",
+                    'price_reduced_per_unit' => "-"
                 ]);
             }
         }
@@ -376,7 +393,8 @@ class PromoService implements PromoInterface
                 'new_price' => "-",
                 'price_deduced' => "-",
                 'promo_type' => "-",
-                'promo_value' => "-"
+                'promo_value' => "-",
+                'price_reduced_per_unit' => "-"
             ], 500);
         }
     }
@@ -399,13 +417,16 @@ class PromoService implements PromoInterface
                             'new_price' => "-",
                             'price_deduced' => "-",
                             'promo_type' => "-",
-                            'promo_value' => "-"
+                            'promo_value' => "-",
+                            'price_reduced_per_unit' => "-"
                         ]);
                     }
 
-                $newPrice = $this->calculateNewPrice($vehicle->base_price, $promo);
+                $unit_price = 0;
 
-                $priceDeduced = $this->deducePrice($vehicle->base_price, $newPrice);
+                $newPrice = $this->calculateNewPrice($vehicle->base_price, $promo, $request->qty, $unit_price);
+
+                $priceDeduced = $this->deducePrice($vehicle->base_price, $newPrice, $request->qty);
 
                 if($promo->is_amount == false)
                 {
@@ -415,7 +436,8 @@ class PromoService implements PromoInterface
                         'new_price' => $newPrice,
                         'price_deduced' => $priceDeduced,
                         'promo_type' => "percent",
-                        'promo_value' => $promo->percent
+                        'promo_value' => $promo->percent,
+                        'price_reduced_per_unit' => $unit_price
                     ]);
                 }
                 else
@@ -426,7 +448,8 @@ class PromoService implements PromoInterface
                         'new_price' => $newPrice,
                         'price_deduced' => $priceDeduced,
                         'promo_type' => "amount",
-                        'promo_value' => $promo->amount
+                        'promo_value' => $promo->amount,
+                        'price_reduced_per_unit' => $unit_price
                     ]);
                 }
             }
@@ -438,7 +461,8 @@ class PromoService implements PromoInterface
                     'new_price' => "-",
                     'price_deduced' => "-",
                     'promo_type' => "-",
-                    'promo_value' => "-"
+                    'promo_value' => "-",
+                    'price_reduced_per_unit' => "-"
                 ]);
             }
         }
@@ -452,7 +476,8 @@ class PromoService implements PromoInterface
                 'new_price' => "-",
                 'price_deduced' => "-",
                 'promo_type' => "-",
-                'promo_value' => "-"
+                'promo_value' => "-",
+                'price_reduced_per_unit' => "-"
             ], 500);
         }
     }

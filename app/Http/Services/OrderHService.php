@@ -12,6 +12,7 @@ use App\Models\Customer;
 use App\Models\PackageH;
 use App\Models\RefHotel;
 use App\Models\Constanta;
+use App\Models\RefPicture;
 use App\Models\RefVehicle;
 use App\Mail\CustPaidEmail;
 use App\Mail\PaidOrderEmail;
@@ -26,6 +27,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CancelOrderByAgencyEmail;
 use App\Http\Requests\V2\CustIdRequest;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Interfaces\OrderHInterface;
 use App\Mail\CancelOrderByCustomerEmail;
 use App\Http\Requests\V2\AgencyIdRequest;
@@ -35,6 +37,7 @@ use App\Http\Requests\V2\CreateOrderRequest;
 use App\Http\Requests\V2\GetOrderByIdRequest;
 use App\Http\Requests\V2\GetCustomerOrderRequest;
 use App\Http\Requests\V2\GetOrderDashboardRequest;
+use App\Http\Requests\V2\UploadOrderImageRequest;
 use App\Mail\SendEmailNotificationOrderApproveEmail;
 
 class OrderHService implements OrderHInterface
@@ -455,6 +458,25 @@ class OrderHService implements OrderHInterface
     private function getCustomerByCustomerId($customer_id)
     {
         return Customer::where('customer_id', $customer_id)->first();
+    }
+
+    private function insertRefPictureOrderH($picture, $order_no, $order_h_id): void
+    {
+        $image = $picture;
+        $imageName =  $order_no . '_' . $image->getClientOriginalName();
+        $path = $image->storeAs(Constanta::$orderHPictureDirectory, $imageName, Constanta::$refPictureDisk);
+        $url = Storage::url($path);
+
+        $refPicture = new RefPicture();
+
+        $refPicture->order_h_id = $order_h_id;
+        $refPicture->image_url = $url;
+        $refPicture->save();
+    }
+
+    private function getRefPictureByOrderHId($order_h_id)
+    {
+        return RefPicture::where('order_h_id', $order_h_id)->first();
     }
     #endregion
 
@@ -1006,6 +1028,56 @@ class OrderHService implements OrderHInterface
                     'data' => $order
                 ]
                 , 200);
+        }
+    }
+
+    public function UploadOrderImage(UploadOrderImageRequest $request)
+    {
+        try
+        {
+            DB::beginTransaction();
+
+            $orderH = $this->getOrderHById($request->order_h_id);
+
+            $this->insertRefPictureOrderH($request->file('picture'), $orderH->order_no, $orderH->order_h_id);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Image uploaded'
+            ], 200);
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function GetOrderImage(OrderHIdRequest $request)
+    {
+        $refPicture = $this->getRefPictureByOrderHId($request->order_h_id);
+
+        if($refPicture == null)
+        {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Image not found',
+                'image_url' => '-'
+            ], 400);
+        }
+        else
+        {
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Image found',
+                'image_url' => $refPicture->image_url
+            ], 200);
         }
     }
 
