@@ -9,7 +9,7 @@ import { toast } from "@/components/ui/use-toast";
 import { useLogin } from "@/context/LoginContext";
 import { urlConstant } from "@/urlConstant";
 import axios, { AxiosError } from "axios";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import HashLoader from "react-spinners/HashLoader";
@@ -17,6 +17,7 @@ import CancelOrderAlert from "./sub-components/CancelOrderAlert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AgencyPayment } from "../../interface/interface";
 import OrderGenericAlert from "./sub-components/OrderGenericAlert";
+import { Input } from "@/components/ui/input";
 
 const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
   const { t } = useTranslation();
@@ -36,6 +37,8 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
   const [accountName, setAccountName] = useState<string | null>(null);
   const [qrisImg, setqrisImg] = useState<string | null>(null);
   const [agencyPayment, setAgencyPayment] = useState<AgencyPayment[]>();
+  const [imageUrl, setImageUrl] = useState<string|undefined>('');
+  const [picture, setPicture] = useState<File | null>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -88,6 +91,28 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
   };
 
   const filteredAgencyPayments = agencyPayment?.filter(payment => payment.payment_type === selectedPaymentType);
+
+  const handleImageUpload = (event: ChangeEvent<HTMLInputElement>, setImageUrl: React.Dispatch<React.SetStateAction<string | undefined>>) => {
+    const file = event.target.files && event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = () => {
+        const result = reader.result as string
+        setImageUrl(result);
+    };
+
+    if (file) {
+        reader.readAsDataURL(file);
+    }
+    else {
+        setImageUrl(undefined);
+    }
+};
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    handleImageUpload(event, setImageUrl);
+    setPicture(event.target.files?.[0]);
+};
 
   return (
     <>
@@ -152,7 +177,7 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
                       <TableCell>{order.order_ds && order.order_ds.length > 0 ? order.order_ds[0].end_dt.split(" ")[0] : "N/A"}</TableCell>
                       <TableCell>{order.order_ds && order.order_ds.length > 0 ? order.order_ds[0].qty : "N/A"}</TableCell>
                       <TableCell className="text-right">{hotel || vehicle || attraction ?
-                        (hotel ? formatPrice(hotel.base_price) : vehicle ? formatPrice(vehicle.base_price) : attraction ? formatPrice(attraction.base_price) : 0) : "N/A"}
+                        (hotel ? formatPrice(order.order_ds[0].price || 0) : vehicle ? formatPrice(order.order_ds[0].price || 0) : attraction ? formatPrice(order.order_ds[0].price || 0) : 0) : "N/A"}
                       </TableCell>
                       <TableCell className="text-right">{formatPrice(order.total_price)}</TableCell>
                     </TableRow>
@@ -331,10 +356,30 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
 
                 </>)}
 
+                {selectedPaymentType && selectedBank && (
+                <div>
                     <div className="flex justify-center items-center mt-7">
-                    {/* <Button className='bg-blue-500 p-2 hover:bg-blue-700 px-4 w-30 mb-3' disabled={!selectedPaymentType || !selectedBank} >{t('Confirm Payment')}</Button> */}
-                    <OrderGenericAlert apiPath='/v1/CustPaidOrder' id={order_h_id} selectedPaymentType={selectedPaymentType}
-                        selectedBank={selectedBank}></OrderGenericAlert>
+                      <p className="font-bold">{t('Upload Proof of Payment')}</p>
+                    </div>
+                    <div className="flex justify-center items-center mt-4">
+                    <Input
+                        id="picture"
+                        type="file"
+                        accept='.jpg, .jpeg, .png'
+                        onChange={handleChange}
+                    />
+                    </div>
+                    {imageUrl && (
+                        <div>
+                            <img src={imageUrl} alt="Uploaded" style={{ maxWidth: '100%', marginTop: '10px' }} />
+                        </div>
+                    )}
+                    </div>
+                )}
+                    
+                    <div className="flex justify-center items-center mt-7">
+                      <OrderGenericAlert apiPath='/v1/CustPaidOrder' id={order_h_id} selectedPaymentType={selectedPaymentType}
+                        selectedBank={selectedBank} image={picture}></OrderGenericAlert>
                     </div>
                 </div>
                 )}

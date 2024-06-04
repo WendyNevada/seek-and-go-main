@@ -1,7 +1,6 @@
 import { useLogin } from "@/context/LoginContext";
-import { urlConstant } from "@/urlConstant";
 import { useEffect, useState } from "react";
-import { AgencyData, AgencyPayment, AttractionRoot } from "../interface/interface";
+import { AgencyData, AttractionRoot } from "../interface/interface";
 import { useNavigate } from "react-router-dom";
 import axiosClient from "@/axios.client";
 import HashLoader from "react-spinners/HashLoader";
@@ -11,8 +10,6 @@ import { Button } from "@/components/ui/button";
 import PriceBox from "./component/PriceBox";
 import rating from "@/components/ui/Custom/rating";
 import { useTranslation } from "react-i18next";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { hitAddApi } from "@/context/HitApi";
 import { format } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
@@ -25,25 +22,19 @@ import { Input } from "@/components/ui/input";
 const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: number }) => {
     const [attraction, setAttraction] = useState<AttractionRoot>();
     const [agency, setAgency] = useState<AgencyData>();
-    const [agencyPayment, setAgencyPayment] = useState<AgencyPayment[]>();
     const [qty, setQty] = useState(0);
     const [loading, setLoading] = useState(true);
-    const [selectedPaymentType, setSelectedPaymentType] = useState<string | null>(null);
-    const [selectedBank, setSelectedBank] = useState<string | null>(null);
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
     const navigate = useNavigate();
     const { t } = useTranslation();
     const { user } = useLogin();
     const [ startDt, setStartDt ] = React.useState<Date>();
-    //const [ endDt, setEndDt ] = useState('');
-    const [ agencyPaymentId, setAgencyPaymentId ] = useState(0);
     const [ promoCode, setPromoCode ] = useState('');
     const [ newPrice, setNewPrice ] = useState(0);
     const [ priceDeduced, setPriceDeduced ] = useState<number>();
     const [ isClicked, setIsClicked ] = useState(false);
     const [ loadingPromo, setLoadingPromo ] = useState(false);
-    const [ promo_type, setPromoType ] = useState('');
-    const [ promo_value, setPromoValue ] = useState(0);
+    const [ unitPromoPrice, setUnitPromoPrice ] = useState(0);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -54,9 +45,6 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
                 if(response.data !== null){
                     const response2 = await axiosClient.post('v1/GetAgencyByAgencyId', { agency_id: response.data.agency_id });
                     setAgency(response2.data.data);
-
-                    const responsePayment = await axiosClient.post('v1/GetAllAgencyPaymentByAgencyId', { agency_id: response.data.agency_id });
-                    setAgencyPayment(responsePayment.data.data);
                 }
             } catch (error) {
                 console.error(error);
@@ -79,103 +67,124 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
     };
 
     const onConfirm = async() => {
-        const merged_values = {
-            agency_id: agency?.agency_id, 
-            customer_id: user?.customer_id, 
-            order_dt: new Date().toISOString().split('T')[0],
-            details: [{
-                package_h_id: null,
-                ref_hotel_id: null,
-                ref_attraction_id: ref_attraction_id,
-                ref_vehicle_id: null,
-                start_dt: startDt?.toISOString().split('T')[0],
-                end_dt: startDt?.toISOString().split('T')[0], //attraction hanya pake 1 tanggal
-                price: attraction?.base_price || 0 * qty,
-                qty: qty,
-                product_type: 'attraction'
-            }]
-        };
-
-        try {
-            const response = await axiosClient.post("/v1/CreateOrder", merged_values, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-
-            if (response.status === 200) {
-                toast({
-                    variant: "success",
-                    description: response.data.message
-                });
-
-                navigate('/Customer/MyOrderDetail/' + response.data.order_h_id);
-            } else {
-                toast({
-                    variant: "destructive",
-                    description: response.data.message
-                });
-            }
-        } catch (error: any) {
-            toast({
-                variant: "destructive",
-                description: error.message
-            });
-        }
-    };
+        if(unitPromoPrice != 0)
+        {
+            const merged_values = {
+                agency_id: agency?.agency_id, 
+                customer_id: user?.customer_id, 
+                order_dt: new Date().toISOString().split('T')[0],
+                details: [{
+                    package_h_id: null,
+                    ref_hotel_id: null,
+                    ref_attraction_id: ref_attraction_id,
+                    ref_vehicle_id: null,
+                    start_dt: startDt?.toISOString().split('T')[0],
+                    end_dt: startDt?.toISOString().split('T')[0], //attraction hanya pake 1 tanggal
+                    price: unitPromoPrice,
+                    qty: qty,
+                    product_type: 'attraction'
+                }]
+            };
     
+            try {
+                const response = await axiosClient.post("/v1/CreateOrder", merged_values, {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+    
+                if (response.status === 200) {
 
-    useEffect(() => {
-        if(promoCode.length > 0 && isClicked) {
-            if(qty === 0)
-            {
-                setPriceDeduced(0);
-                setNewPrice(0);
-                setIsClicked(false);
-            }
-            else
-            {
-                const fetchData = async () => {
-                    const merged_values = {
+                    const merged_values_promo = {
                         id: ref_attraction_id,
                         customer_id: user?.customer_id,
                         promo_code: promoCode,
                         qty: qty
                     }
-            
-                    try {
-                        setLoadingPromo(true);
 
-                        const response = await axiosClient.post("/v1/GetPromoDeductionPriceAttraction", merged_values, {
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                        });
-            
-                        if (response.data.status === "ok") {
-                            toast({
-                                variant: "success",
-                                description: response.data.message
-                            });
-            
-                            setNewPrice(response.data.new_price);
-                            setPriceDeduced(response.data.price_deduced);
-                            setLoadingPromo(false);
-                        } else {
-                            toast({
-                                variant: "destructive",
-                                description: response.data.message
-                            });
-                            setLoadingPromo(false);
-                        }
-                    } catch (error: any) {
-                        toast({
-                            variant: "destructive",
-                            description: error.message
-                        });
-                    }
+                    await axiosClient.post('v1/AddPromoCounterHistory',  merged_values_promo,  {
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
+
+                    toast({
+                        variant: "success",
+                        description: response.data.message
+                    });
+    
+                    navigate('/Customer/MyOrderDetail/' + response.data.order_h_id);
+                } else {
+                    toast({
+                        variant: "destructive",
+                        description: response.data.message
+                    });
                 }
-                fetchData();
+            } catch (error: any) {
+                toast({
+                    variant: "destructive",
+                    description: error.message
+                });
+            }
+        }
+        else
+        {
+            const merged_values = {
+                agency_id: agency?.agency_id, 
+                customer_id: user?.customer_id, 
+                order_dt: new Date().toISOString().split('T')[0],
+                details: [{
+                    package_h_id: null,
+                    ref_hotel_id: null,
+                    ref_attraction_id: ref_attraction_id,
+                    ref_vehicle_id: null,
+                    start_dt: startDt?.toISOString().split('T')[0],
+                    end_dt: startDt?.toISOString().split('T')[0], //attraction hanya pake 1 tanggal
+                    price: attraction?.base_price || 0,
+                    qty: qty,
+                    product_type: 'attraction'
+                }]
+            };
+
+            try {
+                const response = await axiosClient.post("/v1/CreateOrder", merged_values, {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                if (response.status === 200) {
+                    toast({
+                        variant: "success",
+                        description: response.data.message
+                    });
+
+                    navigate('/Customer/MyOrderDetail/' + response.data.order_h_id);
+                } else {
+                    toast({
+                        variant: "destructive",
+                        description: response.data.message
+                    });
+                }
+            } catch (error: any) {
+                toast({
+                    variant: "destructive",
+                    description: error.message
+                });
+            }
+        }
+    };
+    
+
+    //use effect untuk promo code
+    useEffect(() => {
+        if(promoCode.length > 0 && isClicked) {
+            if(qty)
+            {
+                setPriceDeduced(0);
+                setNewPrice(0);
+                setIsClicked(false);
+                setUnitPromoPrice(0);
             }
         }
     }, [qty]);
@@ -209,6 +218,7 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
                     setPriceDeduced(response.data.price_deduced);
                     setIsClicked(true);
                     setLoadingPromo(false);
+                    setUnitPromoPrice(response.data.price_reduced_per_unit);
                 } else {
                     toast({
                         variant: "destructive",
@@ -219,6 +229,7 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
                     setNewPrice(0);
                     setIsClicked(false);
                     setLoadingPromo(false);
+                    setUnitPromoPrice(0);
                 }
             } catch (error: any) {
                 toast({
@@ -259,7 +270,6 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
                                     <span className="text-red-500 ml-2">*</span>
                                 </p>
                                 <div className="flex flex-row space-x-4 items-center">
-                                    {/* <RangeDatePicker onDateChange={handleDateChange} onQtyChange={handleQtyChange} startDt={startDt} endDt={endDt} /> */}
                                     <Popover>
                                         <PopoverTrigger asChild>
                                             <Button
@@ -292,54 +302,10 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
                                 />
                             </div>
 
-                            {/* <div className="shadow-lg border-1 rounded-xl p-6 m-4 bg-slate-100 space-y-2">
-                                <p>{t('Payment Methods')}</p>
-                                <Select onValueChange={(value) => { 
-                                    setSelectedPaymentType(value); 
-                                    setSelectedBank(null);
-                                }}>
-                                    <SelectTrigger className="w-[180px]">
-                                        <SelectValue placeholder={t('Payment Type')}>{selectedPaymentType ?? t('Payment Type')}</SelectValue>
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="Bank Transfer">{t('Bank Transfer')}</SelectItem>
-                                        <SelectItem value="QRIS">{t('QRIS')}</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                
-                                <p>{t('Select Bank')}</p>
-                                <Select 
-                                    value={selectedBank ?? undefined} 
-                                    onValueChange={(value) => {
-                                        setSelectedBank(value);
-                                        const selectedPayment = filteredAgencyPayments?.find(payment => 
-                                            `${payment.bank_name} - ${payment.account_name}` === value
-                                        );
-                                        setAgencyPaymentId(selectedPayment?.agency_payment_id ?? 0);
-                                    }}
-                                >
-                                    <SelectTrigger className="w-[180px]">
-                                        <SelectValue placeholder={t('Select Bank')}>{selectedBank ?? t('Select Bank')}</SelectValue>
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {filteredAgencyPayments?.map((agencyPaymentItem) => (
-                                            <SelectItem 
-                                                key={agencyPaymentItem.agency_payment_id} 
-                                                value={`${agencyPaymentItem.bank_name} - ${agencyPaymentItem.account_name}`}>
-                                                {agencyPaymentItem.bank_name} - {agencyPaymentItem.account_name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div> */}
-
                             <div className="shadow-lg border-1 rounded-xl p-6 m-4 bg-slate-100 space-y-2">
                                 <p>{t('Full Price')}</p>
                                 <p className='font-semibold text-blue-400'>{formatPrice((attraction?.base_price || 0) * qty)}</p>
                             </div>
-                            {/* <div className="m-4 my-10 space-y-2">
-                                <Button className="w-40 bg-blue-500 hover:bg-blue-300" onClick={onConfirm}>{t('Confirm')}</Button>
-                            </div> */}
                         </div>
 
                         <div className="">
@@ -356,15 +322,22 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
                                     <Input placeholder={t('Enter Promo Code')} onChange={(e) => setPromoCode(e.target.value)}></Input>
                                 </div>
                                 <div className="flex justify-center items-center">
-                                    <Button className="bg-blue-500 hover:bg-blue-300" onClick={onApplyPromo}>{t('Apply')}</Button>
+                                    <Button className="bg-blue-500 hover:bg-blue-300" onClick={onApplyPromo} disabled={!promoCode}>{t('Apply')}</Button>
                                 </div>
                             </div>
 
                             <div className="shadow-lg border-slate-100 border-2 p-6 w-72 my-5">
-                                <PriceBox price={attraction?.base_price || 0} qty={qty} totalPrice={(attraction?.base_price || 0) * qty } priceDeduced={priceDeduced || undefined} newPrice={newPrice || undefined} loadingPromo={loadingPromo}/>
-                                <br />
-                                <Button className="w-full bg-blue-500 hover:bg-blue-300" onClick={onConfirm} disabled={!startDt || !qty}>{t('Confirm')}</Button>
-
+                                {loadingPromo? (
+                                <div className="flex flex-row justify-center items-center h-40">
+                                    <HashLoader size={50} color={"#123abc"} loading={loadingPromo} />
+                                </div>
+                                ) : (
+                                <>
+                                    <PriceBox price={attraction?.base_price || 0} qty={qty} totalPrice={(attraction?.base_price || 0) * qty } priceDeduced={priceDeduced || undefined} newPrice={newPrice || undefined}/>
+                                    <br />
+                                    <Button className="w-full bg-blue-500 hover:bg-blue-300" onClick={onConfirm} disabled={!startDt || !qty}>{t('Confirm')}</Button>
+                                </>
+                                )}
                             </div>
                         </div>
 

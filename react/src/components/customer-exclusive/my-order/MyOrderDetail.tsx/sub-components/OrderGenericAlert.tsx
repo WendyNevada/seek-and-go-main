@@ -22,25 +22,47 @@ interface OrderGenericAlertProps {
     id: number;
     selectedPaymentType?: string | null;
     selectedBank?: string | null;
+    image?: File | null;
 }
 
-const OrderGenericAlert = ({ apiPath, id, selectedPaymentType, selectedBank }: OrderGenericAlertProps) => {
+const OrderGenericAlert = ({ apiPath, id, selectedPaymentType, selectedBank, image }: OrderGenericAlertProps) => {
 
     const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
 
+    const formData = new FormData();
+    formData.append('order_h_id', id.toString());
+    if (image) 
+    {
+        formData.append('picture', image);
+    }
+
     const handleClick = async () => {
         setLoading(true);
         try {
-            const response = await axiosClient.post(apiPath, { order_h_id: id});
-            // toast({
-            //     variant: response.data.status === "ok" ? "success" : "destructive",
-            //     description: response.data.message
-            // });
-            if (response.data.status === "ok") {
-                setTimeout(() => {
-                    window.location.reload();
-                }, 100);
+            if(image) 
+            {
+                console.log("image: ", image)
+                const response = await axiosClient.post( "v1/UploadOrderImage", formData);
+
+                if (response.data.status === "ok") 
+                {
+                    await axiosClient.post(apiPath, { order_h_id: id});
+
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 100);
+                }
+            }
+            else
+            {
+                const response = await axiosClient.post(apiPath, { order_h_id: id});
+
+                if (response.data.status === "ok") {
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 100);
+                }
             }
         } catch (error) {
             const errorMessage = axios.isAxiosError(error) && error.response
