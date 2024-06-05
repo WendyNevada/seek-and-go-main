@@ -10,28 +10,48 @@ import { Button } from '@/components/ui/button';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { formatPrice } from '@/utils/priceFormating';
 import { useTranslation } from 'react-i18next';
+import { DateRange } from 'react-day-picker';
+import { DatePickerWithRange } from './component/rangeDatePicker';
 
 interface HotelQtyProps {
     hotelQty: number;
+    agency_id_param?: number | null | undefined;
     initialDetails?: { ref_hotel_id?: string | null | undefined }[];
     onDetailsChange: (details: { ref_hotel_id?: string | null }[]) => void; // Function to handle details change
     onHotelQtyChange: (hotelQty: number) => void;
 }
 
-const HotelQty = ({hotelQty, initialDetails, onDetailsChange, onHotelQtyChange} : HotelQtyProps) => {
+const HotelQty = ({hotelQty, initialDetails, onDetailsChange, onHotelQtyChange, agency_id_param} : HotelQtyProps) => {
     const { t } = useTranslation();
     const { user } = useLogin();
     const [hotel, setHotel] = useState<DaumHotel[]>([]);
-    const [details, setDetails] = useState<{ ref_hotel_id?: string | null }[]>(Array.from({ length: hotelQty }, () => ({ ref_hotel_id: null })));
+    const [details, setDetails] = useState<{ ref_hotel_id?: string | null, start_dt?: string | null, end_dt?: string | null }[]>(Array.from({ length: hotelQty }, () => ({ ref_hotel_id: null })));
     const [newHotels, setNewHotels] = useState<DaumHotel[]>(Array.from({ length: hotelQty }, () => ({} as DaumHotel)));
 
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
+
+    const handleDateChange = (index: number, date: DateRange | undefined) => {
+        const newDetails = [...details];
+        const start_dt = date?.from ? date.from.toISOString().split('T')[0] : '';
+        const end_dt = date?.to ? date.to.toISOString().split('T')[0] : '';
+        newDetails[index] = {
+            ...newDetails[index],
+            start_dt,
+            end_dt,
+        };
+        setDetails(newDetails);
+        onDetailsChange(newDetails);
+
+        console.log(`Start Date for index ${index}:`, start_dt);
+        console.log(`End Date for index ${index}:`, end_dt);
+    };
+
 
     useEffect(() => {
         const fetchAttraction = async () => {
             try {
                 const response = await axiosClient.post('/v1/GetActiveHotelByAgencyId', {
-                    agency_id: user?.agency_id
+                    agency_id: (user && user.agency_id > 0 ? user.agency_id : agency_id_param)
                 });
                 setHotel(response.data.data);
             } catch (error) {
@@ -57,7 +77,7 @@ const HotelQty = ({hotelQty, initialDetails, onDetailsChange, onHotelQtyChange} 
 
     const handleDetailChange = (index: number, value: string) => {
         const newDetails = [...details];
-        newDetails[index] = { ref_hotel_id: value }; // Create a new object for the detail
+        newDetails[index] = { ref_hotel_id: value, start_dt: details[index]?.start_dt, end_dt: details[index]?.end_dt }; // Create a new object for the detail
         setDetails(newDetails);
         onDetailsChange(newDetails);
 
@@ -107,7 +127,7 @@ const HotelQty = ({hotelQty, initialDetails, onDetailsChange, onHotelQtyChange} 
                         <Button className='ml-2' variant={'destructive'} onClick={() => handleRemoveDetail(index)}>{<HighlightOffIcon/>}</Button>
                     </div>
 
-                    <div className="border-2 rounded-md">
+                    <div className="border-2 rounded-md flex">
                         {details[index]?.ref_hotel_id && newHotels[index]?.image_url ? (
                             <div className='flex flex-row'>
                                 <div className="ml-1 mt-4">
@@ -120,22 +140,40 @@ const HotelQty = ({hotelQty, initialDetails, onDetailsChange, onHotelQtyChange} 
                                         <div className="flex flex-col m-2 space-y-4">
                                             <Table>
                                                 <TableBody>
-                                                    <TableRow>
+                                                    <TableRow className='flex'>
                                                         <TableCell className="font-medium">{t('Product Name')} :</TableCell>
-                                                        <TableCell className="font-medium">{newHotels[index]?.hotel_name}</TableCell>
+                                                        <TableCell className="font-medium flex ">{newHotels[index]?.hotel_name}</TableCell>
                                                     </TableRow>
-                                                    <TableRow>
+                                                    <TableRow className='flex'>
                                                         <TableCell className="font-medium">{t('Price')} :</TableCell>
-                                                        <TableCell className="font-medium">{formatPrice(newHotels[index]?.base_price)}</TableCell>
+                                                        <TableCell className="font-medium flex">{formatPrice(newHotels[index]?.base_price)}</TableCell>
                                                     </TableRow>
-                                                    <TableRow>
+                                                    <TableRow className='flex'>
                                                         <TableCell className="font-medium">{t('Address')} :</TableCell>
-                                                        <TableCell className="font-medium">{newHotels[index]?.address_zipcode}</TableCell>
+                                                        <TableCell className="font-medium flex ">{newHotels[index]?.address_zipcode}</TableCell>
                                                     </TableRow>
-                                                    <TableRow>
+                                                    <TableRow className='flex'>
                                                         <TableCell className="font-medium">{t('Description')} :</TableCell>
-                                                        <TableCell className="font-medium">{newHotels[index]?.description}</TableCell>
+                                                        <TableCell className="font-medium flex">{newHotels[index]?.description}</TableCell>
                                                     </TableRow>
+                                                    {
+                                                        agency_id_param ? (
+                                                            <TableRow className='flex'>
+                                                                <TableCell className="font-medium">{t('Date')} :</TableCell>
+                                                                <TableCell className="font-medium">
+                                                                <DatePickerWithRange
+                                                                    onDateChange={(date) => handleDateChange(index, date)}
+                                                                    startDt={details[index]?.start_dt || ''}
+                                                                    endDt={details[index]?.end_dt || ''}
+                                                                />
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        ) : (
+                                                            <TableRow>
+                                                                -
+                                                            </TableRow>
+                                                        )
+                                                    }
                                                 </TableBody>
                                             </Table>
                                         </div>

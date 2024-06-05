@@ -1,5 +1,5 @@
 import '@/context/language/i18n';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginRegisterPage from './views/Login-register-page/RegisterPage';
 import LoginPage from './views/Login-register-page/LoginPage';
 import { LoginProvider } from '@/context/LoginContext';
@@ -33,6 +33,7 @@ import PackageOrderDetailPage from './views/Customer-page/Order-page/PackageOrde
 import AgencyDetailForCustomer from './views/Home-Page/AgencyDetailForCustomer';
 import AgencyCustomPackagePage from './views/Agency-page/AgencyCustomPackagePage';
 import AgencyCustomPackageDetailPage from './views/Agency-page/AgencyCustomPackageDetailPage';
+import RequestCustomPackagePage from './views/Customer-page/Order-page/RequestCustomPackagePage';
 
 function App() {
   return (
@@ -112,6 +113,7 @@ function CustomerRoutes() {
         <Route path="HotelOrderDetail/:ref_hotel_id" element={<HotelOrderDetailPage/>} />
         <Route path="AttractionOrderDetail/:ref_attraction_id" element={<AttractionOrderDetailPage/>} />
         <Route path="PackageOrderDetail/:package_h_id" element={<PackageOrderDetailPage/>} />
+        <Route path="RequestCustomPackage/:agency_id" element={<RequestCustomPackagePage/>} />
 
         <Route path="PaymentDetail/:order_h_id/:agency_payment_id" element={<PaymentPage/>} />
 

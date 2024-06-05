@@ -15,7 +15,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import React from "react";
 import { toast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 
@@ -28,7 +27,7 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
     const navigate = useNavigate();
     const { t } = useTranslation();
     const { user } = useLogin();
-    const [ startDt, setStartDt ] = React.useState<Date>();
+    const [ startDt, setStartDt ] = useState<Date>();
     const [ promoCode, setPromoCode ] = useState('');
     const [ newPrice, setNewPrice ] = useState(0);
     const [ priceDeduced, setPriceDeduced ] = useState<number>();

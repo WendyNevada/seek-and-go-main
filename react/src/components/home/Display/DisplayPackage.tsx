@@ -31,8 +31,6 @@ const DisplayPackage = () => {
 
     const selectItem = (id : number) => {
         navigate(`/Customer/PackageDetail/${id}`);
-        //navigateTo(`/vehicle/${id}`);
-        //navigatedTo(`/Customer/ProductDetail`);
     }
 
   return (
