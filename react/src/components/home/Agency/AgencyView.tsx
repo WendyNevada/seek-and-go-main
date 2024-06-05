@@ -8,11 +8,15 @@ import HotelListForCust from "./ProductList/HotelListForCust";
 import AttractionListForCust from "./ProductList/AttractionListForCust";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import CredentialModal from "@/components/customer-exclusive/modal/CredentialModal";
+import { useLogin } from "@/context/LoginContext";
 
 const AgencyView = ({agency_id}: {agency_id:number}) => {
     const [agency, setAgency] = useState<AgencyData>();
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const { user } = useLogin();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -30,7 +34,12 @@ const AgencyView = ({agency_id}: {agency_id:number}) => {
     })
 
     const requestCustomPackage = ( id : number) => {
-        navigate(`/Customer/RequestCustomPackage/${id}`);
+        if ( user?.customer_id == null || user?.customer_id === 0) {
+            setIsModalOpen(true);
+        }
+        else{
+            navigate(`/Customer/RequestCustomPackage/${id}`);
+        }
     }
 
     return (
@@ -70,6 +79,8 @@ const AgencyView = ({agency_id}: {agency_id:number}) => {
                         <p className="text-4xl">ATTRACTION</p>
                         <AttractionListForCust agency_id={agency_id}/>
                     </div>
+
+                    <CredentialModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
                 </div>
             )}
         </div>

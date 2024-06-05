@@ -8,44 +8,50 @@ import { Button } from '@/components/ui/button';
 
 //  icon
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+
+// function
 import { formatPrice } from '@/utils/priceFormating';
 import { useTranslation } from 'react-i18next';
 import { DateRange } from 'react-day-picker';
 import { DatePickerWithRange } from './component/rangeDatePicker';
+import { addDays } from 'date-fns';
 
 interface HotelQtyProps {
     hotelQty: number;
     agency_id_param?: number | null | undefined;
     initialDetails?: { ref_hotel_id?: string | null | undefined }[];
-    onDetailsChange: (details: { ref_hotel_id?: string | null }[]) => void; // Function to handle details change
+    onDetailsChange: (details: { ref_hotel_id?: string | null , start_dt?: string | null, end_dt?: string | null }[]) => void; // Function to handle details change
     onHotelQtyChange: (hotelQty: number) => void;
 }
 
-const HotelQty = ({hotelQty, initialDetails, onDetailsChange, onHotelQtyChange, agency_id_param} : HotelQtyProps) => {
+const HotelQty = ({hotelQty, initialDetails, onDetailsChange, onHotelQtyChange, agency_id_param } : HotelQtyProps) => {
     const { t } = useTranslation();
     const { user } = useLogin();
     const [hotel, setHotel] = useState<DaumHotel[]>([]);
     const [details, setDetails] = useState<{ ref_hotel_id?: string | null, start_dt?: string | null, end_dt?: string | null }[]>(Array.from({ length: hotelQty }, () => ({ ref_hotel_id: null })));
     const [newHotels, setNewHotels] = useState<DaumHotel[]>(Array.from({ length: hotelQty }, () => ({} as DaumHotel)));
+    const [startDt, setStartDt] = useState('');
+    const [endDt, setEndDt] = useState('');
 
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
 
     const handleDateChange = (index: number, date: DateRange | undefined) => {
-        const newDetails = [...details];
-        const start_dt = date?.from ? date.from.toISOString().split('T')[0] : '';
-        const end_dt = date?.to ? date.to.toISOString().split('T')[0] : '';
-        newDetails[index] = {
-            ...newDetails[index],
-            start_dt,
-            end_dt,
-        };
-        setDetails(newDetails);
-        onDetailsChange(newDetails);
-
-        console.log(`Start Date for index ${index}:`, start_dt);
-        console.log(`End Date for index ${index}:`, end_dt);
+        if (date) {
+            const newDetails = [...details];
+            const start_dt = date?.from ? (addDays(date.from, 1)).toISOString().split('T')[0] : '';
+            const end_dt = date?.to ? (addDays(date.to, 1)).toISOString().split('T')[0] : '';
+            newDetails[index] = {
+                ...newDetails[index],
+                start_dt,
+                end_dt,
+            };
+            setDetails(newDetails);
+            onDetailsChange(newDetails);
+        } else {
+            setStartDt('');
+            setEndDt('');
+        }
     };
-
 
     useEffect(() => {
         const fetchAttraction = async () => {
@@ -77,7 +83,7 @@ const HotelQty = ({hotelQty, initialDetails, onDetailsChange, onHotelQtyChange, 
 
     const handleDetailChange = (index: number, value: string) => {
         const newDetails = [...details];
-        newDetails[index] = { ref_hotel_id: value, start_dt: details[index]?.start_dt, end_dt: details[index]?.end_dt }; // Create a new object for the detail
+        newDetails[index] = { ref_hotel_id: value, start_dt: startDt, end_dt: endDt }; // Create a new object for the detail
         setDetails(newDetails);
         onDetailsChange(newDetails);
 
@@ -163,8 +169,10 @@ const HotelQty = ({hotelQty, initialDetails, onDetailsChange, onHotelQtyChange, 
                                                                 <TableCell className="font-medium">
                                                                 <DatePickerWithRange
                                                                     onDateChange={(date) => handleDateChange(index, date)}
-                                                                    startDt={details[index]?.start_dt || ''}
-                                                                    endDt={details[index]?.end_dt || ''}
+                                                                    startDt={startDt}
+                                                                    endDt={endDt}
+                                                                    // startDt={details[index]?.start_dt || ''}
+                                                                    // endDt={details[index]?.end_dt || ''}
                                                                 />
                                                                 </TableCell>
                                                             </TableRow>

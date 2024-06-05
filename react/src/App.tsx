@@ -1,8 +1,8 @@
 import '@/context/language/i18n';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginRegisterPage from './views/Login-register-page/RegisterPage';
 import LoginPage from './views/Login-register-page/LoginPage';
-import { LoginProvider } from '@/context/LoginContext';
+import { LoginProvider, useLogin } from '@/context/LoginContext';
 import AgencyHomePage from './views/Agency-page/AgencyHomePage';
 import AgencyProductPage from './views/Agency-page/AgencyProductPage';
 import AgencyAddAttractionPage from './views/Agency-page/AgencyAddAttractionPage';
@@ -59,7 +59,7 @@ function App() {
             <Route path="/Customer/HotelDetail/:ref_hotel_id" element={<HotelDetailPage/>} />
             <Route path="/Customer/AttractionDetail/:ref_attraction_id" element={<AttractionDetailPage/>} />
             <Route path="/Customer/PackageDetail/:package_h_id" element={<PackageDetailPage />} />
-
+///src/views/Customer-page/Custom-Package-Customer/CustomPackageCustomerPage.tsx
           {/* <Route path="/TEST" element={ <ComboboxDemo/>}/> */}
         </Routes>
       </LoginProvider>
@@ -69,45 +69,46 @@ function App() {
 
 // Nested component to handle Agency routes
 function AgencyRoutes() {
+    const { user } = useLogin();
+        if (!user || user.role !== 'Agency') {
+            return <Navigate to="/Login" />;
+        }
 
+    return (
+        <Routes>
+            <Route path="/" element={<AgencyHomePage />} />
+            {/* <Route path="DashBoard" element={<AgencyHomePage />} /> */}
+            <Route path="Product" element={<AgencyProductPage />} />
+            <Route path="AddAttraction" element={<AgencyAddAttractionPage />} />
+            <Route path="EditAttraction/:ref_attraction_id" element={<AgencyEditAttractionPage />} />
+            <Route path="AddVehicle" element={<AgencyAddVehiclePage />}></Route>
+            <Route path="EditVehicle/:ref_vehicle_id" element={<AgencyEditVehiclePage />}></Route>
+            <Route path="AddHotel" element={<AgencyAddHotelPage />}></Route>
+            <Route path="EditHotel/:ref_hotel_id" element={<AgencyEditHotelPage />}></Route>
+            <Route path="AddPackage" element={<AgencyAddPackagePage/>}></Route>
+            <Route path="EditPackage/:package_h_id" element={<AgencyEditPackagePage/>}></Route>
 
-  return (
-    <Routes>
-        <Route path="/" element={<AgencyHomePage />} />
-        {/* <Route path="DashBoard" element={<AgencyHomePage />} /> */}
-        <Route path="Product" element={<AgencyProductPage />} />
-        <Route path="AddAttraction" element={<AgencyAddAttractionPage />} />
-        <Route path="EditAttraction/:ref_attraction_id" element={<AgencyEditAttractionPage />} />
-        <Route path="AddVehicle" element={<AgencyAddVehiclePage />}></Route>
-        <Route path="EditVehicle/:ref_vehicle_id" element={<AgencyEditVehiclePage />}></Route>
-        <Route path="AddHotel" element={<AgencyAddHotelPage />}></Route>
-        <Route path="EditHotel/:ref_hotel_id" element={<AgencyEditHotelPage />}></Route>
-        <Route path="AddPackage" element={<AgencyAddPackagePage/>}></Route>
-        <Route path="EditPackage/:package_h_id" element={<AgencyEditPackagePage/>}></Route>
+            {/* order detail page */}
+            <Route path="OrderDetail/:order_h_id" element={<AgencyOrderApprovalPage/>} />
 
-        {/* order detail page */}
-        <Route path="OrderDetail/:order_h_id" element={<AgencyOrderApprovalPage/>} />
+            {/* order approval page */}
+            <Route path="Approval/:order_h_id" element={<AgencyOrderApprovalPage/>} />
 
-        {/* order approval page */}
-        <Route path="Approval/:order_h_id" element={<AgencyOrderApprovalPage/>} />
+            {/* Edit Profile */}
+            <Route path="EditProfileAgency/:account_id" element={<EditAgencyProfilePage/>} />
 
-        {/* Edit Profile */}
-        <Route path="EditProfileAgency/:account_id" element={<EditAgencyProfilePage/>} />
-
-        <Route path="CustomPackage" element={<AgencyCustomPackagePage />} />
-        <Route path="CustomPackageDetail/:package_h_id" element={<AgencyCustomPackageDetailPage />} />
-    </Routes>
+            <Route path="CustomPackage" element={<AgencyCustomPackagePage />} />
+            <Route path="CustomPackageDetail/:package_h_id" element={<AgencyCustomPackageDetailPage />} />
+        </Routes>
   );
 }
 
 
 function CustomerRoutes() {
-    //const hasCustomerRole = useUserRole('Customer');
-
-    // If user doesn't have the required role, redirect to login
-    // if (!hasCustomerRole) {
-    //     return <Navigate to="/Login" />;
-    // }
+    const { user } = useLogin();
+    if (!user || user.role !== 'Customer') {
+        return <Navigate to="/Login" />;
+    }
 
   return (
     <Routes>

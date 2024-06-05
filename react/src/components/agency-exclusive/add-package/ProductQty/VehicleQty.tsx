@@ -12,12 +12,13 @@ import { formatPrice } from '@/utils/priceFormating';
 import { useTranslation } from 'react-i18next';
 import { DatePickerWithRange } from './component/rangeDatePicker';
 import { DateRange } from 'react-day-picker';
+import { addDays } from 'date-fns';
 
 interface VehicleQtyProps {
     vehicleQty: number;
     agency_id_param?: number | null | undefined;
     initialDetails?: { ref_vehicle_id?: string | null | undefined }[];
-    onDetailsChange: (details: { ref_vehicle_id?: string | null }[]) => void; // Function to handle details change
+    onDetailsChange: (details: { ref_vehicle_id?: string | null, start_dt?: string | null, end_dt?: string | null }[]) => void; // Function to handle details change
     onVehicleQtyChange: (vehicleQty: number) => void;
 }
 
@@ -33,10 +34,18 @@ const VehicleQty = ({ vehicleQty, initialDetails, onDetailsChange, onVehicleQtyC
     const [ startDt, setStartDt ] = useState('');
     const [ endDt, setEndDt ] = useState('');
 
-    const handleDateChange = (date: DateRange | undefined) => {
+    const handleDateChange = (index: number, date: DateRange | undefined) => {
         if (date) {
-            setStartDt(date.from ? date.from.toISOString().split('T')[0] : '');
-            setEndDt(date.to ? date.to.toISOString().split('T')[0] : '');
+            const newDetails = [...details];
+            const start_dt = date?.from ? (addDays(date.from, 1)).toISOString().split('T')[0] : '';
+            const end_dt = date?.to ? (addDays(date.to, 1)).toISOString().split('T')[0] : '';
+            newDetails[index] = {
+                ...newDetails[index],
+                start_dt,
+                end_dt,
+            };
+            setDetails(newDetails);
+            onDetailsChange(newDetails);
         } else {
             setStartDt('');
             setEndDt('');
@@ -160,10 +169,11 @@ const VehicleQty = ({ vehicleQty, initialDetails, onDetailsChange, onVehicleQtyC
                                                                 <TableCell className="font-medium">{t('Date')} :</TableCell>
                                                                 <TableCell className="font-medium">
                                                                 <DatePickerWithRange
-                                                                    onDateChange={handleDateChange}
-                                                                    // onQtyChange={handleQtyChange}
+                                                                    onDateChange={(date) => handleDateChange(index, date)}
                                                                     startDt={startDt}
                                                                     endDt={endDt}
+                                                                    // startDt={details[index]?.start_dt || ''}
+                                                                    // endDt={details[index]?.end_dt || ''}
                                                                 />
                                                                 </TableCell>
                                                             </TableRow>
