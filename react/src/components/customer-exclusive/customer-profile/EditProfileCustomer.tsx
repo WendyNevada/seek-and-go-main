@@ -15,7 +15,6 @@ const EditProfileCustomer = ({account_id} : {account_id:number}) => {
         const fetchData = async () => {
             try {
                 const response = await axiosClient.post('v1/GetAccountInfoById', { account_id : account_id });
-                console.log(response.data);
                 setCustomer(response.data.account);
             }
             catch (error) {
@@ -24,7 +23,6 @@ const EditProfileCustomer = ({account_id} : {account_id:number}) => {
         }
 
         fetchData();
-        console.log('agencies const : ', customer)
     }, [])
 
   return (

@@ -7,7 +7,6 @@ import AgencyHomePage from './views/Agency-page/AgencyHomePage';
 import AgencyProductPage from './views/Agency-page/AgencyProductPage';
 import AgencyAddAttractionPage from './views/Agency-page/AgencyAddAttractionPage';
 import HomePage from './views/Home-Page/HomePage';
-import { useUserRole } from './context/CustomHook';
 import AgencyEditAttractionPage from './views/Agency-page/AgencyEditAttractionPage';
 import AgencyAddVehiclePage from './views/Agency-page/AgencyAddVehiclePage';
 import AgencyEditVehiclePage from './views/Agency-page/AgencyEditVehiclePage';
@@ -32,6 +31,8 @@ import MyOrderDetailPage from './views/Customer-page/My-Order-page/MyOrderDetail
 import PackageDetailPage from './views/Customer-page/PackageDetailPage';
 import PackageOrderDetailPage from './views/Customer-page/Order-page/PackageOrderDetailPage';
 import AgencyDetailForCustomer from './views/Home-Page/AgencyDetailForCustomer';
+import AgencyCustomPackagePage from './views/Agency-page/AgencyCustomPackagePage';
+import AgencyCustomPackageDetailPage from './views/Agency-page/AgencyCustomPackageDetailPage';
 
 function App() {
   return (
@@ -89,6 +90,9 @@ function AgencyRoutes() {
 
         {/* Edit Profile */}
         <Route path="EditProfileAgency/:account_id" element={<EditAgencyProfilePage/>} />
+
+        <Route path="CustomPackage" element={<AgencyCustomPackagePage />} />
+        <Route path="CustomPackageDetail/:package_h_id" element={<AgencyCustomPackageDetailPage />} />
     </Routes>
   );
 }

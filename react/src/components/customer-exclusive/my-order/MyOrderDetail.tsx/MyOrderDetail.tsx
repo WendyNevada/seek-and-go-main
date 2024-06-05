@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { AgencyPayment } from "../../interface/interface";
 import OrderGenericAlert from "./sub-components/OrderGenericAlert";
 import { Input } from "@/components/ui/input";
+import RatingDialog from "./sub-components/RatingDialog";
 
 interface OrderDataRow {
     order_h_id : number,
@@ -29,6 +30,11 @@ interface OrderDataRow {
     qty : number,
     price : number,
     total_price : number
+}
+
+interface RatingData {
+  id: number;
+  product_type: string;
 }
 
 const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
@@ -52,6 +58,10 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
   const [imageUrl, setImageUrl] = useState<string|undefined>('');
   const [picture, setPicture] = useState<File | null>();
   const [orderDataRows, setOrderDataRows] = useState<OrderDataRow[]>([]);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [productsRating, setProductsRating] = useState<RatingData[]>([]);
+  const [isGiveRating, setIsGiveRating] = useState(0);
+  const [buttonRate, setButtonRate] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,6 +69,11 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
             const response = await axiosClient.post('v1/GetOrderById', { order_h_id: order_h_id });
             setOrder(response.data);
             const orderData: OrderD = response.data;
+
+            if(response.status === 200) {
+                const responseTrx = await axiosClient.post('v1/GetTrxByOrderHId', {order_h_id : order_h_id});
+                setIsGiveRating(responseTrx.data.trx.is_given_rating); 
+            }
 
             const fetchDetails = orderData.order_ds.map(async (orderD) => {
                 let hotel_name = '';
@@ -72,18 +87,69 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
                     price = responseHotel.data.base_price;
                     setHotel(responseHotel.data);
                     setPictUrl(responseHotel.data.picture_url)
+
+                    const rateData: RatingData[] = [{
+                      id: orderD.ref_hotel_id ?? 0,
+                      product_type: 'hotel'
+                    },];
+
+                    const fetchRate = rateData.map((rating: RatingData) => {
+                      return {
+                        ...rating,
+                        id: rateData[0].id ?? 0,
+                        product_type: rateData[0].product_type,
+                      };
+                    });
+                    
+                    Promise.all(fetchRate);
+                    setProductsRating(fetchRate);
+
                 } else if (orderD.ref_vehicle_id != null) {
                     const responseVehicle = await axiosClient.post('v1/GetVehicleById', { ref_vehicle_id: orderD.ref_vehicle_id });
                     vehicle_name = responseVehicle.data.vehicle.vehicle_name;
                     price = responseVehicle.data.base_price;
                     setVehicle(responseVehicle.data);
                     setPictUrl(responseVehicle.data.picture_url)
+
+                    const rateData: RatingData[] = [{
+                      id: orderD.ref_vehicle_id ?? 0,
+                      product_type: 'vehicle'
+                    },];
+
+                    const fetchRate = rateData.map((rating: RatingData) => {
+                      return {
+                        ...rating,
+                        id: rateData[0].id ?? 0,
+                        product_type: rateData[0].product_type,
+                      };
+                    });
+                    
+                    Promise.all(fetchRate);
+                    setProductsRating(fetchRate);
+
                 } else if (orderD.ref_attraction_id != null) {
                     const responseAttraction = await axiosClient.post('v1/GetAttractionById', { ref_attraction_id: orderD.ref_attraction_id });
                     attraction_name = responseAttraction.data.attraction.attraction_name;
                     price = responseAttraction.data.base_price;
                     setAttraction(responseAttraction.data);
                     setPictUrl(responseAttraction.data.picture_url)
+
+                    const rateData: RatingData[] = [{
+                      id: orderD.ref_attraction_id ?? 0,
+                      product_type: 'attraction'
+                    },];
+
+                    const fetchRate = rateData.map((rating: RatingData) => {
+                      return {
+                        ...rating,
+                        id: rateData[0].id ?? 0,
+                        product_type: rateData[0].product_type,
+                      };
+                    });
+                    
+                    Promise.all(fetchRate);
+                    setProductsRating(fetchRate);
+                    
                 }
 
                 const responsePayment = await axiosClient.post('v1/GetAllAgencyPaymentByAgencyId', { agency_id: response.data.agency_id });
@@ -110,7 +176,6 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
         }
         }
         fetchData();
-        console.log(pictUrl)
   }, [order_h_id])
 
   const formatPrice = (price: number): string => {
@@ -150,6 +215,15 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
     setPicture(event.target.files?.[0]);
 };
 
+  const handleOpenRatingModal = () => {
+    setIsEditModalOpen(true);
+  }
+
+  const handleAfterRate = () => {
+    setIsEditModalOpen(false);
+    setButtonRate(true);
+  }
+
   return (
     <>
       {loading ? (
@@ -182,10 +256,13 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
                 </div>
               </div>
               <div>
-                <img src={enviUrl + pictUrl} alt="Loading..." className="w-36 h-24 rounded-md" />
+                {order.order_ds[0].package_h_id == null && (
+                  <img src={enviUrl + pictUrl} alt="Loading..." className="w-36 h-24 rounded-md" />
+                )}
               </div>
             </div>
-
+              
+            {/* Table */}
             <div className="p-5 text-xl flex flex-col">
               <hr className='border-2' />
               <br />
@@ -558,12 +635,40 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
 
                 </>)}
 
+                {selectedPaymentType && selectedBank && (
+                <div>
+                    <div className="flex justify-center items-center mt-7">
+                      <p className="font-bold">{t('Upload Proof of Payment')}</p>
+                    </div>
+                    <div className="flex justify-center items-center mt-4">
+                    <Input
+                        id="picture"
+                        type="file"
+                        accept='.jpg, .jpeg, .png'
+                        onChange={handleChange}
+                    />
+                    </div>
+                    {imageUrl && (
+                        <div>
+                            <img src={imageUrl} alt="Uploaded" style={{ maxWidth: '100%', marginTop: '10px' }} />
+                        </div>
+                    )}
+                    </div>
+                )}
+
                     <div className="flex justify-center items-center mt-7">
                     {/* <Button className='bg-blue-500 p-2 hover:bg-blue-700 px-4 w-30 mb-3' disabled={!selectedPaymentType || !selectedBank} >{t('Confirm Payment')}</Button> */}
                     <OrderGenericAlert apiPath='/v1/CustPaidOrder' id={order_h_id} selectedPaymentType={selectedPaymentType}
-                        selectedBank={selectedBank}></OrderGenericAlert>
+                        selectedBank={selectedBank} image={picture}></OrderGenericAlert>
                     </div>
                 </div>
+                )}
+
+                {order.order_status === 'FIN' && order.order_ds[0].package_h_id === null && isGiveRating === 0 && (
+                    <div className="flex justify-center items-center mt-1 mb-3">
+                      <Button variant="primary" className="bg-yellow-500 p-2 hover:bg-yellow-700 px-4 w-28" onClick={() => handleOpenRatingModal()} disabled={buttonRate}>{t('Give Rating')}</Button>
+                      <RatingDialog isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} products={productsRating} order_h_id={order_h_id} onSave={() => handleAfterRate()}/>
+                    </div>
                 )}
 
             </div>

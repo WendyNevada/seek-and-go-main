@@ -29,7 +29,6 @@ const DisplayAttraction = () => {
     },[])
 
     const selectItem = (id : number) => {
-        console.log('selected id : ',id);
         navigate(`/Customer/AttractionDetail/${id}`);
     }
 

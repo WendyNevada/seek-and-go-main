@@ -13,6 +13,7 @@ import { PayAccount } from '../../interface/interface';
 import { useLogin } from '@/context/LoginContext';
 import { hitAddApi } from '@/context/HitApi';
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface CredentialModalProps {
     isOpen: boolean;
@@ -23,7 +24,7 @@ interface CredentialModalProps {
 
 const EditPaymentModal = ({ isOpen, onClose, payment, onSave }: CredentialModalProps) => {
     const { user } = useLogin();
-    const { navigateTo } = useLogin('/Agency/EditProfileAgency/' + user?.agency_id);
+    const  navigate  = useNavigate();
 
     const [editedPayment, setEditedPayment] = useState<PayAccount>();
     // const enviUrl = import.meta.env.VITE_API_BASE_URL;
@@ -62,7 +63,6 @@ const EditPaymentModal = ({ isOpen, onClose, payment, onSave }: CredentialModalP
     };
 
     const handleSaveChanges = async () => {
-        console.log('save changes payment: ', editedPayment)
         if (editedPayment) {
             const formData = new FormData();
             formData.append('agency_payment_id', editedPayment?.agency_payment_id.toString());
@@ -76,7 +76,7 @@ const EditPaymentModal = ({ isOpen, onClose, payment, onSave }: CredentialModalP
                 await hitAddApi('v1/EditAgencyPayment', formData);
                 onSave(editedPayment);
                 if (editedPayment.picture !== null) {
-                    navigateTo('/Agency/EditProfileAgency/' + user?.agency_id);
+                    navigate('/Agency/EditProfileAgency/' + user?.agency_id);
                     setTimeout(() => {
                         window.location.reload();
                     }, 100);
@@ -97,6 +97,17 @@ const EditPaymentModal = ({ isOpen, onClose, payment, onSave }: CredentialModalP
             Make changes to your profile here. Click save when you're done.
           </DialogDescription>
         </DialogHeader>
+             <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="username" className="text-right">
+                Account Name
+                </Label>
+                <Input
+                id="account_name"
+                defaultValue={payment?.account_name}
+                onChange={handleInputChange}
+                className="col-span-3"
+                />
+            </div>
             { (payment.image_url == '-') ? (
                 <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-4 items-center gap-4">
@@ -110,17 +121,6 @@ const EditPaymentModal = ({ isOpen, onClose, payment, onSave }: CredentialModalP
                         className="col-span-3"
                         />
                     </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="username" className="text-right">
-                        Account Name
-                        </Label>
-                        <Input
-                        id="account_name"
-                        defaultValue={payment?.account_name}
-                        onChange={handleInputChange}
-                        className="col-span-3"
-                        />
-                    </div>
                 </div>
             ):(
                 <div className="space-y-4 items-center gap-4 justify-items-center">
@@ -128,6 +128,7 @@ const EditPaymentModal = ({ isOpen, onClose, payment, onSave }: CredentialModalP
                     <Input
                         id="picture"
                         type="file"
+                        accept='.jpg, .jpeg, .png'
                         onChange={handleFileChange}
                         className="col-span-3"
                     />

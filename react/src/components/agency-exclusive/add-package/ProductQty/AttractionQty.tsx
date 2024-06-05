@@ -35,7 +35,6 @@ const AttractionQty = ( {attractionQty, initialDetails, onDetailsChange, onAttra
                     agency_id: user?.agency_id
                 }); // Replace 'your-api-url' with the actual API endpoint
                 setAttraction(response.data.data);
-                console.log('attractionQty : ',attractionQty);
             } catch (error) {
                 console.error('Error fetching attractions:', error);
             }

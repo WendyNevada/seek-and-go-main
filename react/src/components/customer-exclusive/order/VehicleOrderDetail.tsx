@@ -6,7 +6,6 @@ import PriceBox from './component/PriceBox';
 import { useLogin } from '@/context/LoginContext';
 import rating from '@/components/ui/Custom/rating';
 import { HashLoader } from 'react-spinners';
-import geocodeAddress, { Coordinates } from '@/components/ui/Custom/maps/geocodeAddress';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { RangeDatePicker } from './component/RangeDatePicker';
@@ -76,22 +75,6 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
     };
 
     const onConfirm = async() => {
-        const merged_values = {
-            agency_id: agency?.agency_id,
-            customer_id: user?.customer_id,
-            order_dt: new Date().toISOString().split('T')[0],
-            details: [{
-                package_h_id: null,
-                ref_hotel_id: null,
-                ref_attraction_id: null,
-                ref_vehicle_id: ref_vehicle_id,
-                start_dt: startDt,
-                end_dt: endDt,
-                price: vehicle?.base_price || 0,
-                qty: qty,
-                product_type: 'vehicle'
-            }]
-        };
         if(unitPromoPrice != 0)
         {
             const merged_values = {

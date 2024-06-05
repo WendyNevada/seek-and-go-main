@@ -42,7 +42,6 @@ const OrderGenericAlert = ({ apiPath, id, selectedPaymentType, selectedBank, ima
         try {
             if(image) 
             {
-                console.log("image: ", image)
                 const response = await axiosClient.post( "v1/UploadOrderImage", formData);
 
                 if (response.data.status === "ok") 

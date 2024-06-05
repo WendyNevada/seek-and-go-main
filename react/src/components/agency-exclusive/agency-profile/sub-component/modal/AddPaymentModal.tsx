@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { PayAccount } from '../../interface/interface';
 import { useLogin } from '@/context/LoginContext';
 import { hitAddApi } from '@/context/HitApi';
+import { useNavigate } from 'react-router-dom';
 
 interface CredentialModalProps {
   isOpen: boolean;
@@ -20,7 +21,7 @@ interface CredentialModalProps {
 
 const AddPaymentModal = ({ isOpen, onClose }: CredentialModalProps) => {
     const { user } = useLogin();
-    const { navigateTo } = useLogin('/Agency/EditProfileAgency/' + user?.agency_id);
+    const navigate  = useNavigate();
 
     const [account, setAccount] = useState<Partial<PayAccount>>({
         bank_name: '',
@@ -40,7 +41,7 @@ const AddPaymentModal = ({ isOpen, onClose }: CredentialModalProps) => {
         const response = await hitAddApi("/v1/InsertAgencyPayment",payload);
         if (response === 200) {
             onClose();
-            navigateTo('/Agency/EditProfileAgency/' + user?.agency_id);
+            navigate('/Agency/EditProfileAgency/' + user?.agency_id);
             setTimeout(() => {
                 window.location.reload();
             }, 100);

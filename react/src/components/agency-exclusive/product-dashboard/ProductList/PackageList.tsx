@@ -24,7 +24,6 @@ const PackageList = () => {
                 const response = await axiosClient.post('v1/GetActivePackageHByAgencyId', {
                     agency_id: user?.agency_id
                 });
-                console.log(response.data);
                 setPackages(response.data.data);
                 setLoading(false);
             }
@@ -38,7 +37,6 @@ const PackageList = () => {
 
     const onEditPackage = (packageId: number) => {
         // navigate(`/Agency/EditPackage/${packageId}`);
-        console.log('edit package : ', packageId);
         navigate(urlConstant.EditPackage + `/${packageId}`)
     }
 

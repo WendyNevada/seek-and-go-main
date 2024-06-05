@@ -41,17 +41,14 @@ const AddPackage = () => {
 
     const handleAttractionDetailsChange = (newDetails: addPackage['details']) => {
         setAttractionDetails(newDetails);
-        console.log('attraction details : ', newDetails);
     };
 
     const handleVehicleDetailsChange = (newDetails: addPackage['details']) => {
         setVehicleDetails(newDetails);
-        console.log('vehicle details : ', newDetails);
     };
 
     const handleHotelDetailsChange = (newDetails: addPackage['details']) => {
         setHotelDetails(newDetails);
-        console.log('hotel details : ', newDetails);
     }
 
     const onSubmit = async (values: addPackage) => {
@@ -63,8 +60,6 @@ const AddPackage = () => {
             end_date: detail.end_dt || null
         }));
         const payload = { ...values, details: mergedDetails };
-        console.log('merged details : ',mergedDetails);
-        console.log('merged values : ',payload);
         const response = await hitAddApi("/v1/CreatePackageAgency",payload);
         if(response === 200)
         {

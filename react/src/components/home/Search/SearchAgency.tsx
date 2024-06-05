@@ -28,7 +28,6 @@ const SearchAgency = () => {
     const fetchData = async () => {
         try {
             const response = await axiosClient.post('v1/GetAllAgencyForAgencyPage');
-            console.log(response.data);
             setAllData(response.data.data); // Store all data
             setFilteredData(response.data.data); // Initially set filtered data to all data
         } catch (error) {
@@ -38,7 +37,6 @@ const SearchAgency = () => {
 
     // Filter data based on the search query
     useEffect(() => {
-        console.log('query search :', searchQuery);
         if (searchQuery != '') {
             filterData(); // If search query is present, filter data
         } else {
@@ -51,7 +49,6 @@ const SearchAgency = () => {
             const response = await axiosClient.post("v1/GetAllAgencySearchBar", {
                 keyword: searchQuery // Pass search query as a parameter
             });
-            console.log(response.data);
             setFilteredData(response.data.data || []); // Ensure the filtered data is an array
         } catch (error) {
             console.error("Error filtering data:", error);

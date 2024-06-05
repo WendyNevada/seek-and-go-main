@@ -122,6 +122,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('CreateCustomPackageCustomer', 'PackageHController@CreateCustomPackageCustomer');
 
+    Route::post('GetCustomPackageByAgencyId', 'PackageHController@GetCustomPackageByAgencyId');
+
     Route::post('GetNewCustomPackageByAgencyId', 'PackageHController@GetNewCustomPackageByAgencyId');
 
     Route::post('GetApvCustomPackageByAgencyId', 'PackageHController@GetApvCustomPackageByAgencyId');
@@ -205,6 +207,10 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::post('CustPayment', 'TrxController@CustPayment');
 
     Route::post('CancelCustPayment', 'TrxController@CancelCustPayment');
+
+    Route::post('GetTrxByOrderHId', 'TrxController@GetTrxByOrderHId');
+
+    Route::post('RateProduct', 'TrxController@RateProduct');
 
     #endregion
 

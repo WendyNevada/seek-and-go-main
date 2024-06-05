@@ -51,11 +51,9 @@ const CustomerRegisterComponent = () => {
 
     const onSubmit = async (values: z.infer<typeof customerSchema>) => {
         values.birth_date = formatDate(values.birth_date);
-        console.log(values.birth_date);
 
         values.customer_name = "tes1";
         values.role="Customer";
-        console.log(values);
 
         const response = await hitAddApi("/v1/CreateAccountCustomer",values);
         toast({
