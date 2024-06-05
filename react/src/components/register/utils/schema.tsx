@@ -28,7 +28,7 @@ export const agencySchema= z.object({
     account_name: z.string(),
     email: z.string(),
     password: z.string().min(8, {message: "Password must be at least 8 characters"}),
-    //confirmPassword: z.string(),
+    confirmPassword: z.string(),
     role: z.string(),
     phone: z.string(),
     npwp: z.string().min(15, {message: "NPWP must be 15-16 digit long"}).max(16,{message: "NPWP must be 15-16 digit long"}),

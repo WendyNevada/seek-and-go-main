@@ -9,7 +9,7 @@ import axiosClient from '@/axios.client';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/components/ui/use-toast';
 import axios, { AxiosError } from 'axios';
-A
+
 const AgencyRegisterComponent = () => {
     const navigate = useNavigate();
 
