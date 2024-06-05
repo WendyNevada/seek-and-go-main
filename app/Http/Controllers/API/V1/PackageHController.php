@@ -11,6 +11,7 @@ use App\Http\Requests\V2\EditPackageAgencyRequest;
 use App\Http\Requests\V2\CreatePackageAgencyRequest;
 use App\Http\Requests\V2\ApproveCustomPackageRequest;
 use App\Http\Requests\V2\GetCustomPackageAgencyRequest;
+use App\Http\Requests\V2\GetCustomPackageCustomerRequest;
 use App\Http\Requests\V2\CreateCustomPackageCustomerRequest;
 
 class PackageHController extends Controller
@@ -36,6 +37,12 @@ class PackageHController extends Controller
     public function CreateCustomPackageCustomer(PackageHService $packageHService, CreateCustomPackageCustomerRequest $request)
     {
         $response = $packageHService->CreateCustomPackageCustomer($request);
+        return $response;
+    }
+
+    public function GetCustomPackageByCustomerId(PackageHService $packageHService, GetCustomPackageCustomerRequest $request)
+    {
+        $response = $packageHService->GetCustomPackageByCustomerId($request);
         return $response;
     }
 

@@ -44,29 +44,37 @@ const MyOrder = ({customer_id}: {customer_id:number}) => {
         setStatus(newValue);
     };
 
+    const handleClickCustomPackage = () => {
+        navigate('/Customer/CustomPackage');
+    }
+
     return (
         <div className='w-[80rem]'>
             {/* header */}
-            <div className='flex flex-col items-left text-left mt-4 mb-4'>
-                <p className='text-5xl py-2 my-8'>{t('My Orders')}</p>
-                <Select
-                    onValueChange={handleValueChange}
-                >
-                    <SelectTrigger className='w-64'>
-                        <SelectValue placeholder={t('All')}/>
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="ALL">{t('All')}</SelectItem>
-                        <SelectItem value="NEW">New Order</SelectItem>
-                        <SelectItem value="APV">Approved Order</SelectItem>
-                        <SelectItem value="RJT">Rejected Order</SelectItem>
-                        <SelectItem value="CAN">Cancel Order</SelectItem>
-                        <SelectItem value="PAY">Paid Order</SelectItem>
-                        <SelectItem value="CPY">Customer Paid Orders</SelectItem>
-                        <SelectItem value="RTP">Retry Payment Order</SelectItem>
-                        <SelectItem value="FIN">Finished Order</SelectItem>
-                    </SelectContent>
-                </Select>
+            <div className='flex flex-col mt-4 mb-4'>
+            <p className='text-5xl py-2 my-8'>{t('My Orders')}</p>
+                <div className='flex flex-row items-center justify-between'>
+                    <div className='w-64'>
+                        <Select onValueChange={handleValueChange}>
+                            <SelectTrigger>
+                                <SelectValue placeholder={t('All')}/>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="ALL">{t('All')}</SelectItem>
+                                <SelectItem value="NEW">New Order</SelectItem>
+                                <SelectItem value="APV">Approved Order</SelectItem>
+                                <SelectItem value="RJT">Rejected Order</SelectItem>
+                                <SelectItem value="CAN">Cancel Order</SelectItem>
+                                <SelectItem value="PAY">Paid Order</SelectItem>
+                                <SelectItem value="CPY">Customer Paid Orders</SelectItem>
+                                <SelectItem value="RTP">Retry Payment Order</SelectItem>
+                                <SelectItem value="FIN">Finished Order</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <Button className='ml-4 bg-slate-500 hover:bg-slate-700' onClick={() => handleClickCustomPackage()}>{t('View Custom Package Requests')}</Button>
+                </div>
             </div>
 
             <div className="block rounded-lg bg-blue-100 shadow-secondary-1 dark:bg-surface-dark p-10 shadow-xl">
