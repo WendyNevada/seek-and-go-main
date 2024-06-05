@@ -34,6 +34,8 @@ import AgencyDetailForCustomer from './views/Home-Page/AgencyDetailForCustomer';
 import AgencyCustomPackagePage from './views/Agency-page/AgencyCustomPackagePage';
 import AgencyCustomPackageDetailPage from './views/Agency-page/AgencyCustomPackageDetailPage';
 import RequestCustomPackagePage from './views/Customer-page/Order-page/RequestCustomPackagePage';
+import CustomPackageCustomerPage from './views/Customer-page/Custom-Package-Customer/CustomPackageCustomerPage';
+import CustomPackageCustomerDetailPage from './views/Customer-page/Custom-Package-Customer/CustomPackageCustomerDetailPage';
 
 function App() {
   return (
@@ -123,6 +125,10 @@ function CustomerRoutes() {
 
         {/* Edit Profile */}
         <Route path="EditProfileCustomer/:account_id" element={<EditCustomerProfilePage/>} />
+
+
+        <Route path="CustomPackage" element={<CustomPackageCustomerPage />} />
+        <Route path="CustomPackageDetail/:package_h_id" element={<CustomPackageCustomerDetailPage />} />
     </Routes>
   );
 }

@@ -10,6 +10,7 @@ use App\Http\Requests\V2\EditPackageAgencyRequest;
 use App\Http\Requests\V2\CreatePackageAgencyRequest;
 use App\Http\Requests\V2\ApproveCustomPackageRequest;
 use App\Http\Requests\V2\GetCustomPackageAgencyRequest;
+use App\Http\Requests\V2\GetCustomPackageCustomerRequest;
 use App\Http\Requests\V2\CreateCustomPackageCustomerRequest;
 
 interface PackageHInterface
@@ -19,6 +20,8 @@ interface PackageHInterface
     public function DeactivatePackageAgency(PackageHIdRequest $request);
 
     public function CreateCustomPackageCustomer(CreateCustomPackageCustomerRequest $request);
+
+    public function GetCustomPackageByCustomerId(GetCustomPackageCustomerRequest $request);
 
     public function GetCustomPackageByAgencyId(GetCustomPackageAgencyRequest $request);
 

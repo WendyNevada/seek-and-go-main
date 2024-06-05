@@ -122,6 +122,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('CreateCustomPackageCustomer', 'PackageHController@CreateCustomPackageCustomer');
 
+    Route::post('GetCustomPackageByCustomerId', 'PackageHController@GetCustomPackageByCustomerId');
+
     Route::post('GetCustomPackageByAgencyId', 'PackageHController@GetCustomPackageByAgencyId');
 
     Route::post('GetNewCustomPackageByAgencyId', 'PackageHController@GetNewCustomPackageByAgencyId');
