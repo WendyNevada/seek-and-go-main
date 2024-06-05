@@ -4,7 +4,7 @@ export interface VehicleRoot {
     vehicle: Vehicle
     picture_url: string
     base_price: number
-    address: string
+    address_zipcode: string
   }
 
   export interface Vehicle {
@@ -34,7 +34,7 @@ export interface HotelRoot {
     picture_url: string
     base_price: number
     agency_id: number
-    address: string
+    address_zipcode: string
   }
 
   export interface Hotel {
@@ -59,7 +59,7 @@ export interface AttractionRoot {
     picture_url: string
     base_price: number
     agency_id: number
-    address: string
+    address_zipcode: string
   }
 
   export interface Attraction {
@@ -93,8 +93,59 @@ export interface AttractionRoot {
     payment_type: string
     bank_name: string
     account_no?: string
+    account_name: string
     created_at: string
     updated_at: string
     image_url?: string
   }
+
+  export interface OrderData {
+    agency_id : number
+    customer_id : number
+    order_dt : string
+    details : OrderDetail[]
+  }
+
+  export interface OrderDetail {
+    package_h_id? : number | null
+    ref_hotel_id? : number | null
+    ref_attraction_id? : number | null
+    ref_vehicle_id? : number | null
+    start_dt : string
+    end_dt : string
+    price : number
+    qty : number
+    product_type: string
+  }
+
+export interface Package {
+    package_h_id: number
+    package_code: string
+    agency_id: number
+    customer_id: number
+    package_name: string
+    description: string
+    is_custom: number
+    custom_status: string
+    package_price: number
+    is_active: number
+    qty: number
+    total_days: number
+    created_at: string
+    updated_at: string
+    package_ds: PackageD[]
+}
+
+export interface PackageD {
+    package_d_id: number
+    package_h_id: number
+    ref_hotel_id?: number
+    ref_attraction_id?: number
+    ref_vehicle_id?: number
+    start_dt: string
+    end_dt: string
+    created_at: string
+    updated_at: string
+}
+
 

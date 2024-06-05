@@ -38,4 +38,10 @@ class PromoController extends Controller
         return $response;
     }
 
+    public function AddPromoCounterHistory(PromoService $promoService, PromoDeductionRequest $request)
+    {
+        $response = $promoService->AddPromoCounterHistory($request);
+        return $response;
+    }
+
 }

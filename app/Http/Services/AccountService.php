@@ -6,25 +6,32 @@ use App\Models\Agency;
 use App\Models\Account;
 use App\Models\Customer;
 use App\Models\Constanta;
+use App\Mail\ForgotPasswordEmail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\V2\LoginRequest;
 use Illuminate\Auth\Events\Registered;
 use App\Http\Interfaces\AccountInterface;
-use App\Http\Requests\V1\StoreAccountRequest;
 use App\Http\Requests\V2\AccountIdRequest;
+use App\Http\Requests\V1\StoreAccountRequest;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use App\Http\Requests\V2\ChangePasswordRequest;
 use App\Http\Requests\V2\ForgotPasswordRequest;
 use App\Http\Requests\V2\StoreAccountAgencyRequest;
 use App\Http\Requests\V2\UpdateAgencyAccountRequest;
 use App\Http\Requests\V2\UpdateCustomerAccountRequest;
-use App\Mail\ForgotPasswordEmail;
 
 class AccountService implements AccountInterface
 {
 
     #region Private Method
+    private function getAccountById($account_id)
+    {
+        $account = Account::where('account_id', $account_id)->first();
+        return $account;
+    }
+
     private function getAccountByEmail($email)
     {
         $account = Account::where('email', $email)->first();
@@ -138,11 +145,10 @@ class AccountService implements AccountInterface
         return $agency;
     }
 
-    private function updateAccount($account_id, $account_name, $password, $phone): Account
+    private function updateAccount($account_id, $account_name, $phone): Account
     {
         $account = Account::find($account_id);
         $account->account_name = $account_name;
-        $account->password = $password;
         $account->phone = $phone;
         $account->save();
         return $account;
@@ -245,7 +251,8 @@ class AccountService implements AccountInterface
                     'account_id' => "-",
                     'role' => "-",
                     'customer_id' => "-",
-                    'agency_id' => "-"
+                    'agency_id' => "-",
+                    'account_name' => "-"
                 ], 400);
             }
             else
@@ -258,7 +265,8 @@ class AccountService implements AccountInterface
                         'account_id' => "-",
                         'role' => "-",
                         'customer_id' => "-",
-                        'agency_id' => "-"
+                        'agency_id' => "-",
+                        'account_name' => "-"
                     ], 400);
                 }
                 else
@@ -271,7 +279,8 @@ class AccountService implements AccountInterface
                             'account_id' => "-",
                             'role' => "-",
                             'customer_id' => "-",
-                            'agency_id' => "-"
+                            'agency_id' => "-",
+                            'account_name' => "-"
                         ], 400);
                     }
                     else
@@ -284,7 +293,8 @@ class AccountService implements AccountInterface
                             'account_id' => $account->account_id,
                             'role' => $account->role,
                             'customer_id' => $data['customer_id'],
-                            'agency_id' => $data['agency_id']
+                            'agency_id' => $data['agency_id'],
+                            'account_name' => $account->account_name
                         ], 200);
                     
                     }
@@ -300,7 +310,8 @@ class AccountService implements AccountInterface
                 'message' => $message,
                 'account_id' => "-",
                 'customer_id' => "-",
-                'agency_id' => "-"
+                'agency_id' => "-",
+                'account_name' => "-"
             ], 500);
         }
     }
@@ -415,13 +426,13 @@ class AccountService implements AccountInterface
         {
             DB::beginTransaction();
             
-            $account = $this->updateAccount($request->account_id, $request->account_name, $request->email, $request->password, $request->role, $request->phone);
+            $account = $this->updateAccount($request->account_id, $request->account_name, $request->phone);
 
             DB::commit();
 
             return response()->json([
                 'status' => "ok",
-                'message' => "success",
+                'message' => "Account updated successfully",
                 'account_id' => $account->account_id
             ], 200);
             
@@ -446,7 +457,7 @@ class AccountService implements AccountInterface
         {   
             DB::beginTransaction();
 
-            $account = $this->updateAccount($request->account_id, $request->account_name, $request->email, $request->password, $request->role, $request->phone);
+            $account = $this->updateAccount($request->account_id, $request->account_name, $request->phone);
 
             $agency = $this->updateAgency($account->account_id, $request->agency_name, $request->npwp, $request->location);
 
@@ -454,7 +465,7 @@ class AccountService implements AccountInterface
 
             return response()->json([
                 'status' => "ok",
-                'message' => "success",
+                'message' => "Account updated successfully",
                 'account_id' => $account->account_id
             ], 200);
             
@@ -497,23 +508,81 @@ class AccountService implements AccountInterface
 
     public function ResetPassword(ForgotPasswordRequest $request)
     {
-        if(!$this->checkConfirmedPassword($request->password, $request->confirm_password))
+        try
         {
+            if(!$this->checkConfirmedPassword($request->password, $request->confirm_password))
+            {
+                return response()->json([
+                    'status' => "error",
+                    'message' => "Password does not match"
+                ], 400);
+            }
+
+            DB::beginTransaction();
+
+            $this->saveResetPassword($request->account_id, $request->password);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => "ok",
+                'message' => "Password successfully changed"
+            ], 200);
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+
             return response()->json([
                 'status' => "error",
-                'message' => "Password does not match"
-            ], 400);
+                'message' => $e->getMessage()
+            ]);
         }
-
-        $this->saveResetPassword($request->account_id, $request->password);
-
-        return response()->json([
-            'status' => "ok",
-            'message' => "Password successfully changed"
-        ], 200);
-
     }
 
+    public function ChangePassword(ChangePasswordRequest $request)
+    {
+        try
+        {
+            $account = $this->getAccountById($request->account_id);
+
+            if(!$this->checkPassword($account->password, $request->old_password))
+            {
+                return response()->json([
+                    'status' => "error",
+                    'message' => "Old password does not match"
+                ], 400);
+            }
+
+            if(!$this->checkConfirmedPassword($request->password, $request->confirm_password))
+            {
+                return response()->json([
+                    'status' => "error",
+                    'message' => "Password does not match"
+                ], 400);
+            }
+
+            DB::beginTransaction();
+
+            $this->saveResetPassword($request->account_id, $request->password);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => "ok",
+                'message' => "Password successfully changed"
+            ], 200);
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => "error",
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
     
     #endregion
 

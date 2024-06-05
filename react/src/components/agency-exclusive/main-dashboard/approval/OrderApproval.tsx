@@ -2,50 +2,83 @@ import axiosClient from '@/axios.client';
 import { useEffect, useState } from 'react'
 import { OrderD } from '../utils/interface';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { HotelH } from '../utils/interfaceHotel';
-import { VehicleH } from '../utils/interfaceVehicle';
-import { AttractionH } from '../utils/interfaceAttraction';
-import { Button } from "@/components/ui/button"
 import { toast } from '@/components/ui/use-toast';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { TableFooter } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useLogin } from '@/context/LoginContext';
-import { useNavigate } from 'react-router-dom';
-import { urlConstant } from '@/urlConstant';
 import HashLoader from 'react-spinners/HashLoader';
+import OrderAgencyRejectAlert from './sub-component/OrderAgencyRejectAlert';
+import OrderAgencyApproveAlert from './sub-component/OrderAgencyApproveAlert';
+import OrderAgencySendEmailAlert from './sub-component/OrderAgencySendEmailAlert';
+import OrderAgencyCancelAlert from './sub-component/OrderAgencyCancelAlert';
+import OrderAgencyFinishAlert from './sub-component/OrderAgencyFinishAlert';
+import OrderAgencyAcceptPaymentAlert from './sub-component/OrderAgencyAcceptPaymentAlert';
+import OrderAgencyRetryPaymentAlert from './sub-component/OrderAgencyRetryPaymentAlert';
+
+interface OrderDataRow {
+    order_h_id : number,
+    hotel_name : string,
+    vehicle_name : string,
+    attraction_name : string,
+    start_dt : string,
+    end_dt : string,
+    qty : number,
+    price : number,
+    total_price : number
+}
 
 const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
     const { t } = useTranslation();
     const [order, setOrder] = useState<OrderD>({} as OrderD);
-    const [hotel, setHotel] = useState<HotelH>();
-    const [vehicle, setVehicle] = useState<VehicleH>();
-    const [attraction, setAttraction] = useState<AttractionH>();
-    const { user } = useLogin();
-    const navigate  = useNavigate();
+    // const [hotel, setHotel] = useState<HotelH[]>();
+    // const [vehicle, setVehicle] = useState<VehicleH[]>();
+    // const [attraction, setAttraction] = useState<AttractionH[]>();
     const [loading, setLoading] = useState(true);
+    const [actionLoading, setActionLoading] = useState(false);
+    const [orderDataRows, setOrderDataRows] = useState<OrderDataRow[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axiosClient.post('v1/GetOrderById', { order_h_id: order_h_id });
-                setOrder(response.data);
+                const response = await axiosClient.post('v1/GetOrderById', { order_h_id });
+                const orderData: OrderD = response.data;
 
-                if(response.data.order_ds.length > 0) {
-                    const orderD = response.data.order_ds[0];
-                    if(orderD.ref_hotel_id != null){
+                const fetchDetails = orderData.order_ds.map(async (orderD) => {
+                    let hotel_name = '';
+                    let vehicle_name = '';
+                    let attraction_name = '';
+                    let price = 0;
+
+                    if (orderD.ref_hotel_id != null) {
                         const responseHotel = await axiosClient.post('v1/GetHotelById', { ref_hotel_id: orderD.ref_hotel_id });
-                        setHotel(responseHotel.data);
-                    }
-                    else if(orderD.ref_vehicle_id != null){
+                        hotel_name = responseHotel.data.hotel.hotel_name;
+                        price = responseHotel.data.base_price;
+                    } else if (orderD.ref_vehicle_id != null) {
                         const responseVehicle = await axiosClient.post('v1/GetVehicleById', { ref_vehicle_id: orderD.ref_vehicle_id });
-                        setVehicle(responseVehicle.data);
-                    }
-                    else if(orderD.ref_attraction_id != null){
+                        vehicle_name = responseVehicle.data.vehicle.vehicle_name;
+                        price = responseVehicle.data.base_price;
+                    } else if (orderD.ref_attraction_id != null) {
                         const responseAttraction = await axiosClient.post('v1/GetAttractionById', { ref_attraction_id: orderD.ref_attraction_id });
-                        setAttraction(responseAttraction.data);
+                        attraction_name = responseAttraction.data.attraction.attraction_name;
+                        price = responseAttraction.data.base_price;
                     }
-                }
+
+                    return {
+                        order_h_id: orderData.order_h_id,
+                        hotel_name,
+                        vehicle_name,
+                        attraction_name,
+                        start_dt: orderD.start_dt,
+                        end_dt: orderD.end_dt,
+                        qty: orderD.qty,
+                        price,
+                        total_price: orderD.price || 0
+                    };
+                });
+
+                const details = await Promise.all(fetchDetails);
+                setOrder(orderData);
+                setOrderDataRows(details);
             } catch (error) {
                 console.log(error)
             } finally {
@@ -68,187 +101,32 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
         }
     };
 
-    const onApproveOrder = async (order_h_id : number) => {
-        try
-        {
-            const response = await axiosClient.post('v1/ApproveOrder', { order_h_id: order_h_id });
+    const onAction = async (apiPath: string, id: number) => {
+        setActionLoading(true);
+        try {
+            const response = await axiosClient.post(apiPath, {order_h_id : id});
 
-            if(response.data.status == "ok")
-            {
+            if (response.data.status === "ok") {
                 toast({
                     variant: "success",
-                    description: response.data.message
+                    description: response.data.message,
                 });
-
-                navigate(urlConstant.AgencyHomePage);
+                setTimeout(() => {
+                    window.location.reload();
+                }, 100);
             }
+        } catch (error) {
+            const errorMessage = axios.isAxiosError(error) && error.response
+                ? error.response.data.message
+                : "An unexpected error occurred";
+            toast({
+                variant: "destructive",
+                description: errorMessage,
+            });
+        } finally {
+            setActionLoading(false);
         }
-        catch (response) {
-            const axiosError = response as AxiosError; // Cast the error to AxiosError
-            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
-                toast({
-                    variant: "destructive",
-                    description: (axiosError.response?.data as { message: string })?.message,
-                });
-            }
-        }
-    }
-
-    const onSendEmailOrder = async (order_h_id : number) => {
-        try
-        {
-            const response = await axiosClient.post('v1/SendEmailOrderApprove', { order_h_id: order_h_id });
-
-            if(response.data.status == "ok")
-            {
-                toast({
-                    variant: "success",
-                    description: response.data.message
-                });
-
-                navigate(urlConstant.AgencyHomePage);
-            }
-        }
-        catch (response) {
-            const axiosError = response as AxiosError; // Cast the error to AxiosError
-            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
-                toast({
-                    variant: "destructive",
-                    description: (axiosError.response?.data as { message: string })?.message,
-                });
-            }
-        }
-    }
-
-    const onRejectOrder = async (order_h_id : number) => {
-        try
-        {
-            const response = await axiosClient.post('v1/RejectOrder', { order_h_id: order_h_id });
-
-            if(response.data.status == "ok")
-            {
-                toast({
-                    variant: "success",
-                    description: response.data.message
-                });
-
-                navigate(urlConstant.AgencyHomePage);
-            }
-        }
-        catch (response) {
-            const axiosError = response as AxiosError; // Cast the error to AxiosError
-            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
-                toast({
-                    variant: "destructive",
-                    description: (axiosError.response?.data as { message: string })?.message,
-                });
-            }
-        }
-    }
-
-    const onCancelOrder = async (order_h_id : number, cancel_by : string) => {
-        try
-        {
-            const response = await axiosClient.post('v1/CancelOrderAgency', { order_h_id: order_h_id, cancel_by: cancel_by });
-
-            if(response.data.status == "ok")
-            {
-                toast({
-                    variant: "success",
-                    description: response.data.message
-                });
-
-                navigate(urlConstant.AgencyHomePage);
-            }
-        }
-        catch (response) {
-            const axiosError = response as AxiosError; // Cast the error to AxiosError
-            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
-                toast({
-                    variant: "destructive",
-                    description: (axiosError.response?.data as { message: string })?.message,
-                });
-            }
-        }
-    }
-
-    const onAcceptPaymentOrder = async (order_h_id : number) => {
-        try
-        {
-            const response = await axiosClient.post('v1/PaidOrder', { order_h_id: order_h_id });
-
-            if(response.data.status == "ok")
-            {
-                toast({
-                    variant: "success",
-                    description: response.data.message
-                });
-
-                navigate(urlConstant.AgencyHomePage);
-            }
-        }
-        catch (response) {
-            const axiosError = response as AxiosError; // Cast the error to AxiosError
-            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
-                toast({
-                    variant: "destructive",
-                    description: (axiosError.response?.data as { message: string })?.message,
-                });
-            }
-        }
-    }
-
-    const onRetryPaymentOrder  = async (order_h_id : number) => {
-        try
-        {
-            const response = await axiosClient.post('v1/RetryPaymentOrder', { order_h_id: order_h_id });
-
-            if(response.data.status == "ok")
-            {
-                toast({
-                    variant: "success",
-                    description: response.data.message
-                });
-
-                navigate(urlConstant.AgencyHomePage);
-            }
-        }
-        catch (response) {
-            const axiosError = response as AxiosError; // Cast the error to AxiosError
-            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
-                toast({
-                    variant: "destructive",
-                    description: (axiosError.response?.data as { message: string })?.message,
-                });
-            }
-        }
-    }
-
-    const onFinishOrder = async (order_h_id : number) => {
-        try
-        {
-            const response = await axiosClient.post('v1/FinishOrder', { order_h_id: order_h_id });
-
-            if(response.data.status == "ok")
-            {
-                toast({
-                    variant: "success",
-                    description: response.data.message
-                });
-
-                navigate(urlConstant.AgencyHomePage);
-            }
-        }
-        catch (response) {
-            const axiosError = response as AxiosError; // Cast the error to AxiosError
-            if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
-                toast({
-                    variant: "destructive",
-                    description: (axiosError.response?.data as { message: string })?.message,
-                });
-            }
-        }
-    }
+    };
 
     return (
         <>
@@ -281,6 +159,7 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                 </div>
             </div>
 
+            {/* Table */}
             <div className="p-5 text-xl flex flex-col">
                 <hr className='border-2'/>
                 <br />
@@ -298,20 +177,54 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <TableRow>
-                            <TableCell>{hotel || vehicle || attraction ?
-                                (hotel ? hotel.hotel.hotel_name :
-                                    (vehicle ? vehicle.vehicle.vehicle_name :
-                                        (attraction ? attraction.attraction.attraction_name : "N/A"))) :"N/A"}
-                            </TableCell>
-                            <TableCell>{order.order_ds && order.order_ds.length > 0 ? order.order_ds[0].start_dt.split(" ")[0] : "N/A"}</TableCell>
-                            <TableCell>{order.order_ds && order.order_ds.length > 0 ? order.order_ds[0].end_dt.split(" ")[0] : "N/A"}</TableCell>
-                            <TableCell>{order.order_ds && order.order_ds.length > 0 ? order.order_ds[0].qty : "N/A"}</TableCell>
-                            <TableCell className="text-right">{hotel || vehicle || attraction ?
-                                (hotel ? formatPrice(hotel.base_price) : vehicle ? formatPrice(vehicle.base_price) : attraction ? formatPrice(attraction.base_price) : 0) : "N/A"}
-                            </TableCell>
-                            <TableCell className="text-right">{formatPrice(order.total_price)}</TableCell>
-                        </TableRow>
+                        {orderDataRows && orderDataRows.length > 0 ? (
+                            orderDataRows.map((dataRow, index) => (
+                                <TableRow key={index}>
+                                    <TableCell>
+                                        {dataRow.hotel_name || dataRow.vehicle_name || dataRow.attraction_name || "N/A"}
+                                    </TableCell>
+                                    <TableCell>
+                                        {dataRow.start_dt?.split(" ")[0] || "N/A"}
+                                    </TableCell>
+                                    <TableCell>
+                                        {dataRow.end_dt?.split(" ")[0] || "N/A"}
+                                    </TableCell>
+                                    {
+                                        order.order_ds[0].package_h_id == null ? (
+                                            <>
+                                                <TableCell>
+                                                    {dataRow.qty || "N/A"}
+                                                </TableCell>
+                                                <TableCell className="text-center">
+                                                    {formatPrice(dataRow.price)}
+                                                </TableCell>
+                                                <TableCell className="text-right">
+                                                    {formatPrice(dataRow.total_price)}
+                                                </TableCell>
+                                            </>
+                                        ):(
+                                            <>
+                                                <TableCell>
+                                                    -
+                                                </TableCell>
+                                                <TableCell className="text-center">
+                                                    -
+                                                </TableCell>
+                                                <TableCell className="text-right">
+                                                    -
+                                                </TableCell>
+                                            </>
+                                        )
+                                    }
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={6} className="text-center">
+                                    No order details available.
+                                </TableCell>
+                            </TableRow>
+                        )}
                         <TableRow>
                             <TableCell>
                             </TableCell>
@@ -327,39 +240,112 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                 </div>
             </div>
 
+            {/* Buttons */}
             <div className="flex justify-end m-4 p-4">
+
                 {order.order_status === 'NEW' && (
                     <div className="space-x-4">
-                        <Button className='bg-red-500 p-2 hover:bg-red-700 px-4 w-24' onClick={() => onRejectOrder(order.order_h_id)}>Reject</Button>
-                        <Button className='bg-blue-500 p-2 hover:bg-blue-700 px-4 w-24' onClick={() => onApproveOrder(order.order_h_id)}>Approve</Button>
-                    </div>
+                    <OrderAgencyRejectAlert
+                        apiPath={'v1/RejectOrder'}
+                        id={order_h_id}
+                        actionLoading={actionLoading}
+                        setActionLoading={setActionLoading}
+                        onAction={onAction}
+                    />
+                    <OrderAgencyApproveAlert
+                        apiPath={'v1/ApproveOrder'}
+                        id={order_h_id}
+                        actionLoading={actionLoading}
+                        setActionLoading={setActionLoading}
+                        onAction={onAction}
+                    />
+                </div>
                 )}
 
                 {order.order_status === 'APV' && (
                     <div className="space-x-4">
-                        <Button className='bg-orange-500 p-2 hover:bg-orange-700 px-4 w-28' onClick={() => onSendEmailOrder(order.order_h_id)}>Send Email</Button>
-                        <Button className='bg-red-500 p-2 hover:bg-red-700 px-4 w-28' onClick={() => onCancelOrder(order.order_h_id, (user?.role || ''))}>Cancel Order</Button>
+                        <OrderAgencySendEmailAlert
+                            apiPath={'v1/SendEmailOrderApprove'}
+                            id={order_h_id}
+                            actionLoading={actionLoading}
+                            setActionLoading={setActionLoading}
+                            onAction={onAction}
+                        />
+
+                        <OrderAgencyCancelAlert
+                            apiPath={'v1/CancelOrderAgency'}
+                            id={order_h_id}
+                            role={'agency'}
+                            actionLoading={actionLoading}
+                            setActionLoading={setActionLoading}
+                            onAction={onAction}
+                        />
                     </div>
                 )}
 
                 {order.order_status === 'PAY' && (
                     <div className="space-x-4">
-                        <Button className='bg-green-500 p-2 hover:bg-green-700 px-4 w-24' onClick={() => onFinishOrder(order.order_h_id)}>Finish Order</Button>
+                        <OrderAgencyFinishAlert
+                            apiPath={'v1/FinishOrder'}
+                            id={order_h_id}
+                            role={'agency'}
+                            actionLoading={actionLoading}
+                            setActionLoading={setActionLoading}
+                            onAction={onAction}
+                        />
                     </div>
                 )}
 
                 {order.order_status === 'CPY' && (
                     <div className="space-x-4">
-                        <Button className='bg-green-500 p-2 hover:bg-green-700 px-4 w-28' onClick={() => onAcceptPaymentOrder(order.order_h_id)}>Accept Payment</Button>
-                        <Button className='bg-blue-500 p-2 hover:bg-blue-700 px-4 w-28' onClick={() => onRetryPaymentOrder(order.order_h_id)}>Retry Payment</Button>
-                        <Button className='bg-red-500 p-2 hover:bg-red-700 px-4 w-28' onClick={() => onCancelOrder(order.order_h_id, (user?.role || ''))}>Cancel Order</Button>
+                        <OrderAgencyAcceptPaymentAlert
+                            apiPath={'v1/PaidOrder'}
+                            id={order_h_id}
+                            role={'agency'}
+                            actionLoading={actionLoading}
+                            setActionLoading={setActionLoading}
+                            onAction={onAction}
+                        />
+
+                        <OrderAgencyRetryPaymentAlert
+                            apiPath={'v1/RetryPaymentOrder'}
+                            id={order_h_id}
+                            role={'agency'}
+                            actionLoading={actionLoading}
+                            setActionLoading={setActionLoading}
+                            onAction={onAction}
+                        />
+
+                        <OrderAgencyCancelAlert
+                            apiPath={'v1/CancelOrderAgency'}
+                            id={order_h_id}
+                            role={'agency'}
+                            actionLoading={actionLoading}
+                            setActionLoading={setActionLoading}
+                            onAction={onAction}
+                        />
                     </div>
                 )}
 
                 {order.order_status === 'RTP' && (
                     <div className="space-x-4">
-                        <Button className='bg-green-500 p-2 hover:bg-green-700 px-4 w-28' onClick={() => onAcceptPaymentOrder(order.order_h_id)}>Accept Payment</Button>
-                        <Button className='bg-red-500 p-2 hover:bg-red-700 px-4 w-28' onClick={() => onCancelOrder(order.order_h_id, (user?.role || ''))}>Cancel Order</Button>
+                        <OrderAgencyAcceptPaymentAlert
+                            apiPath={'v1/PaidOrder'}
+                            id={order_h_id}
+                            role={'agency'}
+                            actionLoading={actionLoading}
+                            setActionLoading={setActionLoading}
+                            onAction={onAction}
+                        />
+
+                        <OrderAgencyCancelAlert
+                            apiPath={'v1/CancelOrderAgency'}
+                            id={order_h_id}
+                            role={'agency'}
+                            actionLoading={actionLoading}
+                            setActionLoading={setActionLoading}
+                            onAction={onAction}
+                        />
                     </div>
                 )}
 

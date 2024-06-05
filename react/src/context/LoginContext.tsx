@@ -9,6 +9,7 @@ interface User {
   customer_id: number;
   agency_id: number;
   role: string;
+  account_name: string;
 }
 
 // Define the shape of login credentials
@@ -46,7 +47,11 @@ export const useLogin = (path?:string) => {
 
 // Provider component
 export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+        // Fetch user data from local storage when component mounts
+        const storedUser = localStorage.getItem('user');
+        return storedUser ? JSON.parse(storedUser) : null;
+    });
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -57,7 +62,7 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         setUser(parsedUser);
         handleNavigation(parsedUser);
     }
-}, []);
+    }, []);
 
   // Function to handle user login
   const login = async (credentials: LoginCredentials) => {
@@ -70,6 +75,7 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         customer_id: response.data.customer_id,
         agency_id: response.data.agency_id,
         role: response.data.role,
+        account_name: response.data.account_name
       };
 
       // Store user data in localStorage
@@ -78,6 +84,13 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       setUser(userData);
       setError(null);
       handleNavigation(userData);
+
+      if(response.data.role == 'Customer'){
+        navigate('/');
+      }
+      else{
+        navigate('/Agency');
+      }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error : any) {
       // Handle errors
@@ -92,13 +105,10 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const handleNavigation = (userData?: User | null, path?: string) => {
     if (path) {
         navigate(path);
-    } 
-    else if (userData?.role === "Agency") {
-        navigate('/Agency');
-    } 
-    else {
-        navigate('/');
     }
+    // else if (userData?.role === "Agency") {
+    //     navigate('/Agency');
+    // }
   };
 
   const logout = () => {
@@ -106,7 +116,7 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     localStorage.removeItem('user');
     // Clear the user data
     setUser(null);
-    navigate('/Login');
+    navigate('/');
   };
 
 //   const navigatedTo = (path: string) => {

@@ -34,7 +34,7 @@ const VehicleQty = ({ vehicleQty, initialDetails, onDetailsChange, onVehicleQtyC
                     agency_id: user?.agency_id
                 });
                 setVehicle(response.data.data);
-                console.log('initialDetails : ', initialDetails)
+                
             } catch (error) {
                 console.error('Error fetching vehicles:', error);
             }

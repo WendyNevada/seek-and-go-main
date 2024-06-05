@@ -1,5 +1,4 @@
 import '@/context/language/i18n';
-import { toast } from './components/ui/use-toast';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginRegisterPage from './views/Login-register-page/RegisterPage';
 import LoginPage from './views/Login-register-page/LoginPage';
@@ -24,16 +23,28 @@ import HotelOrderDetailPage from './views/Customer-page/Order-page/HotelOrderDet
 import ForgotPasswordPage from './views/Forgot-Password-Page/ForgotPasswordPage';
 import PaymentPage from './views/Customer-page/Order-page/Payment/PaymentPage';
 import AgencyEditPackagePage from './views/Agency-page/AgencyEditPackagePage';
+import EditAgencyProfilePage from './views/Profile-Page/EditAgencyProfilePage';
+import EditCustomerProfilePage from './views/Profile-Page/EditCustomerProfilePage';
+import AttractionOrderDetailPage from './views/Customer-page/Order-page/AttractionOrderDetailPage';
+import SearchAgencyPage from './views/Home-Page/SearchAgencyPage';
+import MyOrderPage from './views/Customer-page/My-Order-page/MyOrderPage';
+import MyOrderDetailPage from './views/Customer-page/My-Order-page/MyOrderDetailPage';
+import PackageDetailPage from './views/Customer-page/PackageDetailPage';
+import PackageOrderDetailPage from './views/Customer-page/Order-page/PackageOrderDetailPage';
+import AgencyDetailForCustomer from './views/Home-Page/AgencyDetailForCustomer';
 
 function App() {
   return (
     <Router>
       <LoginProvider>
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/Register" element={<LoginRegisterPage />} />
-          <Route path="/Login" element={<LoginPage />} />
-          <Route path="/ForgetPassword/:account_id" element={<ForgotPasswordPage />}></Route>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/AgencySearch" element={<SearchAgencyPage/>}/>
+            <Route path="/AgencySearch/AgencyDetail/:agency_id" element={<AgencyDetailForCustomer/>}></Route>
+
+            <Route path="/Register" element={<LoginRegisterPage />} />
+            <Route path="/Login" element={<LoginPage />} />
+            <Route path="/ForgetPassword/:account_id" element={<ForgotPasswordPage />}></Route>
 
             {/* Protected Routes for Agency section */}
             <Route path="/Agency/*" element={<AgencyRoutes />} />
@@ -43,6 +54,7 @@ function App() {
             <Route path="/Customer/VehicleDetail/:ref_vehicle_id" element={<VehicleDetailPage/>} />
             <Route path="/Customer/HotelDetail/:ref_hotel_id" element={<HotelDetailPage/>} />
             <Route path="/Customer/AttractionDetail/:ref_attraction_id" element={<AttractionDetailPage/>} />
+            <Route path="/Customer/PackageDetail/:package_h_id" element={<PackageDetailPage />} />
 
           {/* <Route path="/TEST" element={ <ComboboxDemo/>}/> */}
         </Routes>
@@ -53,12 +65,7 @@ function App() {
 
 // Nested component to handle Agency routes
 function AgencyRoutes() {
-    const hasAgencyRole = useUserRole('Agency');
 
-    // If user doesn't have the required role, redirect to login
-    if (!hasAgencyRole) {
-        return <Navigate to="/Login" />;
-    }
 
   return (
     <Routes>
@@ -79,28 +86,37 @@ function AgencyRoutes() {
 
         {/* order approval page */}
         <Route path="Approval/:order_h_id" element={<AgencyOrderApprovalPage/>} />
+
+        {/* Edit Profile */}
+        <Route path="EditProfileAgency/:account_id" element={<EditAgencyProfilePage/>} />
     </Routes>
   );
 }
 
 
 function CustomerRoutes() {
-    const hasCustomerRole = useUserRole('Customer');
+    //const hasCustomerRole = useUserRole('Customer');
 
     // If user doesn't have the required role, redirect to login
-    if (!hasCustomerRole) {
-        toast({
-            variant: "destructive",
-            description: "please Login first"
-        });
-        return <Navigate to="/Login" />;
-    }
+    // if (!hasCustomerRole) {
+    //     return <Navigate to="/Login" />;
+    // }
 
   return (
     <Routes>
         <Route path="VehicleOrderDetail/:ref_vehicle_id" element={<VehicleOrderDetailPage/>} />
-        <Route path="HoteleOrderDetail/:ref_hotel_id" element={<HotelOrderDetailPage/>} />
-        <Route path="PaymentDetail/:order_h_id" element={<PaymentPage/>} />
+        <Route path="HotelOrderDetail/:ref_hotel_id" element={<HotelOrderDetailPage/>} />
+        <Route path="AttractionOrderDetail/:ref_attraction_id" element={<AttractionOrderDetailPage/>} />
+        <Route path="PackageOrderDetail/:package_h_id" element={<PackageOrderDetailPage/>} />
+
+        <Route path="PaymentDetail/:order_h_id/:agency_payment_id" element={<PaymentPage/>} />
+
+        {/* Customer Orders */}
+        <Route path="MyOrder/:customer_id" element={<MyOrderPage/>}></Route>
+        <Route path="MyOrderDetail/:order_h_id" element={<MyOrderDetailPage/>}></Route>
+
+        {/* Edit Profile */}
+        <Route path="EditProfileCustomer/:account_id" element={<EditCustomerProfilePage/>} />
     </Routes>
   );
 }

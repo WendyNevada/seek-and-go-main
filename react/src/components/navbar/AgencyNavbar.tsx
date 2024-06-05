@@ -3,14 +3,15 @@ import { assetForWeb } from '../../assets/assetStatic'
 import HomeIcon from '@mui/icons-material/Home'
 import InfoIcon from '@mui/icons-material/Info'
 import { Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useLogin } from '@/context/LoginContext'
 import { urlConstant } from '@/urlConstant'
 import { useTranslation } from 'react-i18next'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import LanguageIcon from '@mui/icons-material/Language';
+import PersonIcon from '@mui/icons-material/Person';
 
 const Navbar = () => {
 
@@ -20,7 +21,9 @@ const Navbar = () => {
     i18n.changeLanguage(language);
     };
 
+    const { user } = useLogin();
     const { logout } = useLogin();
+    const navigate = useNavigate();
     const [openMenu, setOpenMenu] = useState(false)
     const menuOptions = [
         {
@@ -54,6 +57,10 @@ const Navbar = () => {
         // }
     ]
 
+    const navigateEditProfile = () => {
+        navigate(`/Agency/EditProfileAgency/${user?.account_id}`);
+    }
+
     return (
         <nav className='flex-no-wrap fixed top-0 flex w-full items-center justify-between bg-blue-800 lg:flex-wrap lg:py-4 p-6 z-10'>
 
@@ -85,7 +92,7 @@ const Navbar = () => {
             <div className='w-full hidden flex lg:flex lg:items-center lg:w-auto'>
                 <Link to ={urlConstant.AgencyHomePage} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Dashboard</Link>
                 <Link to="/Agency/Product" className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Product</Link>
-                <button onClick={() => logout()} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Logout</button>
+                {/* <button onClick={() => logout()} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Logout</button> */}
                 {/* <button onClick={() => changeLanguage('en')} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1' >English</button>
                 <button onClick={() => changeLanguage('id')} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1'>Indonesia</button> */}
 
@@ -109,6 +116,16 @@ const Navbar = () => {
                                 <span>Indonesia</span>
                             </div>
                         </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+
+                <DropdownMenu>
+                    <DropdownMenuTrigger className='text-teal-200 mx-5 hover:text-white'><PersonIcon/>{user?.account_name}</DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => navigateEditProfile()}><PersonIcon/>Profile</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => logout()}><LogoutIcon/>Logout</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>

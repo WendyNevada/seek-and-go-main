@@ -67,7 +67,6 @@ const AddHotel = () => {
     }
 
     const onSubmit = async (values: z.infer<typeof addHotelSchema>) => {
-        console.log(values);
         const formData = new FormData();
         formData.append('agency_id', String(user?.agency_id));
         formData.append('hotel_code', values.hotel_code);

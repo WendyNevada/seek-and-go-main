@@ -15,4 +15,6 @@ interface PromoInterface
     public function GetPromoDeductionPriceHotel(PromoDeductionRequest $request);
 
     public function GetPromoDeductionPriceVehicle(PromoDeductionRequest $request);
+
+    public function AddPromoCounterHistory(PromoDeductionRequest $request);
 }

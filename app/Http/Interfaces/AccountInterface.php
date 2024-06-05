@@ -6,6 +6,7 @@ use App\Http\Requests\V2\LoginRequest;
 use App\Http\Requests\V2\AccountIdRequest;
 use App\Http\Requests\V1\StoreAccountRequest;
 use App\Http\Requests\V1\UpdateAccountRequest;
+use App\Http\Requests\V2\ChangePasswordRequest;
 use App\Http\Requests\V2\ForgotPasswordRequest;
 use App\Http\Requests\V2\StoreAccountAgencyRequest;
 use App\Http\Requests\V2\UpdateAgencyAccountRequest;
@@ -28,5 +29,7 @@ interface AccountInterface {
     public function ForgotPasswordRequest(ForgotPasswordRequest $request);
 
     public function ResetPassword(ForgotPasswordRequest $request);
+
+    public function ChangePassword(ChangePasswordRequest $request);
 
 }

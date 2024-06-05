@@ -24,7 +24,8 @@ class UpdateAgencyPaymentRequest extends FormRequest
         return [
             'agency_payment_id' => 'required',
             'account_no' => 'nullable',
-            'picture' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif', 'max:10000']
+            'picture' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif', 'max:10000'],
+            'account_name' => 'nullable'
         ];
     }
 }

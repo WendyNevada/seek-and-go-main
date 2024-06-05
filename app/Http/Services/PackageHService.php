@@ -81,7 +81,7 @@ class PackageHService implements PackageHInterface
     private function reformatDate($date): string
     {
         $strDate = $date;
-                
+
         if(strpos($strDate, "T") == true)
         {
             $string = $date;
@@ -140,7 +140,7 @@ class PackageHService implements PackageHInterface
             where('custom_status', $custom_status)->
             with('packageDs')->
             get();
-        
+
 
         return $packageH;
     }
@@ -163,7 +163,7 @@ class PackageHService implements PackageHInterface
                 ->with('packageDs')
                 ->get();
         }
-        
+
         return $packageH;
     }
 
@@ -242,7 +242,7 @@ class PackageHService implements PackageHInterface
         where('agency_affiliates.agency_id', $agency_id)->
         select('ref_attractions.ref_attraction_id', 'ref_attractions.attraction_name')->
         get();
-        
+
         return $listAttraction;
     }
 
@@ -253,7 +253,7 @@ class PackageHService implements PackageHInterface
         where('agency_affiliates.agency_id', $agency_id)->
         select('ref_vehicles.ref_vehicle_id', 'ref_vehicles.vehicle_name')->
         get();
-        
+
         return $listVehicle;
     }
 
@@ -264,7 +264,7 @@ class PackageHService implements PackageHInterface
         where('agency_affiliates.agency_id', $agency_id)->
         select('ref_hotels.ref_hotel_id', 'ref_hotels.hotel_name')->
         get();
-        
+
         return $listHotel;
     }
 
@@ -397,7 +397,7 @@ class PackageHService implements PackageHInterface
         $package = PackageH::
             join('agencies', 'package_h_s.agency_id', '=', 'agencies.agency_id')->
             select(
-                'package_h_s.*', 
+                'package_h_s.*',
                 'agencies.agency_name',
                 )->
             where('is_active', '1')->
@@ -478,7 +478,7 @@ class PackageHService implements PackageHInterface
             $packageH = $this->updatePackageHForAgency($request->package_h_id, $request->package_name, $request->description, $request->package_price, $request->qty, $request->total_days);
 
             $this->deleteRangePackageD($request->package_h_id);
-            
+
             foreach($request->details as $detail)
             {
                 $strStartDate = null;
@@ -555,7 +555,7 @@ class PackageHService implements PackageHInterface
         }
     }
 
-    public function CreateCustomPackageCustomer(CreateCustomPackageCustomerRequest $request) 
+    public function CreateCustomPackageCustomer(CreateCustomPackageCustomerRequest $request)
     {
         try
         {
@@ -718,6 +718,23 @@ class PackageHService implements PackageHInterface
     public function GetPackageDataById(PackageHIdRequest $request)
     {
         $package = $this->getPackageHWithDById($request->package_h_id);
+
+        if($package == null)
+        {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data not found',
+                'data' => []
+            ]);
+        }
+        else
+        {
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'success',
+                'data' => $package
+            ]);
+        }
 
         return response()->json($package);
     }

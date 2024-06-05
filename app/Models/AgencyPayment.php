@@ -15,7 +15,8 @@ class AgencyPayment extends Model
         'agency_id',
         'payment_type',
         'bank_name',
-        'account_no'
+        'account_no',
+        'account_name'
     ];
 
     #region Getter Setter

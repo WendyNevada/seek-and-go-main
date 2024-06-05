@@ -56,6 +56,7 @@ class Constanta extends Model
     #region list environment
     public static $enviLocal = "http://localhost:3000/";
     public static $forgetPassword = "ForgetPassword/";
+    public static $enviProd = "https://seekandgo.my.id/";
     #endregion
 
     #region product
@@ -66,7 +67,7 @@ class Constanta extends Model
     #endregion
 
     #region Payment
-    public static $paymentTypeBank = "Bank";
-    public static $paymentTypeQris = "Qris";
+    public static $paymentTypeBank = "Bank Transfer";
+    public static $paymentTypeQris = "QRIS";
     #endregion
 }

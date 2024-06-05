@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { BsCart2 } from 'react-icons/bs'
 import { assetForWeb } from '../../assets/assetStatic'
 import HomeIcon from '@mui/icons-material/Home'
 import InfoIcon from '@mui/icons-material/Info'
@@ -9,17 +8,19 @@ import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded'
 import { Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 import Login from '@mui/icons-material/Login';
 import { useLogin } from '@/context/LoginContext'
-import LogoutIcon from '@mui/icons-material/Logout';
 import { useTranslation } from 'react-i18next'
 import "flag-icons/css/flag-icons.min.css";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import LanguageIcon from '@mui/icons-material/Language';
-// import { Link } from 'react-router-dom'
+import LogoutIcon from '@mui/icons-material/Logout';
+import PersonIcon from '@mui/icons-material/Person';
+import { useNavigate } from 'react-router-dom'
 
 const Navbar = () => {
 
     const { i18n } = useTranslation();
+    const navigate = useNavigate();
 
     const changeLanguage = (language: string) => {
     i18n.changeLanguage(language);
@@ -66,6 +67,14 @@ const Navbar = () => {
         }
     ]
 
+    const navigateEditProfile = () => {
+        navigate(`/Customer/EditProfileCustomer/${user?.account_id}`);
+    }
+
+    const navigateMyOrder = () => {
+        navigate(`/Customer/MyOrder/${user?.customer_id}`);
+    }
+
     return (
         <nav className='flex-no-wrap fixed top-0 flex w-full items-center justify-between bg-blue-800 lg:flex-wrap lg:py-4 p-6 z-50'>
 
@@ -96,14 +105,18 @@ const Navbar = () => {
 
             <div className='w-full hidden flex lg:flex lg:items-center lg:w-auto mr-6'>
                 <a href='\' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Home</a>
-                <a href='\About' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>About</a>
+                <a href='\AgencySearch' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Agency</a>
+                {/* <a href='\About' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>About</a>
                 <a href='\Detail' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Details</a>
                 <a href='' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Contact</a>
                 <a href='' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>
                     <BsCart2 className='navbar-cart-icon'/>
-                </a>
+                </a> */}
                 {
-                    user ? (<div></div>) : 
+                    user ? (
+                    <div>
+                        <a onClick={navigateMyOrder} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5 hover:cursor-pointer'>My Orders</a>
+                    </div>) :
                     (
                         <div>
                             <a href='\Register' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Register</a>
@@ -111,9 +124,8 @@ const Navbar = () => {
                         </div>
                     )
                 }
-                <button className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Bookings Now</button>
-                <button onClick={() => logout()} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Logout</button>
-                
+
+                {/* <button onClick={() => logout()} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Logout</button> */}
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -137,6 +149,18 @@ const Navbar = () => {
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
+
+                { user ?
+                (<DropdownMenu>
+                    <DropdownMenuTrigger className='text-teal-200 mx-5 hover:text-white'><PersonIcon/>{user?.account_name}</DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => navigateEditProfile()}><PersonIcon/>Profile</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => logout()}><LogoutIcon/>Logout</DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+                ) : (<div></div>)}
             </div>
 
 
