@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto'; // Import chart.js auto bundle
 
 function getOrderStatusColor(status: string): string {

@@ -50,6 +50,10 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     
     Route::post('ResetPassword', 'AccountController@ResetPassword');
 
+    Route::post('GetAccountInfoById', 'AccountController@GetAccountInfoById');
+
+    #endregion
+
     #region Attraction
 
     Route::post('GetAttractionByCode', 'RefAttractionController@GetAttractionByCode');
@@ -133,6 +137,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::post('GetListHotelForAgencyPackage', 'PackageHController@GetListHotelForAgencyPackage');
 
     Route::post('GetListVehicleForAgencyPackage', 'PackageHController@GetListVehicleForAgencyPackage');
+
+    Route::post('GetAgencyPackagesHomepage', 'PackageHController@GetAgencyPackagesHomepage');
 
     #endregion
 

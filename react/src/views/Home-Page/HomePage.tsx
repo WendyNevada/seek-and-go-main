@@ -1,7 +1,6 @@
 import Home from "@/components/home/Home";
 import Footer from "@/components/navbar/Footer";
 import Navbar from "@/components/navbar/Navbar";
-import React from "react";
 
 const HomePage = () => {
     return (

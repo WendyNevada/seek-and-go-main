@@ -1,6 +1,5 @@
 import EditHotel from '@/components/agency-exclusive/add-hotel/EditHotel';
 import AgencyNavbar from '@/components/navbar/AgencyNavbar';
-import React from 'react'
 import { useParams } from 'react-router-dom';
 
 const AgencyEditHotelPage = () => {
