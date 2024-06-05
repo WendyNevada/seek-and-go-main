@@ -1,12 +1,7 @@
 import { useState } from 'react'
 import { assetForWeb } from '../../assets/assetStatic'
 import HomeIcon from '@mui/icons-material/Home'
-import InfoIcon from '@mui/icons-material/Info'
-import CommentRoundedIcon from '@mui/icons-material/CommentRounded'
-import PhoneRoundedIcon from '@mui/icons-material/PhoneRounded'
-import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded'
 import { Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
-import Login from '@mui/icons-material/Login';
 import { useLogin } from '@/context/LoginContext'
 import { useTranslation } from 'react-i18next'
 import "flag-icons/css/flag-icons.min.css";
@@ -15,12 +10,13 @@ import { Avatar, AvatarFallback } from '../ui/avatar'
 import LanguageIcon from '@mui/icons-material/Language';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const Navbar = () => {
 
     const { i18n } = useTranslation();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const changeLanguage = (language: string) => {
     i18n.changeLanguage(language);
@@ -35,35 +31,6 @@ const Navbar = () => {
             text:"Home",
             icon:<HomeIcon/>,
             link:"/"
-        },
-        {
-            text:"About",
-            icon:<InfoIcon/>,
-            link:"/About"
-        },
-        {
-            text:"Testimonials",
-            icon:<CommentRoundedIcon/>,
-            link:"/Detail"
-        },
-        {
-            text:"Contact",
-            icon:<PhoneRoundedIcon/>
-        },
-        {
-            text:"Cart",
-            icon:<ShoppingCartRoundedIcon/>
-        },
-        {
-            text:"Login",
-            icon: <Login/>
-        },
-        {
-            text:"Logout",
-            icon:<LogoutIcon/>,
-            onclick: () => {
-                logout
-            }
         }
     ]
 
@@ -74,6 +41,19 @@ const Navbar = () => {
     const navigateMyOrder = () => {
         navigate(`/Customer/MyOrder/${user?.customer_id}`);
     }
+
+    const isActiveLink = (path: string) => {
+        if (location.pathname === path) {
+            return true;
+        }
+        // Handle wildcard path for paths ending with a number
+        const regex = new RegExp('/[^/]+/[^/]+/\\d+$');
+        if (regex.test(location.pathname)) {
+            const basePath = location.pathname.replace(/\d+$/, '');
+            return path.startsWith(basePath);
+        }
+        return false;
+    };
 
     return (
         <nav className='flex-no-wrap fixed top-0 flex w-full items-center justify-between bg-blue-800 lg:flex-wrap lg:py-4 p-6 z-50'>
@@ -104,26 +84,86 @@ const Navbar = () => {
             </div>
 
             <div className='w-full hidden flex lg:flex lg:items-center lg:w-auto mr-6'>
-                <a href='\' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Home</a>
-                <a href='\AgencySearch' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Agency</a>
-                {/* <a href='\About' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>About</a>
-                <a href='\Detail' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Details</a>
-                <a href='' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Contact</a>
-                <a href='' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>
-                    <BsCart2 className='navbar-cart-icon'/>
-                </a> */}
-                {
-                    user ? (
-                    <div>
-                        <a onClick={navigateMyOrder} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5 hover:cursor-pointer'>My Orders</a>
-                    </div>) :
+            {menuOptions.map((item, index) => (
+            <a key={index} href={item.link}
+                className={`block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5 
+                ${
                     (
-                        <div>
-                            <a href='\Register' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Register</a>
-                            <a href='\Login' className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1'>Login</a>
-                        </div>
+                        (location.pathname === item.link) ||
+                        (isActiveLink('/Customer/PackageDetail/')) ||
+                        (isActiveLink('/Customer/PackageOrderDetail/')) ||
+                        (isActiveLink('/Customer/VehicleDetail/')) ||
+                        (isActiveLink('/Customer/VehicleOrderDetail/')) ||
+                        (isActiveLink('/Customer/HotelDetail/')) ||
+                        (isActiveLink('/Customer/HotelOrderDetail/')) ||
+                        (isActiveLink('/Customer/AttractionDetail/')) ||
+                        (isActiveLink('/Customer/AttractionOrderDetail/'))
                     )
+                    ? 'text-white border-b-2 border-white' 
+                    : 
+                    ''
+                }`}>
+                {item.text}
+            </a>
+            ))}
+
+            <a href='\AgencySearch' className={`block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5
+                ${
+                    (
+                        (location.pathname === `/AgencySearch`) ||
+                        (isActiveLink('/AgencySearch/AgencyDetail/')) ||
+                        (isActiveLink('/Customer/RequestCustomPackage/'))
+                    ) 
+                    ? 
+                    'text-white border-b-2 border-white' 
+                    : 
+                    ''
                 }
+            `}>Agency</a>
+
+            {user ? (
+            <div>
+                <a onClick={navigateMyOrder} 
+                    className={`block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5 hover:cursor-pointer 
+                        ${
+                            (
+                                (location.pathname === `/Customer/MyOrder/${user?.customer_id}`) || 
+                                (isActiveLink('/Customer/MyOrderDetail/')) ||
+                                (location.pathname === `/Customer/CustomPackage`) ||
+                                (isActiveLink('/Customer/CustomPackageDetail/'))
+                            ) 
+                            ? 
+                            'text-white border-b-2 border-white' 
+                            : 
+                            ''
+                        }
+                    `}>My Orders</a>
+            </div>) : (
+            <div>
+                <a href='\Register' 
+                    className={`block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5 
+                    ${
+                        ((location.pathname === `/Register`))
+                        ? 
+                        'text-white border-b-2 border-white' 
+                        : 
+                        ''
+                    }
+                    `}
+                    >Register</a>
+                <a href='\Login' 
+                    className={`block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 border-2 border-neutral-50 px-6 pb-[6px] pt-1
+                    ${
+                        ((location.pathname === `/Login`))
+                        ? 
+                        'text-white border-b-2 border-white' 
+                        : 
+                        ''
+                    }
+                    `}
+                >Login</a>
+            </div>
+            )}
 
                 {/* <button onClick={() => logout()} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Logout</button> */}
 
@@ -152,7 +192,20 @@ const Navbar = () => {
 
                 { user ?
                 (<DropdownMenu>
-                    <DropdownMenuTrigger className='text-teal-200 mx-5 hover:text-white'><PersonIcon/>{user?.account_name}</DropdownMenuTrigger>
+                    <DropdownMenuTrigger 
+                        className='text-teal-200 mx-5 hover:text-white'>
+                            <div className={`
+                                ${
+                                    ((location.pathname === `/Customer/EditProfileCustomer/${user?.account_id}`))
+                                    ? 
+                                    'text-white border-b-2 border-white' 
+                                    : 
+                                    ''
+                                }
+                            `}>
+                                <PersonIcon/>{user?.account_name}
+                            </div>
+                    </DropdownMenuTrigger>
                     <DropdownMenuContent>
                         <DropdownMenuLabel>My Account</DropdownMenuLabel>
                         <DropdownMenuSeparator />

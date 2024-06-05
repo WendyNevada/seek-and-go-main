@@ -72,7 +72,7 @@ const RequestPackage = ({agency_id} : {agency_id: number}) => {
             <div className="mx-auto max-w-6xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <h1 className="text-2xl mb-8">{t('Add Package')}</h1>
+                        <h1 className="text-2xl mb-8">{t('Add Custom Package')}</h1>
 
                         <div className="flex flex-row space-x-5">
                             <FormField
