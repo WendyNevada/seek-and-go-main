@@ -196,7 +196,12 @@ class AgencyPaymentService implements AgencyPaymentInterface
 
             if($agencyPayment->payment_type == Constanta::$paymentTypeQris)
             {
-                $this->editRefPictureAgencyPayment($request->picture, $agencyPayment->agencies->agency_name, $agencyPayment->agency_payment_id);
+                $this->editAgencyPaymentAccountNo($request->agency_payment_id, null, $request->account_name);
+
+                if($request->picture != null)
+                {
+                    $this->editRefPictureAgencyPayment($request->picture, $agencyPayment->agencies->agency_name, $agencyPayment->agency_payment_id);
+                }
             }
             else
             {

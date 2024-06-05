@@ -92,6 +92,7 @@ const Navbar = () => {
             <div className='w-full hidden flex lg:flex lg:items-center lg:w-auto'>
                 <Link to ={urlConstant.AgencyHomePage} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Dashboard</Link>
                 <Link to="/Agency/Product" className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Product</Link>
+                <Link to="/Agency/CustomPackage" className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Custom Package</Link>
                 {/* <button onClick={() => logout()} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Logout</button> */}
                 {/* <button onClick={() => changeLanguage('en')} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1' >English</button>
                 <button onClick={() => changeLanguage('id')} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1'>Indonesia</button> */}

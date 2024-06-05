@@ -4,7 +4,7 @@ namespace App\Http\Requests\V2;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RateProductRequest extends FormRequest
+class GetCustomPackageAgencyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +22,8 @@ class RateProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => 'required',
-            'order_h_id' => 'nullable',
-            'rating' => 'required',
-            'product_type' => 'nullable'
+            'agency_id' => 'required',
+            'custom_status' => 'nullable'
         ];
     }
 }

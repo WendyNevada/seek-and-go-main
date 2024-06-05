@@ -66,7 +66,6 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
     }, [ref_hotel_id]);
 
     const onSubmit = async(values: z.infer<typeof editHotelSchema>) => {
-        console.log(values)
         const formData = new FormData();
         formData.append('ref_hotel_id', ref_hotel_id.toString());
         formData.append('hotel_code', values.hotel_code);

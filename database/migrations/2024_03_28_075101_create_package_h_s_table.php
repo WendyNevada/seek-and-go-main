@@ -26,7 +26,7 @@ return new class extends Migration
             $table->double('package_price', 17, 2)->nullable();
             $table->boolean('is_active');
             $table->integer('qty');
-            $table->integer('total_days');
+            $table->integer('total_days')->nullable();
             $table->timestamps();
         });
     }

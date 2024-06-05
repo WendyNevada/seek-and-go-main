@@ -36,7 +36,6 @@ const AgencyRegisterComponent = () => {
     //CreateAccountAgency
 
     const onSubmit = async (values: z.infer<typeof agencySchema>) => {
-        console.log(values);
         const response = await hitAddApi("/v1/CreateAccountAgency",values);
         toast({
             variant: "success",
