@@ -17,6 +17,7 @@ return new class extends Migration
             $table->bigInteger('order_h_id')->unsigned();
             $table->foreign('order_h_id')->references('order_h_id')->on('order_h_s')->onDelete('cascade');
             $table->boolean('payment_status');
+            $table->boolean('is_given_rating');
             $table->timestamps();
         });
     }

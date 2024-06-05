@@ -10,34 +10,31 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { toast } from '@/components/ui/use-toast';
 import axios from 'axios';
-import { useLogin } from "@/context/LoginContext";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+import HashLoader from "react-spinners/HashLoader";
 
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-import { useNavigate } from "react-router-dom";
-
-interface DeletePaymentAlertProps {
+interface RejectCustomPackageAlertProps {
     apiPath: string;
-    Id: number;
-    param: string;
+    id: number;
 }
 
-export function DeletePaymentAlert({ apiPath, Id, param }: DeletePaymentAlertProps) {
+const RejectCustomPackageAlert = ({ apiPath, id }: RejectCustomPackageAlertProps) => {
     const { t } = useTranslation();
-    const { user } = useLogin();
-    const navigate  = useNavigate();
+    const [loading, setLoading] = useState(false);
 
-    const handleDelete = async () => {
+    const handleReject = async () => {
+        setLoading(true);
         try {
-            const response = await axiosClient.post(apiPath, { [param]: Id });
+            const response = await axiosClient.post(apiPath, { package_h_id: id });
             toast({
                 variant: response.data.status === "ok" ? "success" : "destructive",
                 description: response.data.message
             });
             if (response.data.status === "ok") {
-                navigate('/Agency/EditProfileAgency/' + user?.agency_id);
                 setTimeout(() => {
                     window.location.reload();
                 }, 100);
@@ -50,13 +47,17 @@ export function DeletePaymentAlert({ apiPath, Id, param }: DeletePaymentAlertPro
                 variant: "destructive",
                 description: errorMessage
             });
+        } finally {
+            setLoading(false);
         }
     }
 
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <HighlightOffIcon className='cursor-pointer hover:text-red-600'/>
+                <Button variant="destructive" className="bg-red-500 p-2 hover:bg-red-700 px-4 w-28" disabled={loading}>
+                    {loading ? <HashLoader size={20} color={"#ffffff"} loading={loading} /> : t('Reject')}
+                </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
@@ -64,14 +65,18 @@ export function DeletePaymentAlert({ apiPath, Id, param }: DeletePaymentAlertPro
                         {t('Are you sure?')}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('This action cannot be undone. Are you sure you want to delete this product?')}
+                        {t('This action cannot be undone. Are you sure you want to cancel this request?')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>{t('Cancel')}</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDelete}>{t('Continue')}</AlertDialogAction>
+                    <AlertDialogCancel disabled={loading} className="bg-red-500 text-white hover:bg-red-600">{t('No')}</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleReject} className="bg-green-500 text-white hover:bg-green-600" disabled={loading}>
+                        {loading ? <HashLoader size={20} color={"#ffffff"} loading={loading} /> : t('Yes')}
+                    </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
-    );
+    )
 }
+
+export default RejectCustomPackageAlert

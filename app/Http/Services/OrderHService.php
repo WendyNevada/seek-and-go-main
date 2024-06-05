@@ -204,6 +204,7 @@ class OrderHService implements OrderHInterface
         $trx->trx_no = $trxNo;
         $trx->order_h_id = $order_h_id;
         $trx->payment_status = false;
+        $trx->is_given_rating = false;
         $trx->save();
 
         return $trx;
@@ -1069,7 +1070,7 @@ class OrderHService implements OrderHInterface
                 'status' => 'error',
                 'message' => 'Image not found',
                 'image_url' => '-'
-            ], 400);
+            ], 200);
         }
         else
         {

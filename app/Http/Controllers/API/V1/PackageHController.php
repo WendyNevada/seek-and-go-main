@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Models\PackageH;
 use App\Http\Controllers\Controller;
 use App\Http\Services\PackageHService;
 use App\Http\Requests\V2\AgencyIdRequest;
@@ -9,8 +10,8 @@ use App\Http\Requests\V2\PackageHIdRequest;
 use App\Http\Requests\V2\EditPackageAgencyRequest;
 use App\Http\Requests\V2\CreatePackageAgencyRequest;
 use App\Http\Requests\V2\ApproveCustomPackageRequest;
+use App\Http\Requests\V2\GetCustomPackageAgencyRequest;
 use App\Http\Requests\V2\CreateCustomPackageCustomerRequest;
-use App\Models\PackageH;
 
 class PackageHController extends Controller
 {
@@ -38,7 +39,13 @@ class PackageHController extends Controller
         return $response;
     }
 
-    public function GetNewCustomPackageByAgencyId(PackageHService $packageHService, AgencyIdRequest $request)
+    public function GetCustomPackageByAgencyId(PackageHService $packageHService, GetCustomPackageAgencyRequest $request)
+    {
+        $response = $packageHService->GetCustomPackageByAgencyId($request);
+        return $response;
+    }
+
+    public function GetNewCustomPackageByAgencyId(PackageHService $packageHService, GetCustomPackageAgencyRequest $request)
     {
         $response = $packageHService->GetNewCustomPackageByAgencyId($request);
         return $response;

@@ -18,9 +18,7 @@ const EditProfileAgency = ({account_id} : {account_id:number}) => {
         const fetchData = async () => {
             try {
                 const response = await axiosClient.post('v1/GetAccountInfoById', { account_id : account_id });
-                console.log(response.data);
                 setAgency(response.data.account);
-                console.log('agencies const : ', agency)
             }
             catch (error) {
                 console.error('Error fetching data:', error);
@@ -28,12 +26,9 @@ const EditProfileAgency = ({account_id} : {account_id:number}) => {
         }
 
         const fetchData2 = async () => {
-            console.log('agency id : ',user?.agency_id)
             try {
                 const response = await axiosClient.post('v1/GetAllAgencyPaymentByAgencyId', { agency_id : user?.agency_id });
-                console.log(response.data);
                 setPayment(response.data.data);
-                console.log('payment res : ', response)
             }
             catch (error) {
                 console.error('Error fetching data:', error);
@@ -42,7 +37,6 @@ const EditProfileAgency = ({account_id} : {account_id:number}) => {
 
         fetchData();
         fetchData2();
-        console.log('agencies const : ', agency)
     }, [])
 
     return (

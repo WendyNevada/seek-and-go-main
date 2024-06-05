@@ -36,12 +36,19 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
     const [orderDataRows, setOrderDataRows] = useState<OrderDataRow[]>([]);
+    const [imageUrl, setImageUrl] = useState<string | undefined>('');
+    const enviUrl = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await axiosClient.post('v1/GetOrderById', { order_h_id });
                 const orderData: OrderD = response.data;
+
+                if(response.status === 200) {
+                    const responseImg = await axiosClient.post('v1/GetOrderImage', {order_h_id});
+                    setImageUrl(responseImg.data.image_url);   
+                }
 
                 const fetchDetails = orderData.order_ds.map(async (orderD) => {
                     let hotel_name = '';
@@ -240,6 +247,25 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                 </div>
             </div>
 
+            {(order.order_status === 'CPY' || order.order_status === 'RTP') && (
+                <div>
+                    <div className="flex justify-center items-center mt-3">
+                        <p className="font-bold">{t('Proof of Payment')}</p>
+                    </div>
+                    {imageUrl !== '-' ? (
+                        <div className='mt-4'>
+                            <img src={enviUrl + imageUrl} alt="Loading..." style={{ maxWidth: '100%', marginTop: '10px' }} />
+                        </div>
+                    ) : (
+                    <>
+                        <div className="flex justify-center items-center mt-2">
+                            <p className="font-bold text-red-500">{t('Not Available')}</p>
+                        </div>
+                    </>
+                    )}
+                </div>
+            )}
+
             {/* Buttons */}
             <div className="flex justify-end m-4 p-4">
 
@@ -297,33 +323,35 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                 )}
 
                 {order.order_status === 'CPY' && (
-                    <div className="space-x-4">
-                        <OrderAgencyAcceptPaymentAlert
-                            apiPath={'v1/PaidOrder'}
-                            id={order_h_id}
-                            role={'agency'}
-                            actionLoading={actionLoading}
-                            setActionLoading={setActionLoading}
-                            onAction={onAction}
-                        />
+                    <div>
+                        <div className="space-x-4">
+                            <OrderAgencyAcceptPaymentAlert
+                                apiPath={'v1/PaidOrder'}
+                                id={order_h_id}
+                                role={'agency'}
+                                actionLoading={actionLoading}
+                                setActionLoading={setActionLoading}
+                                onAction={onAction}
+                            />
 
-                        <OrderAgencyRetryPaymentAlert
-                            apiPath={'v1/RetryPaymentOrder'}
-                            id={order_h_id}
-                            role={'agency'}
-                            actionLoading={actionLoading}
-                            setActionLoading={setActionLoading}
-                            onAction={onAction}
-                        />
+                            <OrderAgencyRetryPaymentAlert
+                                apiPath={'v1/RetryPaymentOrder'}
+                                id={order_h_id}
+                                role={'agency'}
+                                actionLoading={actionLoading}
+                                setActionLoading={setActionLoading}
+                                onAction={onAction}
+                            />
 
-                        <OrderAgencyCancelAlert
-                            apiPath={'v1/CancelOrderAgency'}
-                            id={order_h_id}
-                            role={'agency'}
-                            actionLoading={actionLoading}
-                            setActionLoading={setActionLoading}
-                            onAction={onAction}
-                        />
+                            <OrderAgencyCancelAlert
+                                apiPath={'v1/CancelOrderAgency'}
+                                id={order_h_id}
+                                role={'agency'}
+                                actionLoading={actionLoading}
+                                setActionLoading={setActionLoading}
+                                onAction={onAction}
+                            />
+                        </div>
                     </div>
                 )}
 

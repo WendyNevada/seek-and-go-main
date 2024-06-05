@@ -29,7 +29,6 @@ const PackageOrderDetail = ({package_h_id} : {package_h_id:number}) => {
     const [ ord ,setOrd ] = useState<OrderData>();
 
     useEffect(() => {
-        console.log(package_h_id)
         const fetchData = async () => {
             try {
                 const response = await axiosClient.post('v1/GetPackageDataById', { package_h_id: package_h_id });
@@ -101,8 +100,6 @@ const PackageOrderDetail = ({package_h_id} : {package_h_id:number}) => {
     };
 
     const onConfirm = async() => {
-        console.log('start & end Date',startDate, endDate)
-        console.log('pack', ord)
         try {
             const response = await axiosClient.post('v1/CreateOrder', ord , {
                 headers: {

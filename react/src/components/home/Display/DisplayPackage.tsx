@@ -19,7 +19,6 @@ const DisplayPackage = () => {
         const fetchPackage =  async () => {
             try {
                 const response = await axiosClient.post('v1/GetAgencyPackagesHomepage');
-                console.log(response.data);
                 setPackages(response.data.data);
             }
             catch (error) {

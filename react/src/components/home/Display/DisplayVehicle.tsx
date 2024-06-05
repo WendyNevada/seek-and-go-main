@@ -31,7 +31,6 @@ const DisplayVehicle = () => {
     },[])
 
     const selectItem = (id : number) => {
-        console.log('selected id : ',id);
         navigate(`/Customer/VehicleDetail/${id}`);
         //navigateTo(`/vehicle/${id}`);
         //navigatedTo(`/Customer/ProductDetail`);

@@ -14,7 +14,8 @@ class Trx extends Model
     protected $fillable = [
         'trx_no',
         'order_h_id',
-        'payment_status'
+        'payment_status',
+        'is_given_rating'
     ];
 
     #region Getter Setter
@@ -56,6 +57,16 @@ class Trx extends Model
     public function setPaymentStatusAttribute($value)
     {
         $this->attributes['payment_status'] = $value;
+    }
+
+    public function getIsGivenRatingAttribute($value)
+    {
+        return $value;
+    }
+
+    public function setIsGivenRatingAttribute($value)
+    {
+        $this->attributes['is_given_rating'] = $value;
     }
     #endregion
 }
