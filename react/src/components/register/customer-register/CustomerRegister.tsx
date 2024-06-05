@@ -40,13 +40,13 @@ const CustomerRegisterComponent = () => {
         birth_date: new Date(),
         gender: "",
         password: "",
-        //confirmPassword: "",
+        confirmPassword: "",
         role:"Customer"
         },
     });
 
     function formatDate(date: Date): Date {
-        return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        return new Date(date);
     }
 
     const onSubmit = async (values: z.infer<typeof customerSchema>) => {
@@ -142,7 +142,7 @@ const CustomerRegisterComponent = () => {
                                 </FormItem>
                             )}
                         />
-                        <FormField
+                        {/* <FormField
                             control={form.control}
                             name="birth_date"
                             render={({ field }) => (
@@ -172,6 +172,23 @@ const CustomerRegisterComponent = () => {
                                                 />
                                             </PopoverContent>
                                         </Popover>
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        /> */}
+                        <FormField
+                            control={form.control}
+                            name="birth_date"
+                            render={({ field }) => (
+                                <FormItem className="custom-field mt-4">
+                                    <FormLabel>{t('Birth Date')}<Required/></FormLabel>
+                                    <FormMessage />
+                                    <FormControl>
+                                        <Input
+                                            type='Date'
+                                            {...field}
+                                            onChange={field.onChange}
+                                        />
                                     </FormControl>
                                 </FormItem>
                             )}
@@ -209,6 +226,24 @@ const CustomerRegisterComponent = () => {
                                         <Input
                                             type="password"
                                             placeholder={t('Password')}
+                                            {...field}
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="confirmPassword"
+                            render={({ field }) => (
+                                <FormItem className="custom-field mt-4">
+                                    <FormLabel>{"Confirm Password"}</FormLabel>
+                                    <FormMessage />
+                                    <FormControl>
+                                        <Input
+                                            type='password'
+                                            placeholder={field.name}
                                             {...field}
                                             onChange={field.onChange}
                                         />
