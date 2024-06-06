@@ -42,17 +42,26 @@ class PromoService implements PromoInterface
         return $promo;
     }
 
-    private function calculateNewPrice($base_price, $promo)
+    private function calculateNewPrice($base_price, $promo, $qty = null, &$unit_price)
     {
         $newPrice = 0;
+
+        $unit_price = $base_price;
+
+        if($qty != null)
+        {
+            $base_price = $base_price * $qty;
+        }
 
         if($promo->is_amount == true)
         {
             $newPrice = $base_price - $promo->amount;
+            $unit_price = $unit_price - $promo->amount;
         }
         else
         {
             $newPrice = $base_price - ($base_price * $promo->percent / 100);
+            $unit_price = $unit_price - ($unit_price * $promo->percent / 100);
         }
 
         return $newPrice;
@@ -124,13 +133,20 @@ class PromoService implements PromoInterface
     {
         $promoHistory = PromoHistory::where('promo_id', $promo_id)->where('customer_id', $customer_id)->first();
 
-        if($promoHistory->counter >= $max_use)
+        if($promoHistory == null)
         {
-            return true;
+            return false;
         }
         else
         {
-            return false;
+            if($promoHistory->counter >= $max_use)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 
@@ -170,9 +186,16 @@ class PromoService implements PromoInterface
         }
     }
 
-    private function deducePrice($price_1, $price_2)
+    private function deducePrice($price_1, $price_2, $qty = null)
     {
-        return $price_1 - $price_2;
+        if($qty != null)
+        {
+            return ($price_1 * $qty) - $price_2;
+        }
+        else
+        {
+            return $price_1 - $price_2;
+        }
     }
     #endregion
 
@@ -228,39 +251,43 @@ class PromoService implements PromoInterface
                         'status' => "error",
                         'message' => "Max use reached",
                         'new_price' => "-",
-                        'price_deduced' => "-"
+                        'price_deduced' => "-",
+                        'promo_type' => "-",
+                        'promo_value' => "-",
+                        'price_reduced_per_unit' => "-"
                     ]);
                 }
 
-                $newPrice = $this->calculateNewPrice($attraction->base_price, $promo);
+                $unit_price = 0;
 
-                $priceDeduced = $this->deducePrice($attraction->base_price, $newPrice);
+                $newPrice = $this->calculateNewPrice($attraction->base_price, $promo, $request->qty, $unit_price);
 
-                $promoHistory = $this->getPromoHistoryByPromoIdAndCustomerId($promo->promo_id, $request->customer_id);
+                $priceDeduced = $this->deducePrice($attraction->base_price, $newPrice, $request->qty);
 
-                if($promoHistory == null)
+                if($promo->is_amount == false)
                 {
-                    DB::beginTransaction();
-
-                    $this->insertPromoHistory($promo->promo_id, $request->customer_id);
-
-                    DB::commit();
+                    return response()->json([
+                        'status' => "ok",
+                        'message' => "Promo found",
+                        'new_price' => $newPrice,
+                        'price_deduced' => $priceDeduced,
+                        'promo_type' => "percent",
+                        'promo_value' => $promo->percent,
+                        'price_reduced_per_unit' => $unit_price
+                    ]);
                 }
                 else
                 {
-                    DB::beginTransaction();
-
-                    $this->updatePromoHistory($promo->promo_id, $request->customer_id);
-
-                    DB::commit();
+                    return response()->json([
+                        'status' => "ok",
+                        'message' => "Promo found",
+                        'new_price' => $newPrice,
+                        'price_deduced' => $priceDeduced,
+                        'promo_type' => "amount",
+                        'promo_value' => $promo->amount,
+                        'price_reduced_per_unit' => $unit_price
+                    ]);
                 }
-
-                return response()->json([
-                    'status' => "success",
-                    'message' => "Promo found",
-                    'new_price' => $newPrice,
-                    'price_deduced' => $priceDeduced
-                ]);
             }
             else
             {
@@ -268,7 +295,10 @@ class PromoService implements PromoInterface
                     'status' => "error",
                     'message' => "Promo is not valid",
                     'new_price' => "-",
-                    'price_deduced' => "-"
+                    'price_deduced' => "-",
+                    'promo_type' => "-",
+                    'promo_value' => "-",
+                    'price_reduced_per_unit' => "-"
                 ]);
             }
         }
@@ -280,7 +310,8 @@ class PromoService implements PromoInterface
                 'status' => "error",
                 'message' => $e->getMessage(),
                 'new_price' => "-",
-                'price_deduced' => "-"
+                'price_deduced' => "-",
+                'price_reduced_per_unit => "-"'
             ], 500);
         }
     }
@@ -301,39 +332,43 @@ class PromoService implements PromoInterface
                         'status' => "error",
                         'message' => "Max use reached",
                         'new_price' => "-",
-                        'price_deduced' => "-"
+                        'price_deduced' => "-",
+                        'promo_type' => "-",
+                        'promo_value' => "-",
+                        'price_reduced_per_unit' => "-"
                     ]);
                 }
+
+                $unit_price = 0;
                 
-                $newPrice = $this->calculateNewPrice($hotel->base_price, $promo);
+                $newPrice = $this->calculateNewPrice($hotel->base_price, $promo, $request->qty, $unit_price);
 
-                $priceDeduced = $this->deducePrice($hotel->base_price, $newPrice);
+                $priceDeduced = $this->deducePrice($hotel->base_price, $newPrice, $request->qty);
 
-                $promoHistory = $this->getPromoHistoryByPromoIdAndCustomerId($promo->promo_id, $request->customer_id);
-
-                if($promoHistory == null)
+                if($promo->is_amount == false)
                 {
-                    DB::beginTransaction();
-
-                    $this->insertPromoHistory($promo->promo_id, $request->customer_id);
-
-                    DB::commit();
+                    return response()->json([
+                        'status' => "ok",
+                        'message' => "Promo found",
+                        'new_price' => $newPrice,
+                        'price_deduced' => $priceDeduced,
+                        'promo_type' => "percent",
+                        'promo_value' => $promo->percent,
+                        'price_reduced_per_unit' => $unit_price
+                    ]);
                 }
                 else
                 {
-                    DB::beginTransaction();
-
-                    $this->updatePromoHistory($promo->promo_id, $request->customer_id);
-
-                    DB::commit();
+                    return response()->json([
+                        'status' => "ok",
+                        'message' => "Promo found",
+                        'new_price' => $newPrice,
+                        'price_deduced' => $priceDeduced,
+                        'promo_type' => "amount",
+                        'promo_value' => $promo->amount,
+                        'price_reduced_per_unit' => $unit_price
+                    ]);
                 }
-
-                return response()->json([
-                    'status' => "success",
-                    'message' => "Promo found",
-                    'new_price' => $newPrice,
-                    'price_deduced' => $priceDeduced
-                ]);
             }
             else
             {
@@ -341,7 +376,10 @@ class PromoService implements PromoInterface
                     'status' => "error",
                     'message' => "Promo is not valid",
                     'new_price' => "-",
-                    'price_deduced' => "-"
+                    'price_deduced' => "-",
+                    'promo_type' => "-",
+                    'promo_value' => "-",
+                    'price_reduced_per_unit' => "-"
                 ]);
             }
         }
@@ -353,7 +391,10 @@ class PromoService implements PromoInterface
                 'status' => "error",
                 'message' => $e->getMessage(),
                 'new_price' => "-",
-                'price_deduced' => "-"
+                'price_deduced' => "-",
+                'promo_type' => "-",
+                'promo_value' => "-",
+                'price_reduced_per_unit' => "-"
             ], 500);
         }
     }
@@ -374,39 +415,43 @@ class PromoService implements PromoInterface
                             'status' => "error",
                             'message' => "Max use reached",
                             'new_price' => "-",
-                            'price_deduced' => "-"
+                            'price_deduced' => "-",
+                            'promo_type' => "-",
+                            'promo_value' => "-",
+                            'price_reduced_per_unit' => "-"
                         ]);
                     }
 
-                $newPrice = $this->calculateNewPrice($vehicle->base_price, $promo);
+                $unit_price = 0;
 
-                $priceDeduced = $this->deducePrice($vehicle->base_price, $newPrice);
+                $newPrice = $this->calculateNewPrice($vehicle->base_price, $promo, $request->qty, $unit_price);
 
-                $promoHistory = $this->getPromoHistoryByPromoIdAndCustomerId($promo->promo_id, $request->customer_id);
+                $priceDeduced = $this->deducePrice($vehicle->base_price, $newPrice, $request->qty);
 
-                if($promoHistory == null)
+                if($promo->is_amount == false)
                 {
-                    DB::beginTransaction();
-
-                    $this->insertPromoHistory($promo->promo_id, $request->customer_id);
-
-                    DB::commit();
+                    return response()->json([
+                        'status' => "ok",
+                        'message' => "Promo found",
+                        'new_price' => $newPrice,
+                        'price_deduced' => $priceDeduced,
+                        'promo_type' => "percent",
+                        'promo_value' => $promo->percent,
+                        'price_reduced_per_unit' => $unit_price
+                    ]);
                 }
                 else
                 {
-                    DB::beginTransaction();
-
-                    $this->updatePromoHistory($promo->promo_id, $request->customer_id);
-
-                    DB::commit();
+                    return response()->json([
+                        'status' => "ok",
+                        'message' => "Promo found",
+                        'new_price' => $newPrice,
+                        'price_deduced' => $priceDeduced,
+                        'promo_type' => "amount",
+                        'promo_value' => $promo->amount,
+                        'price_reduced_per_unit' => $unit_price
+                    ]);
                 }
-
-                return response()->json([
-                    'status' => "success",
-                    'message' => "Promo found",
-                    'new_price' => $newPrice,
-                    'price_deduced' => $priceDeduced
-                ]);
             }
             else
             {
@@ -414,7 +459,10 @@ class PromoService implements PromoInterface
                     'status' => "error",
                     'message' => "Promo is not valid",
                     'new_price' => "-",
-                    'price_deduced' => "-"
+                    'price_deduced' => "-",
+                    'promo_type' => "-",
+                    'promo_value' => "-",
+                    'price_reduced_per_unit' => "-"
                 ]);
             }
         }
@@ -426,8 +474,52 @@ class PromoService implements PromoInterface
                 'status' => "error",
                 'message' => $e->getMessage(),
                 'new_price' => "-",
-                'price_deduced' => "-"
+                'price_deduced' => "-",
+                'promo_type' => "-",
+                'promo_value' => "-",
+                'price_reduced_per_unit' => "-"
             ], 500);
+        }
+    }
+
+    public function AddPromoCounterHistory(PromoDeductionRequest $request)
+    {
+        try
+        {
+            $promo = $this->getPromoByCode($request->promo_code);
+
+            $promoHistory = $this->getPromoHistoryByPromoIdAndCustomerId($promo->promo_id, $request->customer_id);
+
+            if($promoHistory == null)
+            {
+                DB::beginTransaction();
+
+                $this->insertPromoHistory($promo->promo_id, $request->customer_id);
+
+                DB::commit();
+            }
+            else
+            {
+                DB::beginTransaction();
+
+                $this->updatePromoHistory($promo->promo_id, $request->customer_id);
+
+                DB::commit();
+            }
+
+            return response()->json([
+                'status' => "ok",
+                'message' => "Promo counter updated"
+            ]);
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => "ok",
+                'message' => $e->getMessage()
+            ]);
         }
     }
     #endregion

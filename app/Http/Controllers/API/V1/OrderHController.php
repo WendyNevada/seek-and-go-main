@@ -11,6 +11,7 @@ use App\Http\Requests\V2\CancelOrderRequest;
 use App\Http\Requests\V2\CreateOrderRequest;
 use App\Http\Requests\V2\GetOrderByIdRequest;
 use App\Http\Requests\V2\GetCustomerOrderRequest;
+use App\Http\Requests\V2\UploadOrderImageRequest;
 use App\Http\Requests\V2\GetOrderDashboardRequest;
 
 class OrderHController extends Controller
@@ -126,6 +127,18 @@ class OrderHController extends Controller
     public function GetOrderDashboardByAgencyIdAndStatus(OrderHService $orderHService, GetOrderDashboardRequest $request)
     {
         $response = $orderHService->GetOrderDashboardByAgencyIdAndStatus($request);
+        return $response;
+    }
+
+    public function UploadOrderImage(OrderHService $orderHService, UploadOrderImageRequest $request)
+    {
+        $response = $orderHService->UploadOrderImage($request);
+        return $response;
+    }
+
+    public function GetOrderImage(OrderHService $orderHService, OrderHIdRequest $request)
+    {
+        $response = $orderHService->GetOrderImage($request);
         return $response;
     }
 

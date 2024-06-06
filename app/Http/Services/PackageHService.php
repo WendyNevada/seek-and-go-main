@@ -16,6 +16,7 @@ use App\Models\RefAttraction;
 use App\Models\PackageHistoryD;
 use App\Models\PackageHistoryH;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CustomPackageRequestEmail;
 use App\Http\Requests\V2\AgencyIdRequest;
@@ -24,6 +25,8 @@ use App\Http\Requests\V2\PackageHIdRequest;
 use App\Http\Requests\V2\EditPackageAgencyRequest;
 use App\Http\Requests\V2\CreatePackageAgencyRequest;
 use App\Http\Requests\V2\ApproveCustomPackageRequest;
+use App\Http\Requests\V2\GetCustomPackageAgencyRequest;
+use App\Http\Requests\V2\GetCustomPackageCustomerRequest;
 use App\Http\Requests\V2\CreateCustomPackageCustomerRequest;
 
 class PackageHService implements PackageHInterface
@@ -37,7 +40,15 @@ class PackageHService implements PackageHInterface
 
     private function getPackageHWithDById($package_h_id)
     {
-        $packageH = PackageH::with('packageDs')->find($package_h_id);
+        $packageH = PackageH::
+        with('packageDs')->
+        leftjoin('customers', 'package_h_s.customer_id', '=', 'customers.customer_id')->
+        leftjoin('agencies', 'package_h_s.agency_id', '=', 'agencies.agency_id')->
+        leftjoin('accounts', 'customers.account_id', '=', 'accounts.account_id')->
+        leftjoin('accounts as accounts2', 'agencies.account_id', '=', 'accounts2.account_id')->
+        select('package_h_s.*', 'customers.customer_name', 'accounts.phone as customer_phone', 'accounts.email as customer_email', 'agencies.agency_name', 'accounts2.phone as agency_phone', 'accounts2.email as agency_email')->
+        find($package_h_id);
+
         return $packageH;
     }
 
@@ -81,7 +92,7 @@ class PackageHService implements PackageHInterface
     private function reformatDate($date): string
     {
         $strDate = $date;
-                
+
         if(strpos($strDate, "T") == true)
         {
             $string = $date;
@@ -132,17 +143,58 @@ class PackageHService implements PackageHInterface
         return $packageHCustom;
     }
 
-    private function getCustomPackageByAgencyIdAndStatus($agency_id, $is_custom = false, $custom_status)
+    private function getCustomPackageByCustomerIdAndStatus($customer_id, $is_custom = false, $custom_status)
     {
-        $packageH = PackageH::
-            where('agency_id', $agency_id)->
-            where('is_custom', $custom_status)->
-            where('custom_status', $custom_status)->
+        if($custom_status == null)
+        {
+            $packageH = PackageH::
+            where('customer_id', $customer_id)->
+            where('is_custom', $is_custom)->
+            join('agencies', 'package_h_s.agency_id', '=', 'agencies.agency_id')->
+            select('package_h_s.*', 'agencies.agency_name')->
             with('packageDs')->
             get();
-        
+            return $packageH;
+        }
+        else
+        {
+            $packageH = PackageH::
+            where('customer_id', $customer_id)->
+            where('is_custom', $is_custom)->
+            where('custom_status', $custom_status)->
+            join('agencies', 'package_h_s.agency_id', '=', 'agencies.agency_id')->
+            select('package_h_s.*', 'agencies.agency_name')->
+            with('packageDs')->
+            get();
+            return $packageH;
+        }
+    }
 
-        return $packageH;
+    private function getCustomPackageByAgencyIdAndStatus($agency_id, $is_custom = false, $custom_status)
+    {
+        if($custom_status == null)
+        {
+            $packageH = PackageH::
+            where('agency_id', $agency_id)->
+            where('is_custom', $is_custom)->
+            join('customers', 'package_h_s.customer_id', '=', 'customers.customer_id')->
+            select('package_h_s.*', 'customers.customer_name')->
+            with('packageDs')->
+            get();
+            return $packageH;
+        }
+        else
+        {
+            $packageH = PackageH::
+            where('agency_id', $agency_id)->
+            where('is_custom', $is_custom)->
+            where('custom_status', $custom_status)->
+            join('customers', 'package_h_s.customer_id', '=', 'customers.customer_id')->
+            select('package_h_s.*', 'customers.customer_name')->
+            with('packageDs')->
+            get();
+            return $packageH;
+        }
     }
 
     private function getPackageByAgencyId($agency_id, $is_custom = false, $limit = null)
@@ -163,15 +215,16 @@ class PackageHService implements PackageHInterface
                 ->with('packageDs')
                 ->get();
         }
-        
+
         return $packageH;
     }
 
-    private function updatePackageH($package_h_id, $custom_status, $new_price)
+    private function updatePackageH($package_h_id, $custom_status, $new_price, $total_days)
     {
         $packageH = PackageH::lockForUpdate()->find($package_h_id);
         $packageH->custom_status = $custom_status;
         $packageH->package_price = $new_price;
+        $packageH->total_days = $total_days;
         $packageH->save();
 
         return $packageH;
@@ -219,7 +272,7 @@ class PackageHService implements PackageHInterface
         return $packageHistoryD;
     }
 
-    private function createOrderDForCustomPackage($order_h_id, $package_h_id, $package_history_h_id, $ref_hotel_id, $ref_attraction_id, $ref_vehicle_id, $start_dt, $end_dt)
+    private function createOrderDForCustomPackage($order_h_id, $package_h_id, $package_history_h_id, $ref_hotel_id, $ref_attraction_id, $ref_vehicle_id, $start_dt, $end_dt, $qty)
     {
         $orderD = OrderD::create([
             'order_h_id' => $order_h_id,
@@ -229,7 +282,8 @@ class PackageHService implements PackageHInterface
             'ref_attraction_id' => $ref_attraction_id,
             'ref_vehicle_id' => $ref_vehicle_id,
             'start_dt' => $start_dt,
-            'end_dt' => $end_dt
+            'end_dt' => $end_dt,
+            'qty' => $qty
         ]);
 
         return $orderD;
@@ -242,7 +296,7 @@ class PackageHService implements PackageHInterface
         where('agency_affiliates.agency_id', $agency_id)->
         select('ref_attractions.ref_attraction_id', 'ref_attractions.attraction_name')->
         get();
-        
+
         return $listAttraction;
     }
 
@@ -253,7 +307,7 @@ class PackageHService implements PackageHInterface
         where('agency_affiliates.agency_id', $agency_id)->
         select('ref_vehicles.ref_vehicle_id', 'ref_vehicles.vehicle_name')->
         get();
-        
+
         return $listVehicle;
     }
 
@@ -264,7 +318,7 @@ class PackageHService implements PackageHInterface
         where('agency_affiliates.agency_id', $agency_id)->
         select('ref_hotels.ref_hotel_id', 'ref_hotels.hotel_name')->
         get();
-        
+
         return $listHotel;
     }
 
@@ -397,7 +451,7 @@ class PackageHService implements PackageHInterface
         $package = PackageH::
             join('agencies', 'package_h_s.agency_id', '=', 'agencies.agency_id')->
             select(
-                'package_h_s.*', 
+                'package_h_s.*',
                 'agencies.agency_name',
                 )->
             where('is_active', '1')->
@@ -478,7 +532,7 @@ class PackageHService implements PackageHInterface
             $packageH = $this->updatePackageHForAgency($request->package_h_id, $request->package_name, $request->description, $request->package_price, $request->qty, $request->total_days);
 
             $this->deleteRangePackageD($request->package_h_id);
-            
+
             foreach($request->details as $detail)
             {
                 $strStartDate = null;
@@ -555,7 +609,7 @@ class PackageHService implements PackageHInterface
         }
     }
 
-    public function CreateCustomPackageCustomer(CreateCustomPackageCustomerRequest $request) 
+    public function CreateCustomPackageCustomer(CreateCustomPackageCustomerRequest $request)
     {
         try
         {
@@ -606,11 +660,92 @@ class PackageHService implements PackageHInterface
         }
     }
 
-    public function GetNewCustomPackageByAgencyId(AgencyIdRequest $request)
+    public function GetCustomPackageByCustomerId(GetCustomPackageCustomerRequest $request)
     {
-        $packageH = $this->getCustomPackageByAgencyIdAndStatus($request->agency_id, true, Constanta::$customPackageStatNew);
+        try
+        {
+            $packageH = $this->getCustomPackageByCustomerIdAndStatus($request->customer_id, true, $request->custom_status);
 
-        return response()->json($packageH);
+            if($packageH != null)
+            {
+                return response()->json([
+                    'status' => 'ok',
+                    'message' => 'Success',
+                    'package' => $packageH
+                ], 200);
+            }
+            else
+            {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Data not found',
+                    'package' => '-'
+                ], 400);
+            }
+        }
+        catch(\Exception $e)
+        {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'package' => '-'
+            ], 500);
+        }
+    }
+
+    public function GetCustomPackageByAgencyId(GetCustomPackageAgencyRequest $request)
+    {
+        try
+        {
+            $packageH = $this->getCustomPackageByAgencyIdAndStatus($request->agency_id, true, $request->custom_status);
+
+            if($packageH != null)
+            {
+                return response()->json([
+                    'status' => 'ok',
+                    'message' => 'Success',
+                    'package' => $packageH
+                ], 200);
+            }
+            else
+            {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Data not found',
+                    'package' => '-'
+                ], 400);
+            }
+        }
+        catch(\Exception $e)
+        {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'package' => '-'
+            ], 500);
+        }
+    }
+
+    public function GetNewCustomPackageByAgencyId(GetCustomPackageAgencyRequest $request)
+    {
+        $packageH = $this->getCustomPackageByAgencyIdAndStatus($request->agency_id, true, $request->custom_status);
+
+        if($packageH != null)
+        {
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Success',
+                'package' => $packageH
+            ], 200);
+        }
+        else
+        {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data not found',
+                'package' => '-'
+            ], 400);
+        }
     }
 
     public function GetApvCustomPackageByAgencyId(AgencyIdRequest $request)
@@ -626,7 +761,7 @@ class PackageHService implements PackageHInterface
         {
             DB::beginTransaction();
 
-            $packageH = $this->updatePackageH($request->package_h_id, Constanta::$customPackageStatApv, $request->new_price);
+            $packageH = $this->updatePackageH($request->package_h_id, Constanta::$customPackageStatApv, $request->new_price, $request->total_days);
 
             $packageHistoryH = $this->createPackageHistoryH($packageH->package_code, $packageH->agency_id, $packageH->package_name, true, $packageH->package_price, $packageH->total_days);
 
@@ -640,7 +775,7 @@ class PackageHService implements PackageHInterface
             {
                 $packageHistoryD = $this->createPackageHistoryDForCustom($packageHistoryH->package_history_h_id, $packageD->ref_hotel_id, $packageD->ref_attraction_id, $packageD->ref_vehicle_id, $packageD->start_dt, $packageD->end_dt);
 
-                $orderD = $this->createOrderDForCustomPackage($orderH->order_h_id, $packageD->package_h_id, $packageHistoryH->package_history_h_id, $packageD->ref_hotel_id, $packageD->ref_attraction_id, $packageD->ref_vehicle_id, $packageD->start_dt, $packageD->end_dt);
+                $orderD = $this->createOrderDForCustomPackage($orderH->order_h_id, $packageD->package_h_id, $packageHistoryH->package_history_h_id, $packageD->ref_hotel_id, $packageD->ref_attraction_id, $packageD->ref_vehicle_id, $packageD->start_dt, $packageD->end_dt, 1);
             }
 
             DB::commit();
@@ -673,7 +808,7 @@ class PackageHService implements PackageHInterface
 
             $packageH = $this->getPackageHById($request->package_h_id);
 
-            $this->updatePackageH($request->package_h_id, Constanta::$orderStatusRejected, 0);
+            $this->updatePackageH($request->package_h_id, Constanta::$orderStatusRejected, 0, 0);
 
             DB::commit();
 
@@ -718,6 +853,23 @@ class PackageHService implements PackageHInterface
     public function GetPackageDataById(PackageHIdRequest $request)
     {
         $package = $this->getPackageHWithDById($request->package_h_id);
+
+        if($package == null)
+        {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data not found',
+                'data' => []
+            ]);
+        }
+        else
+        {
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'success',
+                'data' => $package
+            ]);
+        }
 
         return response()->json($package);
     }

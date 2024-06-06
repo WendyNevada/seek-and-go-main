@@ -1,4 +1,6 @@
 export const urlConstant = {
+    // Global
+    HomePage: "/",
 
     // Agency Routes
     AgencyHomePage: "/Agency",
@@ -11,4 +13,6 @@ export const urlConstant = {
 
     // Customer Routes
     VehicleOrderDetail: "/Customer/VehicleOrderDetail",
+    HotelOrderDetail: "/Customer/HotelOrderDetail",
+    AttractionOrderDetail: "/Customer/AttractionOrderDetail"
   } as const;

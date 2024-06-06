@@ -12,6 +12,7 @@ use App\Models\Customer;
 use App\Models\PackageH;
 use App\Models\RefHotel;
 use App\Models\Constanta;
+use App\Models\RefPicture;
 use App\Models\RefVehicle;
 use App\Mail\CustPaidEmail;
 use App\Mail\PaidOrderEmail;
@@ -26,6 +27,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CancelOrderByAgencyEmail;
 use App\Http\Requests\V2\CustIdRequest;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Interfaces\OrderHInterface;
 use App\Mail\CancelOrderByCustomerEmail;
 use App\Http\Requests\V2\AgencyIdRequest;
@@ -35,6 +37,7 @@ use App\Http\Requests\V2\CreateOrderRequest;
 use App\Http\Requests\V2\GetOrderByIdRequest;
 use App\Http\Requests\V2\GetCustomerOrderRequest;
 use App\Http\Requests\V2\GetOrderDashboardRequest;
+use App\Http\Requests\V2\UploadOrderImageRequest;
 use App\Mail\SendEmailNotificationOrderApproveEmail;
 
 class OrderHService implements OrderHInterface
@@ -74,14 +77,29 @@ class OrderHService implements OrderHInterface
             $order = OrderH::where([
                 ['customer_id', $customer_id],
                 ['order_status', $order_status]
-            ])->with('orderDs')->orderBy('order_dt', 'asc')->limit($limit)->get();
+            ])->
+            join('agencies', 'order_h_s.agency_id', '=', 'agencies.agency_id')->
+            select('order_h_s.*', 'agencies.agency_name')->
+            with('orderDs')->orderBy('order_dt', 'asc')->limit($limit)->get();
+        }
+        else if($order_status == 'ALL')
+        {
+            $order = OrderH::where([
+                ['customer_id', $customer_id]
+            ])->
+            join('agencies', 'order_h_s.agency_id', '=', 'agencies.agency_id')->
+            select('order_h_s.*', 'agencies.agency_name')->
+            with('orderDs')->orderBy('order_dt', 'asc')->get();
         }
         else
         {
             $order = OrderH::where([
                 ['customer_id', $customer_id],
                 ['order_status', $order_status]
-            ])->with('orderDs')->orderBy('order_dt', 'asc')->get();
+            ])->
+            join('agencies', 'order_h_s.agency_id', '=', 'agencies.agency_id')->
+            select('order_h_s.*', 'agencies.agency_name')->
+            with('orderDs')->orderBy('order_dt', 'asc')->get();
         }
 
         return $order;
@@ -91,7 +109,10 @@ class OrderHService implements OrderHInterface
     {
         $order = OrderH::where('order_h_id', $order_h_id)->
         join('customers', 'order_h_s.customer_id', '=', 'customers.customer_id')->
-        select('order_h_s.*', 'customers.customer_name')->
+        join('agencies', 'order_h_s.agency_id', '=', 'agencies.agency_id')->
+        join('accounts', 'customers.account_id', '=', 'accounts.account_id')->
+        join('accounts as acc2', 'agencies.account_id', '=', 'acc2.account_id')->
+        select('order_h_s.*', 'customers.customer_name', 'agencies.agency_name', 'accounts.email as customer_email', 'acc2.email as agency_email', 'accounts.phone as customer_phone', 'acc2.phone as agency_phone')->
         with('orderDs')->first();
 
         return $order;
@@ -185,6 +206,7 @@ class OrderHService implements OrderHInterface
         $trx->trx_no = $trxNo;
         $trx->order_h_id = $order_h_id;
         $trx->payment_status = false;
+        $trx->is_given_rating = false;
         $trx->save();
 
         return $trx;
@@ -310,11 +332,18 @@ class OrderHService implements OrderHInterface
         }
         else if($product_type == Constanta::$package)
         {
-            $product = PackageH::where('package_h_id', $product['package_h_id'])->first();
+            $packageId = $product['package_h_id'];
+            $product = PackageH::where('package_h_id', $packageId)->first();
             $message = $product->package_name;
         }
         
         $qty = $product->qty;
+
+        if($product_type == Constanta::$hotel || $product_type == Constanta::$vehicle || $product_type == Constanta::$package)
+        {
+            $qtyOrder = 1; //karena qty dari hotel dan vehicle dan paket itu unitnya (kamar atau kendaraannya)
+        }
+
         $total = $qty - $qtyOrder;
 
         $messageRet = $message;
@@ -329,7 +358,7 @@ class OrderHService implements OrderHInterface
         }
     }
 
-    private function reduceProductQty($product, $product_type)
+    private function reduceProductQty($product, $product_type, $qtyOrder)
     {
         if($product_type == Constanta::$attraction)
         {
@@ -338,18 +367,21 @@ class OrderHService implements OrderHInterface
         else if($product_type == Constanta::$hotel)
         {
             $product = RefHotel::where('ref_hotel_id', $product['ref_hotel_id'])->first();
+            $qtyOrder = 1;
         }
         else if($product_type == Constanta::$vehicle)
         {
             $product = RefVehicle::where('ref_vehicle_id', $product['ref_vehicle_id'])->first();
+            $qtyOrder = 1;
         }
         else if($product_type == Constanta::$package)
         {
             $product = PackageH::where('package_h_id', $product['package_h_id'])->first();
+            $qtyOrder = 1;
         }
 
         $product->update([
-            'qty' => $product->qty - 1
+            'qty' => $product->qty - $qtyOrder
         ]);
     }
 
@@ -401,9 +433,9 @@ class OrderHService implements OrderHInterface
         Mail::to($mailTo)->send(new PaidOrderEmail($orderNo, $agencyName));
     }
 
-    private function sendEmailRetryPaymentOrder($mailTo, $orderNo, $custName)
+    private function sendEmailRetryPaymentOrder($mailTo, $orderNo, $agencyName)
     {
-        Mail::to($mailTo)->send(new RetryPaymentEmail($orderNo, $custName));
+        Mail::to($mailTo)->send(new RetryPaymentEmail($orderNo, $agencyName));
     }
 
     private function sendEmailCancelOrderByAgency($mailTo, $orderNo, $agencyName)
@@ -429,6 +461,25 @@ class OrderHService implements OrderHInterface
     private function getCustomerByCustomerId($customer_id)
     {
         return Customer::where('customer_id', $customer_id)->first();
+    }
+
+    private function insertRefPictureOrderH($picture, $order_no, $order_h_id): void
+    {
+        $image = $picture;
+        $imageName =  $order_no . '_' . $image->getClientOriginalName();
+        $path = $image->storeAs(Constanta::$orderHPictureDirectory, $imageName, Constanta::$refPictureDisk);
+        $url = Storage::url($path);
+
+        $refPicture = new RefPicture();
+
+        $refPicture->order_h_id = $order_h_id;
+        $refPicture->image_url = $url;
+        $refPicture->save();
+    }
+
+    private function getRefPictureByOrderHId($order_h_id)
+    {
+        return RefPicture::where('order_h_id', $order_h_id)->first();
     }
     #endregion
 
@@ -527,17 +578,37 @@ class OrderHService implements OrderHInterface
 
             foreach($request->details as $detail)
             {
-                $prodName = "";
-                $isAvail = $this->checkProductAvailable($detail, $detail['product_type'], $detail['qty'], $prodName);
-
-                if(!$isAvail)
+                if($detail['package_h_id'] == null)
                 {
-                    return response()->json([
-                        'status' => 'error',
-                        'message' => 'Product '. $prodName . ' is not available',
-                        'order_h_id' => "-",
-                        'order_no' => "-"
-                    ], 400);
+                    $prodName = "";
+                    $isAvail = $this->checkProductAvailable($detail, $detail['product_type'], $detail['qty'], $prodName);
+
+                    if(!$isAvail)
+                    {
+                        return response()->json([
+                            'status' => 'error',
+                            'message' => 'Product '. $prodName . ' is not available',
+                            'order_h_id' => "-",
+                            'order_no' => "-"
+                        ], 400);
+                    }
+                }
+                else
+                {
+                    $prodName = "";
+                    $isAvail = $this->checkProductAvailable($detail, $detail['product_type'], $detail['qty'], $prodName);
+
+                    if(!$isAvail)
+                    {
+                        return response()->json([
+                            'status' => 'error',
+                            'message' => 'Product '. $prodName . ' is not available',
+                            'order_h_id' => "-",
+                            'order_no' => "-"
+                        ], 400);
+                    }
+                    
+                    break;
                 }
             }
 
@@ -554,12 +625,6 @@ class OrderHService implements OrderHInterface
 
                 $price = $detail['price'];
 
-                if($detail['package_h_id'] == null)
-                {
-                    $totDays = $this->getTotalDays($strEndDate, $strStartDate);
-                    $price = $this->getTotalPrice($detail['price'], $totDays);
-                }
-
                 $orderD = $this->createOrderD(
                     $orderH->order_h_id,
                     $detail['package_h_id'],
@@ -572,12 +637,19 @@ class OrderHService implements OrderHInterface
                     $detail['qty']
                 );
 
-                if($detail['package_h_id'] == null)
+                if(($detail['ref_hotel_id'] != null && $detail['package_h_id'] == null) || ($detail['ref_vehicle_id'] != null && $detail['package_h_id'] == null))
                 {   
+                    $totDays = $this->getTotalDays($strEndDate, $strStartDate);
+                    $price = $this->getTotalPrice($detail['price'], $totDays);
                     $totPrice += $price;
                 }
 
-                $this->reduceProductQty($detail, $detail['product_type']);
+                if($detail['ref_attraction_id'] != null && $detail['package_h_id'] == null)
+                {
+                    $totPrice = $price * $detail['qty'];
+                }
+
+                $this->reduceProductQty($detail, $detail['product_type'], $detail['qty']);
             }
 
             $packageIds = $this->getPackageInsideOrder($orderH->order_h_id);
@@ -598,18 +670,14 @@ class OrderHService implements OrderHInterface
 
                     $totPrice += $this->getPackagePrice($packageId->package_h_id);
                 }
-
-                $this->updateOrderTotalPrice($orderH->order_h_id, $totPrice);
             }
-            else
-            {
-                $this->updateOrderTotalPrice($orderH->order_h_id, $totPrice);
-            }
+            
+            $this->updateOrderTotalPrice($orderH->order_h_id, $totPrice);
 
             DB::commit();
 
             return response()->json([
-                'status' => 'success',
+                'status' => 'ok',
                 'message' => 'Order created successfully',
                 'order_h_id' => $orderH->order_h_id,
                 'order_no' => $orderH->order_no
@@ -879,11 +947,11 @@ class OrderHService implements OrderHInterface
 
             $orderH = $this->updateOrderStatus($request->order_h_id, Constanta::$orderStatusRetryPay);
 
-            $email = $this->getEmailByForeignId($orderH->agency_id, Constanta::$roleAgency);
+            $email = $this->getEmailByForeignId($orderH->customer_id, Constanta::$roleCustomer);
 
-            $customerName = $this->getCustomerByCustomerId($orderH->customer_id)->customer_name;
+            $agencyName = $this->getAgencyByAgencyId($orderH->agency_id)->agency_name;
 
-            $this->sendEmailRetryPaymentOrder($email, $orderH->order_no, $customerName); //Send email to agency
+            $this->sendEmailRetryPaymentOrder($email, $orderH->order_no, $agencyName); //Send email to customer
 
             DB::commit();
 
@@ -963,6 +1031,56 @@ class OrderHService implements OrderHInterface
                     'data' => $order
                 ]
                 , 200);
+        }
+    }
+
+    public function UploadOrderImage(UploadOrderImageRequest $request)
+    {
+        try
+        {
+            DB::beginTransaction();
+
+            $orderH = $this->getOrderHById($request->order_h_id);
+
+            $this->insertRefPictureOrderH($request->file('picture'), $orderH->order_no, $orderH->order_h_id);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Image uploaded'
+            ], 200);
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function GetOrderImage(OrderHIdRequest $request)
+    {
+        $refPicture = $this->getRefPictureByOrderHId($request->order_h_id);
+
+        if($refPicture == null)
+        {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Image not found',
+                'image_url' => '-'
+            ], 200);
+        }
+        else
+        {
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Image found',
+                'image_url' => $refPicture->image_url
+            ], 200);
         }
     }
 

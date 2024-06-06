@@ -10,32 +10,39 @@ import { Button } from '@/components/ui/button';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { formatPrice } from '@/utils/priceFormating';
 import { useTranslation } from 'react-i18next';
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CalendarIcon } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 
 interface AttractionQtyProps {
     attractionQty: number;
+    agency_id_param?: number | null | undefined;
     initialDetails?: { ref_attraction_id?: string | null }[];
     onDetailsChange: (details: { ref_attraction_id?: string | null }[]) => void; // Function to handle details change
     onAttractionQtyChange: (attractionQty: number) => void;
 }
 
-const AttractionQty = ( {attractionQty, initialDetails, onDetailsChange, onAttractionQtyChange } : AttractionQtyProps ) => {
+const AttractionQty = ( {attractionQty, initialDetails, onDetailsChange, onAttractionQtyChange, agency_id_param } : AttractionQtyProps ) => {
     const { t } = useTranslation();
     const { user } = useLogin();
     const [attraction, setAttraction] = useState<DaumAttraction[]>([]);
-    const [details, setDetails] = useState<{ ref_attraction_id?: string | null }[]>([]);
+    const [details, setDetails] = useState<{ ref_attraction_id?: string | null, start_dt?: Date | null, end_dt?: Date | null}[]>(Array.from({ length: attractionQty }, () => ({ ref_attraction_id: null })));
     const [newAttractions, setNewAttractions] = useState<DaumAttraction[]>(Array.from({ length: attractionQty }, () => ({} as DaumAttraction)));
+    const [valueFromDate, setValueFromDate] = useState('');
 
+    const [ startDt, setStartDt ] = useState<Date>();
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
         const fetchAttraction = async () => {
             try {
                 const response = await axiosClient.post('/v1/GetActiveAttractionByAgencyId', {
-                    agency_id: user?.agency_id
+                    agency_id: (user && user.agency_id > 0 ? user.agency_id : agency_id_param)
                 }); // Replace 'your-api-url' with the actual API endpoint
                 setAttraction(response.data.data);
-                console.log('attractionQty : ',attractionQty);
             } catch (error) {
                 console.error('Error fetching attractions:', error);
             }
@@ -57,9 +64,11 @@ const AttractionQty = ( {attractionQty, initialDetails, onDetailsChange, onAttra
         }
     }, [attraction, initialDetails]);
 
-    const handleDetailChange = (index: number, value: string) => {
+    const handleDetailChange = (index: number, value: string, startDt?: Date) => {
+        setStartDt(startDt);
+        setValueFromDate(value);
         const newDetails = [...details];
-        newDetails[index] = { ref_attraction_id: value }; // Create a new object for the detail
+        newDetails[index] = { ref_attraction_id: value, start_dt: startDt, end_dt: startDt }; // Create a new object for the detail
         setDetails(newDetails);
         onDetailsChange(newDetails);
 
@@ -78,7 +87,9 @@ const AttractionQty = ( {attractionQty, initialDetails, onDetailsChange, onAttra
                 return updatedAttractions;
             });
         }
+        console.log('startDt : ',startDt);
     };
+
 
     const handleRemoveDetail = (index: number) => {
         const newDetails = [...details];
@@ -139,6 +150,41 @@ const AttractionQty = ( {attractionQty, initialDetails, onDetailsChange, onAttra
                                                         <TableCell className="font-medium">{t('Description')} :</TableCell>
                                                         <TableCell className="font-medium">{newAttractions[index]?.description}</TableCell>
                                                     </TableRow>
+                                                    {
+                                                        agency_id_param ? (
+                                                            <TableRow>
+                                                                <TableCell className="font-medium">Input Date :</TableCell>
+                                                                <TableCell className="font-medium">
+                                                                    <Popover>
+                                                                        <PopoverTrigger asChild>
+                                                                            <Button
+                                                                            variant={"outline"}
+                                                                            className={cn(
+                                                                                "w-[280px] justify-start text-left font-normal",
+                                                                                !startDt && "text-muted-foreground"
+                                                                            )}
+                                                                            >
+                                                                            <CalendarIcon className="mr-2 h-4 w-4" />
+                                                                            {startDt ? format(startDt, "PPP") : <span>Pick a date</span>}
+                                                                            </Button>
+                                                                        </PopoverTrigger>
+                                                                        <PopoverContent className="w-auto p-0">
+                                                                            <Calendar
+                                                                            mode="single"
+                                                                            selected={startDt}
+                                                                            onSelect={(dt) => handleDetailChange(index, valueFromDate, dt)}
+                                                                            initialFocus
+                                                                            />
+                                                                        </PopoverContent>
+                                                                    </Popover>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        ) : (
+                                                            <>
+                                                                No Data
+                                                            </>
+                                                        )
+                                                    }
                                                 </TableBody>
                                             </Table>
                                         </div>

@@ -9,6 +9,7 @@ use App\Http\Requests\V2\CancelOrderRequest;
 use App\Http\Requests\V2\CreateOrderRequest;
 use App\Http\Requests\V2\GetOrderByIdRequest;
 use App\Http\Requests\V2\GetCustomerOrderRequest;
+use App\Http\Requests\V2\UploadOrderImageRequest;
 use App\Http\Requests\V2\GetOrderDashboardRequest;
 
 interface OrderHInterface
@@ -50,4 +51,8 @@ interface OrderHInterface
     public function GetStatsForOrder(AgencyIdRequest $request);
 
     public function GetOrderDashboardByAgencyIdAndStatus(GetOrderDashboardRequest $request);
+
+    public function UploadOrderImage(UploadOrderImageRequest $request);
+
+    public function GetOrderImage(OrderHIdRequest $request);
 }

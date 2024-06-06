@@ -178,6 +178,29 @@ class AgencyAffiliateService implements AgencyAffiliateInterface
             }])
         ->first();
     }
+
+    private function getAllAgencyData()
+    {
+        return Agency::get();
+    }
+
+    private function getAgencyNameByKeyword($keyword)
+    {
+        $agency = Agency::
+            where('agency_name', 'like', "%$keyword%")->
+            get();
+
+        return $agency;
+    }
+
+    private function getAgencyLocationByKeyword($keyword)
+    {
+        $agency = Agency::
+            where('location', 'like', "%$keyword%")->
+            get();
+
+        return $agency;
+    }
     #endregion
 
     #region Public Function
@@ -308,6 +331,54 @@ class AgencyAffiliateService implements AgencyAffiliateInterface
                 'status' => "ok",
                 'message' => "Success",
                 'data' => $agency
+            ]);
+        }
+    }
+
+    public function GetAllAgencyForAgencyPage()
+    {
+        $agencies = $this->getAllAgencyData();
+
+        if($this->checkDataEmpty($agencies))
+        {
+            return response()->json([
+                'status' => "error",
+                'message' => "Data not found",
+                'data' => []
+            ]);
+        }
+        else
+        {
+            return response()->json([
+                'status' => "ok",
+                'message' => "Success",
+                'data' => $agencies
+            ]);
+        }
+    }
+
+    public function GetAllAgencySearchBar(SearchBarCustomerRequest $request)
+    {
+        $agencyName = $this->getAgencyNameByKeyword($request->keyword);
+
+        $agencyLocation = $this->getAgencyLocationByKeyword($request->keyword);
+
+        $agencies = $this->mergeDataQuery($agencyName, $agencyLocation);
+
+        if($this->checkDataEmpty($agencies))
+        {
+            return response()->json([
+                'status' => "error",
+                'message' => "Data not found",
+                'data' => []
+            ]);
+        }
+        else
+        {
+            return response()->json([
+                'status' => "ok",
+                'message' => "Success",
+                'data' => $agencies
             ]);
         }
     }

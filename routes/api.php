@@ -122,6 +122,10 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('CreateCustomPackageCustomer', 'PackageHController@CreateCustomPackageCustomer');
 
+    Route::post('GetCustomPackageByCustomerId', 'PackageHController@GetCustomPackageByCustomerId');
+
+    Route::post('GetCustomPackageByAgencyId', 'PackageHController@GetCustomPackageByAgencyId');
+
     Route::post('GetNewCustomPackageByAgencyId', 'PackageHController@GetNewCustomPackageByAgencyId');
 
     Route::post('GetApvCustomPackageByAgencyId', 'PackageHController@GetApvCustomPackageByAgencyId');
@@ -194,6 +198,10 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('GetOrderDashboardByAgencyIdAndStatus', 'OrderHController@GetOrderDashboardByAgencyIdAndStatus');
 
+    Route::post('UploadOrderImage', 'OrderHController@UploadOrderImage');
+
+    Route::post('GetOrderImage', 'OrderHController@GetOrderImage');
+
     #endregion
 
     #region Trx
@@ -201,6 +209,10 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::post('CustPayment', 'TrxController@CustPayment');
 
     Route::post('CancelCustPayment', 'TrxController@CancelCustPayment');
+
+    Route::post('GetTrxByOrderHId', 'TrxController@GetTrxByOrderHId');
+
+    Route::post('RateProduct', 'TrxController@RateProduct');
 
     #endregion
 
@@ -212,6 +224,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::post('GetPromoDeductionPriceHotel', 'PromoController@GetPromoDeductionPriceHotel');
 
     Route::post('GetPromoDeductionPriceVehicle', 'PromoController@GetPromoDeductionPriceVehicle');
+
+    Route::post('AddPromoCounterHistory', 'PromoController@AddPromoCounterHistory');
     #endregion
 
     #region AgencyAffiliate
@@ -224,6 +238,10 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::post('SearchVehicleCustomer', 'AgencyAffiliateController@SearchVehicleCustomer');
 
     Route::post('GetAgencyByAgencyId', 'AgencyAffiliateController@GetAgencyByAgencyId');
+
+    Route::post('GetAllAgencyForAgencyPage', 'AgencyAffiliateController@GetAllAgencyForAgencyPage');
+
+    Route::post('GetAllAgencySearchBar', 'AgencyAffiliateController@GetAllAgencySearchBar');
     #endregion
 
     #region AgencyPayment

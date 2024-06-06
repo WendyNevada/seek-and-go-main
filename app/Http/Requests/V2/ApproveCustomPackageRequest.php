@@ -23,7 +23,8 @@ class ApproveCustomPackageRequest extends FormRequest
     {
         return [
             'package_h_id' => ['required'],
-            'new_price' => ['required']
+            'new_price' => ['required'],
+            'total_days' => ['required']
         ];
     }
 }

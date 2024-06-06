@@ -10,31 +10,56 @@ import { Button } from '@/components/ui/button';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { formatPrice } from '@/utils/priceFormating';
 import { useTranslation } from 'react-i18next';
+import { DatePickerWithRange } from './component/rangeDatePicker';
+import { DateRange } from 'react-day-picker';
+import { addDays } from 'date-fns';
 
 interface VehicleQtyProps {
     vehicleQty: number;
+    agency_id_param?: number | null | undefined;
     initialDetails?: { ref_vehicle_id?: string | null | undefined }[];
-    onDetailsChange: (details: { ref_vehicle_id?: string | null }[]) => void; // Function to handle details change
+    onDetailsChange: (details: { ref_vehicle_id?: string | null, start_dt?: string | null, end_dt?: string | null }[]) => void; // Function to handle details change
     onVehicleQtyChange: (vehicleQty: number) => void;
 }
 
-const VehicleQty = ({ vehicleQty, initialDetails, onDetailsChange, onVehicleQtyChange }: VehicleQtyProps) => {
+const VehicleQty = ({ vehicleQty, initialDetails, onDetailsChange, onVehicleQtyChange, agency_id_param }: VehicleQtyProps) => {
     const { t } = useTranslation();
     const { user } = useLogin();
     const [vehicle, setVehicle] = useState<DaumVehicle[]>([]);
-    const [details, setDetails] = useState<{ ref_vehicle_id?: string | null }[]>(Array.from({ length: vehicleQty }, () => ({ ref_vehicle_id: null })));
+    const [details, setDetails] = useState<{ ref_vehicle_id?: string | null , start_dt?: string | null, end_dt?: string | null }[]>(Array.from({ length: vehicleQty }, () => ({ ref_vehicle_id: null })));
     const [newVehicles, setNewVehicles] = useState<DaumVehicle[]>(Array.from({ length: vehicleQty }, () => ({} as DaumVehicle)));
 
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
+
+    const [ startDt, setStartDt ] = useState('');
+    const [ endDt, setEndDt ] = useState('');
+
+    const handleDateChange = (index: number, date: DateRange | undefined) => {
+        if (date) {
+            const newDetails = [...details];
+            const start_dt = date?.from ? (addDays(date.from, 1)).toISOString().split('T')[0] : '';
+            const end_dt = date?.to ? (addDays(date.to, 1)).toISOString().split('T')[0] : '';
+            newDetails[index] = {
+                ...newDetails[index],
+                start_dt,
+                end_dt,
+            };
+            setDetails(newDetails);
+            onDetailsChange(newDetails);
+        } else {
+            setStartDt('');
+            setEndDt('');
+        }
+    };
 
     useEffect(() => {
         const fetchAttraction = async () => {
             try {
                 const response = await axiosClient.post('/v1/GetActiveVehicleByAgencyId', {
-                    agency_id: user?.agency_id
+                    agency_id: (user && user.agency_id > 0 ? user.agency_id : agency_id_param)
                 });
                 setVehicle(response.data.data);
-                console.log('initialDetails : ', initialDetails)
+
             } catch (error) {
                 console.error('Error fetching vehicles:', error);
             }
@@ -58,7 +83,7 @@ const VehicleQty = ({ vehicleQty, initialDetails, onDetailsChange, onVehicleQtyC
 
     const handleDetailChange = (index: number, value: string) => {
         const newDetails = [...details];
-        newDetails[index] = { ref_vehicle_id: value };
+        newDetails[index] = { ref_vehicle_id: value , start_dt: startDt, end_dt: endDt };
         setDetails(newDetails);
         onDetailsChange(newDetails);
 
@@ -109,7 +134,7 @@ const VehicleQty = ({ vehicleQty, initialDetails, onDetailsChange, onVehicleQtyC
                             {<HighlightOffIcon />}
                         </Button>
                     </div>
-                    <div className="border-2 rounded-md">
+                    <div className="border-2 rounded-md flex">
                         {details[index]?.ref_vehicle_id && newVehicles[index]?.image_url ? (
                             <div className='flex flex-row'>
                                 <div className="ml-1 mt-4">
@@ -138,6 +163,26 @@ const VehicleQty = ({ vehicleQty, initialDetails, onDetailsChange, onVehicleQtyC
                                                         <TableCell className="font-medium">{t('Description')} :</TableCell>
                                                         <TableCell className="font-medium">{newVehicles[index]?.description}</TableCell>
                                                     </TableRow>
+                                                    {
+                                                        agency_id_param ? (
+                                                            <TableRow>
+                                                                <TableCell className="font-medium">{t('Date')} :</TableCell>
+                                                                <TableCell className="font-medium">
+                                                                <DatePickerWithRange
+                                                                    onDateChange={(date) => handleDateChange(index, date)}
+                                                                    startDt={startDt}
+                                                                    endDt={endDt}
+                                                                    // startDt={details[index]?.start_dt || ''}
+                                                                    // endDt={details[index]?.end_dt || ''}
+                                                                />
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        ) : (
+                                                            <TableRow>
+                                                                -
+                                                            </TableRow>
+                                                        )
+                                                    }
                                                 </TableBody>
                                             </Table>
                                         </div>

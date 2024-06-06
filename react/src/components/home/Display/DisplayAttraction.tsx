@@ -29,7 +29,6 @@ const DisplayAttraction = () => {
     },[])
 
     const selectItem = (id : number) => {
-        console.log('selected id : ',id);
         navigate(`/Customer/AttractionDetail/${id}`);
     }
 
@@ -46,12 +45,12 @@ const DisplayAttraction = () => {
                                 <Card className='w-64 shadow-lg mt-8 hover:shadow-2xl cursor-pointer overflow-hidden'  onClick={() => selectItem(item.ref_attraction_id)}>
                                     <img src={enviUrl + item.image_url} alt={item.attraction_name} className="h-36 w-full shadow-lg hover:scale-110" />
                                     <CardHeader>
-                                        <CardTitle>{item.attraction_name}</CardTitle>
+                                        <CardTitle className='truncate'>{item.attraction_name}</CardTitle>
                                         <CardDescription>{item.description}</CardDescription>
                                     </CardHeader>
                                     <CardContent className='flex-1'>
                                         <p className="w-[200px] truncate">{item.address_zipcode}</p>
-                                        <p className='font-bold'>{t('Price')}: {formatPrice(item.base_price ?? 0)}</p>
+                                        <p className='font-bold'>{formatPrice(item.base_price ?? 0)}</p>
                                         <p>{item.agency_name}</p>
                                         {rating(item.rating)}
                                     </CardContent>

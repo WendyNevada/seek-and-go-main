@@ -9,23 +9,7 @@ import { AlertDialogProduct } from '../ProductComponent/DeleteProductAlert';
 import { useNavigate } from 'react-router-dom';
 import { urlConstant } from '@/urlConstant';
 import { Skeleton } from '@/components/ui/skeleton';
-
-interface Package {
-    package_h_id: number;
-    package_code: string;
-    agency_id: number;
-    customer_id: number | null;
-    package_name: string;
-    description: string;
-    is_custom: number;
-    custom_status: string | null;
-    package_price: number;
-    is_active: number;
-    qty: number;
-    total_days: number;
-    created_at: string;
-    updated_at: string;
-}
+import { Package } from '../utils/ProductModel';
 
 const PackageList = () => {
     const { t } = useTranslation();
@@ -40,7 +24,6 @@ const PackageList = () => {
                 const response = await axiosClient.post('v1/GetActivePackageHByAgencyId', {
                     agency_id: user?.agency_id
                 });
-                console.log(response.data);
                 setPackages(response.data.data);
                 setLoading(false);
             }
@@ -54,7 +37,6 @@ const PackageList = () => {
 
     const onEditPackage = (packageId: number) => {
         // navigate(`/Agency/EditPackage/${packageId}`);
-        console.log('edit package : ', packageId);
         navigate(urlConstant.EditPackage + `/${packageId}`)
     }
 

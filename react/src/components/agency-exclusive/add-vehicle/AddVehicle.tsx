@@ -72,7 +72,6 @@ const AddVehicle = () => {
 
     const handleProvinceSelect = (province:string) => {
         form.setValue("area_1",province);
-        console.log('province : ', province);
     };
 
     const handleCitySelect = (city:string) => {

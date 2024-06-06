@@ -9,7 +9,7 @@ const HotelDetailPage = () => {
     return (
         <div className="">
             <Navbar/>
-                <div className="flex mt-[7rem] lg:mt-[6rem]  items-center sm:justify-start xl:justify-center">
+                <div className="flex mt-[7rem] lg:mt-[6rem] items-center sm:justify-start xl:justify-center">
                     <ProductHotelDetail ref_hotel_id={Number(ref_hotel_id) || 0}/>
                 </div>
             <Footer/>

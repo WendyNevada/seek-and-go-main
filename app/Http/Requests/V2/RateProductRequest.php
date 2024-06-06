@@ -23,7 +23,9 @@ class RateProductRequest extends FormRequest
     {
         return [
             'id' => 'required',
-            'rating' => 'required'
+            'order_h_id' => 'nullable',
+            'rating' => 'required',
+            'product_type' => 'nullable'
         ];
     }
 }

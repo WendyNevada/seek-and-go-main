@@ -16,4 +16,8 @@ interface AgencyAffiliateInterface
     public function SearchVehicleCustomer(SearchBarCustomerRequest $request);
 
     public function GetAgencyByAgencyId(AgencyIdRequest $request);
+
+    public function GetAllAgencyForAgencyPage();
+
+    public function GetAllAgencySearchBar(SearchBarCustomerRequest $request);
 }

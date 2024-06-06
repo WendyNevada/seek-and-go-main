@@ -14,8 +14,8 @@ import { Button } from "@/components/ui/button";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { toast } from '@/components/ui/use-toast';
 import axios from 'axios';
-import { useLogin } from "@/context/LoginContext";
-import { urlConstant } from "@/urlConstant";
+// import { useLogin } from "@/context/LoginContext";
+// import { urlConstant } from "@/urlConstant";
 import { useTranslation } from "react-i18next";
 
 interface DeleteProductAlertProps {
@@ -25,7 +25,6 @@ interface DeleteProductAlertProps {
 }
 
 export function AlertDialogProduct({ apiPath, Id, param }: DeleteProductAlertProps) {
-    const { navigateTo } = useLogin(urlConstant.AgencyProduct);
     const { t } = useTranslation();
 
     const handleDelete = async () => {
@@ -36,7 +35,6 @@ export function AlertDialogProduct({ apiPath, Id, param }: DeleteProductAlertPro
                 description: response.data.message
             });
             if (response.data.status === "ok") {
-                navigateTo(urlConstant.AgencyProduct);
                 setTimeout(() => {
                     window.location.reload();
                 }, 100);

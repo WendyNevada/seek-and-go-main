@@ -38,4 +38,16 @@ class AgencyAffiliateController extends Controller
         $response = $agencyAffiliateService->GetAgencyByAgencyId($request);
         return $response;
     }
+
+    public function GetAllAgencyForAgencyPage(AgencyAffiliateService $agencyAffiliateService)
+    {
+        $response = $agencyAffiliateService->GetAllAgencyForAgencyPage();
+        return $response;
+    }
+
+    public function GetAllAgencySearchBar(AgencyAffiliateService $agencyAffiliateService, SearchBarCustomerRequest $request)
+    {
+        $response = $agencyAffiliateService->GetAllAgencySearchBar($request);
+        return $response;
+    }
 }
