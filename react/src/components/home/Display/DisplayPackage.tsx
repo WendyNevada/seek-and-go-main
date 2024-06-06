@@ -1,6 +1,5 @@
 import axiosClient from '@/axios.client';
 import { Package } from '@/components/agency-exclusive/product-dashboard/utils/ProductModel';
-import { useLogin } from '@/context/LoginContext';
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +10,7 @@ import { formatPrice } from '@/utils/priceFormating';
 
 const DisplayPackage = () => {
     const { t } = useTranslation();
-    const { user } = useLogin();
+    //const { user } = useLogin();
     const [packages, setPackages] = useState<Package[]>([]);
     const navigate = useNavigate();
 

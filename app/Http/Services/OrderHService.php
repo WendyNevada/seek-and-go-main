@@ -110,7 +110,9 @@ class OrderHService implements OrderHInterface
         $order = OrderH::where('order_h_id', $order_h_id)->
         join('customers', 'order_h_s.customer_id', '=', 'customers.customer_id')->
         join('agencies', 'order_h_s.agency_id', '=', 'agencies.agency_id')->
-        select('order_h_s.*', 'customers.customer_name', 'agencies.agency_name')->
+        join('accounts', 'customers.account_id', '=', 'accounts.account_id')->
+        join('accounts as acc2', 'agencies.account_id', '=', 'acc2.account_id')->
+        select('order_h_s.*', 'customers.customer_name', 'agencies.agency_name', 'accounts.email as customer_email', 'acc2.email as agency_email', 'accounts.phone as customer_phone', 'acc2.phone as agency_phone')->
         with('orderDs')->first();
 
         return $order;

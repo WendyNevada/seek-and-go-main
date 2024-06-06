@@ -154,6 +154,10 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                     {t('Total Price')}
                     <br />
                     {t('Customer Name')}
+                    <br />
+                    {t('Customer Email')}
+                    <br />
+                    {t('Customer Phone')}
                 </div>
                 <div className="ml-4">
                     : {order.order_no}
@@ -163,6 +167,10 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                     : {formatPrice(order.total_price)}
                     <br />
                     : {order.customer_name}
+                    <br />
+                    : {order.customer_email}
+                    <br />
+                    : {order.customer_phone}
                 </div>
             </div>
 

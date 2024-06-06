@@ -24,7 +24,7 @@ const ProductVehicleDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const [position, setPosition] = useState<Coordinates | null>(null);
-    const [addr, setAddr] = useState<string>('');
+    //const [addr, setAddr] = useState<string>('');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -35,7 +35,7 @@ const ProductVehicleDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
 
                 const parts = response.data.address_zipcode.split(',');
                 const wordAfterSecondComma = parts.length >= 3 ? parts[2].trim() : null;
-                setAddr(wordAfterSecondComma);
+                //setAddr(wordAfterSecondComma);
                 const coords = await geocodeAddress(wordAfterSecondComma);
                 setPosition(coords);
 
