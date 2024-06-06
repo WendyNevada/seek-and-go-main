@@ -70,7 +70,7 @@ const AttractionList = () => {
                             <img src={enviUrl + attraction.image_url} alt={attraction.attraction_name} className="h-36 w-full shadow-lg" />
                                 <CardHeader>
                                     <CardTitle className='w-[200px] truncate'>{attraction.attraction_name}</CardTitle>
-                                    <CardDescription>{attraction.description}</CardDescription>
+                                    <CardDescription className='truncate'>{attraction.description}</CardDescription>
                                 </CardHeader>
                                 <CardContent className='flex-1'>
                                     <p>{attraction.address}</p>

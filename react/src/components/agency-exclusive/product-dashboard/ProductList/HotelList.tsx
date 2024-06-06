@@ -73,7 +73,7 @@ const HotelList = () => {
                             <img src={enviUrl + hotel.image_url} alt={hotel.hotel_name} className="h-36 w-full shadow-lg" />
                                 <CardHeader>
                                     <CardTitle className='w-[200px] truncate'>{hotel.hotel_name}</CardTitle>
-                                    <CardDescription>{hotel.description}</CardDescription>
+                                    <CardDescription className='truncate'>{hotel.description}</CardDescription>
                                 </CardHeader>
                                 <CardContent className='flex-1'>
                                     <p>{hotel.address}</p>

@@ -47,7 +47,7 @@ const DisplayVehicle = () => {
                                     <img src={enviUrl + item.image_url} alt={item.vehicle_name} className="h-36 w-full shadow-lg hover:scale-110" />
                                     <CardHeader>
                                         <CardTitle className='truncate'>{item.vehicle_name}</CardTitle>
-                                        <CardDescription>{item.description}</CardDescription>
+                                        <CardDescription className="truncate">{item.description}</CardDescription>
 
                                     </CardHeader>
                                     <CardContent className='flex-1'>

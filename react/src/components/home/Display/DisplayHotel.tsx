@@ -46,7 +46,7 @@ const DisplayHotel = () => {
                                         <img src={enviUrl + item.image_url} alt={item.hotel_name} className="h-36 w-full shadow-lg hover:scale-110" />
                                         <CardHeader>
                                             <CardTitle className='truncate'>{item.hotel_name}</CardTitle>
-                                            <CardDescription>{item.description}</CardDescription>
+                                            <CardDescription className='truncate'>{item.description}</CardDescription>
                                         </CardHeader>
                                         <CardContent className='flex-1'>
                                             <p className="w-[200px] truncate">{item.address_zipcode}</p>

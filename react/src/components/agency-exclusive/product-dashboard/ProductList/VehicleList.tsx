@@ -70,7 +70,7 @@ const VehicleList = () => {
                                 <img src={enviUrl + vehicle.image_url} alt={vehicle.vehicle_name} className="h-36 w-full shadow-lg" />
                                 <CardHeader>
                                     <CardTitle className='w-[200px] truncate'>{vehicle.vehicle_name}</CardTitle>
-                                    <CardDescription>{vehicle.description}</CardDescription>
+                                    <CardDescription className='truncate'>{vehicle.description}</CardDescription>
                                 </CardHeader>
                                 <CardContent className='flex-1'>
                                     <p>{vehicle.address}</p>

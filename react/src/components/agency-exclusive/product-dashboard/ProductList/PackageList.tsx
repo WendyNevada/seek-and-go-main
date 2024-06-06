@@ -70,7 +70,7 @@ const PackageList = () => {
                             <Card className='w-64 shadow-lg mt-10 mr-16'>
                                 <CardHeader>
                                     <CardTitle className='w-[200px] truncate'>{pkg.package_name}</CardTitle>
-                                    <CardDescription>{pkg.description}</CardDescription>
+                                    <CardDescription className='truncate'>{pkg.description}</CardDescription>
                                 </CardHeader>
                                 <CardContent className='flex-1'>
                                     <p>{t('Package Code')}: {pkg.package_code}</p>
