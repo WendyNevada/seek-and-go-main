@@ -59,7 +59,7 @@ function App() {
             <Route path="/Customer/HotelDetail/:ref_hotel_id" element={<HotelDetailPage/>} />
             <Route path="/Customer/AttractionDetail/:ref_attraction_id" element={<AttractionDetailPage/>} />
             <Route path="/Customer/PackageDetail/:package_h_id" element={<PackageDetailPage />} />
-///src/views/Customer-page/Custom-Package-Customer/CustomPackageCustomerPage.tsx
+            ///src/views/Customer-page/Custom-Package-Customer/CustomPackageCustomerPage.tsx
           {/* <Route path="/TEST" element={ <ComboboxDemo/>}/> */}
         </Routes>
       </LoginProvider>
@@ -110,28 +110,28 @@ function CustomerRoutes() {
         return <Navigate to="/Login" />;
     }
 
-  return (
-    <Routes>
-        <Route path="VehicleOrderDetail/:ref_vehicle_id" element={<VehicleOrderDetailPage/>} />
-        <Route path="HotelOrderDetail/:ref_hotel_id" element={<HotelOrderDetailPage/>} />
-        <Route path="AttractionOrderDetail/:ref_attraction_id" element={<AttractionOrderDetailPage/>} />
-        <Route path="PackageOrderDetail/:package_h_id" element={<PackageOrderDetailPage/>} />
-        <Route path="RequestCustomPackage/:agency_id" element={<RequestCustomPackagePage/>} />
+    return (
+        <Routes>
+            <Route path="VehicleOrderDetail/:ref_vehicle_id" element={<VehicleOrderDetailPage/>} />
+            <Route path="HotelOrderDetail/:ref_hotel_id" element={<HotelOrderDetailPage/>} />
+            <Route path="AttractionOrderDetail/:ref_attraction_id" element={<AttractionOrderDetailPage/>} />
+            <Route path="PackageOrderDetail/:package_h_id" element={<PackageOrderDetailPage/>} />
+            <Route path="RequestCustomPackage/:agency_id" element={<RequestCustomPackagePage/>} />
 
-        <Route path="PaymentDetail/:order_h_id/:agency_payment_id" element={<PaymentPage/>} />
+            <Route path="PaymentDetail/:order_h_id/:agency_payment_id" element={<PaymentPage/>} />
 
-        {/* Customer Orders */}
-        <Route path="MyOrder/:customer_id" element={<MyOrderPage/>}></Route>
-        <Route path="MyOrderDetail/:order_h_id" element={<MyOrderDetailPage/>}></Route>
+            {/* Customer Orders */}
+            <Route path="MyOrder/:customer_id" element={<MyOrderPage/>}></Route>
+            <Route path="MyOrderDetail/:order_h_id" element={<MyOrderDetailPage/>}></Route>
 
-        {/* Edit Profile */}
-        <Route path="EditProfileCustomer/:account_id" element={<EditCustomerProfilePage/>} />
+            {/* Edit Profile */}
+            <Route path="EditProfileCustomer/:account_id" element={<EditCustomerProfilePage/>} />
 
 
-        <Route path="CustomPackage" element={<CustomPackageCustomerPage />} />
-        <Route path="CustomPackageDetail/:package_h_id" element={<CustomPackageCustomerDetailPage />} />
-    </Routes>
-  );
+            <Route path="CustomPackage" element={<CustomPackageCustomerPage />} />
+            <Route path="CustomPackageDetail/:package_h_id" element={<CustomPackageCustomerDetailPage />} />
+        </Routes>
+    );
 }
 
 export default App;
