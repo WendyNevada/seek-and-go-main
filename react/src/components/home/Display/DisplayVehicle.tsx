@@ -46,7 +46,7 @@ const DisplayVehicle = () => {
                                 <Card className='w-64 shadow-lg mt-8 hover:shadow-2xl cursor-pointer overflow-hidden' onClick={() => selectItem(item.ref_vehicle_id)}>
                                     <img src={enviUrl + item.image_url} alt={item.vehicle_name} className="h-36 w-full shadow-lg hover:scale-110" />
                                     <CardHeader>
-                                        <CardTitle className='truncate'>{item.vehicle_name}</CardTitle>
+                                        <CardTitle className='truncate min-h-8'>{item.vehicle_name}</CardTitle>
                                         <CardDescription className="truncate">{item.description}</CardDescription>
 
                                     </CardHeader>

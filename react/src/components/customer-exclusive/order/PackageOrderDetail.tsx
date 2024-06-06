@@ -140,18 +140,36 @@ const PackageOrderDetail = ({package_h_id} : {package_h_id:number}) => {
                     <div className="flex flex-row space-x-8">
                         <div className="shadow-lg border-2 border-slate-100 w-full rounded-xl">
                             <div className="flex flex-col p-6">
-                                <p>{t('Total Days')} : {pack.total_days}</p>
-                                <p>{t('Price')} : {formatPrice(pack.package_price)}</p>
-                                <p>{t('Qty')} : {pack.qty}</p>
-                                <p>{t('Description')} : {pack.description}</p>
+
+                                <div className="flex flex-row">
+                                    <div className="">
+                                        {t('Total Days')}
+                                        <br />
+                                        {t('Price')}
+                                        <br />
+                                        {t('QTY')}
+                                        <br />
+                                        {t('Description')}
+                                    </div>
+                                    <div className="ml-4">
+                                        : {pack.total_days}
+                                        <br />
+                                        : {formatPrice(pack.package_price)}
+                                        <br />
+                                        : {pack.qty}
+                                        <br />
+                                        : {pack.description}
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
 
                     <div className="flex flex-row space-y-full">
                         <div className="w-[50rem] space-y-2 m-8">
-                            <div className="bg-blue-800 text-white px-6 py-2 rounded-3xl max-w-[10rem] flex justify-center">
-                                <p>Package Detail</p>
+                            <div className="bg-blue-800 text-white px-6 py-2 rounded-lg max-w-[10rem] flex justify-center">
+                                <p>{t('Package Detail')}</p>
                             </div>
 
                             <h2 className="text-xl m">Hotels</h2>
@@ -162,8 +180,25 @@ const PackageOrderDetail = ({package_h_id} : {package_h_id:number}) => {
                                         <div className="flex flex-row space-x-4">
                                             <img className="w-[8rem] h-[6rem] rounded-xl" src={enviUrl + hotel.picture_url} alt="" />
                                             <div className="flex flex-col">
-                                                <p>{t('Description')} : {hotel.hotel.description}</p>
-                                                <p>{t('Rating')} : {rating(hotel?.hotel.rating ?? 0)} ({hotel?.hotel.rating ?? 0})</p>
+
+                                                <div className="flex flex-row">
+                                                    <div>
+                                                        {t('Rating')}
+                                                    </div>
+                                                    <div className="ml-4">
+                                                        : {rating(hotel?.hotel.rating ?? 0)} ({hotel?.hotel.rating ?? 0})
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className="flex flex-row">
+                                                    <div>
+                                                        {t('Description')}
+                                                    </div>
+                                                    <div className="ml-4 text-justify">
+                                                        : {hotel.hotel.description}
+                                                    </div>
+                                                </div>
+
                                             </div>
                                         </div>
                                     </div>
@@ -178,8 +213,25 @@ const PackageOrderDetail = ({package_h_id} : {package_h_id:number}) => {
                                         <div className="flex flex-row space-x-4">
                                             <img className="w-[8rem] h-[6rem] rounded-xl" src={enviUrl + attraction.picture_url} alt="" />
                                             <div className="flex flex-col">
-                                                <p>{t('Description')} : {attraction.attraction.description}</p>
-                                                <p>{t('Rating')} : {rating(attraction?.attraction.rating ?? 0)} ({attraction?.attraction.rating ?? 0})</p>
+                                            
+                                                <div className="flex flex-row">
+                                                    <div>
+                                                        {t('Rating')}
+                                                    </div>
+                                                    <div className="ml-4">
+                                                        : {rating(attraction?.attraction.rating ?? 0)} ({attraction?.attraction.rating ?? 0})
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className="flex flex-row">
+                                                    <div>
+                                                        {t('Description')}
+                                                    </div>
+                                                    <div className="ml-4 text-justify">
+                                                        : {attraction.attraction.description}
+                                                    </div>
+                                                </div>
+
                                             </div>
                                         </div>
                                     </div>
@@ -194,9 +246,25 @@ const PackageOrderDetail = ({package_h_id} : {package_h_id:number}) => {
                                         <div className="flex flex-row space-x-4">
                                             <img className="w-[8rem] h-[6rem] rounded-xl" src={enviUrl + vehicle.picture_url} alt="" />
                                             <div className="flex flex-col">
-                                                <p>{t('Brand')} : {vehicle.vehicle.vehicle_brand}</p>
-                                                <p>{t('Model')} : {vehicle.vehicle.vehicle_model}</p>
-                                                <p>{t('Rating')} : {rating(vehicle?.vehicle.rating ?? 0)} ({vehicle?.vehicle.rating ?? 0})</p>
+
+                                                <div className="flex flex-row">
+                                                    <div>
+                                                        {t('Rating')}
+                                                    </div>
+                                                    <div className="ml-4">
+                                                        : {rating(vehicle?.vehicle.rating ?? 0)} ({vehicle?.vehicle.rating ?? 0})
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className="flex flex-row">
+                                                    <div>
+                                                        {t('Description')}
+                                                    </div>
+                                                    <div className="ml-4 text-justify">
+                                                        : {vehicle.vehicle.description}
+                                                    </div>
+                                                </div>
+
                                             </div>
                                         </div>
                                     </div>
@@ -206,7 +274,7 @@ const PackageOrderDetail = ({package_h_id} : {package_h_id:number}) => {
                         <div className="flex w-[30rem] h-[30rem] justify-start p-10 border-2 border-slate-100 rounded-xl">
                             <div className="p-4 space-y-16">
                                 <div className="space-y-2">
-                                    <p>{t('Pick The Dates')} {t('(these are the pickup and return dates)')}</p>
+                                    <p>{t('Pick The Date')} {t('(This is the starting date)')}</p>
                                     <DatePicker onDateChange={handleDateChange}/>
                                 </div>
                                 <Button className="w-full bg-blue-500 hover:bg-blue-300" disabled={startDate === null} onClick={onConfirm}>{t('Confirm')}</Button>

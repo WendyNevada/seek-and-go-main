@@ -179,7 +179,7 @@ const VehicleQty = ({ vehicleQty, initialDetails, onDetailsChange, onVehicleQtyC
                                                             </TableRow>
                                                         ) : (
                                                             <TableRow>
-                                                                -
+                                                                
                                                             </TableRow>
                                                         )
                                                     }

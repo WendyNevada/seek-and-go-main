@@ -13,6 +13,7 @@ import { PayAccount } from '../../interface/interface';
 import { useLogin } from '@/context/LoginContext';
 import { hitAddApi } from '@/context/HitApi';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 interface CredentialModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ interface CredentialModalProps {
 const AddPaymentModal = ({ isOpen, onClose }: CredentialModalProps) => {
     const { user } = useLogin();
     const navigate  = useNavigate();
+    const { t } = useTranslation();
 
     const [account, setAccount] = useState<Partial<PayAccount>>({
         bank_name: '',
@@ -52,13 +54,13 @@ const AddPaymentModal = ({ isOpen, onClose }: CredentialModalProps) => {
         <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-                <DialogTitle>Add Payment Account</DialogTitle>
+                <DialogTitle>{t('Add Payment Transfer')}</DialogTitle>
             </DialogHeader>
             <form onSubmit={onSubmit}>
                 <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="bank_name" className="text-right">
-                        Bank
+                        {t('Bank')}
                     </Label>
                     <Input
                         id="bank_name"
@@ -69,7 +71,7 @@ const AddPaymentModal = ({ isOpen, onClose }: CredentialModalProps) => {
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="account_no" className="text-right">
-                            Account No
+                            {t('Account No')}
                         </Label>
                         <Input
                             id="account_no"
@@ -80,7 +82,7 @@ const AddPaymentModal = ({ isOpen, onClose }: CredentialModalProps) => {
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="account_name" className="text-right">
-                        Account Name
+                        {t('Account Name')}
                     </Label>
                     <Input
                         id="account_name"
@@ -91,7 +93,7 @@ const AddPaymentModal = ({ isOpen, onClose }: CredentialModalProps) => {
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="payment_type" className="text-right">
-                            Payment Type
+                            {t('Payment Type')}
                         </Label>
                         <Input
                             id="payment_type"
@@ -102,7 +104,7 @@ const AddPaymentModal = ({ isOpen, onClose }: CredentialModalProps) => {
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button type="submit" variant="primary">Add Account No</Button>
+                    <Button type="submit" variant="primary" className="bg-green-500 hover:bg-green-700">{t('Add Account No')}</Button>
                 </DialogFooter>
             </form>
         </DialogContent>

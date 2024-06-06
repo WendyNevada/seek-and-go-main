@@ -481,6 +481,11 @@ class OrderHService implements OrderHInterface
     {
         return RefPicture::where('order_h_id', $order_h_id)->first();
     }
+
+    private function priceTimesQty($price, $qty)
+    {
+        return $price * $qty;
+    }
     #endregion
 
     #region Public Function
@@ -646,7 +651,7 @@ class OrderHService implements OrderHInterface
 
                 if($detail['ref_attraction_id'] != null && $detail['package_h_id'] == null)
                 {
-                    $totPrice = $price * $detail['qty'];
+                    $totPrice = $this->priceTimesQty($price, $detail['qty']);
                 }
 
                 $this->reduceProductQty($detail, $detail['product_type'], $detail['qty']);

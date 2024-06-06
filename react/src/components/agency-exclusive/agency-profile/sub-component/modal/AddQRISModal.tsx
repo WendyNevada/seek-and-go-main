@@ -15,6 +15,8 @@ import { useRef, useState } from "react";
 import { PayAccount } from "../../interface/interface";
 import { hitAddApi } from "@/context/HitApi";
 import { useLogin } from "@/context/LoginContext";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface CredentialModalProps {
     isOpen: boolean;
@@ -26,6 +28,8 @@ const AddQRISModal = ({ isOpen, onClose }: CredentialModalProps) => {
     //const { navigateTo } = useLogin('/Agency/EditProfileAgency/' + user?.agency_id);
     //const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const [account, setAccount] = useState<Partial<PayAccount>>({
         bank_name: '',
@@ -59,10 +63,10 @@ const AddQRISModal = ({ isOpen, onClose }: CredentialModalProps) => {
         const response = await hitAddApi("/v1/InsertAgencyPayment",formData);
         if (response === 200) {
             onClose();
-            //navigateTo('/Agency/EditProfileAgency/' + user?.agency_id);
-            // setTimeout(() => {
-            //     window.location.reload();
-            // }, 100);
+            navigate('/Agency/EditProfileAgency/' + user?.agency_id);
+            setTimeout(() => {
+                window.location.reload();
+            }, 100);
         }
     };
 
@@ -70,14 +74,14 @@ const AddQRISModal = ({ isOpen, onClose }: CredentialModalProps) => {
         <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-            <DialogTitle>Add QR Payment</DialogTitle>
+            <DialogTitle>{t('Add QR Payment')}</DialogTitle>
             </DialogHeader>
             <div className="grid gap-4 py-4">
                 <Card>
                     <CardContent className="p-6 space-y-4 max-w[23.5rem]">
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="bank_name" className="text-right">
-                                Bank
+                                {t('Bank')}
                             </Label>
                             <Input
                                 id="bank_name"
@@ -88,7 +92,7 @@ const AddQRISModal = ({ isOpen, onClose }: CredentialModalProps) => {
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="account_name" className="text-right">
-                                Account Name
+                                {t('Account Name')}
                             </Label>
                             <Input
                                 id="account_name"
@@ -99,7 +103,7 @@ const AddQRISModal = ({ isOpen, onClose }: CredentialModalProps) => {
                         </div>
                         <div className="space-y-2 text-sm">
                             <Label htmlFor="file" className="text-sm font-medium">
-                                File
+                                {t('File')}
                             </Label>
                             <Input
                                 id="file"
@@ -113,7 +117,7 @@ const AddQRISModal = ({ isOpen, onClose }: CredentialModalProps) => {
                 </Card>
             </div>
             <DialogFooter>
-                <Button type="submit" onClick={onSubmit} variant={'primary'}>Confirm Upload</Button>
+                <Button type="submit" onClick={onSubmit} variant={'primary'} className="bg-green-500 hover:bg-green-700">{t('Confirm Upload')}</Button>
             </DialogFooter>
         </DialogContent>
         </Dialog>

@@ -37,22 +37,32 @@ const CustomerRegisterComponent = () => {
         },
     });
 
-    function formatDate(date: Date): Date {
-        return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    function formatDate(date: Date | null): Date | null {
+        if (date === null)
+        {
+            return null;
+        } 
+        else
+        {
+            return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        }
     }
 
     const onSubmit = async (values: z.infer<typeof customerSchema>) => {
-        values.birth_date = formatDate(values.birth_date);
+        console.log('values.birth_date = ', values.birth_date)
+        values.birth_date = formatDate(values.birth_date) ?? new Date();
 
         values.customer_name = "tes1";
         values.role="Customer";
 
         const response = await hitAddApi("/v1/CreateAccountCustomer",values);
-        toast({
-            variant: "success",
-            description: "Please Check Your Email",
-        });
+        
         if(response === 200){
+            toast({
+                variant: "success",
+                description: "Please Check Your Email",
+            });
+            
             navigate("/Login");
         }
     };
@@ -143,8 +153,11 @@ const CustomerRegisterComponent = () => {
                                         <input
                                             type="date"
                                             className="w-[300px] justify-start text-left font-normal bg-slate-100"
-                                            value={field.value ? format(field.value, "yyyy-MM-dd") : ""}
-                                            onChange={e => field.onChange(new Date(e.target.value))}
+                                            value={field.value ? format(field.value, "yyyy-MM-dd") : "yyyy-MM-dd"}
+                                            onChange={e => {
+                                                const newDate = e.target.value ? new Date(e.target.value) : null;
+                                                field.onChange(newDate);
+                                            }}
                                         />
                                     </FormControl>
                                 </FormItem>

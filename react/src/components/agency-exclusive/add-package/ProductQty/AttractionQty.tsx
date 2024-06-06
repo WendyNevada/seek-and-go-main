@@ -181,7 +181,7 @@ const AttractionQty = ( {attractionQty, initialDetails, onDetailsChange, onAttra
                                                             </TableRow>
                                                         ) : (
                                                             <>
-                                                                No Data
+                                                                
                                                             </>
                                                         )
                                                     }

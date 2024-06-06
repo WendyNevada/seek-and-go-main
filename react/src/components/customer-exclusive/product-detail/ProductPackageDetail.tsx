@@ -88,8 +88,7 @@ const ProductPackageDetail = ({package_h_id} : {package_h_id:number}) => {
             </div>
             ) : (
                 <div className="shadow-xl lg:w-[80rem] mt-16 min-h-72 p-24 space-y-8">
-                    <div className="text-2xl bg-blue-500 w-max p-2 rounded-3xl text-white flex flex-row space-x-4 px-12">
-                        <p>Package : </p>
+                    <div className="text-2xl bg-blue-500 w-max p-2 rounded-lg text-white flex flex-row space-x-4 px-12">
                         <p>{pack.package_name}</p>
                     </div>
 
@@ -97,7 +96,7 @@ const ProductPackageDetail = ({package_h_id} : {package_h_id:number}) => {
 
                     <div className="flex flex-row space-x-8">
                         <div className="w-[36rem] space-y-2">
-                            <h2 className="text-xl">Hotels</h2>
+                            <h2 className="text-xl">{t('Hotel')}</h2>
                             <div className="bg-white p-4 rounded-lg shadow-md">
                                 {hotelData.map((hotel, index) => (
                                     <div key={index}>
@@ -106,7 +105,7 @@ const ProductPackageDetail = ({package_h_id} : {package_h_id:number}) => {
                                 ))}
                             </div>
 
-                            <h2 className="text-xl">Attraction</h2>
+                            <h2 className="text-xl">{t('Attraction')}</h2>
                             <div className="bg-white p-4 rounded-lg shadow-md">
                                 {attractionData.map((attraction, index) => (
                                     <div key={index}>
@@ -115,7 +114,7 @@ const ProductPackageDetail = ({package_h_id} : {package_h_id:number}) => {
                                 ))}
                             </div>
 
-                            <h2 className="text-xl">Vehicle</h2>
+                            <h2 className="text-xl">{t('Vehicle')}</h2>
                             <div className="bg-white p-4 rounded-lg shadow-md">
                                 {vehicleData.map((vehicle, index) => (
                                     <div key={index}>
@@ -129,7 +128,7 @@ const ProductPackageDetail = ({package_h_id} : {package_h_id:number}) => {
                             <div className="space-y-4 bg-blue-100 p-4 rounded-lg max-w-2xl">
                                 <div className="flex flex-row">
                                     <DescriptionIcon className='text-blue-700'/>
-                                    <p className='text-blue-800'>Description</p>
+                                    <p className='text-blue-800'>{t('Description')}</p>
                                 </div>
                                 <p className='text-white-800'>{pack.description}</p>
                             </div>
@@ -140,7 +139,7 @@ const ProductPackageDetail = ({package_h_id} : {package_h_id:number}) => {
                                 </div>
                                 <div className="flex flex-row space-x-4">
                                     <CalendarTodayIcon className='text-blue-700'/>
-                                    <p>{pack.total_days} days</p>
+                                    <p>{pack.total_days} {t('days')}</p>
                                 </div>
                             </div>
                             <div className="flex justify-end p-6">

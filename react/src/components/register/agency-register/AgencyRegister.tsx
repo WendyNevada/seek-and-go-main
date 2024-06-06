@@ -15,9 +15,11 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { hitAddApi } from "@/context/HitApi";
 import { toast } from "@/components/ui/use-toast";
+import { useTranslation } from "react-i18next";
 
 const AgencyRegisterComponent = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const form = useForm<z.infer<typeof agencySchema>>({
         resolver: zodResolver(agencySchema),
@@ -37,13 +39,16 @@ const AgencyRegisterComponent = () => {
 
     const onSubmit = async (values: z.infer<typeof agencySchema>) => {
         const response = await hitAddApi("/v1/CreateAccountAgency",values);
-        toast({
-            variant: "success",
-            description: "Please Check Your Email",
-        });
+
         if(response === 200){
+            toast({
+                variant: "success",
+                description: "Please Check Your Email",
+            });
+            
             navigate("/Login");
         }
+        
         // try {
         //     axiosClient.post("/v1/CreateAccountAgency", values);
         //     toast({
@@ -72,18 +77,18 @@ const AgencyRegisterComponent = () => {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <h1 className="text-2xl font-bold mb-8 text-center">
-                            Agency Register
+                            {t('Agency Register')}
                         </h1>
                         <FormField
                             control={form.control}
                             name="agency_name"
                             render={({ field }) => (
                                 <FormItem className="custom-field">
-                                    <FormLabel>{"Agency Name"}</FormLabel>
+                                    <FormLabel>{t('Agency Name')}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
-                                            placeholder={field.name}
+                                            placeholder={t('Agency Name')}
                                             {...field}
                                             onChange={field.onChange}
                                         />
@@ -96,11 +101,11 @@ const AgencyRegisterComponent = () => {
                             name="account_name"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Account Name"}</FormLabel>
+                                    <FormLabel>{t('Account Name')}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
-                                            placeholder={field.name}
+                                            placeholder={t('Account Name')}
                                             {...field}
                                             onChange={field.onChange}
                                         />
@@ -113,12 +118,12 @@ const AgencyRegisterComponent = () => {
                             name="email"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Email"}</FormLabel>
+                                    <FormLabel>{t('Email')}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
                                             type="email"
-                                            placeholder={field.name}
+                                            placeholder={t('Email')}
                                             {...field}
                                             onChange={field.onChange}
                                         />
@@ -131,12 +136,12 @@ const AgencyRegisterComponent = () => {
                             name="password"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Password"}</FormLabel>
+                                    <FormLabel>{t('Password')}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
                                             type="password"
-                                            placeholder={field.name}
+                                            placeholder={t('Password')}
                                             {...field}
                                             onChange={field.onChange}
                                         />
@@ -149,11 +154,11 @@ const AgencyRegisterComponent = () => {
                             name="phone"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Phone"}</FormLabel>
+                                    <FormLabel>{t('Phone Number')}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
-                                            placeholder={field.name}
+                                            placeholder={t('Phone Number')}
                                             {...field}
                                             onChange={field.onChange}
                                         />
@@ -166,11 +171,11 @@ const AgencyRegisterComponent = () => {
                             name="npwp"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"NPWP"}</FormLabel>
+                                    <FormLabel>{t('NPWP')}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
-                                            placeholder={field.name}
+                                            placeholder={t('NPWP')}
                                             {...field}
                                             onChange={field.onChange}
                                         />
@@ -183,11 +188,11 @@ const AgencyRegisterComponent = () => {
                             name="location"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Location"}</FormLabel>
+                                    <FormLabel>{t('Location')}</FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
-                                            placeholder={field.name}
+                                            placeholder={t('Location')}
                                             {...field}
                                             onChange={field.onChange}
                                         />
@@ -197,7 +202,7 @@ const AgencyRegisterComponent = () => {
                         />
                         <div className="justify-center flex">
                             <Button type="submit" className="mt-4">
-                                Register
+                                {t('Register')}
                             </Button>
                         </div>
                     </form>

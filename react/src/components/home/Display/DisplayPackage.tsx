@@ -43,7 +43,7 @@ const DisplayPackage = () => {
                             <div className='flex-1 mx-4'>
                                 <Card className='w-64 shadow-lg mt-8 hover:shadow-2xl cursor-pointer overflow-hidden' onClick={() => selectItem(item.package_h_id)}>
                                     <CardHeader>
-                                        <CardTitle className='truncate'>{item.package_name}</CardTitle>
+                                        <CardTitle className='truncate min-h-8'>{item.package_name}</CardTitle>
                                         {/* <CardDescription>{item.description}</CardDescription> */}
                                     </CardHeader>
                                     <CardContent className='flex-1'>

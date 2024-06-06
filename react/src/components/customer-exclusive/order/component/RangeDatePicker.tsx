@@ -84,6 +84,7 @@ export function RangeDatePicker({
             selected={date}
             onSelect={setDate}
             numberOfMonths={2}
+            fromDate={new Date()}
           />
         </PopoverContent>
       </Popover>

@@ -273,7 +273,7 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
                     </div>
                     <div className="shadow-lg border-1 rounded-xl p-6 m-4 bg-slate-100 space-y-2">
                         <p>
-                            {t('Pick The Dates')} {t('(these are the pickup and return dates)')}
+                            {t('Pick The Date')} {t('(these are the pickup and return dates)')}
                             <span className="text-red-500 ml-2">*</span>
                         </p>
                         <div className="flex flex-row space-x-4 items-center">

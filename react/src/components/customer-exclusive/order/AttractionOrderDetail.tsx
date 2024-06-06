@@ -288,6 +288,7 @@ const AttractionOrderDetail = ({ ref_attraction_id }: { ref_attraction_id: numbe
                                             selected={startDt}
                                             onSelect={setStartDt}
                                             initialFocus
+                                            fromDate={new Date()}
                                             />
                                         </PopoverContent>
                                     </Popover>

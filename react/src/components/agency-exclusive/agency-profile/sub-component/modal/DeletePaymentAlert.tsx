@@ -68,8 +68,8 @@ export function DeletePaymentAlert({ apiPath, Id, param }: DeletePaymentAlertPro
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>{t('Cancel')}</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDelete}>{t('Continue')}</AlertDialogAction>
+                    <AlertDialogCancel className="bg-red-500 hover:bg-red-700 text-white hover:text-white">{t('Cancel')}</AlertDialogCancel>
+                    <AlertDialogAction className="bg-green-500 hover:bg-green-700 text-white hover:text-white" onClick={handleDelete}>{t('Continue')}</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
