@@ -25,7 +25,7 @@ const PackageOrderDetail = ({package_h_id} : {package_h_id:number}) => {
     const [attractionData, setAttractionData] = useState<AttractionRoot[]>([]);
     const [vehicleData, setVehicleData] = useState<VehicleRoot[]>([]);
     const [startDate, setStartDate] = useState<Date | null>(null);
-    const [endDate, setEndDate] = useState<Date | null>(null);
+    //const [endDate, setEndDate] = useState<Date | null>(null);
     const [ ord ,setOrd ] = useState<OrderData>();
 
     useEffect(() => {
@@ -75,7 +75,7 @@ const PackageOrderDetail = ({package_h_id} : {package_h_id:number}) => {
         if (pack.total_days) {
             const endDt = addDays(date, pack.total_days);
 
-            setEndDate(endDt);
+            //setEndDate(endDt);
 
             // Update pack state with start_dt and end_dt for each PackageD
             const updatedPack = {

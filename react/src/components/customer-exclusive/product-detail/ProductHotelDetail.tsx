@@ -18,13 +18,13 @@ const ProductHotelDetail = ({ref_hotel_id} : {ref_hotel_id: number}) => {
     const [hotel, setHotel] = useState<HotelRoot>();
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
     const [image, setImage] = useState('');
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    //const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const { user } = useLogin();
     const { t } = useTranslation();
     const [position, setPosition] = useState<Coordinates | null>(null);
-    const [addr, setAddr] = useState<string>('');
+    //const [addr, setAddr] = useState<string>('');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -35,7 +35,7 @@ const ProductHotelDetail = ({ref_hotel_id} : {ref_hotel_id: number}) => {
 
                 const parts = response.data.address_zipcode.split(',');
                 const wordAfterSecondComma = parts.length >= 3 ? parts[2].trim() : null;
-                setAddr(wordAfterSecondComma);
+                //setAddr(wordAfterSecondComma);
                 const coords = await geocodeAddress(wordAfterSecondComma);
                 setPosition(coords);
             } catch (error) {
@@ -49,7 +49,7 @@ const ProductHotelDetail = ({ref_hotel_id} : {ref_hotel_id: number}) => {
 
     const checkCredential = (custId: number) => {
         if (!custId || custId === 0) {
-            setIsModalOpen(true);
+            //setIsModalOpen(true);
         }
         else {
             navigate('/Customer/HotelOrderDetail/' + ref_hotel_id);

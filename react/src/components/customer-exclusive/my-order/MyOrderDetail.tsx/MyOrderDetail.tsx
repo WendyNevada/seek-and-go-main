@@ -1,17 +1,10 @@
 import axiosClient from "@/axios.client";
 import { OrderD } from "@/components/agency-exclusive/main-dashboard/utils/interface";
-import { AttractionH } from "@/components/agency-exclusive/main-dashboard/utils/interfaceAttraction";
-import { HotelH } from "@/components/agency-exclusive/main-dashboard/utils/interfaceHotel";
-import { VehicleH } from "@/components/agency-exclusive/main-dashboard/utils/interfaceVehicle";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { toast } from "@/components/ui/use-toast";
 import { useLogin } from "@/context/LoginContext";
-import { urlConstant } from "@/urlConstant";
-import axios, { AxiosError } from "axios";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import HashLoader from "react-spinners/HashLoader";
 import CancelOrderAlert from "./sub-components/CancelOrderAlert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -40,17 +33,16 @@ interface RatingData {
 const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
   const { t } = useTranslation();
   const [order, setOrder] = useState<OrderD>({} as OrderD);
-  const [hotel, setHotel] = useState<HotelH>();
-  const [vehicle, setVehicle] = useState<VehicleH>();
-  const [attraction, setAttraction] = useState<AttractionH>();
+  // const [hotel, setHotel] = useState<HotelH>();
+  // const [vehicle, setVehicle] = useState<VehicleH>();
+  // const [attraction, setAttraction] = useState<AttractionH>();
   const { user } = useLogin();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const enviUrl = import.meta.env.VITE_API_BASE_URL;
   const [pictUrl, setPictUrl] = useState('');
   const [selectedPaymentType, setSelectedPaymentType] = useState<string | null>(null);
   const [selectedBank, setSelectedBank] = useState<string | null>(null);
-  const [agencyPaymentId, setAgencyPaymentId] = useState(0);
+  // const [agencyPaymentId, setAgencyPaymentId] = useState(0);
   const [accountNo, setAccountNo] = useState<string | null>(null);
   const [accountName, setAccountName] = useState<string | null>(null);
   const [qrisImg, setqrisImg] = useState<string | null>(null);
@@ -85,7 +77,7 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
                     const responseHotel = await axiosClient.post('v1/GetHotelById', { ref_hotel_id: orderD.ref_hotel_id });
                     hotel_name = responseHotel.data.hotel.hotel_name;
                     price = responseHotel.data.base_price;
-                    setHotel(responseHotel.data);
+                    //setHotel(responseHotel.data);
                     setPictUrl(responseHotel.data.picture_url)
 
                     const rateData: RatingData[] = [{
@@ -108,7 +100,7 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
                     const responseVehicle = await axiosClient.post('v1/GetVehicleById', { ref_vehicle_id: orderD.ref_vehicle_id });
                     vehicle_name = responseVehicle.data.vehicle.vehicle_name;
                     price = responseVehicle.data.base_price;
-                    setVehicle(responseVehicle.data);
+                    //setVehicle(responseVehicle.data);
                     setPictUrl(responseVehicle.data.picture_url)
 
                     const rateData: RatingData[] = [{
@@ -131,7 +123,7 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
                     const responseAttraction = await axiosClient.post('v1/GetAttractionById', { ref_attraction_id: orderD.ref_attraction_id });
                     attraction_name = responseAttraction.data.attraction.attraction_name;
                     price = responseAttraction.data.base_price;
-                    setAttraction(responseAttraction.data);
+                    //setAttraction(responseAttraction.data);
                     setPictUrl(responseAttraction.data.picture_url)
 
                     const rateData: RatingData[] = [{
@@ -244,6 +236,10 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
                   {t('Total Price')}
                   <br />
                   {t('Agency Name')}
+                  <br />
+                  {t('Agency Email')}
+                  <br />
+                  {t('Agency Phone')}
                 </div>
                 <div className="ml-4">
                   : {order.order_no}
@@ -253,6 +249,10 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
                   : {formatPrice(order.total_price)}
                   <br />
                   : {order.agency_name}
+                  <br />
+                  : {order.agency_email}
+                  <br />
+                  : {order.agency_phone}
                 </div>
               </div>
               <div>
@@ -432,7 +432,7 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
                                     const selectedPayment = filteredAgencyPayments?.find(payment =>
                                     `${payment.bank_name} - ${payment.account_name}` === value
                                     );
-                                    setAgencyPaymentId(selectedPayment?.agency_payment_id ?? 0);
+                                    //setAgencyPaymentId(selectedPayment?.agency_payment_id ?? 0);
                                     setAccountNo(selectedPayment?.account_no ?? null);
                                     setAccountName(selectedPayment?.account_name ?? null);
                                     setqrisImg(selectedPayment?.image_url ?? null);
@@ -564,7 +564,7 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
                                     const selectedPayment = filteredAgencyPayments?.find(payment =>
                                     `${payment.bank_name} - ${payment.account_name}` === value
                                     );
-                                    setAgencyPaymentId(selectedPayment?.agency_payment_id ?? 0);
+                                    //setAgencyPaymentId(selectedPayment?.agency_payment_id ?? 0);
                                     setAccountNo(selectedPayment?.account_no ?? null);
                                     setAccountName(selectedPayment?.account_name ?? null);
                                     setqrisImg(selectedPayment?.image_url ?? null);
