@@ -144,6 +144,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                                                 placeholder={t('Hotel Name')}
                                                 {...field}
                                                 onChange={field.onChange}
+                                                maxLength={100}
                                             />
                                         </FormControl>
                                     </FormItem>
@@ -188,6 +189,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                                             placeholder={t('Description')}
                                             {...field}
                                             onChange={field.onChange}
+                                            maxLength={1000}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -207,6 +209,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                                                 placeholder={t('Street Address')}
                                                 {...field}
                                                 onChange={field.onChange}
+                                                maxLength={100}
                                             />
                                         </FormControl>
                                     </FormItem>
@@ -243,6 +246,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                                                 placeholder={t('Promo Code')}
                                                 {...field}
                                                 onChange={field.onChange}
+                                                maxLength={50}
                                             />
                                         </FormControl>
                                     </FormItem>

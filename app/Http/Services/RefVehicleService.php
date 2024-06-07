@@ -286,6 +286,7 @@ class RefVehicleService implements RefVehicleInterface
             )->
         where('ref_vehicles.is_active', true)->
         where('agency_affiliates.agency_id', $agency_id)->
+        where('qty', '>', 0)->
         get();
 
         $vehicle->transform(function($vehicle) {

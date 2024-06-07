@@ -146,6 +146,7 @@ const AddHotel = () => {
                                                 placeholder={t('Hotel Name')}
                                                 {...field}
                                                 onChange={field.onChange}
+                                                maxLength={100}
                                             />
                                         </FormControl>
                                     </FormItem>
@@ -249,6 +250,7 @@ const AddHotel = () => {
                                             placeholder={t('Description')}
                                             {...field}
                                             onChange={field.onChange}
+                                            maxLength={1000}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -269,6 +271,7 @@ const AddHotel = () => {
                                                 placeholder={t('Street Address')}
                                                 {...field}
                                                 onChange={field.onChange}
+                                                maxLength={100}
                                             />
                                         </FormControl>
                                     </FormItem>
@@ -305,6 +308,7 @@ const AddHotel = () => {
                                                 placeholder={t('Promo Code')}
                                                 {...field}
                                                 onChange={field.onChange}
+                                                maxLength={50}
                                             />
                                         </FormControl>
                                     </FormItem>

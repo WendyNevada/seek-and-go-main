@@ -270,6 +270,7 @@ class RefHotelService implements RefHotelInterface
             )
             ->where('ref_hotels.is_active', true)
             ->where('agency_affiliates.agency_id', $agency_id)
+            ->where('qty', '>', 0)
             ->get();
 
         $hotels->transform(function($hotels) {

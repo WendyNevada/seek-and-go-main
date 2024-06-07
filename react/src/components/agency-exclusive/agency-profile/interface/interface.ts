@@ -38,3 +38,16 @@ export interface ChangePassword {
   password: string
   confirm_password: string
 }
+
+export interface AgencyPromo {
+  promo_code : string
+  start_date : string
+  end_date : string
+  is_hotel : number
+  is_vehicle : number
+  is_attraction : number
+  is_amount : number
+  amount : number
+  percent : number
+  max_use : number
+}

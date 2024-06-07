@@ -33,7 +33,7 @@ const AgencyView = ({agency_id}: {agency_id:number}) => {
             }
         }
         fetchData();
-    })
+    }, [agency_id]);
 
     const requestCustomPackage = ( id : number) => {
         if ( user?.customer_id == null || user?.customer_id === 0) {

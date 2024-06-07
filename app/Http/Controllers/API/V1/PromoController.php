@@ -10,6 +10,13 @@ use App\Http\Requests\V2\PromoDeductionRequest;
 
 class PromoController extends Controller
 {
+    public function GetAllPromo(PromoService $promoService)
+    {
+        $response = $promoService->GetAllPromo();
+
+        return $response;
+    }
+
     public function AddPromo(PromoService $promoService, StorePromoRequest $request)
     {
         $response = $promoService->AddPromo($request);
