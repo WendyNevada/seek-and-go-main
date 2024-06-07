@@ -54,7 +54,8 @@ class Constanta extends Model
     #endregion
 
     #region list environment
-    public static $enviLocal = "http://localhost:3000/";
+    //public static $enviLocal = "http://localhost:3000/";
+    public static $enviLocal = "https://www.seekandgo.my.id/";
     public static $forgetPassword = "ForgetPassword/";
     public static $enviProd = "https://seekandgo.my.id/";
     #endregion

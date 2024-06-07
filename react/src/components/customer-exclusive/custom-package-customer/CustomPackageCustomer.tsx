@@ -3,13 +3,12 @@ import { useLogin } from "@/context/LoginContext"
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { Package } from "./interface/interface";
 import HashLoader from "react-spinners/HashLoader";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Package } from "./interface/interface";
 
-
-const AgencyCustomPackage = () => {
+const CustomPackageCustomer = () => {
     const user = useLogin();
     const [ loading, setLoading ] = useState(false);
     const navigate = useNavigate();
@@ -18,55 +17,65 @@ const AgencyCustomPackage = () => {
     const [status, setStatus] = useState<string | null>(null);
 
     useEffect(() => {
-      const fetchData = async () => {
-          setLoading(true);
-          try {
-              const response = await axiosClient.post('v1/GetCustomPackageByAgencyId', { agency_id: user.user?.agency_id, custom_status: status});
-              if(response.data.status == "error") {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const response = await axiosClient.post('v1/GetCustomPackageByCustomerId', { customer_id: user.user?.customer_id, custom_status: status});
+                if(response.data.status == "error") {
+                  setCustomPackage([]);
+                } else {
+                  setCustomPackage(response.data.package);
+                }
+            } catch (error) {
+                console.error(error);
                 setCustomPackage([]);
-              } else {
-                setCustomPackage(response.data.package);
-              }
-          } catch (error) {
-              console.error(error);
-              setCustomPackage([]);
-          } finally {
-              setLoading(false);
-          }
-      }
-      fetchData();
-      }, [status])
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchData();
+        }, [status])
 
-      const navigatePackageDetail = (package_h_id: number) => {
-        navigate('/Agency/CustomPackageDetail/' + package_h_id);
+    const navigatePackageDetail = (package_h_id: number) => {
+        navigate('/Customer/CustomPackageDetail/' + package_h_id);
     }
 
     const handleValueChange = (newValue: string) => {
-      if(newValue == "ALL") {
-        setStatus(null)
-      }
-      else {
-        setStatus(newValue)
-      }
+        if(newValue == "ALL") {
+            setStatus(null)
+        }
+        else {
+            setStatus(newValue)
+        }
     }
 
-  return (
-      <div className='w-[80rem]'>
-        <div className='flex flex-col items-left text-left mt-4 mb-4'>
+    const handleClickOrder = () => {
+        navigate('/Customer/MyOrder/' + user.user?.customer_id);
+    }
+
+    return (
+        <div className='w-[80rem]'>
+            <div className='flex flex-col mt-4 mb-4'>
                 <p className='text-5xl py-2 my-8'>{t('Custom Package Request')}</p>
-                <Select
-                    onValueChange={handleValueChange}
-                >
-                    <SelectTrigger className='w-64'>
-                        <SelectValue placeholder={t('All')}/>
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="ALL">{t('All')}</SelectItem>
-                        <SelectItem value="NEW">New Request</SelectItem>
-                        <SelectItem value="APV">Approved Request</SelectItem>
-                        <SelectItem value="RJT">Rejected Request</SelectItem>
-                    </SelectContent>
-                </Select>
+                <div className='flex flex-row items-center justify-between'>
+                    <div className='w-64'>
+                    <Select
+                        onValueChange={handleValueChange}
+                    >
+                        <SelectTrigger className='w-64'>
+                            <SelectValue placeholder={t('All')}/>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="ALL">{t('All')}</SelectItem>
+                            <SelectItem value="NEW">New Request</SelectItem>
+                            <SelectItem value="APV">Approved Request</SelectItem>
+                            <SelectItem value="RJT">Rejected Request</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                <Button className='ml-4 bg-slate-500 hover:bg-slate-700' onClick={() => handleClickOrder()}>{t('View Order')}</Button>
+                </div>
             </div>
           <div className="block rounded-lg bg-blue-100 shadow-secondary-1 dark:bg-surface-dark p-10 shadow-xl">
                 {loading ? (
@@ -83,7 +92,7 @@ const AgencyCustomPackage = () => {
                                         <p>{customPackage.package_code}</p>
                                     </div>
                                     <div className="text-sm w-max p-2 rounded-3xlflex flex-row max-w-[10rem]">
-                                        <p className='font-bold text-lg truncate'>{customPackage.customer_name}</p>
+                                        <p className='font-bold text-lg truncate'>{customPackage.agency_name}</p>
                                         <p className='font-bold text-lg truncate'>{customPackage.package_name}</p>
                                     </div>
                                 </div>
@@ -110,6 +119,6 @@ const AgencyCustomPackage = () => {
             </div>
       </div>
     )
-  }
+}
 
-export default AgencyCustomPackage
+export default CustomPackageCustomer

@@ -26,6 +26,7 @@ use App\Http\Requests\V2\EditPackageAgencyRequest;
 use App\Http\Requests\V2\CreatePackageAgencyRequest;
 use App\Http\Requests\V2\ApproveCustomPackageRequest;
 use App\Http\Requests\V2\GetCustomPackageAgencyRequest;
+use App\Http\Requests\V2\GetCustomPackageCustomerRequest;
 use App\Http\Requests\V2\CreateCustomPackageCustomerRequest;
 
 class PackageHService implements PackageHInterface
@@ -42,8 +43,10 @@ class PackageHService implements PackageHInterface
         $packageH = PackageH::
         with('packageDs')->
         leftjoin('customers', 'package_h_s.customer_id', '=', 'customers.customer_id')->
+        leftjoin('agencies', 'package_h_s.agency_id', '=', 'agencies.agency_id')->
         leftjoin('accounts', 'customers.account_id', '=', 'accounts.account_id')->
-        select('package_h_s.*', 'customers.customer_name', 'accounts.phone as customer_phone', 'accounts.email as customer_email')->
+        leftjoin('accounts as accounts2', 'agencies.account_id', '=', 'accounts2.account_id')->
+        select('package_h_s.*', 'customers.customer_name', 'accounts.phone as customer_phone', 'accounts.email as customer_email', 'agencies.agency_name', 'accounts2.phone as agency_phone', 'accounts2.email as agency_email')->
         find($package_h_id);
 
         return $packageH;
@@ -138,6 +141,33 @@ class PackageHService implements PackageHInterface
         $packageHCustom->save();
 
         return $packageHCustom;
+    }
+
+    private function getCustomPackageByCustomerIdAndStatus($customer_id, $is_custom = false, $custom_status)
+    {
+        if($custom_status == null)
+        {
+            $packageH = PackageH::
+            where('customer_id', $customer_id)->
+            where('is_custom', $is_custom)->
+            join('agencies', 'package_h_s.agency_id', '=', 'agencies.agency_id')->
+            select('package_h_s.*', 'agencies.agency_name')->
+            with('packageDs')->
+            get();
+            return $packageH;
+        }
+        else
+        {
+            $packageH = PackageH::
+            where('customer_id', $customer_id)->
+            where('is_custom', $is_custom)->
+            where('custom_status', $custom_status)->
+            join('agencies', 'package_h_s.agency_id', '=', 'agencies.agency_id')->
+            select('package_h_s.*', 'agencies.agency_name')->
+            with('packageDs')->
+            get();
+            return $packageH;
+        }
     }
 
     private function getCustomPackageByAgencyIdAndStatus($agency_id, $is_custom = false, $custom_status)
@@ -626,6 +656,39 @@ class PackageHService implements PackageHInterface
                 'status' => 'error',
                 'message' => $e->getMessage(),
                 'package_h_id' => '-'
+            ], 500);
+        }
+    }
+
+    public function GetCustomPackageByCustomerId(GetCustomPackageCustomerRequest $request)
+    {
+        try
+        {
+            $packageH = $this->getCustomPackageByCustomerIdAndStatus($request->customer_id, true, $request->custom_status);
+
+            if($packageH != null)
+            {
+                return response()->json([
+                    'status' => 'ok',
+                    'message' => 'Success',
+                    'package' => $packageH
+                ], 200);
+            }
+            else
+            {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Data not found',
+                    'package' => '-'
+                ], 400);
+            }
+        }
+        catch(\Exception $e)
+        {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'package' => '-'
             ], 500);
         }
     }

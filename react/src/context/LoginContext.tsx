@@ -102,6 +102,7 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }
   };
 
+  // @ts-ignore
   const handleNavigation = (userData?: User | null, path?: string) => {
     if (path) {
         navigate(path);

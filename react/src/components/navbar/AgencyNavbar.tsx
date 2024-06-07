@@ -1,21 +1,25 @@
 import { useState } from 'react'
 import { assetForWeb } from '../../assets/assetStatic'
 import HomeIcon from '@mui/icons-material/Home'
-import InfoIcon from '@mui/icons-material/Info'
 import { Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useLogin } from '@/context/LoginContext'
 import { urlConstant } from '@/urlConstant'
 import { useTranslation } from 'react-i18next'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Avatar, AvatarFallback } from '../ui/avatar'
+
+// icon
 import LanguageIcon from '@mui/icons-material/Language';
 import PersonIcon from '@mui/icons-material/Person';
+import CategoryIcon from '@mui/icons-material/Category';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 const Navbar = () => {
 
     const { i18n } = useTranslation();
+    const location = useLocation();
 
     const changeLanguage = (language: string) => {
     i18n.changeLanguage(language);
@@ -27,39 +31,53 @@ const Navbar = () => {
     const [openMenu, setOpenMenu] = useState(false)
     const menuOptions = [
         {
-            text:"Product",
+            text:"Dashboard",
             icon:<HomeIcon/>,
             link: urlConstant.AgencyHomePage
         },
         {
-            text:"About",
-            icon:<InfoIcon/>,
+            text:"Product",
+            icon:<CategoryIcon/>,
             link:"/Agency/Product"
+        },
+        {
+            text:"Custom Package",
+            icon:<AutoAwesomeIcon/>,
+            link:"/Agency/CustomPackage"
         },
         {
             text:"Logout",
             icon:<LogoutIcon/>,
-            onclick: () => {
-                logout
-            }
-        },
-        // {
-        //     text:"Contact",
-        //     icon:<PhoneRoundedIcon/>
-        // },
-        // {
-        //     text:"Cart",
-        //     icon:<ShoppingCartRoundedIcon/>
-        // },
-        // {
-        //     text:"Login",
-        //     icon: <Login/>
-        // }
+            action:logout
+        }
     ]
 
     const navigateEditProfile = () => {
         navigate(`/Agency/EditProfileAgency/${user?.account_id}`);
     }
+
+    const isActiveLink = (path: string) => {
+        if (location.pathname === path) {
+            return true;
+        }
+        // Handle wildcard path for paths ending with a number
+        const regex = new RegExp('/[^/]+/[^/]+/\\d+$');
+        if (regex.test(location.pathname)) {
+            const basePath = location.pathname.replace(/\d+$/, '');
+            return path.startsWith(basePath);
+        }
+        return false;
+    };
+
+    const handleNavigation = (link:string) => {
+        navigate(link);
+        setOpenMenu(false);
+      };
+
+      const handleAction = (action: () => void | undefined) => {
+        action();
+        setOpenMenu(false);
+    };
 
     return (
         <nav className='flex-no-wrap fixed top-0 flex w-full items-center justify-between bg-blue-800 lg:flex-wrap lg:py-4 p-6 z-10'>
@@ -79,7 +97,7 @@ const Navbar = () => {
                     onKeyDown={() => setOpenMenu(false)}>
                     <List>
                             {menuOptions.map((item) => (
-                                <ListItemButton component="a" href={item.link} target="_blank">
+                                <ListItemButton component="a" onClick={() => item.link ? handleNavigation(item.link) : (item.action ? handleAction(item.action) : undefined)} target="_blank">
                                     <ListItemIcon>{item.icon}</ListItemIcon>
                                     <ListItemText primary={item.text}></ListItemText>
                                 </ListItemButton>
@@ -89,10 +107,54 @@ const Navbar = () => {
                 </Drawer>
             </div>
 
-            <div className='w-full hidden flex lg:flex lg:items-center lg:w-auto'>
-                <Link to ={urlConstant.AgencyHomePage} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Dashboard</Link>
-                <Link to="/Agency/Product" className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Product</Link>
-                <Link to="/Agency/CustomPackage" className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Custom Package</Link>
+            <div className='w-full hidden lg:flex lg:items-center lg:w-auto'>
+                <Link
+                    to ={urlConstant.AgencyHomePage}
+                    className={`block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5
+                        ${
+                            (location.pathname === urlConstant.AgencyHomePage) ||
+                            (isActiveLink('/Agency/Approval/'))
+                            ?
+                            'text-white border-b-2 border-white'
+                            :
+                            ''
+                        }
+                    `}>Dashboard
+                </Link>
+
+                <Link
+                    to="/Agency/Product"
+                    className={`block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5
+                        ${
+                            (location.pathname === "/Agency/Product") ||
+                            (location.pathname === "/Agency/AddAttraction") ||
+                            (location.pathname === "/Agency/AddHotel") ||
+                            (location.pathname === "/Agency/AddVehicle") ||
+                            (location.pathname === "/Agency/AddPackage") ||
+                            (isActiveLink("/Agency/EditPackage/")) ||
+                            (isActiveLink("/Agency/EditAttraction/")) ||
+                            (isActiveLink("/Agency/EditHotel/")) ||
+                            (isActiveLink("/Agency/EditVehicle/"))
+                            ?
+                            'text-white border-b-2 border-white'
+                            :
+                            ''
+                        }
+                    `}>Product
+                </Link>
+                <Link
+                    to="/Agency/CustomPackage"
+                    className={`block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5
+                    ${
+                        (location.pathname === "/Agency/CustomPackage") ||
+                        (isActiveLink("/Agency/CustomPackageDetail/"))
+                        ?
+                        'text-white border-b-2 border-white'
+                        :
+                        ''
+                    }
+                    `}>Custom Package
+                </Link>
                 {/* <button onClick={() => logout()} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5'>Logout</button> */}
                 {/* <button onClick={() => changeLanguage('en')} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1' >English</button>
                 <button onClick={() => changeLanguage('id')} className='block mt-4 lg:inline-block lg:mt-0 text-teal-200 rounded-full hover:text-white mr-5 rounded-full border-2 border-neutral-50 px-6 pb-[6px] pt-1'>Indonesia</button> */}
@@ -121,7 +183,20 @@ const Navbar = () => {
                 </DropdownMenu>
 
                 <DropdownMenu>
-                    <DropdownMenuTrigger className='text-teal-200 mx-5 hover:text-white'><PersonIcon/>{user?.account_name}</DropdownMenuTrigger>
+                    <DropdownMenuTrigger
+                        className='text-teal-200 mx-5 hover:text-white'>
+                            <div className={`
+                                ${
+                                    ((location.pathname === `/Agency/EditProfileAgency/${user?.account_id}`))
+                                    ?
+                                    'text-white border-b-2 border-white'
+                                    :
+                                    ''
+                                }
+                            `}>
+                                <PersonIcon/>{user?.account_name}
+                            </div>
+                    </DropdownMenuTrigger>
                     <DropdownMenuContent>
                         <DropdownMenuLabel>My Account</DropdownMenuLabel>
                         <DropdownMenuSeparator />

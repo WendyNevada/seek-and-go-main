@@ -1,4 +1,6 @@
 export const urlConstant = {
+    // Global
+    HomePage: "/",
 
     // Agency Routes
     AgencyHomePage: "/Agency",

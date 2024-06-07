@@ -148,28 +148,12 @@ const CustomerRegisterComponent = () => {
                                     <FormLabel className='mr-4'>{t("Birth Date")}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
-                                        <Popover>
-                                            <PopoverTrigger asChild>
-                                                <Button
-                                                variant={"outline"}
-                                                className={cn(
-                                                    "w-[300px] justify-start text-left font-normal",
-                                                    !field.value && "text-muted-foreground"
-                                                )}
-                                                >
-                                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                                {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                                                </Button>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-0">
-                                                <Calendar
-                                                    mode="single"
-                                                    selected={field.value}
-                                                    onSelect={field.onChange}
-                                                    initialFocus
-                                                />
-                                            </PopoverContent>
-                                        </Popover>
+                                        <input
+                                            type="date"
+                                            className="w-[300px] justify-start text-left font-normal bg-slate-100"
+                                            value={field.value ? format(field.value, "yyyy-MM-dd") : ""}
+                                            onChange={e => field.onChange(new Date(e.target.value))}
+                                        />
                                     </FormControl>
                                 </FormItem>
                             )}

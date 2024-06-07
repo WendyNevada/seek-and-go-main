@@ -22,6 +22,10 @@ export interface OrderD {
     updated_at: string;
     customer_name: string;
     agency_name: string;
+    customer_email: string;
+    customer_phone: string;
+    agency_email: string;
+    agency_phone: string;
     order_ds: [{
         order_d_id: number;
         order_h_id: number;

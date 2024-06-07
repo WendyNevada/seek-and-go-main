@@ -1,15 +1,9 @@
 import axiosClient from "@/axios.client";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import HashLoader from "react-spinners/HashLoader"
 import { Package, PackageDs } from "./interface/interface";
-// import { HotelH } from "../main-dashboard/utils/interfaceHotel";
-// import { VehicleH } from "../main-dashboard/utils/interfaceVehicle";
-// import { AttractionH } from "../main-dashboard/utils/interfaceAttraction";
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useTranslation } from "react-i18next";
-import RejectCustomPackageAlert from "./sub-component/RejectCustomPackageAlert";
-import AcceptCustomPackageAlert from "./sub-component/AcceptCustomPackageAlert";
-import { Input } from "@/components/ui/input";
 
 interface PackageDataRow {
     package_h_id : string,
@@ -21,8 +15,7 @@ interface PackageDataRow {
     price : number,
 }
 
-
-const AgencyCustomPackageDetail = ({ package_h_id }: { package_h_id: number }) => {
+const CustomPackageCustomerDetail = ({ package_h_id }: { package_h_id: number }) => {
     const [loading, setLoading] = useState(true);
     const [customPackage, setCustomPackage] = useState<Package>({} as Package);
     // const [hotel, setHotel] = useState<HotelH>();
@@ -30,10 +23,6 @@ const AgencyCustomPackageDetail = ({ package_h_id }: { package_h_id: number }) =
     // const [attraction, setAttraction] = useState<AttractionH>();
     const [packageDataRows, setPackageDataRows] = useState<PackageDataRow[]>([]);
     const { t } = useTranslation();
-    const [newPrice, setNewPrice] = useState(0);
-    const [totalDays, setTotalDays] = useState(0);
-    const [boolPrice, setBoolPrice] = useState(true);
-    const [boolDays, setBoolDays] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -101,34 +90,9 @@ const AgencyCustomPackageDetail = ({ package_h_id }: { package_h_id: number }) =
         }
       };
 
-      const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setNewPrice(event.target.valueAsNumber);
-        setBoolPrice(false);
-
-        if(event.target.valueAsNumber <= 0 || isNaN(event.target.valueAsNumber)) {
-            setBoolPrice(true);
-        }
-    };
-
-    const handleChange2 = (event: ChangeEvent<HTMLInputElement>) => {
-        setTotalDays(event.target.valueAsNumber);
-        setBoolDays(false);
-
-        if(event.target.valueAsNumber <= 0 || isNaN(event.target.valueAsNumber) ) {
-            setBoolDays(true);
-        }
-    };
-
-    const handleDisableButton = (priceFill : boolean, totalDaysFill : boolean) => {
-        if(!priceFill && !totalDaysFill) {
-            return false;
-        } else {
-            return true;
-        }
-    }
 
     return (
-    <div>
+        <div>
         {loading ? (
         <div className="flex justify-center items-center min-h-screen">
             <HashLoader size={50} color={"#123abc"} loading={loading} />
@@ -143,22 +107,22 @@ const AgencyCustomPackageDetail = ({ package_h_id }: { package_h_id: number }) =
                   <br />
                   {t('Custom Package Status')}
                   <br />
-                  {t('Customer Name')}
+                  {t('Agency Name')}
                   <br />
-                  {t('Customer Phone')}
+                  {t('Agency Phone')}
                   <br />
-                  {t('Customer Email')}
+                  {t('Agency Email')}
                 </div>
                 <div className="ml-4">
                   : {customPackage.package_code}
                   <br />
                   : {customPackage.custom_status}
                   <br />
-                  : {customPackage.customer_name}
+                  : {customPackage.agency_name}
                   <br />
-                  : {customPackage.customer_phone}
+                  : {customPackage.agency_phone}
                   <br />
-                  : {customPackage.customer_email}
+                  : {customPackage.agency_email}
                 </div>
               </div>
             </div>
@@ -219,37 +183,16 @@ const AgencyCustomPackageDetail = ({ package_h_id }: { package_h_id: number }) =
                 </Table>
               </div>
             </div>
-
-            {customPackage.custom_status === 'NEW' && (
-                <div className="flex justify-center items-center flex-col">
-                    <div className="flex justify-center items-center flex-col">
-                        <p className="font-bold">{t('If you want to accept this package, please input the')}</p>
-                        <p className="font-bold text-red-500">{t('New Total Price')}</p>
-                    </div>
-                    <div className="w-36 mt-4">
-                        <Input
-                            type="number"
-                            onChange={handleChange}
-                            className="border border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:border-blue-500"
-                            >
-                        </Input>
-                    </div>
-                    <div className="mt-4 flex justify-center items-center flex-col">
-                        <p className="font-bold">{t('If you want to accept this package, please input the')}</p>
-                        <p className="font-bold text-red-500">{t('Total Days')}</p>
-                    </div>
-                    <div className="w-36 mt-4">
-                        <Input
-                            type="number"
-                            onChange={handleChange2}
-                            className="border border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:border-blue-500"
-                            >
-                        </Input>
-                    </div>
-                </div>
-            )}
-
+            
             <div className="text-xl flex flex-col p-3">
+                {customPackage.custom_status === 'NEW' && (
+                    <div className="flex justify-center items-center flex-col">
+                        <div className="flex justify-center items-center flex-col">
+                            <p className="font-bold">{t('Please wait for the agency approval')}</p>
+                        </div>
+                    </div>
+                )}
+
                 {customPackage.custom_status === 'APV' && (
                     <div className="flex justify-center items-center flex-col">
                         <div>
@@ -265,20 +208,12 @@ const AgencyCustomPackageDetail = ({ package_h_id }: { package_h_id: number }) =
                         </div>
                     </div>
                 )}
-                
-                {customPackage.custom_status === 'NEW' && (
-                    <div className="flex justify-center m-2 p-2 mt-3">
-                        <div className="flex justify-center items-center space-x-6">
-                            <RejectCustomPackageAlert apiPath='/v1/RejectCustomPackage' id={package_h_id} ></RejectCustomPackageAlert>
-                            <AcceptCustomPackageAlert apiPath='/v1/ApproveCustomPackage' id={package_h_id} newPrice={newPrice} totalDays={totalDays} disabled={handleDisableButton(boolPrice, boolDays)}></AcceptCustomPackageAlert>
-                        </div>
-                    </div>
-                )}
             </div>
+            
         </div>
         )}
     </div>
     )
 }
 
-export default AgencyCustomPackageDetail
+export default CustomPackageCustomerDetail
