@@ -1,4 +1,3 @@
-import { useEffect} from "react";
 import { useTranslation } from "react-i18next";
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AgencyPromo } from "../interface/interface";
