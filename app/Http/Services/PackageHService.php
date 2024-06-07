@@ -203,6 +203,7 @@ class PackageHService implements PackageHInterface
         {
             $packageH = PackageH::where('agency_id', $agency_id)
             ->where('is_custom', $is_custom)
+            ->where('qty', '>', '0')
             ->with('packageDs')
             ->get();
 

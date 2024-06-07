@@ -49,10 +49,7 @@ const CustomerRegisterComponent = () => {
     }
 
     const onSubmit = async (values: z.infer<typeof customerSchema>) => {
-        console.log('values.birth_date = ', values.birth_date)
         values.birth_date = formatDate(values.birth_date) ?? new Date();
-
-        values.customer_name = "tes1";
         values.role="Customer";
 
         const response = await hitAddApi("/v1/CreateAccountCustomer",values);
@@ -64,6 +61,13 @@ const CustomerRegisterComponent = () => {
             });
             
             navigate("/Login");
+        }
+    };
+
+    const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        if (/^\d*$/.test(value)) {
+            form.setValue("phone", value);
         }
     };
 
@@ -85,6 +89,7 @@ const CustomerRegisterComponent = () => {
                                             placeholder={t('Customer Name')}
                                             {...field}
                                             onChange={field.onChange}
+                                            maxLength={100}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -102,6 +107,7 @@ const CustomerRegisterComponent = () => {
                                             placeholder={t('Account Name')}
                                             {...field}
                                             onChange={field.onChange}
+                                            maxLength={100}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -120,6 +126,7 @@ const CustomerRegisterComponent = () => {
                                             placeholder={t('Email')}
                                             {...field}
                                             onChange={field.onChange}
+                                            maxLength={100}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -134,9 +141,14 @@ const CustomerRegisterComponent = () => {
                                     <FormMessage />
                                     <FormControl>
                                         <Input
+                                            type="tel"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
                                             placeholder={t('Phone Number')}
                                             {...field}
-                                            onChange={field.onChange}
+                                            onChange={handlePhoneChange}
+                                            // onChange={field.onChange}
+                                            maxLength={20}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -198,6 +210,7 @@ const CustomerRegisterComponent = () => {
                                             placeholder={t('Password')}
                                             {...field}
                                             onChange={field.onChange}
+                                            maxLength={100}
                                         />
                                     </FormControl>
                                 </FormItem>

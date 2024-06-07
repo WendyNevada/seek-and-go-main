@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { hitAddApi } from "@/context/HitApi";
 import { toast } from "@/components/ui/use-toast";
 import { useTranslation } from "react-i18next";
+import { Required } from "@/components/ui/Custom/required";
 
 const AgencyRegisterComponent = () => {
     const navigate = useNavigate();
@@ -71,6 +72,13 @@ const AgencyRegisterComponent = () => {
         // }
     };
 
+    const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        if (/^\d*$/.test(value)) {
+            form.setValue("phone", value);
+        }
+    };
+
     return (
         <div className="min-h-50 w-50 p-0 sm:p-12">
             <div className="mx-auto max-w-xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
@@ -84,13 +92,14 @@ const AgencyRegisterComponent = () => {
                             name="agency_name"
                             render={({ field }) => (
                                 <FormItem className="custom-field">
-                                    <FormLabel>{t('Agency Name')}</FormLabel>
+                                    <FormLabel>{t('Agency Name')} <Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
                                             placeholder={t('Agency Name')}
                                             {...field}
                                             onChange={field.onChange}
+                                            maxLength={100}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -101,13 +110,14 @@ const AgencyRegisterComponent = () => {
                             name="account_name"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{t('Account Name')}</FormLabel>
+                                    <FormLabel>{t('Account Name')}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
                                             placeholder={t('Account Name')}
                                             {...field}
                                             onChange={field.onChange}
+                                            maxLength={100}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -118,7 +128,7 @@ const AgencyRegisterComponent = () => {
                             name="email"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{t('Email')}</FormLabel>
+                                    <FormLabel>{t('Email')}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
@@ -126,6 +136,7 @@ const AgencyRegisterComponent = () => {
                                             placeholder={t('Email')}
                                             {...field}
                                             onChange={field.onChange}
+                                            maxLength={100}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -136,7 +147,7 @@ const AgencyRegisterComponent = () => {
                             name="password"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{t('Password')}</FormLabel>
+                                    <FormLabel>{t('Password')}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
@@ -144,6 +155,7 @@ const AgencyRegisterComponent = () => {
                                             placeholder={t('Password')}
                                             {...field}
                                             onChange={field.onChange}
+                                            maxLength={100}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -154,13 +166,18 @@ const AgencyRegisterComponent = () => {
                             name="phone"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{t('Phone Number')}</FormLabel>
+                                    <FormLabel>{t('Phone Number')}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
+                                            type="tel"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
                                             placeholder={t('Phone Number')}
                                             {...field}
-                                            onChange={field.onChange}
+                                            // onChange={field.onChange}
+                                            onChange={handlePhoneChange}
+                                            maxLength={20}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -171,13 +188,14 @@ const AgencyRegisterComponent = () => {
                             name="npwp"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{t('NPWP')}</FormLabel>
+                                    <FormLabel>{t('NPWP')} {t('(can be -)')}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
                                             placeholder={t('NPWP')}
                                             {...field}
                                             onChange={field.onChange}
+                                            maxLength={50}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -188,13 +206,14 @@ const AgencyRegisterComponent = () => {
                             name="location"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{t('Location')}</FormLabel>
+                                    <FormLabel>{t('Location')}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
                                             placeholder={t('Location')}
                                             {...field}
                                             onChange={field.onChange}
+                                            maxLength={100}
                                         />
                                     </FormControl>
                                 </FormItem>

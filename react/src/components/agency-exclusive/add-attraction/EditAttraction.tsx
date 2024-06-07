@@ -182,6 +182,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                                     placeholder={t('Attraction Name')}
                                                     {...field}
                                                     onChange={field.onChange}
+                                                    maxLength={100}
                                                 />
                                             </FormControl>
                                         </FormItem>
@@ -200,6 +201,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                                     placeholder={t('Description')}
                                                     {...field}
                                                     onChange={field.onChange}
+                                                    maxLength={1000}
                                                 />
                                             </FormControl>
                                         </FormItem>
@@ -218,6 +220,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                                     placeholder={t('Street Address')}
                                                     {...field}
                                                     onChange={field.onChange}
+                                                    maxLength={100}
                                                 />
                                             </FormControl>
                                         </FormItem>
@@ -272,6 +275,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                                     placeholder={t('Promo Code')}
                                                     {...field}
                                                     onChange={field.onChange}
+                                                    maxLength={50}
                                                 />
                                             </FormControl>
                                         </FormItem>

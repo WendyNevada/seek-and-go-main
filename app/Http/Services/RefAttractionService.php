@@ -274,6 +274,7 @@ class RefAttractionService implements RefAttractionInterface
             )->
         where('ref_attractions.is_active', true)->
         where('agency_affiliates.agency_id', $agency_id)->
+        where('qty', '>', 0)->
         get();
 
         $attraction->transform(function($attraction) {

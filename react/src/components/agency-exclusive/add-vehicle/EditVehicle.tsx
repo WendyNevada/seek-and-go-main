@@ -182,6 +182,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                                         placeholder={t('Vehicle Name')}
                                                         {...field}
                                                         onChange={field.onChange}
+                                                        maxLength={100}
                                                     />
                                                 </FormControl>
                                             </FormItem>
@@ -278,7 +279,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                                 <FormControl>
                                                     <Select onValueChange={(newValue) => form.setValue("vehicle_seat", parseInt(newValue))}>
                                                         <SelectTrigger className="w-[180px]">
-                                                            <SelectValue placeholder={form.watch("vehicle_seat").toString() || "Vehicle Seat"} />
+                                                            <SelectValue placeholder={form.watch("vehicle_seat").toString().concat(" Seat") || "Vehicle Seat"} />
                                                         </SelectTrigger>
                                                         <SelectContent>
                                                             <SelectItem value="2">2 Seat</SelectItem>
@@ -306,6 +307,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                                         placeholder={t('Input Vehicle Brand')}
                                                         {...field}
                                                         onChange={field.onChange}
+                                                        maxLength={100}
                                                     />
                                                 </FormControl>
                                             </FormItem>
@@ -324,6 +326,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                                         placeholder={t('Input Vehicle Series')}
                                                         {...field}
                                                         onChange={field.onChange}
+                                                        maxLength={100}
                                                     />
                                                 </FormControl>
                                             </FormItem>
@@ -342,6 +345,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                                         placeholder={t('Input Vehicle Model')}
                                                         {...field}
                                                         onChange={field.onChange}
+                                                        maxLength={100}
                                                     />
                                                 </FormControl>
                                             </FormItem>
@@ -381,6 +385,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                                         placeholder={t('Street Address')}
                                                         {...field}
                                                         onChange={field.onChange}
+                                                        maxLength={100}
                                                     />
                                                 </FormControl>
                                             </FormItem>
@@ -417,6 +422,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                                         placeholder={t('Promo Code')}
                                                         {...field}
                                                         onChange={field.onChange}
+                                                        maxLength={50}
                                                     />
                                                 </FormControl>
                                             </FormItem>
@@ -456,6 +462,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                                     placeholder={t('Description')}
                                                     {...field}
                                                     onChange={field.onChange}
+                                                    maxLength={1000}
                                                 />
                                             </FormControl>
                                         </FormItem>
