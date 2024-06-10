@@ -64,7 +64,7 @@ export function DeletePaymentAlert({ apiPath, Id, param }: DeletePaymentAlertPro
                         {t('Are you sure?')}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('This action cannot be undone. Are you sure you want to delete this product?')}
+                        {t('This action cannot be undone. Are you sure you want to delete this payment method?')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

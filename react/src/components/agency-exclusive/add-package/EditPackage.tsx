@@ -15,6 +15,7 @@ import { urlConstant } from '@/urlConstant';
 import { addPackage } from './utils/schema';
 import axiosClient from '@/axios.client';
 import { hitAddApi } from '@/context/HitApi';
+import HashLoader from 'react-spinners/HashLoader';
 
 const EditPackage = ({package_h_id} : {package_h_id: number}) => {
     const { t } = useTranslation();
@@ -28,6 +29,7 @@ const EditPackage = ({package_h_id} : {package_h_id: number}) => {
     const [vehicleDetails, setVehicleDetails] = useState<addPackage['details']>([]);
     const [hotelDetails, setHotelDetails] = useState<addPackage['details']>([]);
     const [packageData, setPackageData] = useState<addPackage | null>(null);
+    const [ loading, setLoading ] = useState(true);
 
     const form = useForm<addPackage>({
         defaultValues: {
@@ -47,7 +49,7 @@ const EditPackage = ({package_h_id} : {package_h_id: number}) => {
             try {
                 const response = await axiosClient.post(`/v1/GetPackageDataById`, { package_h_id: package_h_id });
                 if(response.data){
-                    const resPackageData = response.data;
+                    const resPackageData = response.data.data;
                     setPackageData(resPackageData);
 
                     form.reset({
@@ -70,6 +72,8 @@ const EditPackage = ({package_h_id} : {package_h_id: number}) => {
                 }
             } catch (error) {
                 console.error('Error fetching package data:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -103,7 +107,7 @@ const EditPackage = ({package_h_id} : {package_h_id: number}) => {
         try {
             const response = await hitAddApi(`/v1/EditPackageAgency`, payload);
             if (response === 200) {
-                navigate(urlConstant.AgencyHomePage);
+                navigate(urlConstant.AgencyProduct);
             }
         } catch (error) {
             console.error('Error updating package:', error);
@@ -113,6 +117,11 @@ const EditPackage = ({package_h_id} : {package_h_id: number}) => {
   return (
     <div className="min-h-50 w-50 p-0 sm:p-12">
             <div className="mx-auto max-w-6xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
+                {loading ? (
+                    <div className="flex justify-center items-center">
+                        <HashLoader size={50} color={"#123abc"} loading={loading} />
+                    </div>
+                ) : (
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <h1 className="text-2xl mb-8">{t('Edit Package')}</h1>
@@ -258,6 +267,7 @@ const EditPackage = ({package_h_id} : {package_h_id: number}) => {
                         </div>
                     </form>
                 </Form>
+                )}
             </div>
         </div>
   )

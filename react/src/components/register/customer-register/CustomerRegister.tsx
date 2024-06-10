@@ -14,11 +14,14 @@ import { toast } from '@/components/ui/use-toast';
 import { Required } from '@/components/ui/Custom/required';
 import { hitAddApi } from '@/context/HitApi';
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
+import HashLoader from 'react-spinners/HashLoader';
 
 const CustomerRegisterComponent = () => {
     const { t } = useTranslation();
 
     const navigate = useNavigate();
+    const [ loading, setLoading ] = useState(false);
     // const {setUser, setToken} = useStateContext()
     // const [errors, setErrors] = useState(null)
 
@@ -49,6 +52,7 @@ const CustomerRegisterComponent = () => {
     }
 
     const onSubmit = async (values: z.infer<typeof customerSchema>) => {
+        setLoading(true);
         values.birth_date = formatDate(values.birth_date) ?? new Date();
         values.role="Customer";
 
@@ -59,9 +63,9 @@ const CustomerRegisterComponent = () => {
                 variant: "success",
                 description: "Please Check Your Email",
             });
-            
             navigate("/Login");
         }
+        setLoading(false);
     };
 
     const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -217,7 +221,13 @@ const CustomerRegisterComponent = () => {
                             )}
                         />
                         <div className="justify-center flex">
-                            <Button type="submit" className='mt-4'>{t('Register')}</Button>
+                            <Button type="submit" className='mt-4' disabled={loading} variant="primary">
+                                {loading ? (
+                                    <HashLoader size={20} color={"#ffffff"} loading={loading} />
+                                ) : (
+                                    t('Register')
+                                )}
+                            </Button>
                         </div>
                     </form>
                 </Form>

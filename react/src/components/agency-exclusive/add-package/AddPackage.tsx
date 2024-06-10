@@ -63,7 +63,7 @@ const AddPackage = () => {
         const response = await hitAddApi("/v1/CreatePackageAgency",payload);
         if(response === 200)
         {
-            navigate(urlConstant.AgencyHomePage);
+            navigate(urlConstant.AgencyProduct);
         }
     }
 

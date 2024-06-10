@@ -110,7 +110,7 @@ const AddAttraction = () => {
                 variant: "success",
                 description: "Item added."
             });
-            navigate('/Agency');
+            navigate('/Agency/Product');
         }catch (response) {
             const axiosError = response as AxiosError; // Cast the error to AxiosError
             if (axios.isAxiosError(response)) { // Check if the error is an AxiosError

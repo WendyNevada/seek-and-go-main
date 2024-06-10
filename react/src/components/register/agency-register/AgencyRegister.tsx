@@ -17,10 +17,13 @@ import { hitAddApi } from "@/context/HitApi";
 import { toast } from "@/components/ui/use-toast";
 import { useTranslation } from "react-i18next";
 import { Required } from "@/components/ui/Custom/required";
+import { useState } from "react";
+import HashLoader from "react-spinners/HashLoader";
 
 const AgencyRegisterComponent = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
+    const [ loading, setLoading ] = useState(false);
 
     const form = useForm<z.infer<typeof agencySchema>>({
         resolver: zodResolver(agencySchema),
@@ -39,6 +42,7 @@ const AgencyRegisterComponent = () => {
     //CreateAccountAgency
 
     const onSubmit = async (values: z.infer<typeof agencySchema>) => {
+        setLoading(true);
         const response = await hitAddApi("/v1/CreateAccountAgency",values);
 
         if(response === 200){
@@ -49,7 +53,7 @@ const AgencyRegisterComponent = () => {
             
             navigate("/Login");
         }
-        
+        setLoading(false);
         // try {
         //     axiosClient.post("/v1/CreateAccountAgency", values);
         //     toast({
@@ -220,8 +224,12 @@ const AgencyRegisterComponent = () => {
                             )}
                         />
                         <div className="justify-center flex">
-                            <Button type="submit" className="mt-4">
-                                {t('Register')}
+                            <Button type="submit" className='mt-4' disabled={loading} variant="primary">
+                                {loading ? (
+                                    <HashLoader size={20} color={"#ffffff"} loading={loading} />
+                                ) : (
+                                    t('Register')
+                                )}
                             </Button>
                         </div>
                     </form>
