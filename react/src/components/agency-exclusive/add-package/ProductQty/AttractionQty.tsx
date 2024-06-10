@@ -1,5 +1,5 @@
 import { useLogin } from '@/context/LoginContext';
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 import { DaumAttraction } from '../../product-dashboard/utils/ProductModel';
 import axiosClient from '@/axios.client';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -13,27 +13,23 @@ import { useTranslation } from 'react-i18next';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
-import { format } from 'date-fns';
+import { addDays, format } from 'date-fns';
 import { cn } from '@/lib/utils';
-
 
 interface AttractionQtyProps {
     attractionQty: number;
     agency_id_param?: number | null | undefined;
     initialDetails?: { ref_attraction_id?: string | null }[];
-    onDetailsChange: (details: { ref_attraction_id?: string | null }[]) => void; // Function to handle details change
+    onDetailsChange: (details: { ref_attraction_id?: string | null, start_dt?: string | null, end_dt?: string | null }[]) => void;
     onAttractionQtyChange: (attractionQty: number) => void;
 }
 
-const AttractionQty = ( {attractionQty, initialDetails, onDetailsChange, onAttractionQtyChange, agency_id_param } : AttractionQtyProps ) => {
+const AttractionQty = ({ attractionQty, initialDetails, onDetailsChange, onAttractionQtyChange, agency_id_param }: AttractionQtyProps) => {
     const { t } = useTranslation();
     const { user } = useLogin();
     const [attraction, setAttraction] = useState<DaumAttraction[]>([]);
-    const [details, setDetails] = useState<{ ref_attraction_id?: string | null, start_dt?: Date | null, end_dt?: Date | null}[]>(Array.from({ length: attractionQty }, () => ({ ref_attraction_id: null })));
+    const [details, setDetails] = useState<{ ref_attraction_id?: string | null, start_dt?: string | null, end_dt?: string | null }[]>(Array.from({ length: attractionQty }, () => ({ ref_attraction_id: null })));
     const [newAttractions, setNewAttractions] = useState<DaumAttraction[]>(Array.from({ length: attractionQty }, () => ({} as DaumAttraction)));
-    const [valueFromDate, setValueFromDate] = useState('');
-
-    const [ startDt, setStartDt ] = useState<Date>();
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
@@ -41,14 +37,14 @@ const AttractionQty = ( {attractionQty, initialDetails, onDetailsChange, onAttra
             try {
                 const response = await axiosClient.post('/v1/GetActiveAttractionByAgencyId', {
                     agency_id: (user && user.agency_id > 0 ? user.agency_id : agency_id_param)
-                }); // Replace 'your-api-url' with the actual API endpoint
+                });
                 setAttraction(response.data.data);
             } catch (error) {
                 console.error('Error fetching attractions:', error);
             }
         }
         fetchAttraction();
-    },[]);
+    }, []);
 
     useEffect(() => {
         if (initialDetails && initialDetails.length > 0) {
@@ -64,11 +60,24 @@ const AttractionQty = ( {attractionQty, initialDetails, onDetailsChange, onAttra
         }
     }, [attraction, initialDetails]);
 
-    const handleDetailChange = (index: number, value: string, startDt?: Date) => {
-        setStartDt(startDt);
-        setValueFromDate(value);
+    const handleDateChange = (index: number, date: Date | undefined) => {
+        if (date) {
+            const newDetails = [...details];
+            const start_dt = date ? addDays(date, 1).toISOString().split('T')[0] : '';
+            const end_dt = date ? addDays(date, 1).toISOString().split('T')[0] : '';
+            newDetails[index] = {
+                ...newDetails[index],
+                start_dt,
+                end_dt,
+            };
+            setDetails(newDetails);
+            onDetailsChange(newDetails);
+        }
+    };
+
+    const handleDetailChange = (index: number, value: string) => {
         const newDetails = [...details];
-        newDetails[index] = { ref_attraction_id: value, start_dt: startDt, end_dt: startDt }; // Create a new object for the detail
+        newDetails[index] = { ...newDetails[index], ref_attraction_id: value };
         setDetails(newDetails);
         onDetailsChange(newDetails);
 
@@ -87,9 +96,7 @@ const AttractionQty = ( {attractionQty, initialDetails, onDetailsChange, onAttra
                 return updatedAttractions;
             });
         }
-        // console.log('startDt : ',startDt?.toISOString().split('T')[0]);
     };
-
 
     const handleRemoveDetail = (index: number) => {
         const newDetails = [...details];
@@ -101,7 +108,6 @@ const AttractionQty = ( {attractionQty, initialDetails, onDetailsChange, onAttra
 
     return (
         <div>
-            {/* <p className='text-sm'>prev attraction : {attraction.map((attractionItem) => attractionItem.attraction_name)}</p> */}
             {Array.from({ length: attractionQty }).map((_, index) => (
                 <div key={index} className="flex flex-col gap-4 my-2">
                     <div className="flex flex-row">
@@ -118,7 +124,7 @@ const AttractionQty = ( {attractionQty, initialDetails, onDetailsChange, onAttra
                             </SelectContent>
                         </Select>
 
-                        <Button className='ml-2' variant={'destructive'} onClick={() => handleRemoveDetail(index)}>{<HighlightOffIcon/>}</Button>
+                        <Button className='ml-2' variant={'destructive'} onClick={() => handleRemoveDetail(index)}>{<HighlightOffIcon />}</Button>
                     </div>
 
                     <div className="border-2 rounded-md">
@@ -126,7 +132,7 @@ const AttractionQty = ( {attractionQty, initialDetails, onDetailsChange, onAttra
                             <div className='flex flex-row'>
                                 <div className="ml-1 mt-4">
                                     {details[index]?.ref_attraction_id && (
-                                        <img src={enviUrl + newAttractions[index]?.image_url} className='w-64 ml-4 rounded-md'/>
+                                        <img src={enviUrl + newAttractions[index]?.image_url} className='w-64 ml-4 rounded-md' />
                                     )}
                                 </div>
                                 <div className="">
@@ -150,42 +156,38 @@ const AttractionQty = ( {attractionQty, initialDetails, onDetailsChange, onAttra
                                                         <TableCell className="font-medium">{t('Description')} :</TableCell>
                                                         <TableCell className="font-medium">{newAttractions[index]?.description}</TableCell>
                                                     </TableRow>
-                                                    {
-                                                        agency_id_param ? (
-                                                            <TableRow>
-                                                                <TableCell className="font-medium">Input Date :</TableCell>
-                                                                <TableCell className="font-medium">
-                                                                    <Popover>
-                                                                        <PopoverTrigger asChild>
-                                                                            <Button
+                                                    {agency_id_param ? (
+                                                        <TableRow>
+                                                            <TableCell className="font-medium">Input Date :</TableCell>
+                                                            <TableCell className="font-medium">
+                                                                <Popover>
+                                                                    <PopoverTrigger asChild>
+                                                                        <Button
                                                                             variant={"outline"}
                                                                             className={cn(
                                                                                 "w-[280px] justify-start text-left font-normal",
-                                                                                !startDt && "text-muted-foreground"
+                                                                                !details[index]?.start_dt && "text-muted-foreground"
                                                                             )}
-                                                                            >
+                                                                        >
                                                                             <CalendarIcon className="mr-2 h-4 w-4" />
-                                                                            {startDt ? format(startDt, "PPP") : <span>Pick a date</span>}
-                                                                            </Button>
-                                                                        </PopoverTrigger>
-                                                                        <PopoverContent className="w-auto p-0">
-                                                                            <Calendar
+                                                                            {details[index]?.start_dt ? format(new Date(details[index]?.start_dt!), "PPP") : <span>Pick a date</span>}
+                                                                        </Button>
+                                                                    </PopoverTrigger>
+                                                                    <PopoverContent className="w-auto p-0">
+                                                                        <Calendar
                                                                             mode="single"
-                                                                            selected={startDt}
-                                                                            onSelect={(dt) => handleDetailChange(index, valueFromDate, dt)}
+                                                                            selected={details[index]?.start_dt ? new Date(details[index]?.start_dt as string) : undefined}
+                                                                            onSelect={(dt) => handleDateChange(index, dt)}
                                                                             initialFocus
                                                                             fromDate={new Date()}
-                                                                            />
-                                                                        </PopoverContent>
-                                                                    </Popover>
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        ) : (
-                                                            <>
-                                                                
-                                                            </>
-                                                        )
-                                                    }
+                                                                        />
+                                                                    </PopoverContent>
+                                                                </Popover>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    ) : (
+                                                        <></>
+                                                    )}
                                                 </TableBody>
                                             </Table>
                                         </div>
@@ -193,14 +195,14 @@ const AttractionQty = ( {attractionQty, initialDetails, onDetailsChange, onAttra
                                 </div>
                             </div>
                         ) : (
-                            <p className='text-center text-sm'>{t('No attraction selected')}</p> // Fallback message or content
+                            <p className='text-center text-sm'>{t('No attraction selected')}</p>
                         )}
                     </div>
 
                 </div>
             ))}
         </div>
-    )
+    );
 }
 
-export default AttractionQty
+export default AttractionQty;
