@@ -204,6 +204,7 @@ class PackageHService implements PackageHInterface
             $packageH = PackageH::where('agency_id', $agency_id)
             ->where('is_custom', $is_custom)
             ->where('qty', '>', '0')
+            ->where('is_active', '1')
             ->with('packageDs')
             ->get();
 
@@ -212,6 +213,8 @@ class PackageHService implements PackageHInterface
         {
             $packageH = PackageH::where('agency_id', $agency_id)
                 ->where('is_custom', $is_custom)
+                ->where('qty', '>', '0')
+                ->where('is_active', '1')
                 ->limit($limit)
                 ->with('packageDs')
                 ->get();

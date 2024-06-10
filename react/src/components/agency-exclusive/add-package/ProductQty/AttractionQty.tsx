@@ -87,7 +87,7 @@ const AttractionQty = ( {attractionQty, initialDetails, onDetailsChange, onAttra
                 return updatedAttractions;
             });
         }
-        console.log('startDt : ',startDt);
+        // console.log('startDt : ',startDt?.toISOString().split('T')[0]);
     };
 
 
@@ -174,6 +174,7 @@ const AttractionQty = ( {attractionQty, initialDetails, onDetailsChange, onAttra
                                                                             selected={startDt}
                                                                             onSelect={(dt) => handleDetailChange(index, valueFromDate, dt)}
                                                                             initialFocus
+                                                                            fromDate={new Date()}
                                                                             />
                                                                         </PopoverContent>
                                                                     </Popover>

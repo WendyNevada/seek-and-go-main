@@ -71,6 +71,7 @@ export function DatePickerWithRange({ className, onDateChange, startDt, endDt }:
             selected={date}
             onSelect={setDate}
             numberOfMonths={2}
+            fromDate={new Date()}
           />
         </PopoverContent>
       </Popover>

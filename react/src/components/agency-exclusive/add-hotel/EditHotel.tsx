@@ -13,12 +13,14 @@ import axios, { AxiosError } from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Required } from '@/components/ui/Custom/required'
 import { useTranslation } from 'react-i18next'
+import HashLoader from 'react-spinners/HashLoader'
 
 const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
     const { t } = useTranslation();
     const [imageUrl, setImageUrl] = useState<string|undefined>('');
     const navigate = useNavigate()
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
+    const [ loading, setLoading ] = useState(true);
 
     const form = useForm<z.infer<typeof editHotelSchema>>({
         resolver : zodResolver(editHotelSchema),
@@ -58,6 +60,8 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                 //form.setValue('address2', response.data.address2);
             } catch (error) {
                 console.error('Error fetching attraction data:', error);
+            } finally {
+                setLoading(false);
             }
 
         };
@@ -90,9 +94,9 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
             });
             toast({
                 variant: "success",
-                description: "Item added."
+                description: "Item Edited"
             });
-            navigate('/Agency');
+            navigate('/Agency/Product');
         }catch(response){
             const axiosError = response as AxiosError; // Cast the error to AxiosError
             if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
@@ -107,6 +111,11 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
     return (
         <div className="min-h-50 w-50 p-0 sm:p-12">
             <div className="mx-auto max-w-2xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
+                {loading ? (
+                    <div className="flex justify-center items-center">
+                        <HashLoader size={50} color={"#123abc"} loading={loading} />
+                    </div>
+                ) : (
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <h1 className="text-2xl font-bold mb-8 text-center">{t('Edit Hotel')}</h1>
@@ -278,6 +287,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                         </div>
                     </form>
                 </Form>
+                )}
             </div>
         </div>
     )

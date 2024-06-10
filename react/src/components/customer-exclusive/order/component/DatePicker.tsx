@@ -43,6 +43,7 @@ export function DatePicker({ onDateChange }: { onDateChange: (date: Date) => voi
           selected={date}
           onSelect={handleDateSelect}
           initialFocus
+          fromDate={new Date()}
         />
       </PopoverContent>
     </Popover>
