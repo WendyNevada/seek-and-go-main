@@ -102,7 +102,7 @@ const MyOrder = ({customer_id}: {customer_id:number}) => {
                                         <p className='font-bold mr-5'>Date</p>
                                         <p className='font-bold text-lg text-blue-500'>{order.order_dt.split(' ')[0]}</p>
                                     </div>
-                                    <div className="text-sm w-max p-2 rounded-3xl flex flex flex-col">
+                                    <div className="text-sm w-max p-2 rounded-3xl flex flex-col">
                                         <p className='text-sm font-bold'>Status</p>
                                         <p className='font-bold text-lg text-blue-500'>{order.order_status}</p>
                                     </div>
