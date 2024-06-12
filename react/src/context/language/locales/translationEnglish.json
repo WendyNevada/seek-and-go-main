@@ -155,7 +155,7 @@
     "Are you sure you want to reject this order?": "Are you sure you want to reject this order?",
     "Approve": "Approve",
     "Reject": "Reject",
-    "This will send an email to the customer, do you want to continue?": "This will send an email to the customer, do you want to continue?",
+    "This will send an email reminder to the customer to continue the payment, do you want to continue?": "This will send an email reminder to the customer to continue the payment, do you want to continue?",
     "Send Email": "Send Email",
     "Finish": "Finish",
     "This action will finish the order, do you want to continue?": "This action will finish the order, do you want to continue?",
