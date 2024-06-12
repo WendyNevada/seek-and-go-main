@@ -664,7 +664,7 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
                 </div>
                 )}
 
-                {order.order_status === 'FIN' && order.order_ds[0].package_h_id === null && isGiveRating === 0 && (
+                {order.order_status === 'FIN' && order.order_ds[0].package_h_id == null && isGiveRating == 0 && (
                     <div className="flex justify-center items-center mt-1 mb-3">
                       <Button variant="primary" className="bg-yellow-500 p-2 hover:bg-yellow-700 px-4 w-28" onClick={() => handleOpenRatingModal()} disabled={buttonRate}>{t('Give Rating')}</Button>
                       <RatingDialog isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} products={productsRating} order_h_id={order_h_id} onSave={() => handleAfterRate()}/>
