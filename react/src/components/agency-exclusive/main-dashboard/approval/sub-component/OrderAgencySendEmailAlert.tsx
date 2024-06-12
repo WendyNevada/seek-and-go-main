@@ -28,7 +28,7 @@ const OrderAgencySendEmailAlert = ({
     actionLoading,
     onAction
 }: OrderAgencySendEmailAlertProps) => {
-    
+
     const { t } = useTranslation();
 
     const handleSendEmailOrder = async () => {
@@ -45,7 +45,7 @@ const OrderAgencySendEmailAlert = ({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>{t('Are you sure?')}</AlertDialogTitle>
-                    <AlertDialogDescription>{t('This will send an email to the customer, do you want to continue?')}</AlertDialogDescription>
+                    <AlertDialogDescription>{t('This will send an email reminder to the customer to continue the payment, do you want to continue?')}</AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel className="bg-red-500 text-white hover:bg-red-600">{t('No')}</AlertDialogCancel>

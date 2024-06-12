@@ -154,7 +154,7 @@
     "Are you sure you want to reject this order?": "Apakah anda yakin ingin menolak pesanan ini?",
     "Approve": "Setuju",
     "Reject": "Tolak",
-    "This will send an email to the customer, do you want to continue?": "Ini akan mengirimkan email ke pelanggan, apakah anda ingin melanjutkan?",
+    "This will send an email reminder to the customer to continue the payment, do you want to continue?": "Aksi ini akan mengirimkan email pengingat ke pelanggan untuk melanjutkan pembayaran, apakah anda ingin melanjutkan?",
     "Send Email": "Kirim Email",
     "Finish": "Selesai",
     "This action will finish the order, do you want to continue?": "Aksi ini akan menyelesaikan pesanan, apakah anda ingin melanjutkan?",
