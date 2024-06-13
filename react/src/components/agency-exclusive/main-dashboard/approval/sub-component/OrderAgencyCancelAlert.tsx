@@ -44,7 +44,7 @@ const OrderAgencyCancelAlert = ({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>{t('Are you sure?')}</AlertDialogTitle>
-                    <AlertDialogDescription>{t('Are you sure you want to reject this order?')}</AlertDialogDescription>
+                    <AlertDialogDescription>{t('Are you sure you want to cancel this order?')}</AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel className="bg-red-500 text-white hover:bg-red-600">{t('No')}</AlertDialogCancel>

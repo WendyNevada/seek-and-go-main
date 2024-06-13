@@ -14,6 +14,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { urlConstant } from '@/urlConstant'
 import LoginIcon from '@mui/icons-material/Login';
 import LocalGroceryStoreIcon from '@mui/icons-material/LocalGroceryStore';
+import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 
 const Navbar = () => {
 
@@ -80,6 +81,11 @@ const Navbar = () => {
             text:"Profile",
             icon:<PersonIcon/>,
             link:`/Customer/EditProfileCustomer/${user?.customer_id}`
+        },
+        {
+            text:"Register",
+            icon:<AppRegistrationIcon/>,
+            link:`/Register`
         },
         {
             text:"Login",
@@ -176,7 +182,7 @@ const Navbar = () => {
                 )}
             </div>
 
-            <div className='w-full hidden flex lg:flex lg:items-center lg:w-auto mr-6'>
+            <div className='w-full hidden lg:flex lg:items-center lg:w-auto mr-6'>
             {menuOptions.map((item, index) => (
             <a key={index} href={item.link}
                 className={`block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-5
