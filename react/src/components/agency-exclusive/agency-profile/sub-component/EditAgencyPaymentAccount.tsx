@@ -52,7 +52,7 @@ const EditAgencyPaymentAccount = ({ payment }: { payment: PayAccount[] }) => {
             <div className="bg-white border-0 shadow-lg sm:rounded-3xl p-12 space-y-2 flex flex-col items-end">
                 <div className="space-x-4">
                     <Button onClick={addPaymentRow} variant={'primary'} className="mt-4">
-                        {t('Add Payment')}
+                        {t('Add Payment Transfer')}
                     </Button>
                     <Button onClick={addQRISPaymentRow} variant={'primary'} className="mt-4">
                         {t('Add QRIS')}
@@ -62,13 +62,13 @@ const EditAgencyPaymentAccount = ({ payment }: { payment: PayAccount[] }) => {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                        <TableHead>Bank</TableHead>
-                        <TableHead>Account No</TableHead>
-                        <TableHead>Account Name</TableHead>
-                        <TableHead>Payment Type</TableHead>
-                        <TableHead className="text-center">Picture</TableHead>
-                        <TableHead className="text-right">Edit</TableHead>
-                        <TableHead className="text-center">Delete</TableHead>
+                        <TableHead>{t('Bank')}</TableHead>
+                        <TableHead>{t('Account No')}</TableHead>
+                        <TableHead>{t('Account Name')}</TableHead>
+                        <TableHead>{t('Payment Type')}</TableHead>
+                        <TableHead className="text-center">{t('Picture')}</TableHead>
+                        <TableHead className="text-right">{t('Edit')}</TableHead>
+                        <TableHead className="text-center">{t('Delete')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -83,7 +83,7 @@ const EditAgencyPaymentAccount = ({ payment }: { payment: PayAccount[] }) => {
                                     <div>-</div>
                                 ) : (
                                     <a href={enviUrl + payment.image_url} target="_blank" rel="noopener noreferrer">
-                                        Open Picture
+                                        {t('Open Picture')}
                                     </a>
                                 )}
                             </TableCell>

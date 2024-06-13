@@ -481,6 +481,53 @@ class OrderHService implements OrderHInterface
     {
         return RefPicture::where('order_h_id', $order_h_id)->first();
     }
+
+    private function priceTimesQty($price, $qty)
+    {
+        return $price * $qty;
+    }
+
+    private function addQtyBack($order) //tidak support multiple order
+    {
+        $orderD = OrderD::where('order_h_id', $order->order_h_id)->get();
+
+        foreach($orderD as $orderDetail)
+        {
+            if($orderDetail->package_h_id != null)
+            {
+                $package = PackageH::where('package_h_id', $orderDetail->package_h_id)->first();
+                $package->update([
+                    'qty' => $package->qty + $orderDetail->qty
+                ]);
+
+                break;
+            }
+            else
+            {
+                if($orderDetail->ref_hotel_id != null)
+                {
+                    $hotel = RefHotel::where('ref_hotel_id', $orderDetail->ref_hotel_id)->first();
+                    $hotel->update([
+                        'qty' => $hotel->qty + $orderDetail->qty
+                    ]);
+                }
+                else if($orderDetail->ref_attraction_id != null)
+                {
+                    $attraction = RefAttraction::where('ref_attraction_id', $orderDetail->ref_attraction_id)->first();
+                    $attraction->update([
+                        'qty' => $attraction->qty + $orderDetail->qty
+                    ]);
+                }
+                else if($orderDetail->ref_vehicle_id != null)
+                {
+                    $vehicle = RefVehicle::where('ref_vehicle_id', $orderDetail->ref_vehicle_id)->first();
+                    $vehicle->update([
+                        'qty' => $vehicle->qty + $orderDetail->qty
+                    ]);
+                }
+            }
+        }
+    }
     #endregion
 
     #region Public Function
@@ -646,7 +693,7 @@ class OrderHService implements OrderHInterface
 
                 if($detail['ref_attraction_id'] != null && $detail['package_h_id'] == null)
                 {
-                    $totPrice = $price * $detail['qty'];
+                    $totPrice = $this->priceTimesQty($price, $detail['qty']);
                 }
 
                 $this->reduceProductQty($detail, $detail['product_type'], $detail['qty']);
@@ -741,6 +788,8 @@ class OrderHService implements OrderHInterface
             
             $orderH = $this->updateOrderStatus($request->order_h_id, Constanta::$orderStatusRejected);
 
+            $this->addQtyBack($orderH);
+
             $email = $this->getEmailByForeignId($orderH->customer_id, Constanta::$roleCustomer);
 
             $agencyName = $this->getAgencyByAgencyId($orderH->agency_id)->agency_name;
@@ -774,6 +823,8 @@ class OrderHService implements OrderHInterface
             DB::beginTransaction();
 
             $orderH = $this->updateOrderStatus($request->order_h_id, Constanta::$orderStatusCanceled);
+
+            $this->addQtyBack($orderH);
             
             $email = $this->getEmailByForeignId($orderH->customer_id, Constanta::$roleCustomer);
 
@@ -808,6 +859,8 @@ class OrderHService implements OrderHInterface
             DB::beginTransaction();
 
             $orderH = $this->updateOrderStatus($request->order_h_id, Constanta::$orderStatusCanceled);
+
+            $this->addQtyBack($orderH);
 
             $email = $this->getEmailByForeignId($orderH->agency_id, Constanta::$roleAgency);
 

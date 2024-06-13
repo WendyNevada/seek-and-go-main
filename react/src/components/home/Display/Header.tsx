@@ -29,7 +29,7 @@ const Header = () => {
             {/* Background with typewriter effect */}
             <div
                 className="bg-cover bg-center inset-0 flex items-center justify-center flex-col"
-                style={{ height: "40rem", zIndex: 10, backgroundImage: `url(${assetForWeb.HomePageBackground})`, backgroundSize: "cover",}}
+                style={{ height: "40rem", zIndex: 10, backgroundImage: `url(${assetForWeb.Beach})`, backgroundSize: "cover",}}
             >
                 <TypewriterEffect words={words} className="z-40"/>
                 <br></br>
@@ -43,7 +43,7 @@ const Header = () => {
                 }}
             >
                 {/* Gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-50"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500 opacity-50"></div>
             </div>
         </div>
     );

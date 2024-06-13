@@ -121,7 +121,7 @@ const AddVehicle = () => {
                 variant: "success",
                 description: "Item added."
             });
-            navigate('/Agency');
+            navigate('/Agency/Product');
         }catch (response) {
             const axiosError = response as AxiosError; // Cast the error to AxiosError
             if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
@@ -173,6 +173,7 @@ const AddVehicle = () => {
                                                 placeholder={t('Vehicle Name')}
                                                 {...field}
                                                 onChange={field.onChange}
+                                                maxLength={100}
                                             />
                                         </FormControl>
                                     </FormItem>
@@ -353,6 +354,7 @@ const AddVehicle = () => {
                                                 placeholder={t('Input Vehicle Brand')}
                                                 {...field}
                                                 onChange={field.onChange}
+                                                maxLength={100}
                                             />
                                         </FormControl>
                                     </FormItem>
@@ -371,6 +373,7 @@ const AddVehicle = () => {
                                                 placeholder={t('Input Vehicle Series')}
                                                 {...field}
                                                 onChange={field.onChange}
+                                                maxLength={100}
                                             />
                                         </FormControl>
                                     </FormItem>
@@ -389,6 +392,7 @@ const AddVehicle = () => {
                                                 placeholder={t('Input Vehicle Model')}
                                                 {...field}
                                                 onChange={field.onChange}
+                                                maxLength={100}
                                             />
                                         </FormControl>
                                     </FormItem>
@@ -427,6 +431,7 @@ const AddVehicle = () => {
                                                 placeholder={t('Street Address')}
                                                 {...field}
                                                 onChange={field.onChange}
+                                                maxLength={100}
                                             />
                                         </FormControl>
                                     </FormItem>
@@ -462,6 +467,7 @@ const AddVehicle = () => {
                                                 placeholder={t('Promo Code')}
                                                 {...field}
                                                 onChange={field.onChange}
+                                                maxLength={50}
                                             />
                                         </FormControl>
                                     </FormItem>
@@ -498,6 +504,7 @@ const AddVehicle = () => {
                                                 placeholder={t('Description')}
                                                 {...field}
                                                 onChange={field.onChange}
+                                                maxLength={1000}
                                             />
                                         </FormControl>
                                     </FormItem>

@@ -110,7 +110,7 @@ const AddAttraction = () => {
                 variant: "success",
                 description: "Item added."
             });
-            navigate('/Agency');
+            navigate('/Agency/Product');
         }catch (response) {
             const axiosError = response as AxiosError; // Cast the error to AxiosError
             if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
@@ -242,6 +242,7 @@ const AddAttraction = () => {
                                                 placeholder={t('Attraction Name')}
                                                 {...field}
                                                 onChange={field.onChange}
+                                                maxLength={100}
                                             />
                                         </FormControl>
                                     </FormItem>
@@ -259,6 +260,7 @@ const AddAttraction = () => {
                                                 placeholder={t('Description')}
                                                 {...field}
                                                 onChange={field.onChange}
+                                                maxLength={1000}
                                             />
                                         </FormControl>
                                     </FormItem>
@@ -276,6 +278,7 @@ const AddAttraction = () => {
                                                 placeholder={t('Street Address')}
                                                 {...field}
                                                 onChange={field.onChange}
+                                                maxLength={100}
                                             />
                                         </FormControl>
                                     </FormItem>
@@ -310,6 +313,7 @@ const AddAttraction = () => {
                                                 placeholder={t('Promo Code')}
                                                 {...field}
                                                 onChange={field.onChange}
+                                                maxLength={50}
                                             />
                                         </FormControl>
                                     </FormItem>

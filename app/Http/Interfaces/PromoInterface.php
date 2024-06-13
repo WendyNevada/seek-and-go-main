@@ -8,6 +8,8 @@ use App\Http\Requests\V2\PromoDeductionRequest;
 
 interface PromoInterface 
 {
+    public function GetAllPromo();
+
     public function AddPromo(StorePromoRequest $request);
 
     public function GetPromoDeductionPriceAttraction(PromoDeductionRequest $request);

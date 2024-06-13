@@ -45,8 +45,8 @@ const DisplayHotel = () => {
                                     <Card className='w-64 shadow-lg mt-8 hover:shadow-2xl cursor-pointer overflow-hidden' onClick={() => selectItem(item.ref_hotel_id)}>
                                         <img src={enviUrl + item.image_url} alt={item.hotel_name} className="h-36 w-full shadow-lg hover:scale-110" />
                                         <CardHeader>
-                                            <CardTitle className='truncate'>{item.hotel_name}</CardTitle>
-                                            <CardDescription>{item.description}</CardDescription>
+                                            <CardTitle className='truncate min-h-8'>{item.hotel_name}</CardTitle>
+                                            <CardDescription className='truncate'>{item.description}</CardDescription>
                                         </CardHeader>
                                         <CardContent className='flex-1'>
                                             <p className="w-[200px] truncate">{item.address_zipcode}</p>

@@ -13,12 +13,14 @@ import { toast } from '@/components/ui/use-toast'
 import axios, { AxiosError } from 'axios'
 import { Required } from '@/components/ui/Custom/required'
 import { useTranslation } from 'react-i18next'
+import HashLoader from 'react-spinners/HashLoader'
 
 const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) => {
     const { t } = useTranslation();
     const enviUrl = import.meta.env.VITE_API_BASE_URL;
     const [imageUrl, setImageUrl] = useState('');
     const navigate = useNavigate();
+    const [ loading, setLoading ] = useState(true);
 
     const form = useForm<z.infer<typeof editAttractionSchema>>({
         resolver: zodResolver(editAttractionSchema),
@@ -70,6 +72,8 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
 
             } catch (error) {
                 console.error('Error fetching attraction data:', error);
+            } finally {
+                setLoading(false);
             }
 
         };
@@ -104,9 +108,9 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
             });
             toast({
                 variant: "success",
-                description: "Item added."
+                description: "Item Edited"
             });
-            navigate('/Agency');
+            navigate('/Agency/Product');
         }catch(response){
             const axiosError = response as AxiosError; // Cast the error to AxiosError
             if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
@@ -121,6 +125,11 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
     return (
         <div className='min-h-50 w-50 p-0 sm:p-12'>
             <div className="mx-auto max-w-xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
+                {loading ? (
+                    <div className="flex justify-center items-center">
+                        <HashLoader size={50} color={"#123abc"} loading={loading} />
+                    </div>
+                    ) : (
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)}>
                                 <h1 className="text-2xl font-bold mb-8 text-center">{t('Edit Attraction')}</h1>
@@ -182,6 +191,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                                     placeholder={t('Attraction Name')}
                                                     {...field}
                                                     onChange={field.onChange}
+                                                    maxLength={100}
                                                 />
                                             </FormControl>
                                         </FormItem>
@@ -200,6 +210,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                                     placeholder={t('Description')}
                                                     {...field}
                                                     onChange={field.onChange}
+                                                    maxLength={1000}
                                                 />
                                             </FormControl>
                                         </FormItem>
@@ -218,6 +229,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                                     placeholder={t('Street Address')}
                                                     {...field}
                                                     onChange={field.onChange}
+                                                    maxLength={100}
                                                 />
                                             </FormControl>
                                         </FormItem>
@@ -272,6 +284,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                                     placeholder={t('Promo Code')}
                                                     {...field}
                                                     onChange={field.onChange}
+                                                    maxLength={50}
                                                 />
                                             </FormControl>
                                         </FormItem>
@@ -302,7 +315,8 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                                 </div>
                             </form>
                         </Form>
-                    </div>
+                )}
+                </div>
         </div>
     )
 }

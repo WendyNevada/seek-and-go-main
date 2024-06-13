@@ -197,9 +197,35 @@ class PromoService implements PromoInterface
             return $price_1 - $price_2;
         }
     }
+
+    private function getPromo()
+    {
+        return Promo::all();
+    }
     #endregion
 
     #region Public Function
+    public function GetAllPromo()
+    {
+        $promo = $this->getPromo();
+        if($promo != null)
+        {
+            return response()->json([
+                'status' => "success",
+                'message' => "Promo found",
+                'promo' => $promo
+            ], 200);
+        }
+        else
+        {
+            return response()->json([
+                'status' => "error",
+                'message' => "Promo not found",
+                'promo' => []
+            ], 200);
+        }
+    }
+
     public function AddPromo(StorePromoRequest $request)
     {
         try

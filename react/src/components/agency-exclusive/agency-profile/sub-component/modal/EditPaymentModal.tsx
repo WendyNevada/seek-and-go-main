@@ -14,6 +14,7 @@ import { useLogin } from '@/context/LoginContext';
 import { hitAddApi } from '@/context/HitApi';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface CredentialModalProps {
     isOpen: boolean;
@@ -25,6 +26,7 @@ interface CredentialModalProps {
 const EditPaymentModal = ({ isOpen, onClose, payment, onSave }: CredentialModalProps) => {
     const { user } = useLogin();
     const  navigate  = useNavigate();
+    const { t } = useTranslation();
 
     const [editedPayment, setEditedPayment] = useState<PayAccount>();
     // const enviUrl = import.meta.env.VITE_API_BASE_URL;
@@ -92,14 +94,14 @@ const EditPaymentModal = ({ isOpen, onClose, payment, onSave }: CredentialModalP
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px] flex flex-col align-middle items-center">
         <DialogHeader>
-          <DialogTitle>Edit Payment Account</DialogTitle>
+          <DialogTitle>{t('Edit Payment Account')}</DialogTitle>
           <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
+            {t('Make changes to your the payment method here. Click save when you are done')}
           </DialogDescription>
         </DialogHeader>
              <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="username" className="text-right">
-                Account Name
+                {t('Account Name')}
                 </Label>
                 <Input
                 id="account_name"
@@ -112,7 +114,7 @@ const EditPaymentModal = ({ isOpen, onClose, payment, onSave }: CredentialModalP
                 <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="name" className="text-right">
-                        Account No
+                        {t('Account No')}
                         </Label>
                         <Input
                         id="account_no"
@@ -135,7 +137,7 @@ const EditPaymentModal = ({ isOpen, onClose, payment, onSave }: CredentialModalP
                 </div>
             )}
         <DialogFooter>
-          <Button variant={"primary"} onClick={handleSaveChanges}>Save changes</Button>
+          <Button variant={"primary"} className="bg-green-500 hover:bg-green-700" onClick={handleSaveChanges}>{t('Save Changes')}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

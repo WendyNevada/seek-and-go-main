@@ -8,8 +8,10 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { hitAddApi } from "@/context/HitApi";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import HashLoader from "react-spinners/HashLoader";
 
 interface CredentialModalProps {
   isOpen: boolean;
@@ -22,6 +24,7 @@ interface email {
 
 const EmailModal = ({ isOpen, onClose }:CredentialModalProps) => {
   const { t } = useTranslation();
+  const [ loading, setLoading ] = useState(false);
 
   const form = useForm<email>({
     defaultValues: {
@@ -30,7 +33,9 @@ const EmailModal = ({ isOpen, onClose }:CredentialModalProps) => {
 })
 
     const forgetPassword = async (values: string) => {
+      setLoading(true);
       await hitAddApi("v1/ForgotPasswordRequest",{email:values});
+      setLoading(false);
       onClose();
   }
 
@@ -41,7 +46,13 @@ const EmailModal = ({ isOpen, onClose }:CredentialModalProps) => {
             <DialogTitle className="text-center">{t('Input email here')}</DialogTitle>
             </DialogHeader>
                 <Input placeholder={t('Email')} onChange={(e) => form.setValue("email", e.target.value)}></Input>
-                <Button onClick={() => forgetPassword(form.getValues("email"))} variant="primary">{t('Send')}</Button>
+                <Button onClick={() => forgetPassword(form.getValues("email"))} variant="primary">
+                  {loading ? (
+                    <HashLoader size={20} color={"#ffffff"} loading={loading} />
+                  ) : (
+                    t('Send')
+                  )}
+                </Button>
             <DialogFooter>
             </DialogFooter>
         </DialogContent>

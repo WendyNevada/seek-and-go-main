@@ -55,8 +55,8 @@ const RequestPackage = ({agency_id} : {agency_id: number}) => {
             ref_attraction_id: detail.ref_attraction_id || null,
             ref_vehicle_id: detail.ref_vehicle_id || null,
             ref_hotel_id: detail.ref_hotel_id || null,
-            start_date: detail.start_dt || null,
-            end_date: detail.end_dt || null
+            start_dt: detail.start_dt || null,
+            end_dt: detail.end_dt || null
         }));
 
         const payload = { ...values, details: mergedDetails };
@@ -160,7 +160,7 @@ const RequestPackage = ({agency_id} : {agency_id: number}) => {
                         <HotelQty hotelQty={hotelQty} onDetailsChange={handleHotelDetailsChange} onHotelQtyChange={setHotelQty} agency_id_param={agency_id}/>
 
                         <div className="justify-center flex">
-                            <Button type="submit" variant={"primary"} className='mt-4 hover:bg-blue-300'>{t('Add Package')}
+                            <Button type="submit" variant={"primary"} className='mt-4 hover:bg-blue-300'>{t('Send Request')}
                             </Button>
                         </div>
                     </form>

@@ -15,6 +15,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Required } from '@/components/ui/Custom/required';
 import { useTranslation } from 'react-i18next';
+import HashLoader from 'react-spinners/HashLoader';
 
 const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
     const { t } = useTranslation();
@@ -23,6 +24,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
     const navigate = useNavigate()
     const currentYear = new Date().getFullYear();
     const years: number[] = Array.from({ length: currentYear - 1949 }, (_, index) => currentYear - index);
+    const [ loading, setLoading ] = useState(true);
 
     const form = useForm<z.infer<typeof editVehicleSchema>>({
         resolver: zodResolver(editVehicleSchema),
@@ -87,6 +89,8 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                 //form.setValue('address2', response.data.address2);
             } catch (error) {
                 console.error('Error fetching attraction data:', error);
+            } finally {
+                setLoading(false);
             }
 
         };
@@ -127,9 +131,9 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
             });
             toast({
                 variant: "success",
-                description: "Item added."
+                description: "Item Edited"
             });
-            navigate('/Agency');
+            navigate('/Agency/Product');
         }catch(response){
             const axiosError = response as AxiosError; // Cast the error to AxiosError
             if (axios.isAxiosError(response)) { // Check if the error is an AxiosError
@@ -143,8 +147,13 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
 
     //editVehicleSchema
     return (
-        <div className="flex justify-center items-center h-screen min-h-50 w-50 p-0 sm:p-12 mt-80">
-            <div className="x-auto max-w-2xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
+        <div className="min-h-50 w-50 p-0 sm:p-12">
+            <div className="mx-auto max-w-2xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
+                {loading ? (
+                    <div className="flex justify-center items-center">
+                        <HashLoader size={50} color={"#123abc"} loading={loading} />
+                    </div>
+                ) : (
                 <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)}>
                                 <h1 className="text-2xl font-bold mb-8 text-center">{t('Edit Vehicle')}</h1>
@@ -182,6 +191,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                                         placeholder={t('Vehicle Name')}
                                                         {...field}
                                                         onChange={field.onChange}
+                                                        maxLength={100}
                                                     />
                                                 </FormControl>
                                             </FormItem>
@@ -278,7 +288,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                                 <FormControl>
                                                     <Select onValueChange={(newValue) => form.setValue("vehicle_seat", parseInt(newValue))}>
                                                         <SelectTrigger className="w-[180px]">
-                                                            <SelectValue placeholder={form.watch("vehicle_seat").toString() || "Vehicle Seat"} />
+                                                            <SelectValue placeholder={form.watch("vehicle_seat").toString().concat(" Seat") || "Vehicle Seat"} />
                                                         </SelectTrigger>
                                                         <SelectContent>
                                                             <SelectItem value="2">2 Seat</SelectItem>
@@ -306,6 +316,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                                         placeholder={t('Input Vehicle Brand')}
                                                         {...field}
                                                         onChange={field.onChange}
+                                                        maxLength={100}
                                                     />
                                                 </FormControl>
                                             </FormItem>
@@ -324,6 +335,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                                         placeholder={t('Input Vehicle Series')}
                                                         {...field}
                                                         onChange={field.onChange}
+                                                        maxLength={100}
                                                     />
                                                 </FormControl>
                                             </FormItem>
@@ -342,6 +354,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                                         placeholder={t('Input Vehicle Model')}
                                                         {...field}
                                                         onChange={field.onChange}
+                                                        maxLength={100}
                                                     />
                                                 </FormControl>
                                             </FormItem>
@@ -381,6 +394,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                                         placeholder={t('Street Address')}
                                                         {...field}
                                                         onChange={field.onChange}
+                                                        maxLength={100}
                                                     />
                                                 </FormControl>
                                             </FormItem>
@@ -417,6 +431,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                                         placeholder={t('Promo Code')}
                                                         {...field}
                                                         onChange={field.onChange}
+                                                        maxLength={50}
                                                     />
                                                 </FormControl>
                                             </FormItem>
@@ -456,6 +471,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                                     placeholder={t('Description')}
                                                     {...field}
                                                     onChange={field.onChange}
+                                                    maxLength={1000}
                                                 />
                                             </FormControl>
                                         </FormItem>
@@ -468,6 +484,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                 </div>
                             </form>
                         </Form>
+                    )}
             </div>
         </div>
 

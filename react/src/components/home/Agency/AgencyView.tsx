@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import CredentialModal from "@/components/customer-exclusive/modal/CredentialModal";
 import { useLogin } from "@/context/LoginContext";
+import { useTranslation } from "react-i18next";
 
 const AgencyView = ({agency_id}: {agency_id:number}) => {
     const [agency, setAgency] = useState<AgencyData>();
@@ -17,6 +18,7 @@ const AgencyView = ({agency_id}: {agency_id:number}) => {
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { user } = useLogin();
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -31,7 +33,7 @@ const AgencyView = ({agency_id}: {agency_id:number}) => {
             }
         }
         fetchData();
-    })
+    }, [agency_id]);
 
     const requestCustomPackage = ( id : number) => {
         if ( user?.customer_id == null || user?.customer_id === 0) {
@@ -56,27 +58,27 @@ const AgencyView = ({agency_id}: {agency_id:number}) => {
                             <p className="font-bold">{agency?.location}</p>
                         </div>
                         <div className="flex">
-                            <Button className="bg-white hover:bg-blue-700 text-blue-800 hover:text-white" onClick={() => requestCustomPackage(agency?.agency_id || 0)}>Request Custom Package</Button>
+                            <Button className="bg-white hover:bg-blue-700 text-blue-800 hover:text-white" onClick={() => requestCustomPackage(agency?.agency_id || 0)}>{t('Request Custom Package')}</Button>
                         </div>
                     </div>
 
                     <div className="border-2 border-slate-100 w-full rounded-xl p-6">
-                        <p className="text-4xl">PACKAGE</p>
+                        <p className="text-4xl">{t('Package')}</p>
                         <PackageListForCust agency_id={agency_id}/>
                     </div>
 
                     <div className="border-2 border-slate-100 w-full rounded-xl p-6">
-                        <p className="text-4xl">VEHICLE</p>
+                        <p className="text-4xl">{t('Vehicle')}</p>
                         <VehicleListForCust agency_id={agency_id}/>
                     </div>
 
                     <div className="border-2 border-slate-100 w-full rounded-xl p-6">
-                        <p className="text-4xl">HOTEL</p>
+                        <p className="text-4xl">{t('Hotel')}</p>
                         <HotelListForCust agency_id={agency_id}/>
                     </div>
 
                     <div className="border-2 border-slate-100 w-full rounded-xl p-6">
-                        <p className="text-4xl">ATTRACTION</p>
+                        <p className="text-4xl">{t('Attraction')}</p>
                         <AttractionListForCust agency_id={agency_id}/>
                     </div>
 

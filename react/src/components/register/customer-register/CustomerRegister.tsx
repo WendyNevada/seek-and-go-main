@@ -8,25 +8,20 @@ import { customerSchema } from '../utils/schema';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Calendar } from "@/components/ui/calendar"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/components/ui/use-toast';
 import { Required } from '@/components/ui/Custom/required';
 import { hitAddApi } from '@/context/HitApi';
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
+import HashLoader from 'react-spinners/HashLoader';
 
 const CustomerRegisterComponent = () => {
     const { t } = useTranslation();
 
     const navigate = useNavigate();
+    const [ loading, setLoading ] = useState(false);
     // const {setUser, setToken} = useStateContext()
     // const [errors, setErrors] = useState(null)
 
@@ -45,23 +40,43 @@ const CustomerRegisterComponent = () => {
         },
     });
 
+<<<<<<< HEAD
     function formatDate(date: Date): Date {
         return new Date(date);
+=======
+    function formatDate(date: Date | null): Date | null {
+        if (date === null)
+        {
+            return null;
+        } 
+        else
+        {
+            return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        }
+>>>>>>> 923c85bbd2675aa26ccbed7736b2bd8d302005a4
     }
 
     const onSubmit = async (values: z.infer<typeof customerSchema>) => {
-        values.birth_date = formatDate(values.birth_date);
-
-        values.customer_name = "tes1";
+        setLoading(true);
+        values.birth_date = formatDate(values.birth_date) ?? new Date();
         values.role="Customer";
 
         const response = await hitAddApi("/v1/CreateAccountCustomer",values);
-        toast({
-            variant: "success",
-            description: "Please Check Your Email",
-        });
+        
         if(response === 200){
+            toast({
+                variant: "success",
+                description: "Please Check Your Email",
+            });
             navigate("/Login");
+        }
+        setLoading(false);
+    };
+
+    const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        if (/^\d*$/.test(value)) {
+            form.setValue("phone", value);
         }
     };
 
@@ -83,6 +98,7 @@ const CustomerRegisterComponent = () => {
                                             placeholder={t('Customer Name')}
                                             {...field}
                                             onChange={field.onChange}
+                                            maxLength={100}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -100,6 +116,7 @@ const CustomerRegisterComponent = () => {
                                             placeholder={t('Account Name')}
                                             {...field}
                                             onChange={field.onChange}
+                                            maxLength={100}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -118,6 +135,7 @@ const CustomerRegisterComponent = () => {
                                             placeholder={t('Email')}
                                             {...field}
                                             onChange={field.onChange}
+                                            maxLength={100}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -132,9 +150,14 @@ const CustomerRegisterComponent = () => {
                                     <FormMessage />
                                     <FormControl>
                                         <Input
+                                            type="tel"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
                                             placeholder={t('Phone Number')}
                                             {...field}
-                                            onChange={field.onChange}
+                                            onChange={handlePhoneChange}
+                                            // onChange={field.onChange}
+                                            maxLength={20}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -151,8 +174,11 @@ const CustomerRegisterComponent = () => {
                                         <input
                                             type="date"
                                             className="w-[300px] justify-start text-left font-normal bg-slate-100"
-                                            value={field.value ? format(field.value, "yyyy-MM-dd") : ""}
-                                            onChange={e => field.onChange(new Date(e.target.value))}
+                                            value={field.value ? format(field.value, "yyyy-MM-dd") : "yyyy-MM-dd"}
+                                            onChange={e => {
+                                                const newDate = e.target.value ? new Date(e.target.value) : null;
+                                                field.onChange(newDate);
+                                            }}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -210,6 +236,7 @@ const CustomerRegisterComponent = () => {
                                             placeholder={t('Password')}
                                             {...field}
                                             onChange={field.onChange}
+                                            maxLength={100}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -234,7 +261,13 @@ const CustomerRegisterComponent = () => {
                             )}
                         />
                         <div className="justify-center flex">
-                            <Button type="submit" className='mt-4'>{t('Register')}</Button>
+                            <Button type="submit" className='mt-4' disabled={loading} variant="primary">
+                                {loading ? (
+                                    <HashLoader size={20} color={"#ffffff"} loading={loading} />
+                                ) : (
+                                    t('Register')
+                                )}
+                            </Button>
                         </div>
                     </form>
                 </Form>

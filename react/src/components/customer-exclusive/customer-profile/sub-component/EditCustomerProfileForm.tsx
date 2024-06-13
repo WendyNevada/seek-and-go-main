@@ -140,7 +140,6 @@ const EditCustomerProfileForm = ({customer} : {customer : Account}) => {
                     <div className="justify-center flex space-x-2">
                         <Button type="submit" className='mt-4 bg-green-500'>{t('Confirm')}
                         </Button>
-                        <Button type="button" variant='destructive' className='mt-4'>{t('Cancel')}</Button>
                     </div>
                 </div>
             </form>

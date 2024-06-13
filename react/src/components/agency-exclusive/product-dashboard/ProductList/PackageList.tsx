@@ -69,8 +69,8 @@ const PackageList = () => {
                         <div key={pkg.package_h_id} className='flex-1'>
                             <Card className='w-64 shadow-lg mt-10 mr-16'>
                                 <CardHeader>
-                                    <CardTitle className='w-[200px] truncate'>{pkg.package_name}</CardTitle>
-                                    <CardDescription>{pkg.description}</CardDescription>
+                                    <CardTitle className='w-[200px] truncate min-h-8'>{pkg.package_name}</CardTitle>
+                                    <CardDescription className='truncate'>{pkg.description}</CardDescription>
                                 </CardHeader>
                                 <CardContent className='flex-1'>
                                     <p>{t('Package Code')}: {pkg.package_code}</p>

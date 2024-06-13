@@ -217,6 +217,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     #endregion
 
     #region Promo
+    Route::post('GetAllPromo', 'PromoController@GetAllPromo');
+
     Route::post('AddPromo', 'PromoController@AddPromo');
 
     Route::post('GetPromoDeductionPriceAttraction', 'PromoController@GetPromoDeductionPriceAttraction');

@@ -267,7 +267,7 @@ const HotelOrderDetail = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                     </div>
                     <div className="shadow-lg border-1 rounded-xl p-6 m-4 bg-slate-100 space-y-2">
                         <p>
-                            {t('Pick The Dates')} {t('(these are the check-in and check-out dates)')}
+                            {t('Pick The Date')} {t('(these are the check-in and check-out dates)')}
                             <span className="text-red-500 ml-2">*</span>
                         </p>
                         <div className="flex flex-row space-x-4 items-center">

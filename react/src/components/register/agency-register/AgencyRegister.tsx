@@ -1,16 +1,25 @@
-import { agencySchema } from '../utils/schema';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
-import { toast } from '@/components/ui/use-toast';
-import { hitAddApi } from '@/context/HitApi';
+import { agencySchema } from "../utils/schema";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { hitAddApi } from "@/context/HitApi";
+import { toast } from "@/components/ui/use-toast";
 
 const AgencyRegisterComponent = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
+    const [ loading, setLoading ] = useState(false);
 
     const form = useForm<z.infer<typeof agencySchema>>({
         resolver: zodResolver(agencySchema),
@@ -27,14 +36,18 @@ const AgencyRegisterComponent = () => {
     });
 
     const onSubmit = async (values: z.infer<typeof agencySchema>) => {
+        setLoading(true);
         const response = await hitAddApi("/v1/CreateAccountAgency",values);
-        toast({
-            variant: "success",
-            description: "Please Check Your Email",
-        });
+
         if(response === 200){
+            toast({
+                variant: "success",
+                description: "Please Check Your Email",
+            });
+
             navigate("/Login");
         }
+        setLoading(false);
         // try {
         //     axiosClient.post("/v1/CreateAccountAgency", values);
         //     toast({
@@ -57,26 +70,34 @@ const AgencyRegisterComponent = () => {
         // }
     };
 
+    const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        if (/^\d*$/.test(value)) {
+            form.setValue("phone", value);
+        }
+    };
+
     return (
         <div className="min-h-50 w-50 p-0 sm:p-12">
             <div className="mx-auto max-w-xl px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <h1 className="text-2xl font-bold mb-8 text-center">
-                            Agency Register
+                            {t('Agency Register')}
                         </h1>
                         <FormField
                             control={form.control}
                             name="agency_name"
                             render={({ field }) => (
                                 <FormItem className="custom-field">
-                                    <FormLabel>{"Agency Name"}</FormLabel>
+                                    <FormLabel>{t('Agency Name')} <Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
-                                            placeholder={field.name}
+                                            placeholder={t('Agency Name')}
                                             {...field}
                                             onChange={field.onChange}
+                                            maxLength={100}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -87,13 +108,14 @@ const AgencyRegisterComponent = () => {
                             name="account_name"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Account Name"}</FormLabel>
+                                    <FormLabel>{t('Account Name')}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
-                                            placeholder={field.name}
+                                            placeholder={t('Account Name')}
                                             {...field}
                                             onChange={field.onChange}
+                                            maxLength={100}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -104,14 +126,15 @@ const AgencyRegisterComponent = () => {
                             name="email"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Email"}</FormLabel>
+                                    <FormLabel>{t('Email')}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
                                             type="email"
-                                            placeholder={field.name}
+                                            placeholder={t('Email')}
                                             {...field}
                                             onChange={field.onChange}
+                                            maxLength={100}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -122,14 +145,15 @@ const AgencyRegisterComponent = () => {
                             name="password"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Password"}</FormLabel>
+                                    <FormLabel>{t('Password')}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
                                             type="password"
-                                            placeholder={field.name}
+                                            placeholder={t('Password')}
                                             {...field}
                                             onChange={field.onChange}
+                                            maxLength={100}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -158,13 +182,18 @@ const AgencyRegisterComponent = () => {
                             name="phone"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Phone"}</FormLabel>
+                                    <FormLabel>{t('Phone Number')}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
-                                            placeholder={field.name}
+                                            type="tel"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
+                                            placeholder={t('Phone Number')}
                                             {...field}
-                                            onChange={field.onChange}
+                                            // onChange={field.onChange}
+                                            onChange={handlePhoneChange}
+                                            maxLength={20}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -175,13 +204,14 @@ const AgencyRegisterComponent = () => {
                             name="npwp"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"NPWP"}</FormLabel>
+                                    <FormLabel>{t('NPWP')} {t('(can be -)')}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
-                                            placeholder={field.name}
+                                            placeholder={t('NPWP')}
                                             {...field}
                                             onChange={field.onChange}
+                                            maxLength={50}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -192,21 +222,26 @@ const AgencyRegisterComponent = () => {
                             name="location"
                             render={({ field }) => (
                                 <FormItem className="custom-field mt-4">
-                                    <FormLabel>{"Location"}</FormLabel>
+                                    <FormLabel>{t('Location')}<Required/></FormLabel>
                                     <FormMessage />
                                     <FormControl>
                                         <Input
-                                            placeholder={field.name}
+                                            placeholder={t('Location')}
                                             {...field}
                                             onChange={field.onChange}
+                                            maxLength={100}
                                         />
                                     </FormControl>
                                 </FormItem>
                             )}
                         />
                         <div className="justify-center flex">
-                            <Button type="submit" className="mt-4">
-                                Register
+                            <Button type="submit" className='mt-4' disabled={loading} variant="primary">
+                                {loading ? (
+                                    <HashLoader size={20} color={"#ffffff"} loading={loading} />
+                                ) : (
+                                    t('Register')
+                                )}
                             </Button>
                         </div>
                     </form>

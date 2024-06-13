@@ -64,12 +64,12 @@ export function DeletePaymentAlert({ apiPath, Id, param }: DeletePaymentAlertPro
                         {t('Are you sure?')}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('This action cannot be undone. Are you sure you want to delete this product?')}
+                        {t('This action cannot be undone. Are you sure you want to delete this payment method?')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>{t('Cancel')}</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDelete}>{t('Continue')}</AlertDialogAction>
+                    <AlertDialogCancel className="bg-red-500 hover:bg-red-700 text-white hover:text-white">{t('Cancel')}</AlertDialogCancel>
+                    <AlertDialogAction className="bg-green-500 hover:bg-green-700 text-white hover:text-white" onClick={handleDelete}>{t('Continue')}</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

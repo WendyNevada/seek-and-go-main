@@ -178,7 +178,7 @@ const HotelQty = ({hotelQty, initialDetails, onDetailsChange, onHotelQtyChange, 
                                                             </TableRow>
                                                         ) : (
                                                             <TableRow>
-                                                                -
+                                                                
                                                             </TableRow>
                                                         )
                                                     }
