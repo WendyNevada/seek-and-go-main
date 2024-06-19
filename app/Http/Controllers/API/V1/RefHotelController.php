@@ -49,6 +49,12 @@ class RefHotelController extends Controller
         return $response;
     }
 
+    public function GetActiveHotelByAgencyIdWithoutQty(RefHotelService $refHotelService, AgencyIdRequest $request)
+    {
+        $response = $refHotelService->GetActiveHotelByAgencyIdWithoutQty($request);
+        return $response;
+    }
+
     public function RateHotel(RefHotelService $refHotelService, RateProductRequest $request)
     {
         $response = $refHotelService->RateHotel($request);

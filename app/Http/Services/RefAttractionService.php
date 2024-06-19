@@ -285,6 +285,30 @@ class RefAttractionService implements RefAttractionInterface
         return $attraction;
     }
 
+    private function getActiveAttractionsByAgencyIdWithoutQty($agency_id)
+    {
+        $attraction = RefAttraction::
+        join('agency_affiliates', 'ref_attractions.ref_attraction_id', '=', 'agency_affiliates.ref_attraction_id')->
+        join('ref_zipcodes', 'ref_attractions.ref_zipcode_id', '=', 'ref_zipcodes.ref_zipcode_id')->
+        leftjoin('ref_pictures', 'ref_attractions.ref_attraction_id', '=', 'ref_pictures.ref_attraction_id')->
+        select(
+            'ref_attractions.*', 
+            'agency_affiliates.base_price', 
+            'ref_pictures.image_url',
+            DB::raw("CONCAT(ref_zipcodes.area_1, ', ', ref_zipcodes.area_2, ', ', ref_zipcodes.area_3, ', ', ref_zipcodes.area_4) as address_zipcode")
+            )->
+        where('ref_attractions.is_active', true)->
+        where('agency_affiliates.agency_id', $agency_id)->
+        get();
+
+        $attraction->transform(function($attraction) {
+            $attraction->address_zipcode = ucwords(strtolower($attraction->address_zipcode));
+            return $attraction;
+        });
+
+        return $attraction;
+    }
+
     private function updateRating($ref_attraction_id, $rating): void
     {
         $attraction = RefAttraction::where('ref_attraction_id', $ref_attraction_id)->first();
@@ -579,6 +603,35 @@ class RefAttractionService implements RefAttractionInterface
     public function GetActiveAttractionByAgencyId(AgencyIdRequest $request)
     {
         $attraction = $this->getActiveAttractionsByAgencyId($request->agency_id);
+
+        if($this->checkDataEmpty($attraction) == true)
+        {
+            return response()->json(
+                [
+                    'status' => "error",
+                    'message' => "Data not found",
+                    'data'=> []
+                ]
+                ,400
+            );
+        }
+        else
+        {
+            return response()->json(
+                [
+                    'status' => "ok",
+                    'message' => "Success",
+                    'data'=> $attraction
+                ]
+            , 200);
+        }
+
+        return response()->json($attraction);
+    }
+
+    public function GetActiveAttractionByAgencyIdWithoutQty(AgencyIdRequest $request)
+    {
+        $attraction = $this->getActiveAttractionsByAgencyIdWithoutQty($request->agency_id);
 
         if($this->checkDataEmpty($attraction) == true)
         {

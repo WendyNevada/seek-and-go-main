@@ -83,6 +83,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                 form.setValue('with_driver', response.data.vehicle.with_driver === 1 ? true : false);
                 form.setValue('description', response.data.vehicle.description);
                 form.setValue('address', response.data.vehicle.address);
+                form.setValue('address2', response.data.address_zipcode);
                 form.setValue('qty', response.data.vehicle.qty);
                 form.setValue('promo_code', response.data.vehicle.promo_code ? response.data.attraction.promo_code : '');
 
@@ -452,6 +453,26 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                                     type='number'
                                                     {...field}
                                                     onChange={field.onChange}
+                                                />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="address2"
+                                    render={({ field }) => (
+                                        <FormItem className="custom-field">
+                                            <FormLabel>{t('Address')}</FormLabel>
+                                            <Required/>
+                                            <FormMessage />
+                                            <FormControl>
+                                                <Textarea
+                                                    placeholder={t('Address')}
+                                                    {...field}
+                                                    onChange={field.onChange}
+                                                    disabled
                                                 />
                                             </FormControl>
                                         </FormItem>

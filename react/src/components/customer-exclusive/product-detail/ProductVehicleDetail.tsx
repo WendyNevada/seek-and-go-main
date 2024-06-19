@@ -115,7 +115,7 @@ const ProductVehicleDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
                     {/* kanan */}
                     <div className='flex flex-col px-5'>
                         <h1>{t('Price')} :</h1>
-                        <label htmlFor="" className='font-bold text-2xl'>{formatPrice(vehicle?.base_price ?? 0)}</label>
+                        <label htmlFor="" className='font-bold text-2xl truncate'>{formatPrice(vehicle?.base_price ?? 0)}</label>
                         <button className='bg-gradient-to-r from-green-300 to-blue-500 hover:from-pink-500 hover:to-yellow-500 text-white font-bold py-2 px-4 rounded mt-4' onClick={() => checkCredential(user?.customer_id ?? 0)}>{t('Order')}</button>
                     </div>
                 </div>

@@ -21,14 +21,16 @@ const PackageList = () => {
     useEffect( () => {
         const fetchPackage =  async () => {
             try {
-                const response = await axiosClient.post('v1/GetActivePackageHByAgencyId', {
+                const response = await axiosClient.post('v1/GetActivePackageHByAgencyIdWithoutQty', {
                     agency_id: user?.agency_id
                 });
                 setPackages(response.data.data);
-                setLoading(false);
             }
             catch (error) {
                 console.error('Error fetching data:', error);
+            }
+            finally {
+                setLoading(false);
             }
         }
 
@@ -61,43 +63,49 @@ const PackageList = () => {
                     ))}
                 </div>
             ) : (
-                packages.reduce((rows: JSX.Element[][], pkg, index) => {
-                    if (index % 4 === 0) {
-                        rows.push([]);
-                    }
-                    rows[rows.length - 1].push(
-                        <div key={pkg.package_h_id} className='flex-1'>
-                            <Card className='w-64 shadow-lg mt-10 mr-16'>
-                                <CardHeader>
-                                    <CardTitle className='w-[200px] truncate min-h-8'>{pkg.package_name}</CardTitle>
-                                    <CardDescription className='truncate'>{pkg.description}</CardDescription>
-                                </CardHeader>
-                                <CardContent className='flex-1'>
-                                    <p>{t('Package Code')}: {pkg.package_code}</p>
-                                    <p>{t('Price')}: Rp.{pkg.package_price}</p>
-                                    <p>{t('Quantity')}: {pkg.qty}</p>
-                                    <p>{t('Total Days')}: {pkg.total_days}</p>
-                                </CardContent>
-                                <CardFooter>
-                                    <Button variant='primary' onClick={() => onEditPackage(pkg.package_h_id)}>
-                                        {<EditIcon />}
-                                    </Button>
-                                    <AlertDialogProduct apiPath='/v1/DeactivatePackageAgency' Id={pkg.package_h_id} param='package_h_id'/>
-                                    {/* Implement deletion logic here */}
-                                </CardFooter>
-                            </Card>
-                        </div>
-                    );
-                    return rows;
-                }, []).map((row, index) => (
-                    <div key={index} className='flex flex-row justify-left w-64'>
-                        {row.map((card, i) => (
-                            <div key={i} className='flex-1'>
-                                {card}
-                            </div>
-                        ))}
+                packages.length == 0 ? (
+                    <div>
+                        <p>{t('Package not available')}</p>
                     </div>
-                ))
+                ) : (
+                    packages.reduce((rows: JSX.Element[][], pkg, index) => {
+                        if (index % 4 === 0) {
+                            rows.push([]);
+                        }
+                        rows[rows.length - 1].push(
+                            <div key={pkg.package_h_id} className='flex-1'>
+                                <Card className='w-64 shadow-lg mt-10 mr-16'>
+                                    <CardHeader>
+                                        <CardTitle className='w-[200px] truncate min-h-8'>{pkg.package_name}</CardTitle>
+                                        <CardDescription className='truncate'>{pkg.description}</CardDescription>
+                                    </CardHeader>
+                                    <CardContent className='flex-1'>
+                                        <p>{t('Package Code')}: {pkg.package_code}</p>
+                                        <p>{t('Price')}: Rp.{pkg.package_price}</p>
+                                        <p>{t('Quantity')}: {pkg.qty}</p>
+                                        <p>{t('Total Days')}: {pkg.total_days}</p>
+                                    </CardContent>
+                                    <CardFooter>
+                                        <Button variant='primary' onClick={() => onEditPackage(pkg.package_h_id)}>
+                                            {<EditIcon />}
+                                        </Button>
+                                        <AlertDialogProduct apiPath='/v1/DeactivatePackageAgency' Id={pkg.package_h_id} param='package_h_id'/>
+                                        {/* Implement deletion logic here */}
+                                    </CardFooter>
+                                </Card>
+                            </div>
+                        );
+                        return rows;
+                    }, []).map((row, index) => (
+                        <div key={index} className='flex flex-row justify-left w-64'>
+                            {row.map((card, i) => (
+                                <div key={i} className='flex-1'>
+                                    {card}
+                                </div>
+                            ))}
+                        </div>
+                    ))
+                )
             )}
         </div>
     )

@@ -4,6 +4,7 @@ import HashLoader from "react-spinners/HashLoader"
 import { Package, PackageDs } from "./interface/interface";
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useTranslation } from "react-i18next";
+import { formatPrice } from "@/utils/priceFormating";
 
 interface PackageDataRow {
     package_h_id : string,
@@ -77,18 +78,18 @@ const CustomPackageCustomerDetail = ({ package_h_id }: { package_h_id: number })
             fetchData();
       }, [package_h_id])
 
-      const formatPrice = (price: number): string => {
-        if (typeof price !== 'undefined' && !isNaN(price)) {
-          // Format the price using toLocaleString
-          return price.toLocaleString('id-ID', {
-            style: 'currency',
-            currency: 'IDR'
-          });
-        } else {
-          // Handle undefined or non-numeric inputs
-          return 'N/A'; // Or any default value or error message you prefer
-        }
-      };
+    //   const formatPrice = (price: number): string => {
+    //     if (typeof price !== 'undefined' && !isNaN(price)) {
+    //       // Format the price using toLocaleString
+    //       return price.toLocaleString('id-ID', {
+    //         style: 'currency',
+    //         currency: 'IDR'
+    //       });
+    //     } else {
+    //       // Handle undefined or non-numeric inputs
+    //       return 'N/A'; // Or any default value or error message you prefer
+    //     }
+    //   };
 
 
     return (

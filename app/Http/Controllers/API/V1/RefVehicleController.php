@@ -49,6 +49,12 @@ class RefVehicleController extends Controller
         $response = $refVehicleService->GetActiveVehicleByAgencyId($request);
         return $response;
     }
+    
+    public function GetActiveVehicleByAgencyIdWithoutQty(RefVehicleService $refVehicleService, AgencyIdRequest $request)
+    {
+        $response = $refVehicleService->GetActiveVehicleByAgencyIdWithoutQty($request);
+        return $response;
+    }
 
     public function RateVehicle(RefVehicleService $refVehicleService, RateProductRequest $request)
     {

@@ -14,6 +14,7 @@ import OrderAgencyCancelAlert from './sub-component/OrderAgencyCancelAlert';
 import OrderAgencyFinishAlert from './sub-component/OrderAgencyFinishAlert';
 import OrderAgencyAcceptPaymentAlert from './sub-component/OrderAgencyAcceptPaymentAlert';
 import OrderAgencyRetryPaymentAlert from './sub-component/OrderAgencyRetryPaymentAlert';
+import { formatPrice } from '@/utils/priceFormating';
 
 interface OrderDataRow {
     order_h_id : number,
@@ -95,18 +96,18 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
         fetchData();
     },[order_h_id])
 
-    const formatPrice = (price: number): string => {
-        if (typeof price !== 'undefined' && !isNaN(price)) {
-            // Format the price using toLocaleString
-            return price.toLocaleString('id-ID', {
-                style: 'currency',
-                currency: 'IDR'
-            });
-        } else {
-            // Handle undefined or non-numeric inputs
-            return 'N/A'; // Or any default value or error message you prefer
-        }
-    };
+    // const formatPrice = (price: number): string => {
+    //     if (typeof price !== 'undefined' && !isNaN(price)) {
+    //         // Format the price using toLocaleString
+    //         return price.toLocaleString('id-ID', {
+    //             style: 'currency',
+    //             currency: 'IDR'
+    //         });
+    //     } else {
+    //         // Handle undefined or non-numeric inputs
+    //         return 'N/A'; // Or any default value or error message you prefer
+    //     }
+    // };
 
     const onAction = async (apiPath: string, id: number) => {
         setActionLoading(true);
@@ -256,7 +257,7 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
             </div>
 
             {(order.order_status === 'CPY' || order.order_status === 'RTP') && (
-                <div>
+                <div className='flex justify-center items-center flex-col'>
                     <div className="flex justify-center items-center mt-3">
                         <p className="font-bold">{t('Proof of Payment')}</p>
                     </div>

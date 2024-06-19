@@ -479,7 +479,10 @@ class OrderHService implements OrderHInterface
 
     private function getRefPictureByOrderHId($order_h_id)
     {
-        return RefPicture::where('order_h_id', $order_h_id)->first();
+        return RefPicture::
+            where('order_h_id', $order_h_id)
+            ->orderBy('created_at', 'desc')
+            ->first();
     }
 
     private function priceTimesQty($price, $qty)

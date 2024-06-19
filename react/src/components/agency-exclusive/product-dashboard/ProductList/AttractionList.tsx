@@ -23,13 +23,14 @@ const AttractionList = () => {
         // Fetch data from the API
         const fetchAttractions = async () => {
             try {
-                const response = await axiosClient.post('/v1/GetActiveAttractionByAgencyId', {
+                const response = await axiosClient.post('/v1/GetActiveAttractionByAgencyIdWithoutQty', {
                     agency_id: user?.agency_id
                 }); // Replace 'your-api-url' with the actual API endpoint
                 setAttractions(response.data.data); // Assuming the response data is an array of attractions
-                setLoading(false);
             } catch (error) {
                 console.error('Error fetching attractions:', error);
+            } finally {
+                setLoading(false);
             }
         };
         fetchAttractions();
@@ -60,43 +61,49 @@ const AttractionList = () => {
                     ))}
                 </div>
             ) : (
-                attractions.reduce((rows: JSX.Element[][], attraction, index) => {
-                    if (index % 4 === 0) {
-                        rows.push([]);
-                    }
-                    rows[rows.length - 1].push(
-                        <div key={attraction.ref_attraction_id} className='flex-1'>
-                            <Card className='w-64 shadow-lg mt-10 mr-16'>
-                            <img src={enviUrl + attraction.image_url} alt={attraction.attraction_name} className="h-36 w-full shadow-lg" />
-                                <CardHeader>
-                                    <CardTitle className='w-[200px] truncate min-h-8'>{attraction.attraction_name}</CardTitle>
-                                    <CardDescription className='truncate'>{attraction.description}</CardDescription>
-                                </CardHeader>
-                                <CardContent className='flex-1'>
-                                    <p>{attraction.address}</p>
-                                    <div className="flex flex-row  align-middle">
-                                        {rating(attraction.rating)}
-                                        {attraction.rating ? attraction.rating : 0 }
-                                    </div>
-                                    <p>{t('Price')}: Rp.{attraction.base_price}</p>
-                                </CardContent>
-                                <CardFooter>
-                                    <Button variant='primary' onClick={() => onEditAttraction(attraction.ref_attraction_id)}>{<EditIcon />}</Button>
-                                    <AlertDialogProduct apiPath='/v1/DeactivateAttractionById' Id={attraction.ref_attraction_id} param='ref_attraction_id'/>
-                                </CardFooter>
-                            </Card>
-                        </div>
-                    );
-                    return rows;
-                }, []).map((row, index) => (
-                    <div key={index} className='flex flex-row justify-left w-64'>
-                        {row.map((card, i) => (
-                            <div key={i} className='flex-1'>
-                                {card}
-                            </div>
-                        ))}
+                attractions.length == 0 ? (
+                    <div>
+                        <p>{t('Attraction not available')}</p>
                     </div>
-                ))
+                    ) : (
+                    attractions.reduce((rows: JSX.Element[][], attraction, index) => {
+                        if (index % 4 === 0) {
+                            rows.push([]);
+                        }
+                        rows[rows.length - 1].push(
+                            <div key={attraction.ref_attraction_id} className='flex-1'>
+                                <Card className='w-64 shadow-lg mt-10 mr-16'>
+                                <img src={enviUrl + attraction.image_url} alt={attraction.attraction_name} className="h-36 w-full shadow-lg" />
+                                    <CardHeader>
+                                        <CardTitle className='w-[200px] truncate min-h-8'>{attraction.attraction_name}</CardTitle>
+                                        <CardDescription className='truncate'>{attraction.description}</CardDescription>
+                                    </CardHeader>
+                                    <CardContent className='flex-1'>
+                                        <p>{attraction.address}</p>
+                                        <div className="flex flex-row  align-middle">
+                                            {rating(attraction.rating)}
+                                            {attraction.rating ? attraction.rating : 0 }
+                                        </div>
+                                        <p>{t('Price')}: Rp.{attraction.base_price}</p>
+                                    </CardContent>
+                                    <CardFooter>
+                                        <Button variant='primary' onClick={() => onEditAttraction(attraction.ref_attraction_id)}>{<EditIcon />}</Button>
+                                        <AlertDialogProduct apiPath='/v1/DeactivateAttractionById' Id={attraction.ref_attraction_id} param='ref_attraction_id'/>
+                                    </CardFooter>
+                                </Card>
+                            </div>
+                        );
+                        return rows;
+                    }, []).map((row, index) => (
+                        <div key={index} className='flex flex-row justify-left w-64'>
+                            {row.map((card, i) => (
+                                <div key={i} className='flex-1'>
+                                    {card}
+                                </div>
+                            ))}
+                        </div>
+                    ))
+                )
             )}
         </div>
     )

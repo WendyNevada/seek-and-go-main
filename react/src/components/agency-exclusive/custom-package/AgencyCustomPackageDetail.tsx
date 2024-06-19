@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import RejectCustomPackageAlert from "./sub-component/RejectCustomPackageAlert";
 import AcceptCustomPackageAlert from "./sub-component/AcceptCustomPackageAlert";
 import { Input } from "@/components/ui/input";
+import { formatPrice } from "@/utils/priceFormating";
 
 interface PackageDataRow {
     package_h_id : string,
@@ -88,18 +89,18 @@ const AgencyCustomPackageDetail = ({ package_h_id }: { package_h_id: number }) =
             fetchData();
       }, [package_h_id])
 
-      const formatPrice = (price: number): string => {
-        if (typeof price !== 'undefined' && !isNaN(price)) {
-          // Format the price using toLocaleString
-          return price.toLocaleString('id-ID', {
-            style: 'currency',
-            currency: 'IDR'
-          });
-        } else {
-          // Handle undefined or non-numeric inputs
-          return 'N/A'; // Or any default value or error message you prefer
-        }
-      };
+    //   const formatPrice = (price: number): string => {
+    //     if (typeof price !== 'undefined' && !isNaN(price)) {
+    //       // Format the price using toLocaleString
+    //       return price.toLocaleString('id-ID', {
+    //         style: 'currency',
+    //         currency: 'IDR'
+    //       });
+    //     } else {
+    //       // Handle undefined or non-numeric inputs
+    //       return 'N/A'; // Or any default value or error message you prefer
+    //     }
+    //   };
 
       const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         setNewPrice(event.target.valueAsNumber);

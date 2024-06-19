@@ -316,7 +316,7 @@ const HotelOrderDetail = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                             <>
                             <PriceBox price={hotel?.base_price || 0} qty={qty} totalPrice={(hotel?.base_price || 0)*(qty)} priceDeduced={priceDeduced || undefined} newPrice={newPrice || undefined}/>
                             <br />
-                            <Button className="w-full bg-blue-500 hover:bg-blue-300" onClick={onConfirm} disabled={!startDt || !endDt}>{t('Confirm')}</Button>
+                            <Button className="w-full bg-blue-500 hover:bg-blue-300" onClick={onConfirm} disabled={!startDt || !endDt || (startDt == endDt)}>{t('Confirm')}</Button>
                             </>
                         )}
                     </div>

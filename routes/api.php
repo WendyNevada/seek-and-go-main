@@ -72,6 +72,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('GetActiveAttractionByAgencyId', 'RefAttractionController@GetActiveAttractionByAgencyId');
 
+    Route::post('GetActiveAttractionByAgencyIdWithoutQty', 'RefAttractionController@GetActiveAttractionByAgencyIdWithoutQty');
+
     Route::post('RateAttraction', 'RefAttractionController@RateAttraction');
 
     #endregion
@@ -90,6 +92,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     Route::post('GetActiveHotelByAgencyId', 'RefHotelController@GetActiveHotelByAgencyId');
 
+    Route::post('GetActiveHotelByAgencyIdWithoutQty', 'RefHotelController@GetActiveHotelByAgencyIdWithoutQty');
+
     Route::post('RateHotel', 'RefHotelController@RateHotel');
 
     #endregion
@@ -107,6 +111,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::post('GetVehicleHomepage', 'RefVehicleController@GetVehicleHomepage');
 
     Route::post('GetActiveVehicleByAgencyId', 'RefVehicleController@GetActiveVehicleByAgencyId');
+
+    Route::post('GetActiveVehicleByAgencyIdWithoutQty', 'RefVehicleController@GetActiveVehicleByAgencyIdWithoutQty');
 
     Route::post('RateVehicle', 'RefVehicleController@RateVehicle');
 
@@ -135,6 +141,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     Route::post('RejectCustomPackage', 'PackageHController@RejectCustomPackage');
 
     Route::post('GetActivePackageHByAgencyId', 'PackageHController@GetActivePackageHByAgencyId');
+
+    Route::post('GetActivePackageHByAgencyIdWithoutQty', 'PackageHController@GetActivePackageHByAgencyIdWithoutQty');
 
     Route::post('GetPackageDataById', 'PackageHController@GetPackageDataById');
 
