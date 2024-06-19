@@ -72,7 +72,7 @@ const VehicleQty = ({ vehicleQty, initialDetails, onDetailsChange, onVehicleQtyC
             const initialVehicles = initialDetails.map((detail) => {
                 const selectedVehicle = vehicle.find((vehicleItem) => {
                     const detailId = detail.ref_vehicle_id;
-                    return detailId !== null && detailId !== undefined && vehicleItem.ref_vehicle_id === parseInt(detailId);
+                    return detailId != null && detailId != undefined && vehicleItem.ref_vehicle_id == parseInt(detailId);
                 });
                 return selectedVehicle || ({} as DaumVehicle);
             });
@@ -87,7 +87,7 @@ const VehicleQty = ({ vehicleQty, initialDetails, onDetailsChange, onVehicleQtyC
         setDetails(newDetails);
         onDetailsChange(newDetails);
 
-        const selectedVehicle = vehicle.find(vehicleItem => Number(vehicleItem.ref_vehicle_id) === Number(value));
+        const selectedVehicle = vehicle.find(vehicleItem => Number(vehicleItem.ref_vehicle_id) == Number(value));
         if (selectedVehicle) {
             setNewVehicles(prevVehicles => {
                 const updatedVehicles = [...prevVehicles];
