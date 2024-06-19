@@ -72,7 +72,7 @@ const HotelQty = ({hotelQty, initialDetails, onDetailsChange, onHotelQtyChange, 
             const initialHotels = initialDetails.map((detail) => {
                 const selectedVehicle = hotel.find((hotelItem) => {
                     const detailId = detail.ref_hotel_id;
-                    return detailId !== null && detailId !== undefined && hotelItem.ref_hotel_id === parseInt(detailId);
+                    return detailId != null && detailId != undefined && hotelItem.ref_hotel_id == parseInt(detailId);
                 });
                 return selectedVehicle || ({} as DaumHotel);
             });
@@ -87,7 +87,7 @@ const HotelQty = ({hotelQty, initialDetails, onDetailsChange, onHotelQtyChange, 
         setDetails(newDetails);
         onDetailsChange(newDetails);
 
-        const selectedHotel = hotel.find(hotelItem => Number(hotelItem.ref_hotel_id) === Number(value));
+        const selectedHotel = hotel.find(hotelItem => Number(hotelItem.ref_hotel_id) == Number(value));
         if (selectedHotel) {
             setNewHotels(prevHotels => {
                 const updatedHotels = [...prevHotels];

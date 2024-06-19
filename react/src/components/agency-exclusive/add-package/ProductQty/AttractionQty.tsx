@@ -51,7 +51,7 @@ const AttractionQty = ({ attractionQty, initialDetails, onDetailsChange, onAttra
             const initialAttractions = initialDetails.map((detail) => {
                 const selectedAttraction = attraction.find((attractionItem) => {
                     const detailId = detail.ref_attraction_id;
-                    return detailId !== null && detailId !== undefined && attractionItem.ref_attraction_id === parseInt(detailId);
+                    return detailId != null && detailId != undefined && attractionItem.ref_attraction_id == parseInt(detailId);
                 });
                 return selectedAttraction || ({} as DaumAttraction);
             });
@@ -81,7 +81,7 @@ const AttractionQty = ({ attractionQty, initialDetails, onDetailsChange, onAttra
         setDetails(newDetails);
         onDetailsChange(newDetails);
 
-        const selectedAttraction = attraction.find(attractionItem => Number(attractionItem.ref_attraction_id) === Number(value));
+        const selectedAttraction = attraction.find(attractionItem => Number(attractionItem.ref_attraction_id) == Number(value));
         if (selectedAttraction) {
             setNewAttractions(prevAttractions => {
                 const updatedAttractions = [...prevAttractions];
