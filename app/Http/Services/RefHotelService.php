@@ -281,6 +281,29 @@ class RefHotelService implements RefHotelInterface
         return $hotels;
     }
 
+    private function getActiveHotelsByAgencyIdWithoutQty($agency_id)
+    {
+        $hotels = RefHotel::join('agency_affiliates', 'ref_hotels.ref_hotel_id', '=', 'agency_affiliates.ref_hotel_id')
+            ->join('ref_zipcodes', 'ref_hotels.ref_zipcode_id', '=', 'ref_zipcodes.ref_zipcode_id')
+            ->leftJoin('ref_pictures', 'ref_hotels.ref_hotel_id', '=', 'ref_pictures.ref_hotel_id')
+            ->select(
+                'ref_hotels.*',
+                'agency_affiliates.base_price',
+                'ref_pictures.image_url',
+                DB::raw("CONCAT(ref_zipcodes.area_1, ', ', ref_zipcodes.area_2, ', ', ref_zipcodes.area_3, ', ', ref_zipcodes.area_4) as address_zipcode")
+            )
+            ->where('ref_hotels.is_active', true)
+            ->where('agency_affiliates.agency_id', $agency_id)
+            ->get();
+
+        $hotels->transform(function($hotels) {
+            $hotels->address_zipcode = ucwords(strtolower($hotels->address_zipcode));
+            return $hotels;
+        });
+
+        return $hotels;
+    }
+
     private function updateRating($ref_hotel_id, $rating): void
     {
         $hotel = RefHotel::where('ref_hotel_id', $ref_hotel_id)->first();
@@ -568,6 +591,33 @@ class RefHotelService implements RefHotelInterface
     public function GetActiveHotelByAgencyId(AgencyIdRequest $request)
     {
         $hotel = $this->getActiveHotelsByAgencyId($request->agency_id);
+
+        if($this->checkDataEmpty($hotel) == true)
+        {
+            return response()->json(
+                [
+                    'status' => "error",
+                    'message' => "Data not found",
+                    'data'=> []
+                ]
+                ,400
+            );
+        }
+        else
+        {
+            return response()->json(
+                [
+                    'status' => "ok",
+                    'message' => "Success",
+                    'data'=> $hotel
+                ]
+            );
+        }
+    }
+
+    public function GetActiveHotelByAgencyIdWithoutQty(AgencyIdRequest $request)
+    {
+        $hotel = $this->getActiveHotelsByAgencyIdWithoutQty($request->agency_id);
 
         if($this->checkDataEmpty($hotel) == true)
         {

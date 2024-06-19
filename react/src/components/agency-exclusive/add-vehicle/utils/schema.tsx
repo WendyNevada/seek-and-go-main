@@ -59,7 +59,7 @@ export const editVehicleSchema = z.object({
     vehicle_year : z.number().min(1,  {message: "Vehicle Year is required" }),
     description: z.string().min(1,  {message: "Product Description is required" }),
     address: z.string().min(1,  {message: "Product Address is required" }),
-    //address2 : z.string(),
+    address2 : z.string(),
     with_driver : z.boolean(),
     //is_active: z.boolean(),
     qty: z.coerce.number(),

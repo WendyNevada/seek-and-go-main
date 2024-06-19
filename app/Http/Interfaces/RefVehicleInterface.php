@@ -23,5 +23,7 @@ interface RefVehicleInterface
 
     public function GetActiveVehicleByAgencyId(AgencyIdRequest $request);
 
+    public function GetActiveVehicleByAgencyIdWithoutQty(AgencyIdRequest $request);
+
     public function RateVehicle(RateProductRequest $request);
 }

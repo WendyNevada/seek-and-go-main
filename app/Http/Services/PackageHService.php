@@ -223,6 +223,30 @@ class PackageHService implements PackageHInterface
         return $packageH;
     }
 
+    private function getPackageByAgencyIdWithoutQty($agency_id, $is_custom = false, $limit = null)
+    {
+        if($limit == null)
+        {
+            $packageH = PackageH::where('agency_id', $agency_id)
+            ->where('is_custom', $is_custom)
+            ->where('is_active', '1')
+            ->with('packageDs')
+            ->get();
+
+        }
+        else
+        {
+            $packageH = PackageH::where('agency_id', $agency_id)
+                ->where('is_custom', $is_custom)
+                ->where('is_active', '1')
+                ->limit($limit)
+                ->with('packageDs')
+                ->get();
+        }
+
+        return $packageH;
+    }
+
     private function updatePackageH($package_h_id, $custom_status, $new_price, $total_days)
     {
         $packageH = PackageH::lockForUpdate()->find($package_h_id);
@@ -835,6 +859,28 @@ class PackageHService implements PackageHInterface
     public function GetActivePackageHByAgencyId(AgencyIdRequest $request)
     {
         $packageH = $this->getPackageByAgencyId($request->agency_id);
+
+        if($this->checkPackageDataEmpty($packageH) == true)
+        {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No active package for this agency',
+                'data' => []
+            ]);
+        }
+        else
+        {
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'success',
+                'data' => $packageH
+            ]);
+        }
+    }
+
+    public function GetActivePackageHByAgencyIdWithoutQty(AgencyIdRequest $request)
+    {
+        $packageH = $this->getPackageByAgencyIdWithoutQty($request->agency_id);
 
         if($this->checkPackageDataEmpty($packageH) == true)
         {

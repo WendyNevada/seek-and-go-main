@@ -12,6 +12,7 @@ import { AgencyPayment } from "../../interface/interface";
 import OrderGenericAlert from "./sub-components/OrderGenericAlert";
 import { Input } from "@/components/ui/input";
 import RatingDialog from "./sub-components/RatingDialog";
+import { formatPrice } from "@/utils/priceFormating";
 
 interface OrderDataRow {
     order_h_id : number,
@@ -170,18 +171,18 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
         fetchData();
   }, [order_h_id])
 
-  const formatPrice = (price: number): string => {
-    if (typeof price !== 'undefined' && !isNaN(price)) {
-      // Format the price using toLocaleString
-      return price.toLocaleString('id-ID', {
-        style: 'currency',
-        currency: 'IDR'
-      });
-    } else {
-      // Handle undefined or non-numeric inputs
-      return 'N/A'; // Or any default value or error message you prefer
-    }
-  };
+  // const formatPrice = (price: number): string => {
+  //   if (typeof price !== 'undefined' && !isNaN(price)) {
+  //     // Format the price using toLocaleString
+  //     return price.toLocaleString('id-ID', {
+  //       style: 'currency',
+  //       currency: 'IDR'
+  //     });
+  //   } else {
+  //     // Handle undefined or non-numeric inputs
+  //     return 'N/A'; // Or any default value or error message you prefer
+  //   }
+  // };
 
   const filteredAgencyPayments = agencyPayment?.filter(payment => payment.payment_type === selectedPaymentType);
 
@@ -504,7 +505,7 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
                 </>)}
 
                 {selectedPaymentType && selectedBank && (
-                <div>
+                <div className="flex justify-center items-center flex-col">
                     <div className="flex justify-center items-center mt-7">
                       <p className="font-bold">{t('Upload Proof of Payment')}</p>
                     </div>
@@ -636,7 +637,7 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
                 </>)}
 
                 {selectedPaymentType && selectedBank && (
-                <div>
+                <div className="flex justify-center items-center flex-col">
                     <div className="flex justify-center items-center mt-7">
                       <p className="font-bold">{t('Upload Proof of Payment')}</p>
                     </div>

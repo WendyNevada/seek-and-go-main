@@ -54,6 +54,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                 form.setValue('hotel_name', response.data.hotel.hotel_name);
                 form.setValue('description', response.data.hotel.description);
                 form.setValue('address', response.data.hotel.address);
+                form.setValue('address2', response.data.address_zipcode);
                 form.setValue('qty', response.data.hotel.qty);
                 form.setValue('promo_code', response.data.attraction.promo_code ? response.data.attraction.promo_code : '');
 
@@ -199,6 +200,26 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                                             {...field}
                                             onChange={field.onChange}
                                             maxLength={1000}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="address2"
+                            render={({ field }) => (
+                                <FormItem className="custom-field">
+                                    <FormLabel>{t('Address')}</FormLabel>
+                                    <Required/>
+                                    <FormMessage />
+                                    <FormControl>
+                                        <Textarea
+                                            placeholder={t('Address')}
+                                            {...field}
+                                            onChange={field.onChange}
+                                            disabled
                                         />
                                     </FormControl>
                                 </FormItem>

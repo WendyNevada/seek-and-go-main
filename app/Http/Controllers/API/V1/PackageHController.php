@@ -82,6 +82,12 @@ class PackageHController extends Controller
         return $response;
     }
 
+    public function GetActivePackageHByAgencyIdWithoutQty(PackageHService $packageHService, AgencyIdRequest $request)
+    {
+        $response = $packageHService->GetActivePackageHByAgencyIdWithoutQty($request);
+        return $response;
+    }
+
     public function GetPackageDataById(PackageHService $packageHService, PackageHIdRequest $request)
     {
         $response = $packageHService->GetPackageDataById($request);

@@ -57,6 +57,12 @@ class RefAttractionController extends Controller
         return $response;
     }
 
+    public function GetActiveAttractionByAgencyIdWithoutQty(RefAttractionService $refAttractionService, AgencyIdRequest $request)
+    {
+        $response = $refAttractionService->GetActiveAttractionByAgencyIdWithoutQty($request);
+        return $response;
+    }
+
     public function RateAttraction(RefAttractionService $refAttractionService, RateProductRequest $request)
     {
         $response = $refAttractionService->RateAttraction($request);

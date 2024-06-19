@@ -316,7 +316,7 @@ const VehicleOrderDetail = ({ref_vehicle_id} : {ref_vehicle_id: number}) => {
                                 <>
                                 <PriceBox price={vehicle?.base_price || 0} qty={qty} totalPrice={(vehicle?.base_price || 0)*qty} priceDeduced={priceDeduced || undefined} newPrice={newPrice || undefined}/>
                                 <br />
-                                <Button className="w-full bg-blue-500 hover:bg-blue-300" onClick={onConfirm} disabled={!startDt || !endDt}>{t('Confirm')}</Button>
+                                <Button className="w-full bg-blue-500 hover:bg-blue-300" onClick={onConfirm} disabled={!startDt || !endDt || (startDt == endDt)}>{t('Confirm')}</Button>
                             </>
                             )}
                     </div>

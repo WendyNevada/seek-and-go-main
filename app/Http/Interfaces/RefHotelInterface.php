@@ -23,5 +23,7 @@ interface RefHotelInterface
 
     public function GetActiveHotelByAgencyId(AgencyIdRequest $request);
 
+    public function GetActiveHotelByAgencyIdWithoutQty(AgencyIdRequest $request);
+
     public function RateHotel(RateProductRequest $request);
 }

@@ -26,5 +26,7 @@ interface RefAttractionInterface
 
     public function GetActiveAttractionByAgencyId(AgencyIdRequest $request);
 
+    public function GetActiveAttractionByAgencyIdWithoutQty(AgencyIdRequest $request);
+
     public function RateAttraction(RateProductRequest $request);
 }

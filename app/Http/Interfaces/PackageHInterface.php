@@ -34,6 +34,8 @@ interface PackageHInterface
     public function RejectCustomPackage(PackageHIdRequest $request);
 
     public function GetActivePackageHByAgencyId(AgencyIdRequest $request);
+    
+    public function GetActivePackageHByAgencyIdWithoutQty(AgencyIdRequest $request);
 
     public function GetPackageDataById(PackageHIdRequest $request);
 

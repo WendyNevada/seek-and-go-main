@@ -47,6 +47,7 @@ export const editHotelSchema = z.object({
         }),
     description: z.string(),
     address: z.string(),
+    address2: z.string(),
     qty: z.coerce.number(),
     promo_code: z.string(),
     base_price: z.coerce.number(),
