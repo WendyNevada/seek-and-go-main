@@ -201,112 +201,73 @@ class TrxService implements TrxInterface
             {
                 $attraction = $this->getRefAttractionById($request->id);
 
+                $ratingAvg = $request->rating;
+
                 if($attraction->rating != null)
                 {
                     $ratingAvg = $this->getAverage([$attraction->rating, $request->rating]);
+                }
                     
-                    $this->updateRatingAttraction($request->id, $ratingAvg);
+                $this->updateRatingAttraction($request->id, $ratingAvg);
 
-                    $this->updateIsRatingTrx($request->order_h_id, true);
+                $this->updateIsRatingTrx($request->order_h_id, true);
 
-                    DB::commit();
+                DB::commit();
 
-                    return response()->json([
-                        'status' => "ok",
-                        'message' => "Attraction has been rated",
-                        'product_type' => $request->product_type,
-                        'id' => $request->id
-                    ], 200);
-                }
-                else
-                { 
-                    $this->updateRatingAttraction($request->id, $request->rating);
-
-                    $this->updateIsRatingTrx($request->order_h_id, true);
-
-                    DB::commit();
-
-                    return response()->json([
-                        'status' => "ok",
-                        'message' => "Attraction has been rated",
-                        'product_type' => $request->product_type,
-                        'id' => $request->id
-                    ], 200);
-                }
+                return response()->json([
+                    'status' => "ok",
+                    'message' => "Attraction has been rated",
+                    'product_type' => $request->product_type,
+                    'id' => $request->id
+                ], 200);
             }
             else if($request->product_type == Constanta::$hotel)
             {
                 $hotel = $this->getRefHotelById($request->id);
 
+                $ratingAvg = $request->rating;
+
                 if($hotel->rating != null)
                 {
                     $ratingAvg = $this->getAverage([$hotel->rating, $request->rating]);
+                }
                     
-                    $this->updateRatingHotel($request->id, $ratingAvg);
+                $this->updateRatingHotel($request->id, $ratingAvg);
 
-                    $this->updateIsRatingTrx($request->order_h_id, true);
+                $this->updateIsRatingTrx($request->order_h_id, true);
 
-                    DB::commit();
+                DB::commit();
 
-                    return response()->json([
-                        'status' => "ok",
-                        'message' => "Hotel has been rated",
-                        'product_type' => $request->product_type,
-                        'id' => $request->id
-                    ], 200);
-                }
-                else
-                { 
-                    $this->updateRatingHotel($request->id, $request->rating);
-
-                    $this->updateIsRatingTrx($request->order_h_id, true);
-
-                    DB::commit();
-
-                    return response()->json([
-                        'status' => "ok",
-                        'message' => "Hotel has been rated",
-                        'product_type' => $request->product_type,
-                        'id' => $request->id
-                    ], 200);
-                }
+                return response()->json([
+                    'status' => "ok",
+                    'message' => "Hotel has been rated",
+                    'product_type' => $request->product_type,
+                    'id' => $request->id
+                ], 200);
             }
             else if($request->product_type == Constanta::$vehicle)
             {
                 $vehicle = $this->getRefVehicleById($request->id);
+                
+                $ratingAvg = $request->rating;
 
                 if($vehicle->rating != null)
                 {
                     $ratingAvg = $this->getAverage([$vehicle->rating, $request->rating]);
+                }
                     
-                    $this->updateRatingVehicle($request->id, $ratingAvg);
+                $this->updateRatingVehicle($request->id, $ratingAvg);
 
-                    $this->updateIsRatingTrx($request->order_h_id, true);
+                $this->updateIsRatingTrx($request->order_h_id, true);
 
-                    DB::commit();
+                DB::commit();
 
-                    return response()->json([
-                        'status' => "ok",
-                        'message' => "Vehicle has been rated",
-                        'product_type' => $request->product_type,
-                        'id' => $request->id
-                    ], 200);
-                }
-                else
-                { 
-                    $this->updateRatingVehicle($request->id, $request->rating);
-
-                    $this->updateIsRatingTrx($request->order_h_id, true);
-
-                    DB::commit();
-
-                    return response()->json([
-                        'status' => "ok",
-                        'message' => "Vehicle has been rated",
-                        'product_type' => $request->product_type,
-                        'id' => $request->id
-                    ], 200);
-                }
+                return response()->json([
+                    'status' => "ok",
+                    'message' => "Vehicle has been rated",
+                    'product_type' => $request->product_type,
+                    'id' => $request->id
+                ], 200);
             }
         }
         catch (\Exception $e)
