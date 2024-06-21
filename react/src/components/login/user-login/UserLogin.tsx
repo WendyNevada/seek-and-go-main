@@ -58,7 +58,7 @@ const UserLogin = () => {
                                     <FormControl>
                                         <Input
                                             type='email'
-                                            placeholder={t('Email')}
+                                            placeholder={t('example@email.com')}
                                             {...field}
                                             onChange={field.onChange}
                                         />

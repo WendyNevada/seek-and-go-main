@@ -44,7 +44,7 @@ const CustomerRegisterComponent = () => {
         if (date === null)
         {
             return null;
-        } 
+        }
         else
         {
             return new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -57,7 +57,7 @@ const CustomerRegisterComponent = () => {
         values.role="Customer";
 
         const response = await hitAddApi("/v1/CreateAccountCustomer",values);
-        
+
         if(response === 200){
             toast({
                 variant: "success",
@@ -127,7 +127,7 @@ const CustomerRegisterComponent = () => {
                                     <FormControl>
                                         <Input
                                             type='email'
-                                            placeholder={t('Email')}
+                                            placeholder={t('example@email.com')}
                                             {...field}
                                             onChange={field.onChange}
                                             maxLength={100}
@@ -148,7 +148,7 @@ const CustomerRegisterComponent = () => {
                                             type="tel"
                                             inputMode="numeric"
                                             pattern="[0-9]*"
-                                            placeholder={t('Phone Number')}
+                                            placeholder={t('08xxxxxxxxxx')}
                                             {...field}
                                             onChange={handlePhoneChange}
                                             // onChange={field.onChange}
