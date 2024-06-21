@@ -50,7 +50,7 @@ const AgencyRegisterComponent = () => {
                 variant: "success",
                 description: "Please Check Your Email",
             });
-            
+
             navigate("/Login");
         }
         setLoading(false);
@@ -137,7 +137,7 @@ const AgencyRegisterComponent = () => {
                                     <FormControl>
                                         <Input
                                             type="email"
-                                            placeholder={t('Email')}
+                                            placeholder={t('example@email.com')}
                                             {...field}
                                             onChange={field.onChange}
                                             maxLength={100}
@@ -177,7 +177,7 @@ const AgencyRegisterComponent = () => {
                                             type="tel"
                                             inputMode="numeric"
                                             pattern="[0-9]*"
-                                            placeholder={t('Phone Number')}
+                                            placeholder={t('08xxxxxxxxxx')}
                                             {...field}
                                             // onChange={field.onChange}
                                             onChange={handlePhoneChange}
