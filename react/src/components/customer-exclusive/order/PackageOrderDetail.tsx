@@ -7,7 +7,7 @@ import { formatPrice } from "@/utils/priceFormating";
 import rating from "@/components/ui/Custom/rating";
 import { DatePicker } from "./component/DatePicker";
 import { Button } from "@/components/ui/button";
-import { addDays, format } from "date-fns";
+import { format } from "date-fns";
 import { useLogin } from "@/context/LoginContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
@@ -69,6 +69,12 @@ const PackageOrderDetail = ({package_h_id} : {package_h_id:number}) => {
 
         fetchData();
     },[package_h_id])
+
+    const addDays = (date: Date, days: number): Date => {
+        const result = new Date(date);
+        result.setDate(result.getDate() + days);
+        return result;
+    };
 
     const handleDateChange = (date: Date) => {
         setStartDate(date);
@@ -189,7 +195,7 @@ const PackageOrderDetail = ({package_h_id} : {package_h_id:number}) => {
                                                         : {rating(hotel?.hotel.rating ?? 0)} ({hotel?.hotel.rating ?? 0})
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div className="flex flex-row">
                                                     <div>
                                                         {t('Description')}
@@ -213,7 +219,7 @@ const PackageOrderDetail = ({package_h_id} : {package_h_id:number}) => {
                                         <div className="flex flex-row space-x-4">
                                             <img className="w-[8rem] h-[6rem] rounded-xl" src={enviUrl + attraction.picture_url} alt="" />
                                             <div className="flex flex-col">
-                                            
+
                                                 <div className="flex flex-row">
                                                     <div>
                                                         {t('Rating')}
@@ -222,7 +228,7 @@ const PackageOrderDetail = ({package_h_id} : {package_h_id:number}) => {
                                                         : {rating(attraction?.attraction.rating ?? 0)} ({attraction?.attraction.rating ?? 0})
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div className="flex flex-row">
                                                     <div>
                                                         {t('Description')}
@@ -255,7 +261,7 @@ const PackageOrderDetail = ({package_h_id} : {package_h_id:number}) => {
                                                         : {rating(vehicle?.vehicle.rating ?? 0)} ({vehicle?.vehicle.rating ?? 0})
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div className="flex flex-row">
                                                     <div>
                                                         {t('Description')}
