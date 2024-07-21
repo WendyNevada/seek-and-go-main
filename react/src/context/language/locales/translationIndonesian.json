@@ -235,5 +235,8 @@
     "Package not available": "Paket tidak tersedia",
     "Attraction not available": "Atraksi tidak tersedia",
     "Hotel not available": "Hotel tidak tersedia",
-    "Vehicle not available": "Kendaraan tidak tersedia"
+    "Vehicle not available": "Kendaraan tidak tersedia",
+    "This package has no hotel": "Paket ini tidak memiliki hotel",
+    "This package has no attraction": "Paket ini tidak memiliki atraksi",
+    "This package has no vehicle": "Paket ini tidak memiliki kendaraan"
 }

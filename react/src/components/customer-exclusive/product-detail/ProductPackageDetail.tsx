@@ -92,7 +92,7 @@ const ProductPackageDetail = ({package_h_id} : {package_h_id:number}) => {
                         <p>{pack.package_name}</p>
                     </div>
 
-                    <Resizable hotelPic={enviUrl + hotelData[0].picture_url} attractionPic={enviUrl+attractionData[0].picture_url} vehiclePic={enviUrl + vehicleData[0].picture_url}/>
+                    <Resizable hotelPic={hotelData[0]?.picture_url} attractionPic={attractionData[0]?.picture_url} vehiclePic={vehicleData[0]?.picture_url}/>
 
                     <div className="flex flex-row space-x-8">
                         <div className="w-[36rem] space-y-2">

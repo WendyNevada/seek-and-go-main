@@ -3,25 +3,32 @@ import {
     ResizablePanel,
     ResizablePanelGroup,
   } from "@/components/ui/resizable"
+import { useTranslation } from "react-i18next";
 
 interface Props {
-    hotelPic?: string | null;
-    attractionPic?: string | null;
-    vehiclePic?: string | null;
+    hotelPic?: string | null | undefined;
+    attractionPic?: string | null | undefined;
+    vehiclePic?: string | null | undefined;
 }
 
 export function Resizable( { hotelPic, attractionPic, vehiclePic } : Props ) {
+    const enviUrl = import.meta.env.VITE_API_BASE_URL;
+    const { t } = useTranslation();
+
     return (
+
         <ResizablePanelGroup
         direction="horizontal"
         className="rounded-lg border"
         >
             <ResizablePanel defaultSize={60}>
                 <div className="flex h-[25rem] items-center justify-center">
-                    {hotelPic ? (
-                        <img src={hotelPic} alt="Hotel" className="h-full w-full object-cover" />
+                    { (hotelPic != null && hotelPic != undefined) ? (
+                        <img src={enviUrl + hotelPic} alt="Hotel Image" className="h-full w-full object-cover" />
                     ) : (
-                        <div className="flex items-center justify-center h-full w-full bg-gray-200">No Image</div>
+                        <div className="flex items-center justify-center h-full w-full bg-gray-200">
+                            {t('This package has no hotel')}
+                        </div>
                     )}
                 </div>
             </ResizablePanel>
@@ -31,9 +38,11 @@ export function Resizable( { hotelPic, attractionPic, vehiclePic } : Props ) {
                     <ResizablePanel defaultSize={50}>
                         <div className="flex h-full">
                             {attractionPic ? (
-                                <img src={attractionPic} alt="Attraction" className="h-full w-full object-cover" />
+                                <img src={enviUrl + attractionPic} alt="Not Contain Attraction" className="h-full w-full object-cover" />
                             ) : (
-                                <div className="flex items-center justify-center h-full w-full bg-gray-200">No Image</div>
+                                <div className="flex items-center justify-center h-full w-full bg-gray-200">
+                                    {t('This package has no Attraction')}
+                                </div>
                             )}
                         </div>
                     </ResizablePanel>
@@ -41,9 +50,11 @@ export function Resizable( { hotelPic, attractionPic, vehiclePic } : Props ) {
                     <ResizablePanel defaultSize={50}>
                         <div className="flex h-full items-center justify-center">
                             {vehiclePic ? (
-                                <img src={vehiclePic} alt="Vehicle" className="h-full w-full object-cover" />
+                                <img src={enviUrl + vehiclePic} alt="Not Contain Vehicle" className="h-full w-full object-cover" />
                             ) : (
-                                <div className="flex items-center justify-center h-full w-full bg-gray-200">No Image</div>
+                                <div className="flex items-center justify-center h-full w-full bg-gray-200">
+                                    {t('This package has no Vehicle')}
+                                </div>
                             )}
                         </div>
                     </ResizablePanel>

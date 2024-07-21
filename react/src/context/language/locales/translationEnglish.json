@@ -236,5 +236,8 @@
     "Package not available": "Package not available",
     "Attraction not available": "Attraction not available",
     "Hotel not available": "Hotel not available",
-    "Vehicle not available": "Vehicle not available"
+    "Vehicle not available": "Vehicle not available",
+    "This package has no hotel": "This package has no hotel",
+    "This package has no attraction": "This package has no attraction",
+    "This package has no vehicle": "This package has no vehicle"
 }
