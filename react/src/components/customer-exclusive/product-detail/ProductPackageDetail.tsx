@@ -27,7 +27,7 @@ const ProductPackageDetail = ({package_h_id} : {package_h_id:number}) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const navigate = useNavigate();
-    const enviUrl = import.meta.env.VITE_API_BASE_URL;
+    //const enviUrl = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
         const fetchData = async () => {
