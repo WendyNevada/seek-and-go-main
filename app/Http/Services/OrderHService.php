@@ -358,7 +358,7 @@ class OrderHService implements OrderHInterface
         }
     }
 
-    private function reduceProductQty($product, $product_type, $qtyOrder)
+    private function reduceProductQty($product, $product_type, $qtyOrder, $count = null, $maxLen = null)
     {
         if($product_type == Constanta::$attraction)
         {
@@ -380,9 +380,18 @@ class OrderHService implements OrderHInterface
             $qtyOrder = 1;
         }
 
-        $product->update([
-            'qty' => $product->qty - $qtyOrder
-        ]);
+        if($maxLen == null)
+        {
+            $product->update([
+                'qty' => $product->qty - $qtyOrder
+            ]);
+        }
+        else if(($count != null && $maxLen != null) && $count == $maxLen)
+        {
+            $product->update([
+                'qty' => $product->qty - $qtyOrder
+            ]);
+        }
     }
 
     private function checkOrderDataEmpty($data)
@@ -668,6 +677,10 @@ class OrderHService implements OrderHInterface
 
             $totPrice = 0;
 
+            $maxLen = count($request->details);
+
+            $count = 1;
+
             foreach($request->details as $detail)
             {
                 $strStartDate = $this->reformatDate($detail['start_dt']);
@@ -699,7 +712,9 @@ class OrderHService implements OrderHInterface
                     $totPrice = $this->priceTimesQty($price, $detail['qty']);
                 }
 
-                $this->reduceProductQty($detail, $detail['product_type'], $detail['qty']);
+                $this->reduceProductQty($detail, $detail['product_type'], $detail['qty'], $count, $maxLen);
+
+                $count += 1;
             }
 
             $packageIds = $this->getPackageInsideOrder($orderH->order_h_id);
