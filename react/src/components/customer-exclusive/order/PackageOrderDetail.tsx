@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import { useLogin } from "@/context/LoginContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
+import { toInteger } from "lodash";
 
 
 const PackageOrderDetail = ({package_h_id} : {package_h_id:number}) => {
@@ -79,7 +80,8 @@ const PackageOrderDetail = ({package_h_id} : {package_h_id:number}) => {
     const handleDateChange = (date: Date) => {
         setStartDate(date);
         if (pack.total_days) {
-            const endDt = addDays(date, pack.total_days);
+            const days = toInteger(pack.total_days);
+            const endDt = addDays(date, days);
 
             //setEndDate(endDt);
 
