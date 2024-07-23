@@ -145,6 +145,8 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
                     
                 }
 
+                price = price;
+
                 const responsePayment = await axiosClient.post('v1/GetAllAgencyPaymentByAgencyId', { agency_id: response.data.agency_id });
                 setAgencyPayment(responsePayment.data.data);
 

@@ -71,6 +71,8 @@ const OrderApproval = ({order_h_id} : {order_h_id: number}) => {
                         price = responseAttraction.data.base_price;
                     }
 
+                    price = price;
+
                     return {
                         order_h_id: orderData.order_h_id,
                         hotel_name,
