@@ -374,7 +374,8 @@ class RefHotelService implements RefHotelInterface
                     'picture_url' => $hotelPicture->image_url,
                     'base_price' => $agencyAffiliate->base_price,
                     'agency_id' => $agencyAffiliate->agency_id,
-                    'address_zipcode' => $addressString
+                    'address_zipcode' => $addressString,
+                    'promo_code' => $agencyAffiliate->promo_code
                 ], 200);
             }
             else
@@ -386,7 +387,8 @@ class RefHotelService implements RefHotelInterface
                     'picture_url' => "-",
                     'base_price' => $agencyAffiliate->base_price,
                     'agency_id' => $agencyAffiliate->agency_id,
-                    'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4
+                    'address' => $address->area_1.","." ".$address->area_2.","." ".$address->area_3.","." ".$address->area_4,
+                    'promo_code' => $agencyAffiliate->promo_code
                 ], 200);
             }
         }
@@ -399,7 +401,8 @@ class RefHotelService implements RefHotelInterface
                 'picture_url' => "-",
                 'base_price' => "-",
                 'agency_id' => "-",
-                'address' => "-"
+                'address' => "-",
+                'promo_code' => "-"
             ], 400);
         }
     }

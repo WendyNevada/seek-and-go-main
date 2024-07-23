@@ -66,7 +66,7 @@ const EditAttraction = ({ ref_attraction_id }: { ref_attraction_id: number }) =>
                 form.setValue('address', response.data.attraction.address);
                 form.setValue('address2', response.data.address_zipcode);
                 form.setValue('qty', response.data.attraction.qty);
-                form.setValue('promo_code', response.data.attraction.promo_code ? response.data.attraction.promo_code : '');
+                form.setValue('promo_code', response.data.promo_code ? response.data.promo_code : '');
                 form.setValue('base_price', response.data.base_price);
                 setImageUrl(enviUrl + response.data.picture_url)
 

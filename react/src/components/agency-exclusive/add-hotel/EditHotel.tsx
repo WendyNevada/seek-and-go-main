@@ -56,7 +56,7 @@ const EditHotel = ({ref_hotel_id} : {ref_hotel_id: number}) => {
                 form.setValue('address', response.data.hotel.address);
                 form.setValue('address2', response.data.address_zipcode);
                 form.setValue('qty', response.data.hotel.qty);
-                form.setValue('promo_code', response.data.attraction.promo_code ? response.data.attraction.promo_code : '');
+                form.setValue('promo_code', response.data.promo_code ? response.data.promo_code : '');
 
                 //form.setValue('address2', response.data.address2);
             } catch (error) {

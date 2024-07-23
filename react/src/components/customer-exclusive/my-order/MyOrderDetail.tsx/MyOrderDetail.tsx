@@ -156,7 +156,7 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
                     start_dt: orderD.start_dt,
                     end_dt: orderD.end_dt,
                     qty: orderD.qty,
-                    price,
+                    price : orderD.price || 0,
                     total_price: orderD.price || 0
                 };
             });
@@ -303,7 +303,7 @@ const MyOrderDetail = ({ order_h_id }: { order_h_id: number }) => {
                                                 {formatPrice(dataRow.price)}
                                             </TableCell>
                                             <TableCell className="text-right">
-                                                {formatPrice(dataRow.total_price)}
+                                                {formatPrice(dataRow.total_price * dataRow.qty)}
                                             </TableCell>
                                         </>
                                     ):(
