@@ -16,6 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Required } from '@/components/ui/Custom/required';
 import { useTranslation } from 'react-i18next';
 import HashLoader from 'react-spinners/HashLoader';
+import { toInteger } from "lodash";
 
 const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
     const { t } = useTranslation();
@@ -78,7 +79,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                 form.setValue('vehicle_brand', response.data.vehicle.vehicle_brand);
                 form.setValue('vehicle_series', response.data.vehicle.vehicle_series);
                 form.setValue('vehicle_model', response.data.vehicle.vehicle_model);
-                form.setValue('vehicle_seat', response.data.vehicle.vehicle_seat);
+                form.setValue('vehicle_seat', parseInt(response.data.vehicle.vehicle_seat));
                 form.setValue('vehicle_year', parseInt(response.data.vehicle.vehicle_year));
                 form.setValue('with_driver', response.data.vehicle.with_driver === 1 ? true : false);
                 form.setValue('description', response.data.vehicle.description);
@@ -287,7 +288,7 @@ const EditVehicle = ({ref_vehicle_id} : {ref_vehicle_id:number}) => {
                                                 <Required/>
                                                 <FormMessage />
                                                 <FormControl>
-                                                    <Select onValueChange={(newValue) => form.setValue("vehicle_seat", parseInt(newValue))}>
+                                                    <Select onValueChange={(newValue) => form.setValue("vehicle_seat", toInteger(newValue))}>
                                                         <SelectTrigger className="w-[180px]">
                                                             <SelectValue placeholder={form.watch("vehicle_seat").toString().concat(" Seat") || "Vehicle Seat"} />
                                                         </SelectTrigger>
